@@ -7,6 +7,17 @@
     <groupId>com.salesforce.ccspayments</groupId>
     <artifactId>batch-validation-framework</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>Batch Validation Framework</name>
+    <properties>
+        <nexus.repo.url>https://nexus.soma.salesforce.com/nexus/content/repositories/releases/</nexus.repo.url>
+        <nexus.snapshots.repo.url>https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots/</nexus.snapshots.repo.url>
+        <nexus.repo.id>ccspaymentslibs</nexus.repo.id>
+    </properties>
+    <parent>
+        <groupId>com.salesforce</groupId>
+        <artifactId>salesforce-company-pom</artifactId>
+        <version>2.2.1</version>
+    </parent>
     <build>
         <plugins>
             <plugin>
@@ -19,6 +30,15 @@
             </plugin>
         </plugins>
     </build>
-
+    <distributionManagement>
+        <repository>
+            <id>${nexus.repo.id}</id>
+            <url>${nexus.repo.url}</url>
+        </repository>
+        <snapshotRepository>
+            <id>${nexus.repo.id}</id>
+            <url>${nexus.snapshots.repo.url}</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>
