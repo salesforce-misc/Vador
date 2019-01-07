@@ -9,7 +9,7 @@
     <properties>
         <nexus.repo.url>https://nexus.soma.salesforce.com/nexus/content/repositories/releases/</nexus.repo.url>
         <nexus.snapshots.repo.url>https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots/</nexus.snapshots.repo.url>
-        <nexus.repo.id>ccspaymentslibs</nexus.repo.id>
+        <nexus.repo.id>ccspayments</nexus.repo.id>
     </properties>
     <parent>
         <groupId>com.salesforce</groupId>
