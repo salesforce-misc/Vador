@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.salesforce.ccspayments</groupId>
     <artifactId>batch-validation-framework</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <name>Batch Validation Framework</name>
     <properties>
         <nexus.repo.url>https://nexus.soma.salesforce.com/nexus/content/repositories/releases/</nexus.repo.url>
@@ -41,4 +39,8 @@
         </snapshotRepository>
     </distributionManagement>
 
+
+  <scm>
+    <tag>batch-validation-framework-1.0</tag>
+  </scm>
 </project>
