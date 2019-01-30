@@ -7,7 +7,7 @@
     <version>1.6-SNAPSHOT</version>
     <name>Batch Validation Framework</name>
     <properties>
-        <nexus.repo.url>https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots/</nexus.repo.url>
+        <nexus.repo.url>https://nexus.soma.salesforce.com/nexus/content/repositories/releases/</nexus.repo.url>
         <nexus.snapshots.repo.url>https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots/</nexus.snapshots.repo.url>
         <nexus.repo.id>nexus</nexus.repo.id>
     </properties>
