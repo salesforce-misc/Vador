@@ -1,4 +1,4 @@
-@Library('sfci-pipeline-sharedlib@v0.13.6') _
+@Library('sfci-pipeline-sharedlib@master') _
 import net.sfdc.dci.BuildUtils
 import net.sfdc.dci.MavenUtils
 
