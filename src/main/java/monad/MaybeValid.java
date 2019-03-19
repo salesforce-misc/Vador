@@ -1,9 +1,11 @@
-/*
+package monad;/*
  * Copyright 2018 salesforce.com, inc. 
  * All Rights Reserved 
  * Company Confidential
  */
 
+
+import failure.ValidationFailure;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
