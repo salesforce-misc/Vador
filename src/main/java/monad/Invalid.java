@@ -5,6 +5,8 @@ package monad;/*
  */
 
 
+import failure.ValidationFailure;
+
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Function;
