@@ -33,6 +33,13 @@
             </plugin>
         </plugins>
     </build>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.collections</groupId>
+            <artifactId>google-collections</artifactId>
+            <version>1.0-rc1</version>
+        </dependency>
+    </dependencies>
     <distributionManagement>
         <repository>
             <id>${nexus.repo.id}</id>
