@@ -8,7 +8,7 @@ package org.qtc.delphinus;
 
 import com.google.common.collect.ImmutableList;
 
-import javax.annotation.Nonnull;
+
 
 /**
  * This needs to be instantiated with list of Validations in the sequence of their execution.
@@ -42,7 +42,7 @@ public class RequestValidator<FailureT, RequestT> {
      * @param request Object to be validated.
      * @return Validation failure, if any. ValidationFailure.SUCCESS otherwise.
      */
-    public FailureT validate(@Nonnull RequestT request) {
+    public FailureT validate(RequestT request) {
         return ValidationRunner.validateFailFast(request, requestValidations, null); // todo fix
     }
 
