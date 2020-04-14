@@ -14,7 +14,6 @@ import java.util.function.Function;
 /**
  * Singleton class to run all validations on the validatable
  * and returns the first failed validation.
- * {@link #validateFailFast} for Service requests.
  */
 final class ValidationRunner {
 
@@ -62,7 +61,7 @@ final class ValidationRunner {
     }
 
     /**
-     * Represents a function that runs as a Validation and might throw a {@link Throwable}.
+     * Represents a function that runs as a Validation and might throw a
      *
      * @param <InputRepresentationT> Type of input representation for request validation.
      */

@@ -10,7 +10,6 @@ package org.qtc.delphinus;
  * Represents a request validation function that accepts service request bean and produces a validation result.
  *
  * <p>This is a <a href="package-summary.html">functional interface</a>
- * whose functional method is {@link #validate(RequestT)}.
  *
  * @param <RequestT> the type of request to be validated.
  * @author gakshintala
