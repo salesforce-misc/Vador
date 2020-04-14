@@ -50,8 +50,4 @@
             <url>${nexus.snapshots.repo.url}</url>
         </snapshotRepository>
     </distributionManagement>
-
-  <scm>
-    <tag>batch-validation-framework-1.7</tag>
-  </scm>
 </project>
