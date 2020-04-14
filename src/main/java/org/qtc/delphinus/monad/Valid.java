@@ -1,11 +1,11 @@
-package monad;/*
+package org.qtc.delphinus.monad;/*
  * Copyright 2018 salesforce.com, inc. 
  * All Rights Reserved 
  * Company Confidential
  */
 
 
-import failure.ValidationFailure;
+import org.qtc.delphinus.failure.ValidationFailure;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;

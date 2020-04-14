@@ -1,4 +1,4 @@
-package failure;/*
+package org.qtc.delphinus.failure;/*
  * Copyright 2018 salesforce.com, inc. 
  * All Rights Reserved 
  * Company Confidential
