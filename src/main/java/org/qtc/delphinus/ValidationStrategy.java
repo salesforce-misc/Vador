@@ -7,39 +7,43 @@
 package org.qtc.delphinus;
 
 import com.google.common.collect.ImmutableList;
+import io.vavr.control.Either;
 
 import java.util.function.Function;
+
+import static org.qtc.delphinus.Dsl.NONE;
 
 
 /**
  * Singleton class to run all validations on the validatable
  * and returns the first failed validation.
  */
-final class ValidationRunner {
+final class ValidationStrategy {
 
-    private ValidationRunner() {
+    private ValidationStrategy() {
     }
 
     /**
-     * Method to run all request validations on Validatable in fail-fast mode and returns the first validation failure.
+     * Method to run all validatable validations on Validatable in fail-fast mode and returns the first validation failure.
      *
-     * @param request            Generic Input representation to validate.
-     * @param requestValidations Validations to be performed on the request.
-     * @param <RequestT>         Input Representation type to be validated
+     * @param validatable            Generic Input representation to validate.
+     * @param requestValidations Validations to be performed on the validatable.
+     * @param <ValidatableT>         Input Representation type to be validated
      * @return Validation failure if any, ValidationFailure.SUCCESS otherwise.
      */
-    public static <FailureT, RequestT> FailureT validateFailFast(RequestT request,
-                                                                ImmutableList<RequestValidation<FailureT, RequestT>> requestValidations, 
-                                                                 FailureT invalidRequest) {
-        if (request == null || requestValidations == null) {
-            return invalidRequest;
+    public static <FailureT, ValidatableT> Either<FailureT, ValidatableT> validateFailFast(ValidatableT validatable,
+                                                                     ImmutableList<RequestValidation<FailureT, ValidatableT>> requestValidations,
+                                                                     FailureT invalidRequest) {
+        if (validatable == null || requestValidations == null) {
+            return Either.left(invalidRequest);
         }
         return requestValidations.stream()
                 .map(handleThrowableRequestValidation(requestValidation ->
-                                                              requestValidation.validate(request)))
-                .filter(validationFailure -> validationFailure != null) //todo
+                                                              requestValidation.validate(validatable)))
+                .filter(validationFailure -> validationFailure != NONE) // TODO: 4/15/20 No need of this as we migrate to Either. 
                 .findFirst()
-                .orElse(invalidRequest); // TODO: 4/13/20 fix 
+                .map(Either::<FailureT, ValidatableT>left)
+                .orElse(Either.right(validatable)); 
     }
 
     /**

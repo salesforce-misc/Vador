@@ -8,6 +8,7 @@ package org.qtc.delphinus;
 
 
 import com.google.common.collect.ImmutableList;
+import org.qtc.delphinus.failure.Failure;
 
 /**
  * gakshintala created on 4/9/20.
@@ -21,20 +22,18 @@ public final class Dsl {
         return new RequestValidator<>(ImmutableList.of());
     }
 
-    public enum GenericValidationFailureMessage implements ValidationFailureMessage {
-        NONE,
-        UNKNOWN_EXCEPTION,
-        ;
+    private static final FailureMessageDetails NO_FAILURE_DETAILS = new FailureMessageDetails("", "");
 
+    public static final Failure NONE = new Failure() {
         @Override
-        public String getSection() {
-            return "";
+        public FailureMessageDetails getFailureMessageDetails() {
+            return NO_FAILURE_DETAILS;
         }
 
         @Override
-        public String getName() {
+        public String getExceptionMessageFromFailure() {
             return "";
         }
-    }
-    
+    };
+
 }        

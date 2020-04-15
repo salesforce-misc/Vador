@@ -43,7 +43,7 @@ public class RequestValidator<FailureT, RequestT> {
      * @return Validation failure, if any. ValidationFailure.SUCCESS otherwise.
      */
     public FailureT validate(RequestT request) {
-        return ValidationRunner.validateFailFast(request, requestValidations, null); // todo fix
+        return ValidationStrategy.validateFailFast(request, requestValidations, null); // todo fix
     }
 
 }

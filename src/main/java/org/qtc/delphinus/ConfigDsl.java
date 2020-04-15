@@ -19,9 +19,9 @@ import static java.util.stream.Collectors.toList;
  * <p>
  * gakshintala created on 2/22/20.
  */
-public final class ValidationUtils {
+public final class ConfigDsl {
 
-    private ValidationUtils() {
+    private ConfigDsl() {
     }
 
     /**
@@ -29,13 +29,13 @@ public final class ValidationUtils {
      * This method should be called on the instance of Shared Input representation.
      *
      * @param toSharedRepresentationMapper Function that can map ParentInputRepresentation to SharedInputRepresentation.
-     * @param <ParentInputRepresentationT> Parent representation type to be validated. Parent HAS-A shared representation.
+     * @param <ParentT> Parent representation type to be validated. Parent HAS-A shared representation.
      * @return Composition of all shared validations for a shared representation.
      */
-    static <ParentInputRepresentationT, SharedInputRepresentationT, FailureT>
-    ImmutableList<RequestValidation<FailureT, ParentInputRepresentationT>> liftAllToParentRequestValidationType(
-            ImmutableList<RequestValidation<FailureT, SharedInputRepresentationT>> sharedInputRequestValidations,
-            Function<ParentInputRepresentationT, SharedInputRepresentationT> toSharedRepresentationMapper,
+    public static <ParentT, ChildT, FailureT>
+    ImmutableList<RequestValidation<FailureT, ParentT>> liftAllToParentRequestValidationType(
+            ImmutableList<RequestValidation<FailureT, ChildT>> sharedInputRequestValidations,
+            Function<ParentT, ChildT> toSharedRepresentationMapper,
             FailureT invalidChild) {
         return sharedInputRequestValidations.stream()
                 .map(requestValidation -> liftToParentRequestValidationType(requestValidation, toSharedRepresentationMapper, invalidChild))
@@ -47,16 +47,16 @@ public final class ValidationUtils {
      *
      * @param sharedRequestValidation      shared request validation to be converted.
      * @param toSharedRepresentationMapper Function that can map ParentInputRepresentation to SharedInputRepresentation.
-     * @param <ParentInputRepresentationT> Parent representation type to be validated. Parent HAS-A shared representation.
+     * @param <ParentT> Parent representation type to be validated. Parent HAS-A shared representation.
      * @return converted parent request validator.
      */
-    private static <ParentInputRepresentationT, SharedInputRepresentationT, FailureT>
-    RequestValidation<FailureT, ParentInputRepresentationT>
-    liftToParentRequestValidationType(RequestValidation<FailureT, SharedInputRepresentationT> sharedRequestValidation,
-                                      Function<ParentInputRepresentationT, SharedInputRepresentationT> toSharedRepresentationMapper,
+    public static <ParentT, ChildT, FailureT>
+    RequestValidation<FailureT, ParentT>
+    liftToParentRequestValidationType(RequestValidation<FailureT, ChildT> sharedRequestValidation,
+                                      Function<ParentT, ChildT> toSharedRepresentationMapper,
             FailureT invalidChild) {
         return parentInputRepresentation -> {
-            final SharedInputRepresentationT sharedInputRepresentation = toSharedRepresentationMapper.apply(
+            final ChildT sharedInputRepresentation = toSharedRepresentationMapper.apply(
                     parentInputRepresentation);
             return sharedInputRepresentation != null
                     ? sharedRequestValidation.validate(sharedInputRepresentation)
