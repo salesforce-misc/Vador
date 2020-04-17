@@ -7,7 +7,6 @@
 package consumer.representation;
 
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import consumer.ConnectInputRepresentation;
 
 import java.util.Date;
@@ -23,7 +22,7 @@ public class ChildInputRepresentation extends ConnectInputRepresentation {
 
     private Double amount;
     private String paymentAuthorizationId;
-    private ID accountId;
+    private String accountId;
     private Date effectiveDate;
     private String comments;
     private String clientContext;
@@ -75,11 +74,11 @@ public class ChildInputRepresentation extends ConnectInputRepresentation {
         return isSetEffectiveDate;
     }
 
-    public ID getAccountId() {
+    public String getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(final ID id) {
+    public void setAccountId(final String id) {
         this.accountId = id;
         this.isSetAccountId = true;
     }
