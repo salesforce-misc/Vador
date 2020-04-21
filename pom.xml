@@ -4,7 +4,7 @@
 
     <groupId>com.salesforce.ccspayments</groupId>
     <artifactId>batch-validation-framework</artifactId>
-    <version>1.18</version>
+    <version>1.19-SNAPSHOT</version>
     <name>Batch Validation Framework</name>
     <properties>
         <nexus.repo.url>https://nexus.soma.salesforce.com/nexus/content/repositories/releases/</nexus.repo.url>
@@ -63,6 +63,6 @@
     </distributionManagement>
 
   <scm>
-    <tag>batch-validation-framework-1.18</tag>
+    <tag>batch-validation-framework-1.13</tag>
   </scm>
 </project>
