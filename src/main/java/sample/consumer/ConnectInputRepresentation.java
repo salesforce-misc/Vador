@@ -1,4 +1,4 @@
-package consumer;
+package sample.consumer;
 
 /**
  * gakshintala created on 4/17/20.

@@ -4,7 +4,7 @@
  * Company Confidential
  */
 
-package consumer.failure;
+package sample.consumer.failure;
 
 
 import java.util.Objects;
@@ -54,6 +54,7 @@ public enum ValidationFailureMessage {
      * Common validation section
      */
     SUCCESS(Section.COMMON_VALIDATION_FAILURE, "Success"),
+    NOTHING_TO_VALIDATE(Section.COMMON_VALIDATION_FAILURE, "Nothing"),
     UNKNOWN_EXCEPTION("", ""), // This is used as a placeholder for ValidationFailureMessage during RuntimeExceptions.
     FIELD_ABSENT(Section.COMMON_VALIDATION_FAILURE, "RequiredFieldMissing"),
     FIELD_NULL_OR_EMPTY(Section.COMMON_VALIDATION_FAILURE, "FieldNullOrEmpty"),

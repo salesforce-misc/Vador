@@ -1,7 +1,7 @@
 /*
  * Copyright, 1999-2019, salesforce.com All Rights Reserved Company Confidential
  */
-package consumer.failure;
+package sample.consumer.failure;
 
 
 /**

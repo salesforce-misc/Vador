@@ -4,9 +4,9 @@
  * Company Confidential
  */
 
-package consumer;
+package sample.consumer;
 
-import consumer.representation.ParentInputRepresentation;
+import sample.consumer.representation.ParentInputRepresentation;
 
 /**
  * gakshintala created on 4/13/20.

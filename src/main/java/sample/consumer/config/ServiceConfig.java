@@ -4,13 +4,13 @@
  * Company Confidential
  */
 
-package consumer.config;
+package sample.consumer.config;
 
 
-import consumer.BaseService;
-import consumer.Service;
-import consumer.representation.ParentInputRepresentation;
-import consumer.failure.ValidationFailure;
+import sample.consumer.BaseService;
+import sample.consumer.Service;
+import sample.consumer.representation.ParentInputRepresentation;
+import sample.consumer.failure.ValidationFailure;
 import io.vavr.collection.List;
 import org.qtc.delphinus.types.validators.Validator;
 

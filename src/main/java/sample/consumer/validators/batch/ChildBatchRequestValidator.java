@@ -4,17 +4,16 @@
  * Company Confidential
  */
 
-package consumer.validators.batch;
+package sample.consumer.validators.batch;
 
 
-import consumer.failure.ValidationFailure;
-import consumer.representation.ChildInputRepresentation;
+import sample.consumer.failure.ValidationFailure;
+import sample.consumer.representation.ChildInputRepresentation;
 import io.vavr.control.Either;
 import org.qtc.delphinus.types.validators.ThrowableValidator;
 import org.qtc.delphinus.types.validators.Validator;
-
-import static consumer.failure.ApiErrorCodes.REQUIRED_FIELD_MISSING;
-import static consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
+import sample.consumer.failure.ApiErrorCodes;
+import sample.consumer.failure.ValidationFailureMessage;
 
 public class ChildBatchRequestValidator {
 
@@ -27,13 +26,13 @@ public class ChildBatchRequestValidator {
     public static final Validator<ChildInputRepresentation, ValidationFailure> batchValidation1 =
             childInputRepresentation -> childInputRepresentation
                     .filter(ChildInputRepresentation::_isSetAccountId)
-                    .getOrElse(Either.left(new ValidationFailure(REQUIRED_FIELD_MISSING, FIELD_NULL_OR_EMPTY,
+                    .getOrElse(Either.left(new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING, ValidationFailureMessage.FIELD_NULL_OR_EMPTY,
                                                          ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID)));
 
     public static final Validator<ChildInputRepresentation, ValidationFailure> batchValidation2 =
             childInputRepresentation -> childInputRepresentation
                     .filter(ChildInputRepresentation::_isSetAccountId)
-                    .getOrElse(Either.left(new ValidationFailure(REQUIRED_FIELD_MISSING, FIELD_NULL_OR_EMPTY,
+                    .getOrElse(Either.left(new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING, ValidationFailureMessage.FIELD_NULL_OR_EMPTY,
                             ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID)));
 
 

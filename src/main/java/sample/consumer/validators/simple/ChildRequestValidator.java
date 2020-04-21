@@ -4,16 +4,15 @@
  * Company Confidential
  */
 
-package consumer.validators.simple;
+package sample.consumer.validators.simple;
 
 
-import consumer.failure.ValidationFailure;
-import consumer.representation.ChildInputRepresentation;
+import sample.consumer.failure.ValidationFailure;
+import sample.consumer.representation.ChildInputRepresentation;
 import org.qtc.delphinus.types.validators.SimpleThrowableValidator;
 import org.qtc.delphinus.types.validators.SimpleValidator;
-
-import static consumer.failure.ApiErrorCodes.REQUIRED_FIELD_MISSING;
-import static consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
+import sample.consumer.failure.ApiErrorCodes;
+import sample.consumer.failure.ValidationFailureMessage;
 
 public class ChildRequestValidator {
 
@@ -28,7 +27,7 @@ public class ChildRequestValidator {
                 if (childInputRepresentation._isSetPaymentAuthorizationId()) {
                     return null;
                 } else {
-                    return new ValidationFailure(REQUIRED_FIELD_MISSING, FIELD_NULL_OR_EMPTY,
+                    return new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING, ValidationFailureMessage.FIELD_NULL_OR_EMPTY,
                             ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID);
                 }
             };
@@ -38,7 +37,7 @@ public class ChildRequestValidator {
                 if (childInputRepresentation._isSetPaymentAuthorizationId()) {
                     return null;
                 } else {
-                    return new ValidationFailure(REQUIRED_FIELD_MISSING, FIELD_NULL_OR_EMPTY,
+                    return new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING, ValidationFailureMessage.FIELD_NULL_OR_EMPTY,
                             ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID);
                 }
             };

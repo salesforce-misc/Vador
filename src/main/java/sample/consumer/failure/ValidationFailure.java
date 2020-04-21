@@ -4,7 +4,7 @@
  * Company Confidential
  */
 
-package consumer.failure;
+package sample.consumer.failure;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -21,6 +21,7 @@ public class ValidationFailure {
     private String[] params;
 
     public static final ValidationFailure SUCCESS = new ValidationFailure(ValidationFailureMessage.SUCCESS);
+    public static final ValidationFailure NOTHING_TO_VALIDATE = new ValidationFailure(ValidationFailureMessage.NOTHING_TO_VALIDATE);
 
     public ValidationFailure(ApiErrorCodes apiErrorCode, ValidationFailureMessage validationFailureMessage) {
         Objects.requireNonNull(apiErrorCode, "apiErrorCode for ValidationFailure cannot be null");

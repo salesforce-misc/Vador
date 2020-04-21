@@ -4,12 +4,12 @@
  * Company Confidential
  */
 
-package consumer.config;
+package sample.consumer.config;
 
 
-import consumer.failure.ValidationFailure;
-import consumer.representation.ParentInputRepresentation;
-import consumer.validators.batch.ParentBatchRequestValidator;
+import sample.consumer.failure.ValidationFailure;
+import sample.consumer.representation.ParentInputRepresentation;
+import sample.consumer.validators.batch.ParentBatchRequestValidator;
 import io.vavr.collection.List;
 import org.qtc.delphinus.dsl.Dsl;
 import org.qtc.delphinus.types.validators.Validator;
@@ -20,7 +20,7 @@ import org.qtc.delphinus.types.validators.Validator;
  */
 public class ValidationConfig {
     
-    List<Validator<ParentInputRepresentation, ValidationFailure>> getServiceRequestValidator() {
+    public static List<Validator<ParentInputRepresentation, ValidationFailure>> getServiceValidations() {
         return List.of(
                 ParentBatchRequestValidator.batchValidation1,
                 ParentBatchRequestValidator.batchValidation2)

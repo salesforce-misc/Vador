@@ -37,27 +37,6 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.2.0</version>
             </plugin>
-            <!--<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    &lt;!&ndash; get all project dependencies &ndash;&gt;
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        &lt;!&ndash; bind to the packaging phase &ndash;&gt;
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>-->
         </plugins>
     </build>
     <dependencies>
