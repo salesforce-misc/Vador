@@ -4,7 +4,7 @@
 
     <groupId>com.salesforce.ccspayments</groupId>
     <artifactId>batch-validation-framework</artifactId>
-    <version>1.17-SNAPSHOT</version>
+    <version>1.18-SNAPSHOT</version>
     <name>Batch Validation Framework</name>
     <properties>
         <nexus.repo.url>https://nexus.soma.salesforce.com/nexus/content/repositories/releases/</nexus.repo.url>
@@ -30,6 +30,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.2.0</version>
             </plugin>
             <!--<plugin>
