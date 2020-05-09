@@ -4,12 +4,12 @@
  * Company Confidential
  */
 
-package sample.consumer;
+package consumer;
 
 
-import sample.consumer.config.ValidationConfig;
-import sample.consumer.failure.ValidationFailure;
-import sample.consumer.representation.ParentInputRepresentation;
+import consumer.config.ValidationConfig;
+import consumer.failure.ValidationFailure;
+import consumer.representation.ParentInputRepresentation;
 import io.vavr.collection.List;
 import lombok.val;
 import org.qtc.delphinus.dsl.ValidateDsl;

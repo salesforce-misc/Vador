@@ -50,8 +50,8 @@ public class Dsl {
     public static <FailureT, ValidatableT> Validator<ValidatableT, FailureT> liftThrowable(
             ThrowableValidator<ValidatableT, FailureT> throwableValidator, Function1<Throwable, FailureT> throwableMapper) {
         return validatable -> validatable
-                .flatMap(egg -> {
-                    val apply = throwableValidator.apply(egg);
+                .flatMap(toBeValidated -> {
+                    val apply = throwableValidator.apply(toBeValidated);
                     return fold(apply, throwableMapper);
                 });
     }

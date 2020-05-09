@@ -1,4 +1,4 @@
-package sample.consumer.failure;
+package consumer.failure;
 
 /**
  * gakshintala created on 4/17/20.

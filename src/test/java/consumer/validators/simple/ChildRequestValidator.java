@@ -4,15 +4,15 @@
  * Company Confidential
  */
 
-package sample.consumer.validators.simple;
+package consumer.validators.simple;
 
 
-import sample.consumer.failure.ValidationFailure;
-import sample.consumer.representation.ChildInputRepresentation;
+import consumer.failure.ValidationFailure;
+import consumer.representation.ChildInputRepresentation;
 import org.qtc.delphinus.types.validators.SimpleThrowableValidator;
 import org.qtc.delphinus.types.validators.SimpleValidator;
-import sample.consumer.failure.ApiErrorCodes;
-import sample.consumer.failure.ValidationFailureMessage;
+import consumer.failure.ApiErrorCodes;
+import consumer.failure.ValidationFailureMessage;
 
 public class ChildRequestValidator {
 

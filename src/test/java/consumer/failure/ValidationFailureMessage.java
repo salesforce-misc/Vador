@@ -4,7 +4,7 @@
  * Company Confidential
  */
 
-package sample.consumer.failure;
+package consumer.failure;
 
 
 import java.util.Objects;

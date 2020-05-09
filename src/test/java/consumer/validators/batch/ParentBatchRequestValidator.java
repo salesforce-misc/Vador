@@ -4,17 +4,17 @@
  * Company Confidential
  */
 
-package sample.consumer.validators.batch;
+package consumer.validators.batch;
 
 
-import sample.consumer.failure.ValidationFailure;
-import sample.consumer.representation.ParentInputRepresentation;
+import consumer.failure.ValidationFailure;
+import consumer.representation.ParentInputRepresentation;
 import io.vavr.control.Either;
 import org.qtc.delphinus.types.validators.ThrowableValidator;
 import org.qtc.delphinus.types.validators.Validator;
-import sample.consumer.failure.ApiErrorCodes;
+import consumer.failure.ApiErrorCodes;
 
-import static sample.consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
+import static consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
 
 public class ParentBatchRequestValidator {
 
