@@ -5,10 +5,10 @@ import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.qtc.delphinus.types.validators.SimpleThrowableValidator;
-import org.qtc.delphinus.types.validators.SimpleValidator;
 import org.qtc.delphinus.types.validators.ThrowableValidator;
 import org.qtc.delphinus.types.validators.Validator;
+import org.qtc.delphinus.types.validators.simple.SimpleThrowableValidator;
+import org.qtc.delphinus.types.validators.simple.SimpleValidator;
 
 import static io.vavr.CheckedFunction1.liftTry;
 
@@ -17,6 +17,10 @@ import static io.vavr.CheckedFunction1.liftTry;
  */
 @UtilityClass
 public class Dsl {
+
+    /**
+     * -------------------- SIMPLE --------------------
+     **/
 
     public static <FailureT, ValidatableT> Validator<ValidatableT, FailureT> liftSimple(
             SimpleValidator<ValidatableT, FailureT> toBeLifted, FailureT none) {
@@ -31,29 +35,38 @@ public class Dsl {
         return toBeLiftedFns.map(toBeLifted -> liftSimple(toBeLifted, none));
     }
 
+    /**
+     * -------------------- SIMPLE THROWABLE --------------------
+     **/
+
     public static <FailureT, ValidatableT> Validator<ValidatableT, FailureT> liftSimpleThrowable(
             SimpleThrowableValidator<ValidatableT, FailureT> toBeLifted, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
-        return liftThrowable(validatable -> {
-            val result = liftTry(toBeLifted).apply(validatable).toEither();
-            return result.fold(
-                    throwable -> Either.left(Either.left(throwable)),
-                    failure -> failure != none ? Either.left(Either.right(failure)) : Either.right(validatable));
-
-        }, throwableMapper);
+        ThrowableValidator<ValidatableT, FailureT> throwableValidator =
+                validatable -> validatable.mapLeft(Either::<Throwable, FailureT>right)
+                        .flatMap(toBeValidated -> {
+                            val result = liftTry(toBeLifted).apply(toBeValidated).toEither();
+                            return result.fold(
+                                    throwable -> Either.left(Either.left(throwable)),
+                                    failure -> failure != none ? Either.left(Either.right(failure)) : Either.right(toBeValidated));
+                        });
+        return liftThrowable(throwableValidator, throwableMapper);
     }
 
     public static <FailureT, ValidatableT> List<Validator<ValidatableT, FailureT>> liftAllSimpleThrowable(
             List<SimpleThrowableValidator<ValidatableT, FailureT>> toBeLiftedFns, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
         return toBeLiftedFns.map(toBeLifted -> liftSimpleThrowable(toBeLifted, none, throwableMapper));
     }
+    
+    /**
+     * -------------------- THROWABLE --------------------
+     **/
 
     public static <FailureT, ValidatableT> Validator<ValidatableT, FailureT> liftThrowable(
             ThrowableValidator<ValidatableT, FailureT> throwableValidator, Function1<Throwable, FailureT> throwableMapper) {
-        return validatable -> validatable
-                .flatMap(toBeValidated -> {
-                    val apply = throwableValidator.apply(toBeValidated);
-                    return fold(apply, throwableMapper);
-                });
+        return validatable -> {
+            val result = throwableValidator.apply(validatable);
+            return fold(result, throwableMapper);
+        };
     }
 
     public static <FailureT, ValidatableT> List<Validator<ValidatableT, FailureT>> liftAllThrowable(

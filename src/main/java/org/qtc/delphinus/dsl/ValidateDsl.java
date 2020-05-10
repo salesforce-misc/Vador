@@ -12,11 +12,19 @@ import org.qtc.delphinus.types.validators.Validator;
  */
 @UtilityClass
 public class ValidateDsl {
-    public static <FailureT, ValidatableT> FailureT nonBulkValidateFailFast(
-            ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validations, 
+    public static <FailureT, ValidatableT> FailureT validateAndFailFast(
+            ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators, 
             FailureT invalidValidatable, FailureT none) {
         final Either<FailureT, ValidatableT> validationResult 
-                = Strategies.failFastStrategy(validations, invalidValidatable).apply(validatable);
+                = Strategies.failFastStrategy(validators, invalidValidatable).apply(validatable);
         return validationResult.fold(Function1.identity(), ignore -> none);
+    }
+
+    public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFast(
+            List<ValidatableT> validatables, List<Validator<ValidatableT, FailureT>> validators, 
+            FailureT invalidValidatable) {
+        return validatables.iterator()
+                .map(Strategies.failFastStrategy(validators, invalidValidatable))
+                .toList();
     }
 }

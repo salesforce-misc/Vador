@@ -27,7 +27,7 @@ public abstract class BaseService<InputRepresentationT extends ConnectInputRepre
 
     public ValidationFailure validateNonBulk() {
         val parentInputRepresentation = new ParentInputRepresentation();
-        return ValidateDsl.nonBulkValidateFailFast(
+        return ValidateDsl.validateAndFailFast(
                 parentInputRepresentation,
                 ValidationConfig.getServiceValidations(),
                 ValidationFailure.NOTHING_TO_VALIDATE,

@@ -8,5 +8,5 @@ import io.vavr.control.Either;
  */
 @FunctionalInterface
 public interface ThrowableValidator<ValidatableT, FailureT> 
-        extends Function1<ValidatableT, Either<Either<Throwable, FailureT>, ValidatableT>> {
+        extends Function1<Either<FailureT, ValidatableT>, Either<Either<Throwable, FailureT>, ValidatableT>> {
 }

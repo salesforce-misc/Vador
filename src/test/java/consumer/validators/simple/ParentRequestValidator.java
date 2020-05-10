@@ -9,8 +9,8 @@ package consumer.validators.simple;
 
 import consumer.failure.ValidationFailure;
 import consumer.representation.ParentInputRepresentation;
-import org.qtc.delphinus.types.validators.SimpleThrowableValidator;
-import org.qtc.delphinus.types.validators.SimpleValidator;
+import org.qtc.delphinus.types.validators.simple.SimpleThrowableValidator;
+import org.qtc.delphinus.types.validators.simple.SimpleValidator;
 import consumer.failure.ApiErrorCodes;
 
 import static consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
