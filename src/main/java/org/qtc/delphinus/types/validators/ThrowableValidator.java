@@ -1,6 +1,6 @@
 package org.qtc.delphinus.types.validators;
 
-import io.vavr.Function1;
+import io.vavr.CheckedFunction1;
 import io.vavr.control.Either;
 
 /**
@@ -8,5 +8,5 @@ import io.vavr.control.Either;
  */
 @FunctionalInterface
 public interface ThrowableValidator<ValidatableT, FailureT> 
-        extends Function1<Either<FailureT, ValidatableT>, Either<Either<Throwable, FailureT>, ValidatableT>> {
+        extends CheckedFunction1<Either<FailureT, ValidatableT>, Either<FailureT, ValidatableT>> {
 }

@@ -137,3 +137,4 @@ buildNumber.properties
 batch-validation-framework.iml
 src/main/java/rebel.xml
 release.properties
+/.sdkmanrc
