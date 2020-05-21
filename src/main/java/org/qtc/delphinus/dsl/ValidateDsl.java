@@ -27,4 +27,20 @@ public class ValidateDsl {
                 .map(Strategies.failFastStrategy(validators, invalidValidatable))
                 .toList();
     }
+
+    public static <FailureT, ValidatableT> List<FailureT> validateAndAccumulateErrors(
+            ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators,
+            FailureT invalidValidatable, FailureT none) {
+        final List<Either<FailureT, ValidatableT>> validationResults
+                = Strategies.accumulationStrategy(validators, invalidValidatable).apply(validatable);
+        return validationResults.map(validationResult -> validationResult.fold(Function1.identity(), ignore -> none));
+    }
+
+    public static <FailureT, ValidatableT> List<List<Either<FailureT, ValidatableT>>> validateAndAccumulateErrors(
+            List<ValidatableT> validatables, List<Validator<ValidatableT, FailureT>> validators,
+            FailureT invalidValidatable) {
+        return validatables.iterator()
+                .map(Strategies.accumulationStrategy(validators, invalidValidatable))
+                .toList();
+    }
 }
