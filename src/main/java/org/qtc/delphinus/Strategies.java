@@ -6,7 +6,6 @@
 
 package org.qtc.delphinus;
 
-import io.vavr.collection.Iterator;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
@@ -24,22 +23,23 @@ public class Strategies {
             List<Validator<ValidatableT, FailureT>> validations, FailureT invalidValidatable) {
         return validatable -> validatable == null
                 ? Either.left(invalidValidatable)
-                : applyValidations(validations, validatable).getOrElse(Either.right(validatable));
+                : applyValidations(validatable, validations).getOrElse(Either.right(validatable));
     }
 
     public static <FailureT, ValidatableT> AccumulationStrategy<ValidatableT, FailureT> accumulationStrategy(
             List<Validator<ValidatableT, FailureT>> validations, FailureT invalidValidatable) {
         return validatable -> validatable == null
                 ? List.of(Either.left(invalidValidatable))
-                : applyValidations(validations, validatable).toList();
+                : applyValidations(validatable, validations).toList();
     }
 
-    private static <FailureT, ValidatableT> Iterator<Either<FailureT, ValidatableT>> applyValidations(
-            List<Validator<ValidatableT, FailureT>> validations, ValidatableT validatable) {
-        Either<FailureT, ValidatableT> validatableRight = Either.right(validatable);
-        return validations.iterator()
-                .map(validation -> validation.apply(validatableRight))
-                .filter(Either::isLeft);
+    private static <FailureT, ValidatableT> List<Either<FailureT, ?>> applyValidations(
+            ValidatableT toBeValidated, List<Validator<ValidatableT, FailureT>> validations) {
+        Either<FailureT, ValidatableT> toBeValidatedRight = Either.right(toBeValidated);
+        final List<Either<FailureT, ?>> validationResults =
+                validations
+                        .map(validation -> validation.apply(toBeValidatedRight));
+        return validationResults.filter(Either::isLeft);
     }
 
 }

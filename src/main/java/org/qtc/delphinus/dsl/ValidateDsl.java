@@ -15,12 +15,12 @@ public class ValidateDsl {
     public static <FailureT, ValidatableT> FailureT validateAndFailFast(
             ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators, 
             FailureT invalidValidatable, FailureT none) {
-        final Either<FailureT, ValidatableT> validationResult 
+        final Either<FailureT, ?> validationResult 
                 = Strategies.failFastStrategy(validators, invalidValidatable).apply(validatable);
         return validationResult.fold(Function1.identity(), ignore -> none);
     }
 
-    public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFast(
+    public static <FailureT, ValidatableT> List<Either<FailureT, ?>> validateAndFailFast(
             List<ValidatableT> validatables, List<Validator<ValidatableT, FailureT>> validators, 
             FailureT invalidValidatable) {
         return validatables.iterator()
@@ -31,12 +31,12 @@ public class ValidateDsl {
     public static <FailureT, ValidatableT> List<FailureT> validateAndAccumulateErrors(
             ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable, FailureT none) {
-        final List<Either<FailureT, ValidatableT>> validationResults
+        final List<Either<FailureT, ?>> validationResults
                 = Strategies.accumulationStrategy(validators, invalidValidatable).apply(validatable);
         return validationResults.map(validationResult -> validationResult.fold(Function1.identity(), ignore -> none));
     }
 
-    public static <FailureT, ValidatableT> List<List<Either<FailureT, ValidatableT>>> validateAndAccumulateErrors(
+    public static <FailureT, ValidatableT> List<List<Either<FailureT, ?>>> validateAndAccumulateErrors(
             List<ValidatableT> validatables, List<Validator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable) {
         return validatables.iterator()

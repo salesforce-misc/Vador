@@ -7,5 +7,5 @@ import io.vavr.control.Either;
  * gakshintala created on 4/11/20.
  */
 @FunctionalInterface
-public interface Validator<ValidatableT, FailureT> extends Function1<Either<FailureT, ValidatableT>, Either<FailureT, ValidatableT>> {
+public interface Validator<ValidatableT, FailureT> extends Function1<Either<FailureT, ValidatableT>, Either<FailureT, ?>> {
 }

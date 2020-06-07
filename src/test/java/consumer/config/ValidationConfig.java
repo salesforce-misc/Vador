@@ -20,7 +20,6 @@ import org.qtc.delphinus.types.validators.Validator;
  */
 public class ValidationConfig {
     
-    
     public static List<Validator<ParentInputRepresentation, ValidationFailure>> getServiceValidations() {
         return List.of(
                 ParentBatchRequestValidator.batchValidation1,

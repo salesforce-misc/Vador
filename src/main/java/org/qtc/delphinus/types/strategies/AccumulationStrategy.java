@@ -8,5 +8,5 @@ import io.vavr.control.Either;
  * gakshintala created on 4/14/20.
  */
 @FunctionalInterface
-public interface AccumulationStrategy<ValidatableT, FailureT> extends Function1<ValidatableT, List<Either<FailureT, ValidatableT>>> {
+public interface AccumulationStrategy<ValidatableT, FailureT> extends Function1<ValidatableT, List<Either<FailureT, ?>>> {
 }
