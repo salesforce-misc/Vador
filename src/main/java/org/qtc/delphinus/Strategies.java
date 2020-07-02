@@ -6,14 +6,19 @@
 
 package org.qtc.delphinus;
 
+import io.vavr.collection.Iterator;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
 import org.qtc.delphinus.types.strategies.AccumulationStrategy;
 import org.qtc.delphinus.types.strategies.FailFastStrategy;
+import org.qtc.delphinus.types.strategies.SimpleFailFastStrategy;
 import org.qtc.delphinus.types.validators.Validator;
+import org.qtc.delphinus.types.validators.simple.SimpleValidator;
 
 /**
+ * These Strategies compose multiple validations and return a single function which can be applied on the Validatable.
+ * 
  * gakshintala created on 4/15/20.
  */
 @UtilityClass
@@ -26,6 +31,13 @@ public class Strategies {
                 : applyValidations(validatable, validations).getOrElse(Either.right(validatable));
     }
 
+    public static <FailureT, ValidatableT> SimpleFailFastStrategy<ValidatableT, FailureT> failFastStrategy(
+            List<SimpleValidator<ValidatableT, FailureT>> validations, FailureT invalidValidatable, FailureT none) {
+        return validatable -> validatable == null
+                ? invalidValidatable
+                : applySimpleValidations(validatable, validations).getOrElse(none);
+    }
+    
     public static <FailureT, ValidatableT> AccumulationStrategy<ValidatableT, FailureT> accumulationStrategy(
             List<Validator<ValidatableT, FailureT>> validations, FailureT invalidValidatable) {
         return validatable -> validatable == null
@@ -33,13 +45,20 @@ public class Strategies {
                 : applyValidations(validatable, validations).toList();
     }
 
-    private static <FailureT, ValidatableT> List<Either<FailureT, ?>> applyValidations(
+    private static <FailureT, ValidatableT> Iterator<Either<FailureT, ?>> applyValidations(
             ValidatableT toBeValidated, List<Validator<ValidatableT, FailureT>> validations) {
         Either<FailureT, ValidatableT> toBeValidatedRight = Either.right(toBeValidated);
-        final List<Either<FailureT, ?>> validationResults =
-                validations
+        final Iterator<Either<FailureT, ?>> validationResults =
+                validations.iterator()
                         .map(validation -> validation.apply(toBeValidatedRight));
+        // This is just returning the description, nothing shall be run without terminal operator.
         return validationResults.filter(Either::isLeft);
+    }
+
+    private static <FailureT, ValidatableT> Iterator<FailureT> applySimpleValidations(
+            ValidatableT toBeValidated, List<SimpleValidator<ValidatableT, FailureT>> validations) {
+        return validations.iterator()
+                .map(validation -> validation.apply(toBeValidated));
     }
 
 }

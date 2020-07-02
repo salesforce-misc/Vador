@@ -14,6 +14,8 @@ import static io.vavr.CheckedFunction1.liftTry;
 import static io.vavr.Function1.identity;
 
 /**
+ * Dsl to lift simple, throwable validations to Validator type.
+ * 
  * gakshintala created on 4/15/20.
  */
 @UtilityClass
