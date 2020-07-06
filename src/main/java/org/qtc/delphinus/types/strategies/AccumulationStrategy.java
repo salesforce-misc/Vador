@@ -5,7 +5,10 @@ import io.vavr.collection.List;
 import io.vavr.control.Either;
 
 /**
- * gakshintala created on 4/14/20.
+ * Composed function for validations, for Error-Accumulation Strategy.
+ *
+ *  @author gakshintala
+ *  @since 228
  */
 @FunctionalInterface
 public interface AccumulationStrategy<ValidatableT, FailureT> extends Function1<ValidatableT, List<Either<FailureT, ?>>> {

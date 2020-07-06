@@ -4,7 +4,10 @@ import io.vavr.CheckedFunction1;
 import io.vavr.control.Either;
 
 /**
- * gakshintala created on 4/11/20.
+ * Data type for Throwable Validation functions.
+ * 
+ *  @author gakshintala
+ *  @since 228
  */
 @FunctionalInterface
 public interface ThrowableValidator<ValidatableT, FailureT> 
