@@ -8,7 +8,7 @@ package consumer.config;
 
 
 import consumer.failure.ValidationFailure;
-import consumer.representation.ParentInputRepresentation;
+import consumer.representation.Parent;
 import consumer.validators.batch.ParentBatchRequestValidator;
 import io.vavr.collection.List;
 import org.qtc.delphinus.dsl.Dsl;
@@ -20,7 +20,7 @@ import org.qtc.delphinus.types.validators.Validator;
  */
 public class ValidationConfig {
     
-    public static List<Validator<ParentInputRepresentation, ValidationFailure>> getServiceValidations() {
+    public static List<Validator<Parent, ValidationFailure>> getServiceValidations() {
         return List.of(
                 ParentBatchRequestValidator.batchValidation1,
                 ParentBatchRequestValidator.batchValidation2)

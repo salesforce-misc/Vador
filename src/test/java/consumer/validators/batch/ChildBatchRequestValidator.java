@@ -8,7 +8,7 @@ package consumer.validators.batch;
 
 
 import consumer.failure.ValidationFailure;
-import consumer.representation.ChildInputRepresentation;
+import consumer.representation.Child;
 import io.vavr.control.Either;
 import org.qtc.delphinus.types.validators.ThrowableValidator;
 import org.qtc.delphinus.types.validators.Validator;
@@ -23,25 +23,25 @@ public class ChildBatchRequestValidator {
      * Validates if Auth id in request has a status PROCESSED.
      * This is a lambda function implementation.
      */
-    public static final Validator<ChildInputRepresentation, ValidationFailure> batchValidation1 =
+    public static final Validator<Child, ValidationFailure> batchValidation1 =
             childInputRepresentation -> childInputRepresentation
-                    .filter(ChildInputRepresentation::_isSetAccountId)
+                    .filter(Child::_isSetAccountId)
                     .getOrElse(Either.left(new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING, ValidationFailureMessage.FIELD_NULL_OR_EMPTY,
                                                          ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID)));
 
-    public static final Validator<ChildInputRepresentation, ValidationFailure> batchValidation2 =
+    public static final Validator<Child, ValidationFailure> batchValidation2 =
             childInputRepresentation -> childInputRepresentation
-                    .filter(ChildInputRepresentation::_isSetAccountId)
+                    .filter(Child::_isSetAccountId)
                     .getOrElse(Either.left(new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING, ValidationFailureMessage.FIELD_NULL_OR_EMPTY,
                             ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID)));
 
 
-    public static final ThrowableValidator<ChildInputRepresentation, ValidationFailure> batchValidationThrowable1 =
+    public static final ThrowableValidator<Child, ValidationFailure> batchValidationThrowable1 =
             childInputRepresentation -> {
                 throw new IllegalArgumentException("1 - you did something illegal");
             };
 
-    public static final ThrowableValidator<ChildInputRepresentation, ValidationFailure> batchValidationThrowable2 =
+    public static final ThrowableValidator<Child, ValidationFailure> batchValidationThrowable2 =
             childInputRepresentation -> {
                 throw new IllegalArgumentException("1 - you did something illegal");
             };

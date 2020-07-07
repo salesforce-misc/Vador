@@ -6,11 +6,11 @@
 
 package consumer;
 
-import consumer.representation.ParentInputRepresentation;
+import consumer.representation.Parent;
 
 /**
  * gakshintala created on 4/13/20.
  */
-public class Service extends BaseService<ParentInputRepresentation> {
+public class Service extends BaseService<Parent> {
     
 }

@@ -9,7 +9,7 @@ package consumer.config;
 
 import consumer.BaseService;
 import consumer.Service;
-import consumer.representation.ParentInputRepresentation;
+import consumer.representation.Parent;
 import consumer.failure.ValidationFailure;
 import io.vavr.collection.List;
 import org.qtc.delphinus.types.validators.Validator;
@@ -19,7 +19,7 @@ import org.qtc.delphinus.types.validators.Validator;
  * gakshintala created on 4/13/20.
  */
 public class ServiceConfig {
-    BaseService<ParentInputRepresentation> getService(List<Validator<ParentInputRepresentation, ValidationFailure>> requestValidators) {
+    BaseService<Parent> getService(List<Validator<Parent, ValidationFailure>> requestValidators) {
         final Service service = new Service();
         service.setRequestValidators(requestValidators);
         return service;

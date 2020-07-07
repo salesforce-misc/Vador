@@ -9,7 +9,7 @@ package consumer;
 
 import consumer.config.ValidationConfig;
 import consumer.failure.ValidationFailure;
-import consumer.representation.ParentInputRepresentation;
+import consumer.representation.Parent;
 import io.vavr.collection.List;
 import lombok.val;
 import org.qtc.delphinus.dsl.ValidateDsl;
@@ -26,7 +26,7 @@ public abstract class BaseService<InputRepresentationT extends ConnectInputRepre
     }
 
     public ValidationFailure validateNonBulk() {
-        val parentInputRepresentation = new ParentInputRepresentation();
+        val parentInputRepresentation = new Parent();
         return ValidateDsl.validateAndFailFast(
                 parentInputRepresentation,
                 ValidationConfig.getServiceValidations(),

@@ -55,7 +55,7 @@ public class Strategies {
             List<SimpleValidator<ValidatableT, FailureT>> validations, FailureT invalidValidatable, FailureT none) {
         return validatable -> validatable == null
                 ? invalidValidatable
-                : applySimpleValidations(validatable, validations).getOrElse(none);
+                : applySimpleValidations(validatable, validations, none).getOrElse(none);
     }
 
     /**
@@ -85,9 +85,9 @@ public class Strategies {
     }
 
     private static <FailureT, ValidatableT> Iterator<FailureT> applySimpleValidations(
-            ValidatableT toBeValidated, List<SimpleValidator<ValidatableT, FailureT>> validations) {
+            ValidatableT toBeValidated, List<SimpleValidator<ValidatableT, FailureT>> validations, FailureT none) {
         return validations.iterator()
-                .map(validation -> validation.apply(toBeValidated));
+                .map(validation -> validation.apply(toBeValidated)).filter(result -> result != none);
     }
 
 }
