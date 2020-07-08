@@ -54,7 +54,7 @@ public class ValidateDsl {
     }
 
     /**
-     * Validates a list of validatables agains a list of validations, in fail-fast mode, per validatable.
+     * Validates a list of validatables against a list of validations, in fail-fast mode, per validatable.
      *
      * @param validatables       List of validatables.
      * @param validators
@@ -91,7 +91,7 @@ public class ValidateDsl {
     }
 
     /**
-     * Validates a list of validatables agains a list of validations, in error-accumulation mode, per validatable.
+     * Validates a list of validatables against a list of validations, in error-accumulation mode, per validatable.
      *
      * @param validatables
      * @param validators
