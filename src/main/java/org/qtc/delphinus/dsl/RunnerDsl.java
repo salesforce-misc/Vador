@@ -4,7 +4,6 @@ import io.vavr.Function1;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
-import org.qtc.delphinus.Strategies;
 import org.qtc.delphinus.types.validators.Validator;
 import org.qtc.delphinus.types.validators.simple.SimpleValidator;
 
@@ -15,7 +14,7 @@ import org.qtc.delphinus.types.validators.simple.SimpleValidator;
  * @since 228
  */
 @UtilityClass
-public class ValidateDsl {
+public class RunnerDsl {
 
     /**
      * Applies the validators on validatable in fail-fast mode.
@@ -54,21 +53,56 @@ public class ValidateDsl {
     }
 
     /**
-     * Validates a list of validatables against a list of validations, in fail-fast mode, per validatable.
+     * This can be used to validate a batch of beans together. It Validates a list of
+     * validatables against a list of SimpleValidations, in fail-fast mode, per validatable.
      *
-     * @param validatables       List of validatables.
+     * @param validatables
      * @param validators
-     * @param invalidValidatable FailureT if the validatable is null.
+     * @param invalidValidatable       FailureT if the validatable is null.
+     * @param none
+     * @param fillRightWithValidatable If true, all the valid Eithers (Eithers in right state) are filled with validatables
+     *                                 on the right state. This helps in making further processing on these bag of results
+     *                                 skipping the invalid ones.
      * @param <FailureT>
      * @param <ValidatableT>
-     * @return List of Validation failures.
+     * @return This list is a bag of results for both Valids and Invalids.
+     * Valids are represented by right state of Either and Invalids with left (holding Validation Failures).
+     */
+    public static <FailureT, ValidatableT> List<Either<FailureT, ?>> validateAndFailFastForSimpleValidators(
+            List<ValidatableT> validatables, List<SimpleValidator<ValidatableT, FailureT>> validators,
+            FailureT invalidValidatable, FailureT none, boolean fillRightWithValidatable) {
+        return validateAndFailFast(validatables, Dsl.liftAllSimple(validators, none), invalidValidatable, fillRightWithValidatable);
+    }
+
+    /**
+     * This can be used to validate a batch of beans together. It Validates a list of
+     * validatables against a list of Validations, in fail-fast mode, per validatable.
+     *
+     * @param validatables             List of validatables.
+     * @param validators
+     * @param invalidValidatable       FailureT if the validatable is null.
+     * @param fillRightWithValidatable If true, all the valid Eithers (Eithers in right state) are filled with validatables
+     *                                 on the right state. This helps in making further processing on these bag of results
+     *                                 skipping the invalid ones.
+     * @param <FailureT>
+     * @param <ValidatableT>
+     * @return This list is a bag of results for both Valids and Invalids.
+     * Valids are represented by right state of Either and Invalids with left (holding Validation Failures).
      */
     public static <FailureT, ValidatableT> List<Either<FailureT, ?>> validateAndFailFast(
             List<ValidatableT> validatables, List<Validator<ValidatableT, FailureT>> validators,
-            FailureT invalidValidatable) {
-        return validatables.iterator()
+            FailureT invalidValidatable, boolean fillRightWithValidatable) {
+        final List<Either<FailureT, ?>> validationResults = validatables.iterator()
                 .map(Strategies.failFastStrategy(validators, invalidValidatable))
                 .toList();
+        if (fillRightWithValidatable) {
+            return validationResults.zip(validatables)
+                    .map(resultToValidatable -> resultToValidatable._1.isRight()
+                            ? Either.right(resultToValidatable._2)
+                            : resultToValidatable._1);
+        } else {
+            return validationResults;
+        }
     }
 
     /**

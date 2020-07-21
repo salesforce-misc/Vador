@@ -11,6 +11,7 @@ import consumer.failure.ValidationFailure;
 import consumer.representation.Parent;
 import consumer.validators.batch.ParentBatchRequestValidator;
 import io.vavr.collection.List;
+import lombok.experimental.UtilityClass;
 import org.qtc.delphinus.dsl.Dsl;
 import org.qtc.delphinus.types.validators.Validator;
 
@@ -18,6 +19,7 @@ import org.qtc.delphinus.types.validators.Validator;
 /**
  * gakshintala created on 4/13/20.
  */
+@UtilityClass
 public class ValidationConfig {
     
     public static List<Validator<Parent, ValidationFailure>> getServiceValidations() {

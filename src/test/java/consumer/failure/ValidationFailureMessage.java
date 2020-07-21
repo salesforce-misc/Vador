@@ -55,6 +55,8 @@ public enum ValidationFailureMessage {
      */
     SUCCESS(Section.COMMON_VALIDATION_FAILURE, "Success"),
     NOTHING_TO_VALIDATE(Section.COMMON_VALIDATION_FAILURE, "Nothing"),
+    INVALID_PARENT(Section.COMMON_VALIDATION_FAILURE, "invalidParent"),
+    INVALID_CHILD(Section.COMMON_VALIDATION_FAILURE, "invalidChild"),
     UNKNOWN_EXCEPTION("", ""), // This is used as a placeholder for ValidationFailureMessage during RuntimeExceptions.
     FIELD_ABSENT(Section.COMMON_VALIDATION_FAILURE, "RequiredFieldMissing"),
     FIELD_NULL_OR_EMPTY(Section.COMMON_VALIDATION_FAILURE, "FieldNullOrEmpty"),

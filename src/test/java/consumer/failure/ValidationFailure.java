@@ -20,8 +20,11 @@ public class ValidationFailure {
     private ValidationFailureMessage validationFailureMessage;
     private String[] params;
 
-    public static final ValidationFailure SUCCESS = new ValidationFailure(ValidationFailureMessage.SUCCESS);
+    public static final ValidationFailure NONE = new ValidationFailure(ValidationFailureMessage.SUCCESS);
     public static final ValidationFailure NOTHING_TO_VALIDATE = new ValidationFailure(ValidationFailureMessage.NOTHING_TO_VALIDATE);
+    public static final ValidationFailure INVALID_PARENT = new ValidationFailure(ValidationFailureMessage.INVALID_PARENT);
+    public static final ValidationFailure INVALID_CHILD = new ValidationFailure(ValidationFailureMessage.INVALID_CHILD);
+    public static final ValidationFailure UNKNOWN_EXCEPTION = new ValidationFailure(ValidationFailureMessage.UNKNOWN_EXCEPTION);
 
     public ValidationFailure(ApiErrorCodes apiErrorCode, ValidationFailureMessage validationFailureMessage) {
         Objects.requireNonNull(apiErrorCode, "apiErrorCode for ValidationFailure cannot be null");
@@ -63,8 +66,7 @@ public class ValidationFailure {
      * Method to get validation failure message in localized format.
      * @return validation failure message in localized format.
      */
-
-
+    
     /**
      * Static factory method used to generate Validation failure out of an Exception.
      * 

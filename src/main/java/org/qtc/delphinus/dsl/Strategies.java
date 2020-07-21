@@ -4,15 +4,13 @@
  * Company Confidential
  */
 
-package org.qtc.delphinus;
+package org.qtc.delphinus.dsl;
 
+import io.vavr.Function1;
 import io.vavr.collection.Iterator;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
-import org.qtc.delphinus.types.strategies.AccumulationStrategy;
-import org.qtc.delphinus.types.strategies.FailFastStrategy;
-import org.qtc.delphinus.types.strategies.SimpleFailFastStrategy;
 import org.qtc.delphinus.types.validators.Validator;
 import org.qtc.delphinus.types.validators.simple.SimpleValidator;
 
@@ -23,7 +21,7 @@ import org.qtc.delphinus.types.validators.simple.SimpleValidator;
  *  @since 228
  */
 @UtilityClass
-public class Strategies {
+class Strategies {
 
     /**
      * Higher-order function to compose list of validators into Fail-Fast Strategy.
@@ -34,7 +32,7 @@ public class Strategies {
      * @param <ValidatableT>
      * @return  Composed Fail-Fast Strategy
      */
-    public static <FailureT, ValidatableT> FailFastStrategy<ValidatableT, FailureT> failFastStrategy(
+    static <FailureT, ValidatableT> FailFastStrategy<ValidatableT, FailureT> failFastStrategy(
             List<Validator<ValidatableT, FailureT>> validations, FailureT invalidValidatable) {
         return validatable -> validatable == null
                 ? Either.left(invalidValidatable)
@@ -51,7 +49,7 @@ public class Strategies {
      * @param <ValidatableT>
      * @return  Composed Fail-Fast Strategy
      */
-    public static <FailureT, ValidatableT> SimpleFailFastStrategy<ValidatableT, FailureT> failFastStrategy(
+    static <FailureT, ValidatableT> SimpleFailFastStrategy<ValidatableT, FailureT> failFastStrategy(
             List<SimpleValidator<ValidatableT, FailureT>> validations, FailureT invalidValidatable, FailureT none) {
         return validatable -> validatable == null
                 ? invalidValidatable
@@ -67,7 +65,7 @@ public class Strategies {
      * @param <ValidatableT>
      * @return  Composed Accumulation Strategy
      */
-    public static <FailureT, ValidatableT> AccumulationStrategy<ValidatableT, FailureT> accumulationStrategy(
+    static <FailureT, ValidatableT> AccumulationStrategy<ValidatableT, FailureT> accumulationStrategy(
             List<Validator<ValidatableT, FailureT>> validations, FailureT invalidValidatable) {
         return validatable -> validatable == null
                 ? List.of(Either.left(invalidValidatable))
@@ -90,4 +88,16 @@ public class Strategies {
                 .map(validation -> validation.apply(toBeValidated)).filter(result -> result != none);
     }
 
+}
+
+@FunctionalInterface
+interface AccumulationStrategy<ValidatableT, FailureT> extends Function1<ValidatableT, List<Either<FailureT, ?>>> {
+}
+
+@FunctionalInterface
+interface FailFastStrategy<ValidatableT, FailureT> extends Function1<ValidatableT, Either<FailureT, ?>> {
+}
+
+@FunctionalInterface
+interface SimpleFailFastStrategy<ValidatableT, FailureT> extends Function1<ValidatableT, FailureT> {
 }
