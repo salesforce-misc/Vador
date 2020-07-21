@@ -8,10 +8,9 @@ package consumer.validators.simple;
 
 
 import consumer.failure.ValidationFailure;
-import consumer.representation.Parent;
+import consumer.bean.Parent;
 import org.qtc.delphinus.types.validators.simple.SimpleThrowableValidator;
 import org.qtc.delphinus.types.validators.simple.SimpleValidator;
-import consumer.failure.ApiErrorCodes;
 
 import static consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
 
@@ -24,22 +23,20 @@ public class ParentRequestValidator {
      * This is a lambda function implementation.
      */
     public static final SimpleValidator<Parent, ValidationFailure> validation1 =
-            parentInputRepresentation -> {
-                if (parentInputRepresentation._isSetPaymentAuthorizationId()) {
+            parent -> {
+                if (parent.getChild() == null) {
                     return null;
                 } else {
-                    return new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING, FIELD_NULL_OR_EMPTY,
-                            ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID);
+                    return new ValidationFailure(FIELD_NULL_OR_EMPTY);
                 }
             };
 
     static final SimpleValidator<Parent, ValidationFailure> validation2 =
-            parentInputRepresentation -> {
-                if (parentInputRepresentation._isSetPaymentAuthorizationId()) {
+            parent -> {
+                if (parent.getChild() == null) {
                     return null;
                 } else {
-                    return new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING, FIELD_NULL_OR_EMPTY,
-                            ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID);
+                    return new ValidationFailure(FIELD_NULL_OR_EMPTY);
                 }
             };
 

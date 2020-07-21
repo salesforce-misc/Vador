@@ -9,7 +9,7 @@ package consumer.config;
 
 import consumer.BaseService;
 import consumer.Service;
-import consumer.representation.Parent;
+import consumer.bean.Parent;
 import consumer.failure.ValidationFailure;
 import io.vavr.collection.List;
 import org.qtc.delphinus.types.validators.Validator;

@@ -6,7 +6,7 @@
 
 package consumer;
 
-import consumer.representation.Parent;
+import consumer.bean.Parent;
 
 /**
  * gakshintala created on 4/13/20.

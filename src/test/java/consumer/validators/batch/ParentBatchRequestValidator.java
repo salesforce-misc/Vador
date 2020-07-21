@@ -7,10 +7,8 @@
 package consumer.validators.batch;
 
 
-import consumer.failure.ApiErrorCodes;
 import consumer.failure.ValidationFailure;
-import consumer.representation.Parent;
-import io.vavr.control.Either;
+import consumer.bean.Parent;
 import org.qtc.delphinus.types.validators.ThrowableValidator;
 import org.qtc.delphinus.types.validators.Validator;
 
@@ -26,17 +24,11 @@ public class ParentBatchRequestValidator {
      */
     public static final Validator<Parent, ValidationFailure> batchValidation1 =
             parentInputRepresentation -> parentInputRepresentation
-                    .filterOrElse(Parent::_isSetAccountId, ignore -> new ValidationFailure(
-                            ApiErrorCodes.REQUIRED_FIELD_MISSING,
-                            FIELD_NULL_OR_EMPTY,
-                            ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID));
+                    .filterOrElse(parent -> parent.getChild() != null, ignore -> new ValidationFailure(FIELD_NULL_OR_EMPTY));
 
     public static final Validator<Parent, ValidationFailure> batchValidation2 =
             parentInputRepresentation -> parentInputRepresentation
-                    .filterOrElse(Parent::_isSetAccountId, ignore -> new ValidationFailure(
-                            ApiErrorCodes.REQUIRED_FIELD_MISSING,
-                            FIELD_NULL_OR_EMPTY,
-                            ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID));
+                    .filterOrElse(parent -> parent.getChild() != null, ignore -> new ValidationFailure(FIELD_NULL_OR_EMPTY));
 
     public static final ThrowableValidator<Parent, ValidationFailure> batchValidationThrowable1 =
             parentInputRepresentation -> {

@@ -8,12 +8,15 @@ package consumer.validators.batch;
 
 
 import consumer.failure.ValidationFailure;
-import consumer.representation.Child;
+import consumer.bean.Child;
 import io.vavr.control.Either;
 import org.qtc.delphinus.types.validators.ThrowableValidator;
 import org.qtc.delphinus.types.validators.Validator;
-import consumer.failure.ApiErrorCodes;
 import consumer.failure.ValidationFailureMessage;
+
+import java.util.Objects;
+
+import static consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
 
 public class ChildBatchRequestValidator {
 
@@ -24,16 +27,13 @@ public class ChildBatchRequestValidator {
      * This is a lambda function implementation.
      */
     public static final Validator<Child, ValidationFailure> batchValidation1 =
-            childInputRepresentation -> childInputRepresentation
-                    .filter(Child::_isSetAccountId)
-                    .getOrElse(Either.left(new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING, ValidationFailureMessage.FIELD_NULL_OR_EMPTY,
-                                                         ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID)));
+            child -> child
+                    .filter(Objects::isNull)
+                    .getOrElse(Either.left(new ValidationFailure(FIELD_NULL_OR_EMPTY)));
 
     public static final Validator<Child, ValidationFailure> batchValidation2 =
-            childInputRepresentation -> childInputRepresentation
-                    .filter(Child::_isSetAccountId)
-                    .getOrElse(Either.left(new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING, ValidationFailureMessage.FIELD_NULL_OR_EMPTY,
-                            ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID)));
+            child -> child
+                    .filterOrElse(Objects::isNull, ignore -> new ValidationFailure(FIELD_NULL_OR_EMPTY));
 
 
     public static final ThrowableValidator<Child, ValidationFailure> batchValidationThrowable1 =

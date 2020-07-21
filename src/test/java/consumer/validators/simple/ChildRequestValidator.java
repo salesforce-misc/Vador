@@ -8,11 +8,12 @@ package consumer.validators.simple;
 
 
 import consumer.failure.ValidationFailure;
-import consumer.representation.Child;
+import consumer.bean.Child;
 import org.qtc.delphinus.types.validators.simple.SimpleThrowableValidator;
 import org.qtc.delphinus.types.validators.simple.SimpleValidator;
-import consumer.failure.ApiErrorCodes;
 import consumer.failure.ValidationFailureMessage;
+
+import static consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
 
 public class ChildRequestValidator {
 
@@ -24,21 +25,19 @@ public class ChildRequestValidator {
      */
     public static final SimpleValidator<Child, ValidationFailure> validation1 =
             child -> {
-                if (child._isSetPaymentAuthorizationId()) {
+                if (child == null) {
                     return null;
                 } else {
-                    return new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING, ValidationFailureMessage.FIELD_NULL_OR_EMPTY,
-                            ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID);
+                    return new ValidationFailure(FIELD_NULL_OR_EMPTY);
                 }
             };
 
     static final SimpleValidator<Child, ValidationFailure> validation2 =
             child -> {
-                if (child._isSetPaymentAuthorizationId()) {
+                if (child == null) {
                     return null;
                 } else {
-                    return new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING, ValidationFailureMessage.FIELD_NULL_OR_EMPTY,
-                            ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID);
+                    return new ValidationFailure(FIELD_NULL_OR_EMPTY);
                 }
             };
 

@@ -8,7 +8,7 @@ package consumer.config;
 
 
 import consumer.failure.ValidationFailure;
-import consumer.representation.Parent;
+import consumer.bean.Parent;
 import consumer.validators.batch.ParentBatchRequestValidator;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;

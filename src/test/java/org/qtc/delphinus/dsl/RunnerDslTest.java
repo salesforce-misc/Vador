@@ -1,26 +1,31 @@
 package org.qtc.delphinus.dsl;
 
-import consumer.failure.ValidationFailure;
-import consumer.representation.Parent;
+import consumer.bean.Parent;
 import io.vavr.collection.List;
+import io.vavr.control.Either;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.qtc.delphinus.types.validators.Validator;
 import org.qtc.delphinus.types.validators.simple.SimpleValidator;
 
 import java.util.function.Supplier;
 
+import static consumer.failure.ValidationFailure.NONE;
+import static consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
+import static consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
+
 class RunnerDslTest {
 
     @Test
-    void FailFastWithFirstFailure() {
+    void FailFastWithFirstFailureForSimpleValidators() {
         val result = validateAndFailFastForSimpleValidators(
-                () -> ValidationFailure.NONE,
-                () -> ValidationFailure.NOTHING_TO_VALIDATE,
-                () -> ValidationFailure.UNKNOWN_EXCEPTION,
-                Parent::new
+                () -> NONE,
+                () -> NOTHING_TO_VALIDATE,
+                () -> new Parent(null),
+                () -> UNKNOWN_EXCEPTION
         );
-        Assertions.assertSame(ValidationFailure.UNKNOWN_EXCEPTION, result);
+        Assertions.assertSame(UNKNOWN_EXCEPTION, result);
     }
 
     private static <ParentT, FailureT> FailureT validateAndFailFastForSimpleValidators(
@@ -39,6 +44,40 @@ class RunnerDslTest {
 
         val validationList = List.of(v1, v2, v3);
         return RunnerDsl.validateAndFailFastForSimpleValidators(
+                getParentToValidate.get(),
+                validationList,
+                nothingToValidate,
+                none
+        );
+    }
+
+    @Test
+    void FailFastWithFirstFailure() {
+        val result = validateAndFailFast(
+                () -> NONE,
+                () -> NOTHING_TO_VALIDATE,
+                () -> new Parent(null),
+                () -> UNKNOWN_EXCEPTION
+        );
+        Assertions.assertSame(UNKNOWN_EXCEPTION, result);
+    }
+
+    private static <ParentT, FailureT> FailureT validateAndFailFast(
+            Supplier<FailureT> getNone,
+            Supplier<FailureT> getNothingToValidate,
+            Supplier<ParentT> getParentToValidate,
+            Supplier<FailureT> getFirstValidationFailure
+    ) {
+        val none = getNone.get();
+        val nothingToValidate = getNothingToValidate.get();
+        val firstValidationFailure = getFirstValidationFailure.get();
+
+        Validator<ParentT, FailureT> v1 = parent -> Either.right(none);
+        Validator<ParentT, FailureT> v2 = parent -> Either.right(none);
+        Validator<ParentT, FailureT> v3 = parent -> Either.left(firstValidationFailure);
+
+        val validationList = List.of(v1, v2, v3);
+        return RunnerDsl.validateAndFailFast(
                 getParentToValidate.get(),
                 validationList,
                 nothingToValidate,

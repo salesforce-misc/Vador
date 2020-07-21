@@ -9,7 +9,7 @@ package consumer;
 
 import consumer.config.ValidationConfig;
 import consumer.failure.ValidationFailure;
-import consumer.representation.Parent;
+import consumer.bean.Parent;
 import io.vavr.collection.List;
 import lombok.val;
 import org.qtc.delphinus.dsl.RunnerDsl;
@@ -18,7 +18,7 @@ import org.qtc.delphinus.types.validators.Validator;
 /**
  * gakshintala created on 4/13/20.
  */
-public abstract class BaseService<InputRepresentationT extends ConnectInputRepresentation> {
+public abstract class BaseService<InputRepresentationT> {
     List<Validator<InputRepresentationT, ValidationFailure>> requestValidators;
 
     public void setRequestValidators(List<Validator<InputRepresentationT, ValidationFailure>> requestValidators) {
@@ -26,7 +26,7 @@ public abstract class BaseService<InputRepresentationT extends ConnectInputRepre
     }
 
     public ValidationFailure validateNonBulk() {
-        val parentInputRepresentation = new Parent();
+        val parentInputRepresentation = new Parent(null);
         return RunnerDsl.validateAndFailFast(
                 parentInputRepresentation,
                 ValidationConfig.getServiceValidations(),
