@@ -4,7 +4,7 @@
  * Company Confidential
  */
 
-package org.qtc.delphinus.dsl;
+package org.qtc.delphinus.dsl.runner;
 
 import io.vavr.Function1;
 import io.vavr.collection.Iterator;
@@ -34,9 +34,13 @@ class Strategies {
      */
     static <FailureT, ValidatableT> FailFastStrategy<ValidatableT, FailureT> failFastStrategy(
             List<Validator<ValidatableT, FailureT>> validations, FailureT invalidValidatable) {
-        return validatable -> validatable == null
-                ? Either.left(invalidValidatable)
-                : applyValidations(validatable, validations).getOrElse(Either.right(validatable));
+        return validatable -> {
+            if (validatable == null) return Either.left(invalidValidatable);
+            // This casting is safe
+            return (Either<FailureT, ValidatableT>) applyValidations(validatable, validations)
+                    .filter(Either::isLeft)
+                    .getOrElse(Either.right(validatable));
+        };
     }
 
     /**
@@ -53,7 +57,7 @@ class Strategies {
             List<SimpleValidator<ValidatableT, FailureT>> validations, FailureT invalidValidatable, FailureT none) {
         return validatable -> validatable == null
                 ? invalidValidatable
-                : applySimpleValidations(validatable, validations, none).getOrElse(none);
+                : applySimpleValidations(validatable, validations).filter(result -> result != none).getOrElse(none);
     }
 
     /**
@@ -69,33 +73,33 @@ class Strategies {
             List<Validator<ValidatableT, FailureT>> validations, FailureT invalidValidatable) {
         return validatable -> validatable == null
                 ? List.of(Either.left(invalidValidatable))
-                : applyValidations(validatable, validations).toList();
+                : applyValidations(validatable, validations)
+                    .map(result -> result.map(ignore -> validatable)) // replacing wildcard on right state with validatable.
+                    .toList();
     }
 
     private static <FailureT, ValidatableT> Iterator<Either<FailureT, ?>> applyValidations(
             ValidatableT toBeValidated, List<Validator<ValidatableT, FailureT>> validations) {
         Either<FailureT, ValidatableT> toBeValidatedRight = Either.right(toBeValidated);
-        final Iterator<Either<FailureT, ?>> validationResults =
-                validations.iterator()
-                        .map(validation -> validation.apply(toBeValidatedRight));
         // This is just returning the description, nothing shall be run without terminal operator.
-        return validationResults.filter(Either::isLeft);
+        return validations.iterator()
+                        .map(validation -> validation.apply(toBeValidatedRight));
     }
 
     private static <FailureT, ValidatableT> Iterator<FailureT> applySimpleValidations(
-            ValidatableT toBeValidated, List<SimpleValidator<ValidatableT, FailureT>> validations, FailureT none) {
+            ValidatableT toBeValidated, List<SimpleValidator<ValidatableT, FailureT>> validations) {
         return validations.iterator()
-                .map(validation -> validation.apply(toBeValidated)).filter(result -> result != none);
+                .map(validation -> validation.apply(toBeValidated));
     }
 
 }
 
 @FunctionalInterface
-interface AccumulationStrategy<ValidatableT, FailureT> extends Function1<ValidatableT, List<Either<FailureT, ?>>> {
+interface AccumulationStrategy<ValidatableT, FailureT> extends Function1<ValidatableT, List<Either<FailureT, ValidatableT>>> {
 }
 
 @FunctionalInterface
-interface FailFastStrategy<ValidatableT, FailureT> extends Function1<ValidatableT, Either<FailureT, ?>> {
+interface FailFastStrategy<ValidatableT, FailureT> extends Function1<ValidatableT, Either<FailureT, ValidatableT>> {
 }
 
 @FunctionalInterface

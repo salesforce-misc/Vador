@@ -1,4 +1,4 @@
-package org.qtc.delphinus.dsl;
+package org.qtc.delphinus.dsl.lift;
 
 import io.vavr.Function1;
 import io.vavr.collection.List;
@@ -20,7 +20,7 @@ import static io.vavr.Function1.identity;
  * @since 228
  */
 @UtilityClass
-public class Dsl {
+public class LiftDsl {
 
     /**
      * Lifts Simple Validator to Validator type.

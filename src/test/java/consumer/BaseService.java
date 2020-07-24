@@ -12,7 +12,7 @@ import consumer.failure.ValidationFailure;
 import consumer.bean.Parent;
 import io.vavr.collection.List;
 import lombok.val;
-import org.qtc.delphinus.dsl.RunnerDsl;
+import org.qtc.delphinus.dsl.runner.RunnerDsl;
 import org.qtc.delphinus.types.validators.Validator;
 
 /**
@@ -26,7 +26,7 @@ public abstract class BaseService<InputRepresentationT> {
     }
 
     public ValidationFailure validateNonBulk() {
-        val parentInputRepresentation = new Parent(null);
+        val parentInputRepresentation = new Parent(0, null);
         return RunnerDsl.validateAndFailFast(
                 parentInputRepresentation,
                 ValidationConfig.getServiceValidations(),

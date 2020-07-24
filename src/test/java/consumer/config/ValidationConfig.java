@@ -12,7 +12,7 @@ import consumer.bean.Parent;
 import consumer.validators.batch.ParentBatchRequestValidator;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
-import org.qtc.delphinus.dsl.Dsl;
+import org.qtc.delphinus.dsl.lift.LiftDsl;
 import org.qtc.delphinus.types.validators.Validator;
 
 
@@ -27,7 +27,7 @@ public class ValidationConfig {
                 ParentBatchRequestValidator.batchValidation1,
                 ParentBatchRequestValidator.batchValidation2)
                 .appendAll(
-                        Dsl.liftAllThrowable(List.of(
+                        LiftDsl.liftAllThrowable(List.of(
                                 ParentBatchRequestValidator.batchValidationThrowable1,
                                 ParentBatchRequestValidator.batchValidationThrowable2
                         ), ValidationFailure::getValidationFailureForException));

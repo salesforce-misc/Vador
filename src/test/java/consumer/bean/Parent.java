@@ -17,5 +17,6 @@ import lombok.Value;
  */
 @Value
 public class Parent {
+    int id;
     Child child;
 }

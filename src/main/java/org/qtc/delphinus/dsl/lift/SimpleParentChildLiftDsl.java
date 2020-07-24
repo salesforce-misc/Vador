@@ -4,27 +4,25 @@
  * Company Confidential
  */
 
-package org.qtc.delphinus.dsl;
+package org.qtc.delphinus.dsl.lift;
 
 import io.vavr.Function1;
 import io.vavr.collection.List;
-import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
-import org.qtc.delphinus.types.validators.Validator;
-
-import java.util.Objects;
+import lombok.val;
+import org.qtc.delphinus.types.validators.simple.SimpleValidator;
 
 /**
- * DSL to lift child validations to parent type.
+ * DSL to lift simple child validations to parent type.
  * 
  *  @author gakshintala
  *  @since 228
  */
 @UtilityClass
-public class ParentChildDsl {
+public class SimpleParentChildLiftDsl {
 
     /**
-     * Lifts a list of child validations to parent type.
+     * Lifts a list of simple child validations to parent type.
      * @param childValidations  List of child validations
      * @param toChildMapper     Mapper function to extract child from parent
      * @param invalidParent     Failure to return if parent is null
@@ -34,15 +32,15 @@ public class ParentChildDsl {
      * @param <FailureT>
      * @return                  List of parent type validations
      */
-    public static <ParentT, ChildT, FailureT> List<Validator<ParentT, FailureT>> liftAllToParentValidationType(
-            List<Validator<ChildT, FailureT>> childValidations,
+    public static <ParentT, ChildT, FailureT> List<SimpleValidator<ParentT, FailureT>> liftAllToParentValidationType(
+            List<SimpleValidator<ChildT, FailureT>> childValidations,
             Function1<ParentT, ChildT> toChildMapper, FailureT invalidParent, FailureT invalidChild) {
         return childValidations.map(childValidation ->
                 liftToParentValidationType(childValidation, toChildMapper, invalidParent, invalidChild));
     }
 
     /**
-     * Lifts a list of child validations to parent type.
+     * Lifts a list of simple child validations to parent type.
      * IMP: This doesn't do a null check on child, so the child validation is supposed to take that responsibility.
      * @param childValidations  List of child validations
      * @param toChildMapper     Mapper function to extract child from parent
@@ -52,15 +50,15 @@ public class ParentChildDsl {
      * @param <FailureT>
      * @return                  List of parent type validations
      */
-    public static <ParentT, ChildT, FailureT> List<Validator<ParentT, FailureT>> liftAllToParentValidationType(
-            List<Validator<ChildT, FailureT>> childValidations,
+    public static <ParentT, ChildT, FailureT> List<SimpleValidator<ParentT, FailureT>> liftAllToParentValidationType(
+            List<SimpleValidator<ChildT, FailureT>> childValidations,
             Function1<ParentT, ChildT> toChildMapper, FailureT invalidParent) {
         return childValidations.map(childValidation ->
                 liftToParentValidationType(childValidation, toChildMapper, invalidParent));
     }
 
     /**
-     * Lifts a child validation to parent type.
+     * Lifts a simple child validation to parent type.
      * @param childValidation
      * @param toChildMapper Mapper function to extract child from parent
      * @param invalidParent Failure to return if parent is null
@@ -70,26 +68,18 @@ public class ParentChildDsl {
      * @param <FailureT>
      * @return  parent type validation
      */
-    public static <ParentT, ChildT, FailureT> Validator<ParentT, FailureT> liftToParentValidationType(
-            Validator<ChildT, FailureT> childValidation,
+    public static <ParentT, ChildT, FailureT> SimpleValidator<ParentT, FailureT> liftToParentValidationType(
+            SimpleValidator<ChildT, FailureT> childValidation,
             Function1<ParentT, ChildT> toChildMapper,
             FailureT invalidParent, FailureT invalidChild) {
         return validatedParent -> {
-            final Either<FailureT, ChildT> child = extractChild(toChildMapper, invalidParent, validatedParent);
-            return child
-                    .filter(Objects::nonNull)
-                    .map(childValidation)
-                    .getOrElse(Either.left(invalidChild));
+            if (validatedParent == null) {
+                return invalidParent;
+            } else {
+                val child = toChildMapper.apply(validatedParent);
+                return child == null ? invalidChild : childValidation.apply(child);
+            }
         };
-    }
-
-    private static <ParentT, ChildT, FailureT> Either<FailureT, ChildT> extractChild(
-            Function1<ParentT, ChildT> toChildMapper,
-            FailureT invalidParent,
-            Either<FailureT, ParentT> validatedParent) {
-        return validatedParent
-                .flatMap(parent -> parent == null ? Either.left(invalidParent) : Either.right(parent))
-                .map(toChildMapper);
     }
 
     /**
@@ -103,10 +93,10 @@ public class ParentChildDsl {
      * @param <FailureT>
      * @return  parent type validation
      */
-    public static <ParentT, ChildT, FailureT> Validator<ParentT, FailureT> liftToParentValidationType(
-            Validator<ChildT, FailureT> childValidation,
+    public static <ParentT, ChildT, FailureT> SimpleValidator<ParentT, FailureT> liftToParentValidationType(
+            SimpleValidator<ChildT, FailureT> childValidation,
             Function1<ParentT, ChildT> toChildMapper,
             FailureT invalidParent) {
-        return validatedParent -> childValidation.apply(extractChild(toChildMapper, invalidParent, validatedParent));
+        return validatedParent -> (validatedParent == null) ? invalidParent : childValidation.apply(toChildMapper.apply(validatedParent));
     }
 }
