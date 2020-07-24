@@ -18,7 +18,9 @@ Predominantly with `if-else-try-catch` pyramids, which can spike your Cyclomatic
 
 Watch this Tech-talk as a prerequisite to understand why `if-else-try-catch` is easy to start but difficult to manage and how Vader disciplines your code-base:
 
-[Fight Complexity with Functional Programming, JavaBin, Norway](<https://youtu.be/tnpL1O8kTbM>)
+Proposal: https://overfullstack.github.io/posts/fight-complexity-with-fp/
+
+Video: [Fight Complexity with Functional Programming, JavaBin, Norway](https://youtu.be/tnpL1O8kTbM)
 
 ---
 
@@ -103,7 +105,7 @@ static final SimpleThrowableValidator<Parent, ValidationFailure> validationThrow
 
 ---
 
-# But, if you need more Power ⚡️⚡️
+# But if you need more Power ⚡️⚡️
 
 ![inline](images/more-power.gif)
 
@@ -191,7 +193,7 @@ Below are the DSLs currently available, with self-explanatory names:
 
 # Run Strategies
 
-Now that we saw how to write validations and how to stitch them together in any order, the last step left is to utilize an out-of-the box runner to run all these validations against one or batch of validatables. Vader has a **RunnerDSL**, which has API methods for below strategies, both for both batch and non-batch.
+Now that we saw how to write validations and how to stitch them together in any order, the last step left is to utilize an out-of-the box runner to run all these validations against one or batch of validatables. Vader has a **RunnerDSL**, which has API methods for below strategies. There are various flavors of these strategies for Batch/Non-Batch and Simple/Non-Simple.
 
 ### `validateAndFailFast`
 
@@ -207,7 +209,32 @@ Now that we saw how to write validations and how to stitch them together in any 
 
 ---
 
-# Thanks
+
 
 ![inline](images/vader.gif)
 
+---
+
+# Source-code Setup
+
+- This is a simple maven project, so all you need is maven on your system. As of writing this, Maven 3.6.3 is used.
+
+- **[lombok](https://projectlombok.org/)** is used to generate boiler plate code. There are plugins available for lombok for all popular IDEs, which you need to install. Latest version of the plugin should work.
+
+- Java version used for both source and target - openjdk-1.8.0_212
+
+---
+
+# Jar release process
+
+- You need to have necessary permissions to release jar into Nexus for both SNAPSHOTS and RELEASE channels. This Gus item was raised for Nexus access - https://gus.my.salesforce.com/a07B0000007Qt0BIAS. Please reach out to this team for any Nexus related permissions, problems or requirements.
+
+- Run the below command to upgrade the version of the library and push it to Nexus. This command should walk you through few steps where you may stick with default values.
+
+  ```shell
+  mvn release:prepare release:perform
+  ```
+
+  > ⚠️ This fails for the first time. Open `release.properites` file and replace the property `scm.url` with this line `scm.url=scm\:git\:ssh\://git@git.soma.salesforce.com/ccspayments/batch-validation-framework`. Run this command again, it resumes from where it failed and should be successful.
+
+- After the build is successful, go to the [Nexus Repo](https://nexus.soma.salesforce.com/nexus/index.html#welcome) and verify if the current version is uploaded.
