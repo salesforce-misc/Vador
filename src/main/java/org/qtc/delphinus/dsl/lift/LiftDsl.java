@@ -33,9 +33,9 @@ public class LiftDsl {
      */
     public static <FailureT, ValidatableT> Validator<ValidatableT, FailureT> liftSimple(
             SimpleValidator<ValidatableT, FailureT> toBeLifted, FailureT none) {
-        return toBeValidated -> toBeValidated.flatMap(validatable -> {
-            val result = toBeLifted.apply(validatable);
-            return result != none ? Either.left(result) : Either.right(validatable);
+        return validatable -> validatable.flatMap(toBeValidated -> {
+            val result = toBeLifted.apply(toBeValidated);
+            return result != none ? Either.left(result) : validatable;
         });
     }
 
@@ -70,7 +70,7 @@ public class LiftDsl {
                     val result = liftTry(toBeLifted).apply(toBeValidated).toEither();
                     return result.fold(
                             throwable -> Either.left(throwableMapper.apply(throwable)),
-                            failure -> failure != none ? Either.left(failure) : Either.right(toBeValidated));
+                            failure -> failure != none ? Either.left(failure) : validatable);
                 });
     }
 

@@ -84,7 +84,9 @@ public class SimpleParentChildLiftDsl {
 
     /**
      * Lifts a child validation to parent type.
-     * IMP: This doesn't do a null check on child, so the child validation is supposed to take that responsibility.
+     * IMP: This doesn't do a null check on child. If the Child is null, the validation throws a NPE while executing.
+     *      So the child validation is supposed to take that responsibility to check for null.
+     *      This is specific to validations which want to check other params, based on child being null.  
      * @param childValidation
      * @param toChildMapper Mapper function to extract child from parent
      * @param invalidParent Failure to return if parent is null

@@ -16,23 +16,24 @@ import java.util.Objects;
 
 /**
  * DSL to lift child validations to parent type.
- * 
- *  @author gakshintala
- *  @since 228
+ *
+ * @author gakshintala
+ * @since 228
  */
 @UtilityClass
 public class ParentChildLiftDsl {
 
     /**
      * Lifts a list of child validations to parent type.
-     * @param childValidations  List of child validations
-     * @param toChildMapper     Mapper function to extract child from parent
-     * @param invalidParent     Failure to return if parent is null
-     * @param invalidChild      Failure to return if child is null
+     *
+     * @param childValidations List of child validations
+     * @param toChildMapper    Mapper function to extract child from parent
+     * @param invalidParent    Failure to return if parent is null
+     * @param invalidChild     Failure to return if child is null
      * @param <ParentT>
      * @param <ChildT>
      * @param <FailureT>
-     * @return                  List of parent type validations
+     * @return List of parent type validations
      */
     public static <ParentT, ChildT, FailureT> List<Validator<ParentT, FailureT>> liftAllToParentValidationType(
             List<Validator<ChildT, FailureT>> childValidations,
@@ -44,13 +45,14 @@ public class ParentChildLiftDsl {
     /**
      * Lifts a list of child validations to parent type.
      * IMP: This doesn't do a null check on child, so the child validation is supposed to take that responsibility.
-     * @param childValidations  List of child validations
-     * @param toChildMapper     Mapper function to extract child from parent
-     * @param invalidParent     Failure to return if parent is null
+     *
+     * @param childValidations List of child validations
+     * @param toChildMapper    Mapper function to extract child from parent
+     * @param invalidParent    Failure to return if parent is null
      * @param <ParentT>
      * @param <ChildT>
      * @param <FailureT>
-     * @return                  List of parent type validations
+     * @return List of parent type validations
      */
     public static <ParentT, ChildT, FailureT> List<Validator<ParentT, FailureT>> liftAllToParentValidationType(
             List<Validator<ChildT, FailureT>> childValidations,
@@ -61,14 +63,15 @@ public class ParentChildLiftDsl {
 
     /**
      * Lifts a child validation to parent type.
+     *
      * @param childValidation
-     * @param toChildMapper Mapper function to extract child from parent
-     * @param invalidParent Failure to return if parent is null
-     * @param invalidChild  Failure to return if child is null
+     * @param toChildMapper   Mapper function to extract child from parent
+     * @param invalidParent   Failure to return if parent is null
+     * @param invalidChild    Failure to return if child is null
      * @param <ParentT>
      * @param <ChildT>
      * @param <FailureT>
-     * @return  parent type validation
+     * @return parent type validation
      */
     public static <ParentT, ChildT, FailureT> Validator<ParentT, FailureT> liftToParentValidationType(
             Validator<ChildT, FailureT> childValidation,
@@ -76,7 +79,9 @@ public class ParentChildLiftDsl {
             FailureT invalidParent, FailureT invalidChild) {
         return validatedParent -> {
             final Either<FailureT, ChildT> child = extractChild(toChildMapper, invalidParent, validatedParent);
-            return child
+            return child.isLeft()
+                    ? child
+                    : child
                     .filter(Objects::nonNull)
                     .map(childValidation)
                     .getOrElse(Either.left(invalidChild));
@@ -94,19 +99,25 @@ public class ParentChildLiftDsl {
 
     /**
      * Lifts a child validation to parent type.
-     * IMP: This doesn't do a null check on child, so the child validation is supposed to take that responsibility.
+     * IMP: This doesn't do a null check on child. If the Child is null, the validation throws a NPE while executing.
+     * So the child validation is supposed to take that responsibility to check for null.
+     * This is specific to validations which want to check other params, based on child being null.
+     *
      * @param childValidation
-     * @param toChildMapper Mapper function to extract child from parent
-     * @param invalidParent Failure to return if parent is null
+     * @param toChildMapper   Mapper function to extract child from parent
+     * @param invalidParent   Failure to return if parent is null
      * @param <ParentT>
      * @param <ChildT>
      * @param <FailureT>
-     * @return  parent type validation
+     * @return parent type validation
      */
     public static <ParentT, ChildT, FailureT> Validator<ParentT, FailureT> liftToParentValidationType(
             Validator<ChildT, FailureT> childValidation,
             Function1<ParentT, ChildT> toChildMapper,
             FailureT invalidParent) {
-        return validatedParent -> childValidation.apply(extractChild(toChildMapper, invalidParent, validatedParent));
+        return validatedParent -> {
+            final Either<FailureT, ChildT> child = extractChild(toChildMapper, invalidParent, validatedParent);
+            return child.isLeft() ? child : childValidation.apply(child);
+        };
     }
 }
