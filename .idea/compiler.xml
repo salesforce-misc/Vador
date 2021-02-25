@@ -10,5 +10,8 @@
         <module name="batch-validation-framework" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Vader" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>

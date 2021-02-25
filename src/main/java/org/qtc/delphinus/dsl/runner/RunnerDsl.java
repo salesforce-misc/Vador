@@ -29,8 +29,18 @@ public class RunnerDsl {
      */
     public static <FailureT, ValidatableT> FailureT validateAndFailFast(
             ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators,
-            FailureT invalidValidatable, FailureT none) {
+            FailureT invalidValidatable, 
+            FailureT none) {
         return Strategies.failFastStrategy(validators, invalidValidatable).apply(validatable)
+                .fold(Function1.identity(), ignore -> none);
+    }
+
+    public static <FailureT, ValidatableT> FailureT validateAndFailFast(
+            ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators,
+            FailureT invalidValidatable,
+            FailureT none,
+            Function1<Throwable, FailureT> throwableMapper) {
+        return Strategies.failFastStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
                 .fold(Function1.identity(), ignore -> none);
     }
 
@@ -52,7 +62,7 @@ public class RunnerDsl {
     }
 
     /**
-     * Applies the validators on a Single validatable in error-accumulation mode.
+     * Applies the validators on a Single validatable in error-accumulation mode. The Accumulated
      *
      * @param validatable
      * @param validators
@@ -60,13 +70,14 @@ public class RunnerDsl {
      * @param none               Value to be returned in case of no failure.
      * @param <FailureT>
      * @param <ValidatableT>
-     * @return List of Validation failures.
+     * @return List of Validation failures. EmptyList if all the validations pass.
      */
     public static <FailureT, ValidatableT> List<FailureT> validateAndAccumulateErrors(
             ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable, FailureT none) {
-        return Strategies.accumulationStrategy(validators, invalidValidatable).apply(validatable)
+        final var results = Strategies.accumulationStrategy(validators, invalidValidatable).apply(validatable)
                 .map(validationResult -> validationResult.fold(Function1.identity(), ignore -> none));
+        return results.forAll(result -> result == none) ? List.empty(): results;
     }
 
     /**
