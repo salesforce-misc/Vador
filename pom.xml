@@ -74,6 +74,6 @@
       <connection>scm:git:https://git.soma.salesforce.com/ccspayments/vader</connection>
       <developerConnection>scm:git:git@git.soma.salesforce.com:ccspayments/vader.git</developerConnection>
       <url>https://git.soma.salesforce.com/ccspayments/vader</url>
-      <tag>HEAD</tag>
+      <tag>batch-validation-framework-1.22</tag>
     </scm>
 </project>
