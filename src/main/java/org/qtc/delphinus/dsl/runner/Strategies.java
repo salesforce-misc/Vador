@@ -39,7 +39,6 @@ class Strategies {
             List<Validator<ValidatableT, FailureT>> validations, FailureT invalidValidatable) {
         return validatable -> {
             if (validatable == null) return Either.left(invalidValidatable);
-            // This casting is safe
             return applyValidations(validatable, validations)
                     .filter(Either::isLeft)
                     .getOrElse(Either.right(validatable));
@@ -52,7 +51,6 @@ class Strategies {
             Function1<Throwable, FailureT> throwableMapper) {
         return validatable -> {
             if (validatable == null) return Either.left(invalidValidatable);
-            // This casting is safe
             return applyValidations(validatable, validations, throwableMapper)
                     .filter(Either::isLeft)
                     .getOrElse(Either.right(validatable));
