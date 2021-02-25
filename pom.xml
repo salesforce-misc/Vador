@@ -4,7 +4,7 @@
 
     <groupId>com.salesforce.ccspayments</groupId>
     <artifactId>batch-validation-framework</artifactId>
-    <version>1.22-SNAPSHOT</version>
+    <version>1.23-SNAPSHOT</version>
     <name>Batch Validation Framework</name>
     <properties>
         <nexus.repo.url>https://nexus.soma.salesforce.com/nexus/content/repositories/releases/</nexus.repo.url>
@@ -74,6 +74,6 @@
       <connection>scm:git:https://git.soma.salesforce.com/ccspayments/vader</connection>
       <developerConnection>scm:git:git@git.soma.salesforce.com:ccspayments/vader.git</developerConnection>
       <url>https://git.soma.salesforce.com/ccspayments/vader</url>
-      <tag>batch-validation-framework-1.22</tag>
+      <tag>batch-validation-framework-1.23</tag>
     </scm>
 </project>
