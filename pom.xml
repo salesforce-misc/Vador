@@ -12,11 +12,6 @@
         <nexus.repo.id>nexus</nexus.repo.id>
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
     </properties>
-    <parent>
-        <groupId>com.salesforce</groupId>
-        <artifactId>salesforce-company-pom</artifactId>
-        <version>2.4.3</version>
-    </parent>
     <build>
         <plugins>
             <plugin>
@@ -37,10 +32,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.2.0</version>
-            </plugin>
-            <plugin>
-                <groupId>com.salesforce.maven.plugins</groupId>
-                <artifactId>zsync-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -78,8 +69,6 @@
             <url>${nexus.snapshots.repo.url}</url>
         </snapshotRepository>
     </distributionManagement>
-
-    <packaging>takari-jar</packaging>
 
     <scm>
       <connection>scm:git:https://git.soma.salesforce.com/ccspayments/vader</connection>

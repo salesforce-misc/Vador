@@ -6,7 +6,6 @@ import io.vavr.control.Either;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.qtc.delphinus.dsl.runner.RunnerDsl;
 import org.qtc.delphinus.types.validators.Validator;
 import org.qtc.delphinus.types.validators.simple.SimpleValidator;
 
