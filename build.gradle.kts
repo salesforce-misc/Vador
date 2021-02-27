@@ -21,8 +21,9 @@ repositories {
 dependencies {
     implementation("org.projectlombok:lombok:1.18.18")
     implementation("io.vavr:vavr:0.10.3")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.1")
+    testImplementation(platform("org.junit:junit-bom:5.7.1"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine")
 }
 
 group = "com.salesforce.ccspayments"
