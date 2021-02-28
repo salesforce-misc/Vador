@@ -1,7 +1,7 @@
 plugins {
     `java-library`
     `maven-publish`
-    signing
+    id("io.freefair.lombok") version "5.3.0"
 }
 
 java {
@@ -19,7 +19,6 @@ repositories {
 }
 
 dependencies {
-    implementation("org.projectlombok:lombok:1.18.18")
     implementation("io.vavr:vavr:0.10.3")
     testImplementation(platform("org.junit:junit-bom:5.7.1"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
@@ -29,10 +28,10 @@ dependencies {
 group = "com.salesforce.ccspayments"
 version = "2.2-SNAPSHOT"
 description = "Vader"
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_15
 
 /********************/
-/* Publishing stuff */
+/* Publish to Nexus */
 /********************/
 tasks.withType<PublishToMavenRepository>().configureEach {
     doLast {
@@ -76,18 +75,14 @@ publishing {
             }
         }
     }
-
-    signing {
-        sign(publishing.publications["mavenJava"])
-    }
-
     repositories {
         maven {
             name = "Nexus"
             val releasesRepoUrl = uri("https://nexus.soma.salesforce.com/nexus/content/repositories/releases")
             val snapshotsRepoUrl = uri("https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots")
             url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
-// nexusUsername, nexusPassword are set in ~/.gradle/gradle.properties by the "GradleInit" method in SFCI
+            // nexusUsername, nexusPassword are set in ~/.gradle/gradle.properties by the "GradleInit" method in SFCI
+            // refer this for setup: https://git.soma.salesforce.com/MoBE/gradle-init-scripts
             val nexusUsername: String by project
             val nexusPassword: String by project
             credentials {
@@ -96,7 +91,6 @@ publishing {
             }
         }
     }
-
     tasks.javadoc {
         if (JavaVersion.current().isJava9Compatible) {
             (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)

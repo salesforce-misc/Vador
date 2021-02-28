@@ -196,15 +196,10 @@ Vader allows validations to align with the Bean Structure, which is hierarchical
 # How to Stitch all these in a config 🏋🏻‍♂️
 
 Using these Data types for lambdas, we essentially use functions as values. So, all we need is an Ordered List (like `java.util.list`) to maintain the sequence of validations. We can compose all the validation functions, in the order of preference. This order is easily **Configurable**.
-
 However, there is a complexity. A List of Validations for a parent node consists of a mix of parent node and child node validations. But they can't be put under one `List`, as they are functions on different Data Types. So child validations need to be ported to the parent context. We can achieve this with **Higher-Order Functions**, which act as DSL (Domain Specific Language) to **lift** child validation to the parent type.
-
 This is a powerful technique, which enables us to see the code through the lens of **Algebra**. This way, we can configure a **Chain** of validations in-order, sorting out all the parent-child dependencies. This is nothing but the most popular **Chain of Responsibility** Design pattern, with a functional touch.
-
 If the inter-dependencies between Parent-Child happens to be more complex, we may end-up with *Graph* relationship, but we can easily *flatten* it into a Chain with simple *Topological Sort*.
-
 Similarly, Vader has DSL to port Simple Validator types to Non-Simple ones. This is handy, when you have a mix of validations, and they all need to be of the same type to stitch them together.
-
 Below are the DSLs currently available, with self-explanatory names. There are multiple overloads suitable for simple/non-simple. The Java Docs should guide you to use proper overload:
 
 ## DSL for Child to Parent
@@ -232,7 +227,6 @@ If you skim through the source code, you can realize none of these DSL functions
 # Run Strategies
 
 Now that we saw how to write validations and how to stitch them together in any order, the last step left is to utilize an out-of-the-box runner to run all these validations against one or batch of validatables. This can be seen as the **Edge** for validation bounded context, where the actual execution of validations happen and you get back the final result in the form of `ValidationFailure` (For Non-Batch) or a list of `Either<ValidationFailure, Validatable>` (For Batch partial failures).
-
 Vader has a **RunnerDSL**, which has API methods for the below strategies. There are various flavors (Overloads) of these strategies for Batch/Non-Batch and Simple/Non-Simple (Please refer to Java Docs).
 
 ### `validateAndFailFast`
@@ -255,24 +249,20 @@ Vader has a **RunnerDSL**, which has API methods for the below strategies. There
 
 # Source-code Setup
 
-- This is a simple maven project, so all you need is maven on your system. As of writing this, Maven 3.6.3 is used.
-
+- This is a simple Gradle project, so all you need is gradle on your system. As of writing this, Maven v6.8.3 is used.
 - **[Lombok](https://projectlombok.org/)** is used to generate boilerplate code. There are plugins available for Lombok for all popular IDEs, which you need to install. The latest version of the plugin should work.
-
-- Java version used for both source and target - openjdk-1.8.0_212
+- The Java version used for both source and target - openjdk-15.0.2
+- If You want to use your own JDK, you can copy the certs from `~/BLT/tools/Darwin/jdk/openjdk{latest_version}/jre/lib/security/cacerts` to `$JAVA_HOME/jre/lib/security/cacerts`
 
 ---
 
 # Jar release process
 
 - You need to have the necessary permissions to release jar into Nexus for both SNAPSHOTS and RELEASE channels. This Gus item was raised for Nexus access - https://gus.my.salesforce.com/a07B0000007Qt0BIAS. Please reach out to this team for any Nexus related permissions, problems, or requirements.
-
+- As of today, the permissions are maintained by providing a role `CCSPayments`. We are planning to create a AD group for this.
 - Run the below command to upgrade the version of the library and push it to Nexus. This command should walk you through a few steps where you may stick with default values.
 
   ```shell
-  mvn release:prepare release:perform
+  gradle publish
   ```
-
-  > ⚠️ This fails for the first time. Open `release.properites` file and replace the property `scm.url` with this line `scm.url=scm\:git\:ssh\://git@git.soma.salesforce.com/ccspayments/batch-validation-framework`. Run this command again, it resumes from where it failed and should be successful.
-
 - After this step is successful, go to the [Nexus Repo](https://nexus.soma.salesforce.com/nexus/index.html#welcome), search with this jar name and verify if the current version is uploaded.
