@@ -31,6 +31,20 @@ version = "2.2-SNAPSHOT"
 description = "Vader"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
+/********************/
+/* Publishing stuff */
+/********************/
+tasks.withType<PublishToMavenRepository>().configureEach {
+    doLast {
+        logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to ${repository.name}")
+    }
+}
+
+tasks.withType<PublishToMavenLocal>().configureEach {
+    doLast {
+        logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to MavenLocal.")
+    }
+}
 publishing {
     publications.create<MavenPublication>("mavenJava") {
         artifactId = "vader"
@@ -65,6 +79,22 @@ publishing {
 
     signing {
         sign(publishing.publications["mavenJava"])
+    }
+
+    repositories {
+        maven {
+            name = "Nexus"
+            val releasesRepoUrl = uri("https://nexus.soma.salesforce.com/nexus/content/repositories/releases")
+            val snapshotsRepoUrl = uri("https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots")
+            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+// nexusUsername, nexusPassword are set in ~/.gradle/gradle.properties by the "GradleInit" method in SFCI
+            val nexusUsername: String by project
+            val nexusPassword: String by project
+            credentials {
+                username = nexusUsername
+                password = nexusPassword
+            }
+        }
     }
 
     tasks.javadoc {
