@@ -1,45 +1,25 @@
 @Library('sfci-pipeline-sharedlib@master') _
 import net.sfdc.dci.BuildUtils
-import net.sfdc.dci.MavenUtils
 
 env.RELEASE_BRANCHES = ['master']
-def releaseParameters = {
-    parameters([
-        booleanParam( defaultValue: false,
-                      description: 'Do you want to release?',
-                      name: 'RELEASE'),
-        string( defaultValue: MavenUtils.getDefaultReleaseVersion(this),
-                description: 'Enter the release version',
-                name: 'RELEASE_VERSION'
-        ),
-        string( defaultValue: "${BuildUtils.incrementVersion(MavenUtils.getDefaultReleaseVersion(this), BuildUtils.getVersionTypeToIncrement(this))}-SNAPSHOT",
-                description: 'Next Release Version',
-                name: 'NEXT_RELEASE_VERSION'
-        )
-    ])
-}
-def envDef = [ releaseParameters: releaseParameters]
+def envDef = [ : ]
 
 executePipeline(envDef) {
     stage('Init') {
         checkout scm
-        mavenInit()
+        gradleInit()
     }
 
     stage('Build') {
-        if(params.RELEASE) {
-            echo 'Skipping the build as it will be run during the release prepare'
-        } else {
-            mavenBuildWithCodeCoverage()
+        try {
+            sh './gradlew check'
+        } finally {
+            junit allowEmptyResults: false, testResults: "**/build/test-results/test/*.xml"
         }
     }
-    if(params.RELEASE) {
-        stage('Prepare Release') {
-            mavenReleasePrepare()
-        }
-
+    if (BuildUtils.isReleaseBuild(env)) {
         stage('Release') {
-            mavenReleasePerform([staging_profile_id : 'd03df5b20a7e2'])
+            sh './gradlew publish'
         }
     }
 }
