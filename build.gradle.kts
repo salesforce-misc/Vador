@@ -30,6 +30,10 @@ version = "2.2-SNAPSHOT"
 description = "Vader"
 java.sourceCompatibility = JavaVersion.VERSION_15
 
+tasks.named<Test>("test") {
+    useJUnitPlatform()
+}
+
 /********************/
 /* Publish to Nexus */
 /********************/
