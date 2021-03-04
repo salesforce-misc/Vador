@@ -14,7 +14,7 @@ executePipeline(envDef) {
         try {
             sh './gradlew check'
         } finally {
-            junit allowEmptyResults: false, testResults: "**/build/test-results/test/*.xml"
+            junit allowEmptyResults: true, testResults: "build/test-results/test/*.xml"
         }
     }
     if (BuildUtils.isReleaseBuild(env)) {
