@@ -10,12 +10,7 @@ java {
 }
 
 repositories {
-    mavenLocal()
-    maven {
-        val releasesRepoUrl = uri("https://nexus.soma.salesforce.com/nexus/content/repositories/releases/")
-        val snapshotsRepoUrl = uri("https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots/")
-        url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
-    }
+    mavenCentral()
 }
 
 dependencies {
