@@ -1,4 +1,4 @@
-package org.qtc.delphinus.types.validators.simple;
+package org.qtc.delphinus.types.validators;
 
 import io.vavr.Function1;
 

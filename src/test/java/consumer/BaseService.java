@@ -31,6 +31,7 @@ public abstract class BaseService<InputRepresentationT> {
                 parentInputRepresentation,
                 ValidationConfig.getServiceValidations(),
                 ValidationFailure.NOTHING_TO_VALIDATE,
-                ValidationFailure.NONE);
+                ValidationFailure.NONE,
+                throwable -> ValidationFailure.NONE);
     }
 }

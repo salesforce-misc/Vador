@@ -5,7 +5,7 @@ import consumer.bean.Parent;
 import consumer.failure.ValidationFailure;
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.qtc.delphinus.types.validators.simple.SimpleValidator;
+import org.qtc.delphinus.types.validators.SimpleValidator;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;

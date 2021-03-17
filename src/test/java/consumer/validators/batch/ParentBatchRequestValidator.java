@@ -7,9 +7,8 @@
 package consumer.validators.batch;
 
 
-import consumer.failure.ValidationFailure;
 import consumer.bean.Parent;
-import org.qtc.delphinus.types.validators.ThrowableValidator;
+import consumer.failure.ValidationFailure;
 import org.qtc.delphinus.types.validators.Validator;
 
 import static consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
@@ -29,15 +28,5 @@ public class ParentBatchRequestValidator {
     public static final Validator<Parent, ValidationFailure> batchValidation2 =
             parentInputRepresentation -> parentInputRepresentation
                     .filterOrElse(parent -> parent.getChild() != null, ignore -> new ValidationFailure(FIELD_NULL_OR_EMPTY));
-
-    public static final ThrowableValidator<Parent, ValidationFailure> batchValidationThrowable1 =
-            parentInputRepresentation -> {
-                throw new IllegalArgumentException("1 - you did something illegal");
-            };
-
-    public static final ThrowableValidator<Parent, ValidationFailure> batchValidationThrowable2 =
-            parentInputRepresentation -> {
-                throw new IllegalArgumentException("1 - you did something illegal");
-            };
 
 }

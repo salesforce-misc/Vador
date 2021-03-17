@@ -25,11 +25,6 @@ public class ValidationConfig {
     public static List<Validator<Parent, ValidationFailure>> getServiceValidations() {
         return List.of(
                 ParentBatchRequestValidator.batchValidation1,
-                ParentBatchRequestValidator.batchValidation2)
-                .appendAll(
-                        LiftDsl.liftAllThrowable(List.of(
-                                ParentBatchRequestValidator.batchValidationThrowable1,
-                                ParentBatchRequestValidator.batchValidationThrowable2
-                        ), ValidationFailure::getValidationFailureForException));
+                ParentBatchRequestValidator.batchValidation2);
     }
 }

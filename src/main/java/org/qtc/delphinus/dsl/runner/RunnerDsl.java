@@ -5,7 +5,7 @@ import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
 import org.qtc.delphinus.dsl.lift.LiftDsl;
 import org.qtc.delphinus.types.validators.Validator;
-import org.qtc.delphinus.types.validators.simple.SimpleValidator;
+import org.qtc.delphinus.types.validators.SimpleValidator;
 
 /**
  * DSL for different ways to run validations against a Single validatable (Non-Batch).
@@ -29,14 +29,6 @@ public class RunnerDsl {
      */
     public static <FailureT, ValidatableT> FailureT validateAndFailFast(
             ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators,
-            FailureT invalidValidatable, 
-            FailureT none) {
-        return Strategies.failFastStrategy(validators, invalidValidatable).apply(validatable)
-                .fold(Function1.identity(), ignore -> none);
-    }
-
-    public static <FailureT, ValidatableT> FailureT validateAndFailFast(
-            ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable,
             FailureT none,
             Function1<Throwable, FailureT> throwableMapper) {
@@ -57,8 +49,8 @@ public class RunnerDsl {
      */
     public static <FailureT, ValidatableT> FailureT validateAndFailFastForSimpleValidators(
             ValidatableT validatable, List<SimpleValidator<ValidatableT, FailureT>> validators,
-            FailureT invalidValidatable, FailureT none) {
-        return Strategies.failFastStrategy(validators, invalidValidatable, none).apply(validatable);
+            FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
+        return Strategies.failFastStrategy(validators, invalidValidatable, none, throwableMapper).apply(validatable);
     }
 
     /**
@@ -70,12 +62,13 @@ public class RunnerDsl {
      * @param none               Value to be returned in case of no failure.
      * @param <FailureT>
      * @param <ValidatableT>
+     * @param throwableMapper   Function to map throwable to Failure in case of exception
      * @return List of Validation failures. EmptyList if all the validations pass.
      */
     public static <FailureT, ValidatableT> List<FailureT> validateAndAccumulateErrors(
             ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators,
-            FailureT invalidValidatable, FailureT none) {
-        final var results = Strategies.accumulationStrategy(validators, invalidValidatable).apply(validatable)
+            FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
+        final var results = Strategies.accumulationStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
                 .map(validationResult -> validationResult.fold(Function1.identity(), ignore -> none));
         return results.forAll(result -> result == none) ? List.empty(): results;
     }
@@ -93,8 +86,8 @@ public class RunnerDsl {
      */
     public static <FailureT, ValidatableT> List<FailureT> validateAndAccumulateErrorsForSimpleValidators(
             ValidatableT validatable, List<SimpleValidator<ValidatableT, FailureT>> simpleValidators,
-            FailureT invalidValidatable, FailureT none) {
-        return validateAndAccumulateErrors(validatable, LiftDsl.liftAllSimple(simpleValidators, none), invalidValidatable, none);
+            FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
+        return validateAndAccumulateErrors(validatable, LiftDsl.liftAllSimple(simpleValidators, none), invalidValidatable, none, throwableMapper);
     }
 
 }

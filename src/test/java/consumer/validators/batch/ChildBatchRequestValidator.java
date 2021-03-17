@@ -7,12 +7,10 @@
 package consumer.validators.batch;
 
 
-import consumer.failure.ValidationFailure;
 import consumer.bean.Child;
+import consumer.failure.ValidationFailure;
 import io.vavr.control.Either;
-import org.qtc.delphinus.types.validators.ThrowableValidator;
 import org.qtc.delphinus.types.validators.Validator;
-import consumer.failure.ValidationFailureMessage;
 
 import java.util.Objects;
 
@@ -34,16 +32,5 @@ public class ChildBatchRequestValidator {
     public static final Validator<Child, ValidationFailure> batchValidation2 =
             child -> child
                     .filterOrElse(Objects::isNull, ignore -> new ValidationFailure(FIELD_NULL_OR_EMPTY));
-
-
-    public static final ThrowableValidator<Child, ValidationFailure> batchValidationThrowable1 =
-            childInputRepresentation -> {
-                throw new IllegalArgumentException("1 - you did something illegal");
-            };
-
-    public static final ThrowableValidator<Child, ValidationFailure> batchValidationThrowable2 =
-            childInputRepresentation -> {
-                throw new IllegalArgumentException("1 - you did something illegal");
-            };
 
 }

@@ -7,10 +7,9 @@
 package consumer.validators.simple;
 
 
-import consumer.failure.ValidationFailure;
 import consumer.bean.Parent;
-import org.qtc.delphinus.types.validators.simple.SimpleThrowableValidator;
-import org.qtc.delphinus.types.validators.simple.SimpleValidator;
+import consumer.failure.ValidationFailure;
+import org.qtc.delphinus.types.validators.SimpleValidator;
 
 import static consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
 
@@ -39,15 +38,4 @@ public class ParentRequestValidator {
                     return new ValidationFailure(FIELD_NULL_OR_EMPTY);
                 }
             };
-
-    static final SimpleThrowableValidator<Parent, ValidationFailure> validationThrowable1 =
-            parentInputRepresentation -> {
-                throw new IllegalArgumentException("1 - you did something illegal");
-            };
-
-    static final SimpleThrowableValidator<Parent, ValidationFailure> validationThrowable2 =
-            parentInputRepresentation -> {
-                throw new IllegalArgumentException("2 - you did something illegal again");
-            };
-
 }

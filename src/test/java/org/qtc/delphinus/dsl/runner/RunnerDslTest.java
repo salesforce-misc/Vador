@@ -1,13 +1,14 @@
 package org.qtc.delphinus.dsl.runner;
 
 import consumer.bean.Parent;
+import io.vavr.Function1;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qtc.delphinus.types.validators.Validator;
-import org.qtc.delphinus.types.validators.simple.SimpleValidator;
+import org.qtc.delphinus.types.validators.SimpleValidator;
 
 import static consumer.failure.ValidationFailure.NONE;
 import static consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
@@ -42,7 +43,8 @@ class RunnerDslTest {
                 parentToValidate,
                 validationList,
                 nothingToValidate,
-                none
+                none,
+                throwable -> none
         );
     }
 
@@ -52,7 +54,8 @@ class RunnerDslTest {
                 NONE,
                 NOTHING_TO_VALIDATE,
                 new Parent(0, null),
-                UNKNOWN_EXCEPTION
+                UNKNOWN_EXCEPTION,
+                throwable -> UNKNOWN_EXCEPTION
         );
         Assertions.assertSame(UNKNOWN_EXCEPTION, result);
     }
@@ -61,7 +64,8 @@ class RunnerDslTest {
             FailureT none,
             FailureT nothingToValidate,
             ParentT parentToValidate,
-            FailureT firstValidationFailure
+            FailureT firstValidationFailure,
+            Function1<Throwable, FailureT> throwableMapper
     ) {
 
         SimpleValidator<ParentT, FailureT> v1 = parent -> none;
@@ -73,7 +77,8 @@ class RunnerDslTest {
                 parentToValidate,
                 validationList,
                 nothingToValidate,
-                none
+                none,
+                throwableMapper
         );
     }
     

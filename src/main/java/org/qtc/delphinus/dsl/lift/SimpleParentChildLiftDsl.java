@@ -10,7 +10,7 @@ import io.vavr.Function1;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.qtc.delphinus.types.validators.simple.SimpleValidator;
+import org.qtc.delphinus.types.validators.SimpleValidator;
 
 /**
  * DSL to lift simple child validations to parent type.

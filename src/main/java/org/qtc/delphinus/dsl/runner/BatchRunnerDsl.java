@@ -1,11 +1,12 @@
 package org.qtc.delphinus.dsl.runner;
 
+import io.vavr.Function1;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
 import org.qtc.delphinus.dsl.lift.LiftDsl;
 import org.qtc.delphinus.types.validators.Validator;
-import org.qtc.delphinus.types.validators.simple.SimpleValidator;
+import org.qtc.delphinus.types.validators.SimpleValidator;
 
 /**
  * DSL for different ways to run validations against a List of validatables (Batch).
@@ -29,9 +30,9 @@ public class BatchRunnerDsl {
      */
     public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFast(
             List<ValidatableT> validatables, List<Validator<ValidatableT, FailureT>> validators,
-            FailureT invalidValidatable) {
+            FailureT invalidValidatable, Function1<Throwable, FailureT> throwableMapper) {
         return validatables.iterator()
-                .map(Strategies.failFastStrategy(validators, invalidValidatable))
+                .map(Strategies.failFastStrategy(validators, invalidValidatable, throwableMapper))
                 .toList();
     }
 
@@ -49,8 +50,8 @@ public class BatchRunnerDsl {
      */
     public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFast(
             List<ValidatableT> validatables, List<SimpleValidator<ValidatableT, FailureT>> validators,
-            FailureT invalidValidatable, FailureT none) {
-        return validateAndFailFast(validatables, LiftDsl.liftAllSimple(validators, none), invalidValidatable);
+            FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
+        return validateAndFailFast(validatables, LiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper);
     }
 
     /**
@@ -65,9 +66,9 @@ public class BatchRunnerDsl {
      */
     public static <FailureT, ValidatableT> List<List<Either<FailureT, ValidatableT>>> validateAndAccumulateErrors(
             List<ValidatableT> validatables, List<Validator<ValidatableT, FailureT>> validators,
-            FailureT invalidValidatable) {
+            FailureT invalidValidatable, Function1<Throwable, FailureT> throwableMapper) {
         return validatables.iterator()
-                .map(Strategies.accumulationStrategy(validators, invalidValidatable))
+                .map(Strategies.accumulationStrategy(validators, invalidValidatable, throwableMapper))
                 .toList();
     }
 
@@ -83,7 +84,7 @@ public class BatchRunnerDsl {
      */
     public static <FailureT, ValidatableT> List<List<Either<FailureT, ValidatableT>>> validateAndAccumulateErrors(
             List<ValidatableT> validatables, List<SimpleValidator<ValidatableT, FailureT>> simpleValidators,
-            FailureT invalidValidatable, FailureT none) {
-        return validateAndAccumulateErrors(validatables, LiftDsl.liftAllSimple(simpleValidators, none), invalidValidatable);
+            FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
+        return validateAndAccumulateErrors(validatables, LiftDsl.liftAllSimple(simpleValidators, none), invalidValidatable, throwableMapper);
     }
 }

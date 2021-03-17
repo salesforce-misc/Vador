@@ -4,11 +4,12 @@ import consumer.bean.Parent;
 import consumer.failure.ValidationFailure;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qtc.delphinus.types.validators.Validator;
-import org.qtc.delphinus.types.validators.simple.SimpleValidator;
+import org.qtc.delphinus.types.validators.SimpleValidator;
 
 import java.util.function.Predicate;
 
@@ -20,6 +21,7 @@ import static consumer.failure.ValidationFailure.VALIDATION_FAILURE_3;
 /**
  * gakshintala created on 7/22/20.
  */
+@Slf4j
 class BatchRunnerDslTest {
 
     @Test
@@ -33,12 +35,13 @@ class BatchRunnerDslTest {
                 parent -> parent.map(Parent::getId).filterOrElse(predicateForValidId1, ignore -> VALIDATION_FAILURE_1),
                 parent -> parent.map(Parent::getId).filterOrElse(predicateForValidId2, ignore -> VALIDATION_FAILURE_2)
         );
-        val result = BatchRunnerDsl.validateAndFailFast(validatables, validators, null);
-        Assertions.assertEquals(result.size(), validatables.size());
-        Assertions.assertTrue(result.get(2).isRight());
-        Assertions.assertEquals(result.get(2), Either.right(new Parent(2, null)));
-        Assertions.assertTrue(result.take(2).forAll(vf -> vf.isLeft() && vf.getLeft() == VALIDATION_FAILURE_1));
-        Assertions.assertTrue(result.takeRight(2).forAll(vf -> vf.isLeft() && vf.getLeft() == VALIDATION_FAILURE_2));
+        val results = BatchRunnerDsl.validateAndFailFast(validatables, validators, null, throwable -> null);
+        results.forEach(result -> log.info(result.toString()));
+        Assertions.assertEquals(results.size(), validatables.size());
+        Assertions.assertTrue(results.get(2).isRight());
+        Assertions.assertEquals(results.get(2), Either.right(new Parent(2, null)));
+        Assertions.assertTrue(results.take(2).forAll(vf -> vf.isLeft() && vf.getLeft() == VALIDATION_FAILURE_1));
+        Assertions.assertTrue(results.takeRight(2).forAll(vf -> vf.isLeft() && vf.getLeft() == VALIDATION_FAILURE_2));
     }
 
     @Test
@@ -52,7 +55,7 @@ class BatchRunnerDslTest {
                 parent -> predicateForValidId1.test(parent.getId()) ? NONE : VALIDATION_FAILURE_1,
                 parent -> predicateForValidId2.test(parent.getId()) ? NONE : VALIDATION_FAILURE_2
         );
-        val result = BatchRunnerDsl.validateAndFailFast(validatables, simpleValidators, null, NONE);
+        val result = BatchRunnerDsl.validateAndFailFast(validatables, simpleValidators, null, NONE, throwable -> null);
         Assertions.assertEquals(result.size(), validatables.size());
         Assertions.assertTrue(result.get(2).isRight());
         Assertions.assertEquals(result.get(2), Either.right(new Parent(2, null)));
@@ -73,7 +76,7 @@ class BatchRunnerDslTest {
                 parent -> predicateForValidId2.test(parent.getId()) ? NONE : VALIDATION_FAILURE_2,
                 parent -> predicateForValidId3.test(parent.getId()) ? NONE : VALIDATION_FAILURE_3
         );
-        val result = BatchRunnerDsl.validateAndAccumulateErrors(validatables, simpleValidators, null, NONE);
+        val result = BatchRunnerDsl.validateAndAccumulateErrors(validatables, simpleValidators, null, NONE, throwable -> null);
 
         Assertions.assertEquals(result.size(), validatables.size());
         Assertions.assertTrue(result.forAll(r -> r.size() == simpleValidators.size()));
