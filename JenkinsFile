@@ -2,7 +2,8 @@
 import net.sfdc.dci.BuildUtils
 
 env.RELEASE_BRANCHES = ['master']
-def envDef = [ : ]
+
+def envDef = [ buildImage : 'ops0-artifactrepo1-0-prd.data.sfdc.net/dci/centos7-sfci-jdk11-maven:112ada4' ]
 
 executePipeline(envDef) {
     stage('Init') {
