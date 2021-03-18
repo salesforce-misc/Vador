@@ -25,7 +25,7 @@ dependencies {
 group = "com.salesforce.ccspayments"
 version = "2.2"
 description = "Vader"
-java.sourceCompatibility = JavaVersion.VERSION_15
+java.sourceCompatibility = JavaVersion.VERSION_11
 
 tasks.withType<Test> {
     useJUnitPlatform()
