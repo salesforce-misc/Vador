@@ -139,3 +139,5 @@ batch-validation-framework.iml
 src/main/java/rebel.xml
 release.properties
 /.sdkmanrc
+
+!/gradle/wrapper/gradle-wrapper.jar
