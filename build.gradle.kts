@@ -23,17 +23,12 @@ dependencies {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.2"
-description = "Vader"
+version = "2.3-SNAPSHOT"
+description = "Vader - An FP framework for Bean validation"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-
-tasks.withType<Javadoc> {
-    isFailOnError = false
-    options.encoding("UTF-8")
 }
 
 /********************/
@@ -98,5 +93,7 @@ publishing {
         if (JavaVersion.current().isJava9Compatible) {
             (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
         }
+        isFailOnError = false
+        options.encoding("UTF-8")
     }
 }
