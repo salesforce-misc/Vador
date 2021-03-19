@@ -31,6 +31,11 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+tasks.withType<Javadoc> {
+    isFailOnError = false
+    options.encoding("UTF-8")
+}
+
 /********************/
 /* Publish to Nexus */
 /********************/
@@ -53,9 +58,6 @@ publishing {
             name.set("Vader")
             description.set("An FP framework for Bean validation")
             url.set("https://git.soma.salesforce.com/CCSPayments/Vader")
-            properties.set(mapOf(
-                "maven.javadoc.failOnError" to "false"
-            ))
             licenses {
                 license {
                     name.set("The Apache License, Version 2.0")

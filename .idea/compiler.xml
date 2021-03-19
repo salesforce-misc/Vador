@@ -12,7 +12,7 @@
         <module name="vader.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="15">
+    <bytecodeTargetLevel target="11">
       <module name="batch-validation-framework" target="11" />
     </bytecodeTargetLevel>
   </component>
