@@ -25,7 +25,7 @@ import static consumer.failure.ValidationFailure.VALIDATION_FAILURE_3;
 class BatchRunnerDslTest {
 
     @Test
-    void FailFastPartialFailures() {
+    void failFastPartialFailures() {
         val validatables = List.of(new Parent(0, null), new Parent(1, null), new Parent(2, null),
                 new Parent(3, null), new Parent(4, null));
         Predicate<Integer> predicateForValidId1 = id -> id >= 2;
@@ -45,7 +45,7 @@ class BatchRunnerDslTest {
     }
 
     @Test
-    void FailFastPartialFailuresForSimpleValidators() {
+    void failFastPartialFailuresForSimpleValidators() {
         val validatables = List.of(new Parent(0, null), new Parent(1, null), new Parent(2, null),
                 new Parent(3, null), new Parent(4, null));
         Predicate<Integer> predicateForValidId1 = id -> id >= 2;
@@ -64,7 +64,7 @@ class BatchRunnerDslTest {
     }
 
     @Test
-    void ErrorAccumulateForSimpleValidators() {
+    void errorAccumulateForSimpleValidators() {
         val validatables = List.of(new Parent(0, null), new Parent(1, null), new Parent(2, null),
                 new Parent(3, null), new Parent(4, null));
         Predicate<Integer> predicateForValidId1 = id -> id >= 2;

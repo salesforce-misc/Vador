@@ -36,6 +36,16 @@ public class RunnerDsl {
                 .fold(Function1.identity(), ignore -> none);
     }
 
+    public static <FailureT, ValidatableT> FailureT validateAndFailFast(
+            ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators,
+            FailureT invalidValidatable,
+            FailureT none,
+            Function1<Throwable, FailureT> throwableMapper,
+            ValidationConfig<ValidatableT, FailureT> validationConfig) {
+        return Strategies.failFastStrategy(validators, invalidValidatable, throwableMapper, validationConfig).apply(validatable)
+                .fold(Function1.identity(), ignore -> none);
+    }
+
     /**
      * Applies the Simple validators on a Single validatable in fail-fast mode.
      *
@@ -51,6 +61,16 @@ public class RunnerDsl {
             ValidatableT validatable, List<SimpleValidator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
         return Strategies.failFastStrategy(validators, invalidValidatable, none, throwableMapper).apply(validatable);
+    }
+
+    public static <FailureT, ValidatableT> FailureT validateAndFailFastForSimpleValidators(
+            ValidatableT validatable,
+            List<SimpleValidator<ValidatableT, FailureT>> validators,
+            FailureT invalidValidatable,
+            FailureT none,
+            Function1<Throwable, FailureT> throwableMapper,
+            ValidationConfig<ValidatableT, FailureT> validationConfig) {
+        return Strategies.failFastStrategy(validators, invalidValidatable, none, throwableMapper, validationConfig).apply(validatable);
     }
 
     /**

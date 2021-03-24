@@ -27,6 +27,8 @@ public enum ValidationFailureMessage {
     VALIDATION_FAILURE_1("", ""),
     VALIDATION_FAILURE_2("", ""),
     VALIDATION_FAILURE_3("", ""),
+    REQUIRED_FIELD_MISSING("", ""),
+    FIELD_INTEGRITY_EXCEPTION("", ""),
     ;
     
     private final String section;
@@ -49,5 +51,9 @@ public enum ValidationFailureMessage {
 
     private static final class Section {
         static final String COMMON_VALIDATION_FAILURE = "CommonValidationFailure";
+    }
+
+    public String getMessage() {
+        return section + " " + name;
     }
 }

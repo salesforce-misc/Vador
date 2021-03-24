@@ -6,7 +6,12 @@
 
 package consumer.bean;
 
-import lombok.Value;
+import com.force.swag.id.ID;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 
 /**
@@ -15,8 +20,20 @@ import lombok.Value;
  * @author gakshintala
  * @since 228
  */
-@Value
+@AllArgsConstructor
+@RequiredArgsConstructor
+@EqualsAndHashCode
+@ToString
+@Getter
 public class Parent {
-    int id;
-    Child child;
+    final int id;
+    final Child child;
+    
+    Integer requiredField1;
+    String requiredField2;
+    String requiredField3;
+    ID sfId1;
+    ID sfId2;
+    
+    
 }
