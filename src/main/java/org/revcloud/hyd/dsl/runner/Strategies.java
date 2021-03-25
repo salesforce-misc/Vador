@@ -58,7 +58,8 @@ class Strategies {
     static <FailureT, ValidatableT> FailFastStrategy<ValidatableT, FailureT> failFastStrategy(
             @NonNull List<Validator<ValidatableT, FailureT>> validations,
             FailureT invalidValidatable,
-            Function1<Throwable, FailureT> throwableMapper, ValidationConfig<ValidatableT, FailureT> validationConfig) {
+            Function1<Throwable, FailureT> throwableMapper, 
+            ValidationConfig<ValidatableT, FailureT> validationConfig) {
         return toBeValidated -> {
             if (toBeValidated == null) return Either.left(invalidValidatable);
             toValidations(validationConfig);

@@ -4,6 +4,7 @@ import io.vavr.Function1;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
 import org.revcloud.hyd.dsl.lift.LiftDsl;
+import org.revcloud.hyd.dsl.runner.config.HeaderValidationConfig;
 import org.revcloud.hyd.dsl.runner.config.ValidationConfig;
 import org.revcloud.hyd.types.validators.Validator;
 import org.revcloud.hyd.types.validators.SimpleValidator;
@@ -48,6 +49,26 @@ public class RunnerDsl {
     }
 
     /**
+     * Applies the validators on a Single validatable in error-accumulation mode. The Accumulated
+     *
+     * @param validatable
+     * @param validators
+     * @param invalidValidatable FailureT if the validatable is null.
+     * @param none               Value to be returned in case of no failure.
+     * @param <FailureT>
+     * @param <ValidatableT>
+     * @param throwableMapper   Function to map throwable to Failure in case of exception
+     * @return List of Validation failures. EmptyList if all the validations pass.
+     */
+    public static <FailureT, ValidatableT> List<FailureT> validateAndAccumulateErrors(
+            ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators,
+            FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
+        final var results = Strategies.accumulationStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
+                .map(validationResult -> validationResult.fold(Function1.identity(), ignore -> none));
+        return results.forAll(result -> result == none) ? List.empty(): results;
+    }
+
+    /**
      * Applies the Simple validators on a Single validatable in fail-fast mode.
      *
      * @param validatable
@@ -77,24 +98,14 @@ public class RunnerDsl {
         return Strategies.failFastStrategy(validators, invalidValidatable, none, throwableMapper, validationConfig).apply(validatable);
     }
 
-    /**
-     * Applies the validators on a Single validatable in error-accumulation mode. The Accumulated
-     *
-     * @param validatable
-     * @param validators
-     * @param invalidValidatable FailureT if the validatable is null.
-     * @param none               Value to be returned in case of no failure.
-     * @param <FailureT>
-     * @param <ValidatableT>
-     * @param throwableMapper   Function to map throwable to Failure in case of exception
-     * @return List of Validation failures. EmptyList if all the validations pass.
-     */
-    public static <FailureT, ValidatableT> List<FailureT> validateAndAccumulateErrors(
-            ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators,
-            FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
-        final var results = Strategies.accumulationStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
-                .map(validationResult -> validationResult.fold(Function1.identity(), ignore -> none));
-        return results.forAll(result -> result == none) ? List.empty(): results;
+    public static <FailureT, ValidatableT> FailureT validateAndFailFastForSimpleValidatorsForHeader(
+            ValidatableT validatable,
+            List<SimpleValidator<ValidatableT, FailureT>> validators,
+            FailureT invalidValidatable,
+            FailureT none,
+            Function1<Throwable, FailureT> throwableMapper,
+            HeaderValidationConfig<ValidatableT, FailureT> validationConfig) {
+        return Strategies.failFastStrategyForHeader(validators, invalidValidatable, none, throwableMapper, validationConfig).apply(validatable);
     }
 
     /**
