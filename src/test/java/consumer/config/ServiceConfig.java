@@ -9,17 +9,17 @@ package consumer.config;
 
 import consumer.BaseService;
 import consumer.Service;
-import consumer.bean.Parent;
+import consumer.bean.BaseParent;
 import consumer.failure.ValidationFailure;
 import io.vavr.collection.List;
-import org.qtc.delphinus.types.validators.Validator;
+import org.revcloud.hyd.types.validators.Validator;
 
 
 /**
  * gakshintala created on 4/13/20.
  */
 public class ServiceConfig {
-    BaseService<Parent> getService(List<Validator<Parent, ValidationFailure>> requestValidators) {
+    BaseService<BaseParent> getService(List<Validator<BaseParent, ValidationFailure>> requestValidators) {
         final Service service = new Service();
         service.setRequestValidators(requestValidators);
         return service;

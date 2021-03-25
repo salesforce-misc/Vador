@@ -10,16 +10,13 @@ package consumer.validators.batch;
 import consumer.bean.Child;
 import consumer.failure.ValidationFailure;
 import io.vavr.control.Either;
-import org.qtc.delphinus.types.validators.Validator;
+import org.revcloud.hyd.types.validators.Validator;
 
 import java.util.Objects;
 
 import static consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
 
 public class ChildBatchRequestValidator {
-
-    static final String ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID
-            = "PaymentStandardFields.PaymentAuthorizationId.getName()";
     /**
      * Validates if Auth id in request has a status PROCESSED.
      * This is a lambda function implementation.

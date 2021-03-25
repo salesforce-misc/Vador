@@ -1,12 +1,12 @@
-package org.qtc.delphinus.dsl.runner;
+package org.revcloud.hyd.dsl.runner;
 
 import io.vavr.Function1;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
-import org.qtc.delphinus.dsl.lift.LiftDsl;
-import org.qtc.delphinus.types.validators.Validator;
-import org.qtc.delphinus.types.validators.SimpleValidator;
+import org.revcloud.hyd.dsl.lift.LiftDsl;
+import org.revcloud.hyd.types.validators.Validator;
+import org.revcloud.hyd.types.validators.SimpleValidator;
 
 /**
  * DSL for different ways to run validations against a List of validatables (Batch).
@@ -29,8 +29,10 @@ public class BatchRunnerDsl {
      * Valids are represented by right state of Either and Invalids with left (holding Validation Failures).
      */
     public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFast(
-            List<ValidatableT> validatables, List<Validator<ValidatableT, FailureT>> validators,
-            FailureT invalidValidatable, Function1<Throwable, FailureT> throwableMapper) {
+            List<ValidatableT> validatables,
+            List<Validator<ValidatableT, FailureT>> validators,
+            FailureT invalidValidatable,
+            Function1<Throwable, FailureT> throwableMapper) {
         return validatables.iterator()
                 .map(Strategies.failFastStrategy(validators, invalidValidatable, throwableMapper))
                 .toList();
@@ -48,10 +50,24 @@ public class BatchRunnerDsl {
      * @return This list is a bag of results for both Valids and Invalids.
      * Valids are represented by right state of Either and Invalids with left (holding Validation Failures).
      */
-    public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFast(
-            List<ValidatableT> validatables, List<SimpleValidator<ValidatableT, FailureT>> validators,
-            FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
+    public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFast( // TODO: 25/03/21 rename 
+            List<ValidatableT> validatables,
+            List<SimpleValidator<ValidatableT, FailureT>> validators,
+            FailureT invalidValidatable,
+            FailureT none,
+            Function1<Throwable, FailureT> throwableMapper) {
         return validateAndFailFast(validatables, LiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper);
+    }
+
+    public static <FailureT, ValidatableT> List<FailureT> validateAndFailFastForSimpleValidators(
+            List<ValidatableT> validatables,
+            List<SimpleValidator<ValidatableT, FailureT>> validators,
+            FailureT invalidValidatable,
+            FailureT none,
+            Function1<Throwable, FailureT> throwableMapper) {
+        return validatables.iterator()
+                .map(Strategies.failFastStrategy(validators, invalidValidatable, none, throwableMapper))
+                .toList();
     }
 
     /**

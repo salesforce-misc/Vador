@@ -1,11 +1,12 @@
-package org.qtc.delphinus.dsl.runner;
+package org.revcloud.hyd.dsl.runner;
 
 import io.vavr.Function1;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
-import org.qtc.delphinus.dsl.lift.LiftDsl;
-import org.qtc.delphinus.types.validators.Validator;
-import org.qtc.delphinus.types.validators.SimpleValidator;
+import org.revcloud.hyd.dsl.lift.LiftDsl;
+import org.revcloud.hyd.dsl.runner.config.ValidationConfig;
+import org.revcloud.hyd.types.validators.Validator;
+import org.revcloud.hyd.types.validators.SimpleValidator;
 
 /**
  * DSL for different ways to run validations against a Single validatable (Non-Batch).
@@ -58,8 +59,11 @@ public class RunnerDsl {
      * @return Validation failure.
      */
     public static <FailureT, ValidatableT> FailureT validateAndFailFastForSimpleValidators(
-            ValidatableT validatable, List<SimpleValidator<ValidatableT, FailureT>> validators,
-            FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
+            ValidatableT validatable,
+            List<SimpleValidator<ValidatableT, FailureT>> validators,
+            FailureT invalidValidatable,
+            FailureT none,
+            Function1<Throwable, FailureT> throwableMapper) {
         return Strategies.failFastStrategy(validators, invalidValidatable, none, throwableMapper).apply(validatable);
     }
 

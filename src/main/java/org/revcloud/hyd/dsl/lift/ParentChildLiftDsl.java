@@ -4,13 +4,13 @@
  * Company Confidential
  */
 
-package org.qtc.delphinus.dsl.lift;
+package org.revcloud.hyd.dsl.lift;
 
 import io.vavr.Function1;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
-import org.qtc.delphinus.types.validators.Validator;
+import org.revcloud.hyd.types.validators.Validator;
 
 import java.util.Objects;
 

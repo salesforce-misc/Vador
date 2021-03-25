@@ -4,7 +4,7 @@
  * Company Confidential
  */
 
-package org.qtc.delphinus.dsl.runner;
+package org.revcloud.hyd.dsl.runner;
 
 import com.force.swag.id.ID;
 import com.force.swag.id.IdTraits;
@@ -15,8 +15,11 @@ import io.vavr.control.Either;
 import io.vavr.control.Try;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import org.qtc.delphinus.types.validators.SimpleValidator;
-import org.qtc.delphinus.types.validators.Validator;
+import lombok.val;
+import org.revcloud.hyd.dsl.runner.config.HeaderValidationConfig;
+import org.revcloud.hyd.dsl.runner.config.ValidationConfig;
+import org.revcloud.hyd.types.validators.SimpleValidator;
+import org.revcloud.hyd.types.validators.Validator;
 
 import java.util.function.Predicate;
 
@@ -30,16 +33,6 @@ import static io.vavr.Function1.identity;
  */
 @UtilityClass
 class Strategies {
-
-    public static final Predicate<Object> isPresent = fieldValue -> {
-        if (fieldValue != null) {
-            if (fieldValue instanceof String) {
-                return !((String) fieldValue).isBlank();
-            }
-            return true;
-        }
-        return false;
-    };
 
     /**
      * Higher-order function to compose list of validators into Fail-Fast Strategy.
@@ -75,17 +68,27 @@ class Strategies {
         };
     }
 
-    private static <ValidatableT, FailureT> Iterator<Validator<ValidatableT, FailureT>> toValidations(ValidationConfig<ValidatableT, FailureT> validationConfig) {
-        Iterator<Validator<ValidatableT, FailureT>> mandatoryFieldValidations = validationConfig.mandatoryFieldMappers.iterator()
+    private static <ValidatableT, FailureT> Iterator<Validator<ValidatableT, FailureT>> toValidations(
+            ValidationConfig<ValidatableT, FailureT> validationConfig) {
+        Iterator<Validator<ValidatableT, FailureT>> mandatoryFieldValidations = validationConfig.getMandatoryFieldMappers().iterator()
                 .map(tuple2 -> validatableRight -> validatableRight.map(tuple2._1)
-                        .filterOrElse(isPresent, ignore -> tuple2._2)
-                );
-        Iterator<Validator<ValidatableT, FailureT>> sfIdValidations = validationConfig.sfIdFieldMappers.iterator()
+                        .filterOrElse(isPresent, ignore -> tuple2._2));
+        Iterator<Validator<ValidatableT, FailureT>> sfIdValidations = validationConfig.getSfIdFieldMappers().iterator()
                 .map(tuple2 -> validatableRight -> validatableRight.map(tuple2._1).map(ID::toString)
                         .filterOrElse(IdTraits::isValidId, ignore -> tuple2._2));
 
         return mandatoryFieldValidations.concat(sfIdValidations);
     }
+
+    public static final Predicate<Object> isPresent = fieldValue -> {
+        if (fieldValue != null) {
+            if (fieldValue instanceof String) {
+                return !((String) fieldValue).isBlank();
+            }
+            return true;
+        }
+        return false;
+    };
 
     /**
      * Higher-order function to compose list of validators into Accumulation Strategy.
@@ -137,8 +140,10 @@ class Strategies {
      * @return Composed Fail-Fast Strategy
      */
     static <FailureT, ValidatableT> SimpleFailFastStrategy<ValidatableT, FailureT> failFastStrategy(
-            List<SimpleValidator<ValidatableT, FailureT>> validations, FailureT invalidValidatable,
-            FailureT none, Function1<Throwable, FailureT> throwableMapper) {
+            List<SimpleValidator<ValidatableT, FailureT>> validations,
+            FailureT invalidValidatable,
+            FailureT none,
+            Function1<Throwable, FailureT> throwableMapper) {
         return validatable -> validatable == null
                 ? invalidValidatable
                 : applySimpleValidations(validatable, validations.iterator(), throwableMapper)
@@ -146,29 +151,81 @@ class Strategies {
     }
 
     static <FailureT, ValidatableT> SimpleFailFastStrategy<ValidatableT, FailureT> failFastStrategy(
-            List<SimpleValidator<ValidatableT, FailureT>> validations, FailureT invalidValidatable,
-            FailureT none, Function1<Throwable, FailureT> throwableMapper, ValidationConfig<ValidatableT, FailureT> validationConfig) {
+            List<SimpleValidator<ValidatableT, FailureT>> validations,
+            FailureT invalidValidatable,
+            FailureT none,
+            Function1<Throwable, FailureT> throwableMapper,
+            ValidationConfig<ValidatableT, FailureT> validationConfig) {
         return validatable -> validatable == null
                 ? invalidValidatable
                 : applySimpleValidations(validatable, Iterator.concat(toSimpleValidations(validationConfig, none), validations), throwableMapper)
                 .filter(result -> result != none).getOrElse(none);
     }
 
+    static <FailureT, ValidatableT> SimpleFailFastStrategy<ValidatableT, FailureT> failFastStrategyForHeader(
+            List<SimpleValidator<ValidatableT, FailureT>> validations,
+            FailureT invalidValidatable,
+            FailureT none,
+            Function1<Throwable, FailureT> throwableMapper,
+            HeaderValidationConfig<ValidatableT, FailureT> validationConfig) {
+        return validatable -> {
+                if (validatable == null) {
+                    return invalidValidatable;
+                }
+                val batch = validationConfig.getBatchMapper().apply(validatable);
+                val batchSizeFailure = validateSize(batch, none, validationConfig);
+                if (batchSizeFailure != none) {
+                    return batchSizeFailure;
+                }
+                return applySimpleValidations(validatable, validations.iterator(), throwableMapper)
+                    .filter(result -> result != none).getOrElse(none);
+        };
+    }
+
+    /*static <FailureT, ValidatableT> SimpleFailFastStrategyForBatch<ValidatableT, FailureT> failFastStrategyForBatch(
+            List<SimpleValidator<ValidatableT, FailureT>> validations,
+            FailureT invalidValidatable,
+            FailureT none,
+            Function1<Throwable, FailureT> throwableMapper,
+            BatchValidationConfig<ValidatableT, FailureT> validationConfig) {
+        return validatables -> {
+            return validatables.map(failFastStrategy(validations, invalidValidatable, none, throwableMapper));
+        };
+    }*/
+    
+    /*private static <ValidatableT, FailureT> Iterator<Either<FailureT, ValidatableT>> filterDuplicates(
+            List<ValidatableT> validatables, 
+            Function1<ValidatableT, Object> groupingMapper, FailureT failure) {
+        val groups = validatables.groupBy(groupingMapper);
+        val partitions = groups.values().partition(group -> group.size() == 1);
+        val duplicates = partitions._2.flatMap(identity()).map(duplicate -> Either.left(failure));
+    } */
+
+    private static <FailureT> FailureT validateSize(java.util.List<?> validatables,
+                                                                  FailureT none,
+                                                                  HeaderValidationConfig<?, FailureT> validationConfig) {
+        if (validatables.size() < validationConfig.getMinBatchSize()._1) {
+            return validationConfig.getMinBatchSize()._2;
+        } else if (validatables.size() > validationConfig.getMaxBatchSize()._1) {
+            return validationConfig.getMaxBatchSize()._2;
+        }
+        return none;
+    }
+
     private static <ValidatableT, FailureT> Iterator<SimpleValidator<ValidatableT, FailureT>> toSimpleValidations(
             ValidationConfig<ValidatableT, FailureT> validationConfig, FailureT none) {
-        Iterator<SimpleValidator<ValidatableT, FailureT>> mandatoryFieldValidations = validationConfig.mandatoryFieldMappers.iterator()
+        Iterator<SimpleValidator<ValidatableT, FailureT>> mandatoryFieldValidations = validationConfig.getMandatoryFieldMappers().iterator()
                 .map(tuple2 -> validatable -> isPresent.test(tuple2._1.apply(validatable)) ? none : tuple2._2);
-
-        Iterator<SimpleValidator<ValidatableT, FailureT>> sfIdValidations = validationConfig.sfIdFieldMappers.iterator()
+        Iterator<SimpleValidator<ValidatableT, FailureT>> sfIdValidations = validationConfig.getSfIdFieldMappers().iterator()
                 .map(tuple2 -> validatable -> IdTraits.isValidId(tuple2._1.apply(validatable).toString()) ? none : tuple2._2);
-
         return mandatoryFieldValidations.concat(sfIdValidations);
     }
 
     private static <FailureT, ValidatableT> Iterator<FailureT> applySimpleValidations(
-            ValidatableT toBeValidated, Iterator<SimpleValidator<ValidatableT, FailureT>> validations, Function1<Throwable, FailureT> throwableMapper) {
-        return validations
-                .map(validation -> fireSimpleValidation(validation, toBeValidated, throwableMapper));
+            ValidatableT toBeValidated,
+            Iterator<SimpleValidator<ValidatableT, FailureT>> validations,
+            Function1<Throwable, FailureT> throwableMapper) {
+        return validations.map(validation -> fireSimpleValidation(validation, toBeValidated, throwableMapper));
     }
 
     private static <FailureT, ValidatableT> FailureT fireSimpleValidation(
@@ -189,5 +246,13 @@ interface FailFastStrategy<ValidatableT, FailureT> extends Function1<Validatable
 }
 
 @FunctionalInterface
+interface FailFastStrategyForBatch<ValidatableT, FailureT> extends Function1<List<ValidatableT>, Either<FailureT, ValidatableT>> {
+}
+
+@FunctionalInterface
 interface SimpleFailFastStrategy<ValidatableT, FailureT> extends Function1<ValidatableT, FailureT> {
+}
+
+@FunctionalInterface
+interface SimpleFailFastStrategyForBatch<ValidatableT, FailureT> extends Function1<List<ValidatableT>, List<FailureT>> {
 }

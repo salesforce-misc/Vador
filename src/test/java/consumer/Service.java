@@ -6,11 +6,11 @@
 
 package consumer;
 
-import consumer.bean.Parent;
+import consumer.bean.BaseParent;
 
 /**
  * gakshintala created on 4/13/20.
  */
-public class Service extends BaseService<Parent> {
+public class Service extends BaseService<BaseParent> {
     
 }

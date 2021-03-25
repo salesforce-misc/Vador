@@ -7,13 +7,15 @@
 package consumer.config;
 
 
+import consumer.bean.BaseParent;
 import consumer.failure.ValidationFailure;
-import consumer.bean.Parent;
 import consumer.validators.batch.ParentBatchRequestValidator;
+import consumer.validators.simple.BaseParentRequestValidator;
+import consumer.validators.simple.ParentRequestValidator;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
-import org.qtc.delphinus.dsl.lift.LiftDsl;
-import org.qtc.delphinus.types.validators.Validator;
+import org.revcloud.hyd.types.validators.SimpleValidator;
+import org.revcloud.hyd.types.validators.Validator;
 
 
 /**
@@ -22,9 +24,13 @@ import org.qtc.delphinus.types.validators.Validator;
 @UtilityClass
 public class ValidationConfig {
     
-    public static List<Validator<Parent, ValidationFailure>> getServiceValidations() {
+    public static List<Validator<BaseParent, ValidationFailure>> getServiceValidations() {
         return List.of(
                 ParentBatchRequestValidator.batchValidation1,
                 ParentBatchRequestValidator.batchValidation2);
+    }
+
+    public static List<SimpleValidator<? extends BaseParent, ValidationFailure>> getSimpleServiceValidations() {
+        return List.of(BaseParentRequestValidator.validation1, ParentRequestValidator.validation1);
     }
 }

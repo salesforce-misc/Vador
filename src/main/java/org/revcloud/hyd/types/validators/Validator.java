@@ -1,4 +1,4 @@
-package org.qtc.delphinus.types.validators;
+package org.revcloud.hyd.types.validators;
 
 import io.vavr.Function1;
 import io.vavr.control.Either;

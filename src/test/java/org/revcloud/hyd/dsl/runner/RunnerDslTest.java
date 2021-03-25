@@ -1,7 +1,7 @@
-package org.qtc.delphinus.dsl.runner;
+package org.revcloud.hyd.dsl.runner;
 
 import com.force.swag.id.ID;
-import consumer.bean.Parent;
+import consumer.bean.BaseParent;
 import consumer.failure.ValidationFailure;
 import io.vavr.Function1;
 import io.vavr.Tuple;
@@ -10,15 +10,15 @@ import io.vavr.control.Either;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.qtc.delphinus.types.validators.SimpleValidator;
-import org.qtc.delphinus.types.validators.Validator;
+import org.revcloud.hyd.dsl.runner.config.ValidationConfig;
+import org.revcloud.hyd.types.validators.SimpleValidator;
+import org.revcloud.hyd.types.validators.Validator;
 
 import static consumer.failure.ValidationFailure.FIELD_INTEGRITY_EXCEPTION;
 import static consumer.failure.ValidationFailure.NONE;
 import static consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
 import static consumer.failure.ValidationFailure.REQUIRED_FIELD_MISSING;
 import static consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
-import static consumer.failure.ValidationFailure.getValidationFailureForException;
 
 class RunnerDslTest {
 
@@ -27,7 +27,7 @@ class RunnerDslTest {
         val result = validateAndFailFast(
                 NONE,
                 NOTHING_TO_VALIDATE,
-                new Parent(0, null),
+                new BaseParent(0, null),
                 UNKNOWN_EXCEPTION
         );
         Assertions.assertSame(UNKNOWN_EXCEPTION, result);
@@ -56,7 +56,7 @@ class RunnerDslTest {
 
     @Test
     void failFastWithFirstFailureForSimpleValidators() {
-        final var validatable = new Parent(0, null);
+        final var validatable = new BaseParent(0, null);
         val result = validateAndFailFastForSimpleValidators(
                 NONE,
                 NOTHING_TO_VALIDATE,
@@ -91,17 +91,17 @@ class RunnerDslTest {
 
     @Test
     void failFastWithRequiredFieldMissingForSimpleValidators() {
-        ValidationConfig<Parent, ValidationFailure> validationConfig =
-                ValidationConfig.toValidate(Parent.class, ValidationFailure.class)
+        ValidationConfig<BaseParent, ValidationFailure> validationConfig =
+                ValidationConfig.toValidate(BaseParent.class, ValidationFailure.class)
                         .shouldHaveRequiredFields(
-                                Tuple.of(Parent::getRequiredField1, REQUIRED_FIELD_MISSING),
-                                Tuple.of(Parent::getRequiredField2, REQUIRED_FIELD_MISSING),
-                                Tuple.of(Parent::getRequiredField3, REQUIRED_FIELD_MISSING))
+                                Tuple.of(BaseParent::getRequiredField1, REQUIRED_FIELD_MISSING),
+                                Tuple.of(BaseParent::getRequiredField2, REQUIRED_FIELD_MISSING),
+                                Tuple.of(BaseParent::getRequiredField3, REQUIRED_FIELD_MISSING))
                         .shouldHaveValidSFIds(
-                                Tuple.of(Parent::getSfId1, FIELD_INTEGRITY_EXCEPTION),
-                                Tuple.of(Parent::getSfId2, FIELD_INTEGRITY_EXCEPTION));
+                                Tuple.of(BaseParent::getSfId1, FIELD_INTEGRITY_EXCEPTION),
+                                Tuple.of(BaseParent::getSfId2, FIELD_INTEGRITY_EXCEPTION));
         
-        final var validatableWithBlankReqField = new Parent(0, null, 1, "", null, null, null);
+        final var validatableWithBlankReqField = new BaseParent(0, null, 1, "", null, null, null);
         val result1 = validateAndFailFastForSimpleValidatorsWithConfig(
                 NONE,
                 NOTHING_TO_VALIDATE,
@@ -111,7 +111,7 @@ class RunnerDslTest {
         );
         Assertions.assertSame(REQUIRED_FIELD_MISSING, result1);
 
-        final var validatableWithNullReqField = new Parent(0, null, 1, "str", null, null, null);
+        final var validatableWithNullReqField = new BaseParent(0, null, 1, "str", null, null, null);
         val result2 = validateAndFailFastForSimpleValidatorsWithConfig(
                 NONE,
                 NOTHING_TO_VALIDATE,
@@ -124,17 +124,17 @@ class RunnerDslTest {
 
     @Test
     void failFastWithInvalidIdForSimpleValidators() {
-        ValidationConfig<Parent, ValidationFailure> validationConfig =
-                ValidationConfig.toValidate(Parent.class, ValidationFailure.class)
+        ValidationConfig<BaseParent, ValidationFailure> validationConfig =
+                ValidationConfig.toValidate(BaseParent.class, ValidationFailure.class)
                         .shouldHaveRequiredFields(
-                                Tuple.of(Parent::getRequiredField1, REQUIRED_FIELD_MISSING),
-                                Tuple.of(Parent::getRequiredField2, REQUIRED_FIELD_MISSING),
-                                Tuple.of(Parent::getRequiredField3, REQUIRED_FIELD_MISSING))
+                                Tuple.of(BaseParent::getRequiredField1, REQUIRED_FIELD_MISSING),
+                                Tuple.of(BaseParent::getRequiredField2, REQUIRED_FIELD_MISSING),
+                                Tuple.of(BaseParent::getRequiredField3, REQUIRED_FIELD_MISSING))
                         .shouldHaveValidSFIds(
-                                Tuple.of(Parent::getSfId1, FIELD_INTEGRITY_EXCEPTION),
-                                Tuple.of(Parent::getSfId2, FIELD_INTEGRITY_EXCEPTION));
+                                Tuple.of(BaseParent::getSfId1, FIELD_INTEGRITY_EXCEPTION),
+                                Tuple.of(BaseParent::getSfId2, FIELD_INTEGRITY_EXCEPTION));
 
-        final var validatableWithInvalidSfId = new Parent(0, null, 1, "str", "str", new ID("1ttxx00000000hZAAQ"), new ID("invalidSfId"));
+        final var validatableWithInvalidSfId = new BaseParent(0, null, 1, "str", "str", new ID("1ttxx00000000hZAAQ"), new ID("invalidSfId"));
         val result1 = validateAndFailFastForSimpleValidatorsWithConfig(
                 NONE,
                 NOTHING_TO_VALIDATE,
