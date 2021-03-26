@@ -9,7 +9,7 @@ package consumer.validators.batch;
 
 import consumer.bean.BaseParent;
 import consumer.failure.ValidationFailure;
-import org.revcloud.hyd.types.validators.Validator;
+import org.revcloud.vader.types.validators.Validator;
 
 import static consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
 

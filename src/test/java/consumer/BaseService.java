@@ -12,8 +12,8 @@ import consumer.config.ValidationConfig;
 import consumer.failure.ValidationFailure;
 import io.vavr.collection.List;
 import lombok.val;
-import org.revcloud.hyd.dsl.runner.RunnerDsl;
-import org.revcloud.hyd.types.validators.Validator;
+import org.revcloud.vader.dsl.runner.RunnerDsl;
+import org.revcloud.vader.types.validators.Validator;
 
 /**
  * gakshintala created on 4/13/20.

@@ -1,4 +1,4 @@
-package org.revcloud.hyd.types.validators;
+package org.revcloud.vader.types.validators;
 
 import io.vavr.Function1;
 import io.vavr.control.Either;

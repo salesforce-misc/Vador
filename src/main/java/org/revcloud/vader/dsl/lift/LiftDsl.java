@@ -1,11 +1,11 @@
-package org.revcloud.hyd.dsl.lift;
+package org.revcloud.vader.dsl.lift;
 
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.revcloud.hyd.types.validators.Validator;
-import org.revcloud.hyd.types.validators.SimpleValidator;
+import org.revcloud.vader.types.validators.Validator;
+import org.revcloud.vader.types.validators.SimpleValidator;
 
 /**
  * Dsl to lift simple, throwable validations to Validator type.
@@ -29,7 +29,7 @@ public class LiftDsl {
             SimpleValidator<ValidatableT, FailureT> toBeLifted, FailureT none) {
         return validatable -> validatable.flatMap(toBeValidated -> {
             val result = toBeLifted.apply(toBeValidated);
-            return result != none ? Either.left(result) : validatable;
+            return ((result == none) || result.equals(none)) ? validatable : Either.left(result);
         });
     }
 

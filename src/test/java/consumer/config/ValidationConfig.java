@@ -14,8 +14,8 @@ import consumer.validators.simple.BaseParentRequestValidator;
 import consumer.validators.simple.ParentRequestValidator;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
-import org.revcloud.hyd.types.validators.SimpleValidator;
-import org.revcloud.hyd.types.validators.Validator;
+import org.revcloud.vader.types.validators.SimpleValidator;
+import org.revcloud.vader.types.validators.Validator;
 
 
 /**

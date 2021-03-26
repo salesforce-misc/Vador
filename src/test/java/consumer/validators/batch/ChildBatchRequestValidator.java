@@ -10,7 +10,7 @@ package consumer.validators.batch;
 import consumer.bean.Child;
 import consumer.failure.ValidationFailure;
 import io.vavr.control.Either;
-import org.revcloud.hyd.types.validators.Validator;
+import org.revcloud.vader.types.validators.Validator;
 
 import java.util.Objects;
 

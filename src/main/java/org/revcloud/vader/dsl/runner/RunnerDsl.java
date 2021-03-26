@@ -1,13 +1,13 @@
-package org.revcloud.hyd.dsl.runner;
+package org.revcloud.vader.dsl.runner;
 
 import io.vavr.Function1;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
-import org.revcloud.hyd.dsl.lift.LiftDsl;
-import org.revcloud.hyd.dsl.runner.config.HeaderValidationConfig;
-import org.revcloud.hyd.dsl.runner.config.ValidationConfig;
-import org.revcloud.hyd.types.validators.Validator;
-import org.revcloud.hyd.types.validators.SimpleValidator;
+import org.revcloud.vader.dsl.lift.LiftDsl;
+import org.revcloud.vader.dsl.runner.config.HeaderValidationConfig;
+import org.revcloud.vader.dsl.runner.config.ValidationConfig;
+import org.revcloud.vader.types.validators.Validator;
+import org.revcloud.vader.types.validators.SimpleValidator;
 
 /**
  * DSL for different ways to run validations against a Single validatable (Non-Batch).
@@ -65,7 +65,7 @@ public class RunnerDsl {
             FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
         final var results = Strategies.accumulationStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
                 .map(validationResult -> validationResult.fold(Function1.identity(), ignore -> none));
-        return results.forAll(result -> result == none) ? List.empty(): results;
+        return results.forAll(result -> ((result == none) || result.equals(none))) ? List.empty(): results;
     }
 
     /**

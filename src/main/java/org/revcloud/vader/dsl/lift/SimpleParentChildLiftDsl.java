@@ -4,13 +4,13 @@
  * Company Confidential
  */
 
-package org.revcloud.hyd.dsl.lift;
+package org.revcloud.vader.dsl.lift;
 
 import io.vavr.Function1;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.revcloud.hyd.types.validators.SimpleValidator;
+import org.revcloud.vader.types.validators.SimpleValidator;
 
 /**
  * DSL to lift simple child validations to parent type.

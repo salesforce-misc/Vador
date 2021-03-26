@@ -1,15 +1,13 @@
-package org.revcloud.hyd.dsl.runner;
+package org.revcloud.vader.dsl.runner;
 
 import io.vavr.Function1;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
-import io.vavr.control.Validation;
 import lombok.experimental.UtilityClass;
-import org.revcloud.hyd.dsl.lift.LiftDsl;
-import org.revcloud.hyd.dsl.runner.config.BatchValidationConfig;
-import org.revcloud.hyd.dsl.runner.config.ValidationConfig;
-import org.revcloud.hyd.types.validators.Validator;
-import org.revcloud.hyd.types.validators.SimpleValidator;
+import org.revcloud.vader.dsl.lift.LiftDsl;
+import org.revcloud.vader.dsl.runner.config.ValidationConfig;
+import org.revcloud.vader.types.validators.Validator;
+import org.revcloud.vader.types.validators.SimpleValidator;
 
 /**
  * DSL for different ways to run validations against a List of validatables (Batch).
@@ -140,8 +138,11 @@ public class BatchRunnerDsl {
      * @return List of Validation failures.
      */
     public static <FailureT, ValidatableT> List<List<Either<FailureT, ValidatableT>>> validateAndAccumulateErrors(
-            List<ValidatableT> validatables, List<SimpleValidator<ValidatableT, FailureT>> simpleValidators,
-            FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
+            List<ValidatableT> validatables,
+            List<SimpleValidator<ValidatableT, FailureT>> simpleValidators,
+            FailureT invalidValidatable,
+            FailureT none,
+            Function1<Throwable, FailureT> throwableMapper) {
         return validateAndAccumulateErrors(validatables, LiftDsl.liftAllSimple(simpleValidators, none), invalidValidatable, throwableMapper);
     }
 }

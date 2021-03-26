@@ -1,4 +1,4 @@
-package org.revcloud.hyd.dsl.runner;
+package org.revcloud.vader.dsl.runner;
 
 import consumer.bean.BaseParent;
 import consumer.failure.ValidationFailure;
@@ -8,8 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.revcloud.hyd.types.validators.Validator;
-import org.revcloud.hyd.types.validators.SimpleValidator;
+import org.revcloud.vader.types.validators.Validator;
+import org.revcloud.vader.types.validators.SimpleValidator;
 
 import java.util.function.Predicate;
 

@@ -4,7 +4,7 @@
  * Company Confidential
  */
 
-package org.revcloud.hyd.dsl.runner;
+package org.revcloud.vader.dsl.runner;
 
 import com.force.swag.id.ID;
 import com.force.swag.id.IdTraits;
@@ -16,10 +16,10 @@ import io.vavr.control.Try;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.revcloud.hyd.dsl.runner.config.HeaderValidationConfig;
-import org.revcloud.hyd.dsl.runner.config.ValidationConfig;
-import org.revcloud.hyd.types.validators.SimpleValidator;
-import org.revcloud.hyd.types.validators.Validator;
+import org.revcloud.vader.dsl.runner.config.HeaderValidationConfig;
+import org.revcloud.vader.dsl.runner.config.ValidationConfig;
+import org.revcloud.vader.types.validators.SimpleValidator;
+import org.revcloud.vader.types.validators.Validator;
 
 import java.util.function.Predicate;
 
@@ -62,7 +62,6 @@ class Strategies {
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
         return toBeValidated -> {
             if (toBeValidated == null) return Either.left(invalidValidatable);
-            toValidations(validationConfig);
             return applyValidations(toBeValidated, Iterator.concat(toValidations(validationConfig), validations), throwableMapper)
                     .filter(Either::isLeft)
                     .getOrElse(Either.right(toBeValidated)).map(ignore -> toBeValidated);

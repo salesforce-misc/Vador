@@ -12,7 +12,7 @@ import consumer.Service;
 import consumer.bean.BaseParent;
 import consumer.failure.ValidationFailure;
 import io.vavr.collection.List;
-import org.revcloud.hyd.types.validators.Validator;
+import org.revcloud.vader.types.validators.Validator;
 
 
 /**

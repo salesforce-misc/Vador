@@ -1,4 +1,4 @@
-package org.revcloud.hyd.dsl.lift;
+package org.revcloud.vader.dsl.lift;
 
 import consumer.bean.BaseParent;
 import consumer.bean.Child;
@@ -7,7 +7,7 @@ import io.vavr.control.Either;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.revcloud.hyd.types.validators.Validator;
+import org.revcloud.vader.types.validators.Validator;
 
 class ParentChildLiftDslTest {
 

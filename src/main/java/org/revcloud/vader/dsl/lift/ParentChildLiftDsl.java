@@ -4,13 +4,13 @@
  * Company Confidential
  */
 
-package org.revcloud.hyd.dsl.lift;
+package org.revcloud.vader.dsl.lift;
 
 import io.vavr.Function1;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
-import org.revcloud.hyd.types.validators.Validator;
+import org.revcloud.vader.types.validators.Validator;
 
 import java.util.Objects;
 
