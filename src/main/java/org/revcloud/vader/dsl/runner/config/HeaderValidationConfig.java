@@ -17,7 +17,7 @@ public final class HeaderValidationConfig<ValidatableT, FailureT> {
     }
 
     @SuppressWarnings("unused")
-    public static <ValidatableT, FailureT> HeaderValidationConfig<ValidatableT, FailureT> toValidate(Class<ValidatableT> ignore1, Class<FailureT> ignore2) {
+    public static <ValidatableT, FailureT> HeaderValidationConfig<ValidatableT, FailureT> toValidate(Class<ValidatableT> validatableTClass, Class<FailureT> failureTClass) {
         return new HeaderValidationConfig<>();
     }
 

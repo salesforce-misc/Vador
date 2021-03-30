@@ -141,3 +141,5 @@ release.properties
 /.sdkmanrc
 
 !/gradle/wrapper/gradle-wrapper.jar
+rebel.xml
+.rebel.xml.bak

@@ -7,6 +7,8 @@
 package consumer.failure;
 
 
+import lombok.Value;
+
 import java.util.Objects;
 
 
@@ -16,11 +18,11 @@ import java.util.Objects;
  * @author gakshintala
  * @since 220
  */
-
 public enum ValidationFailureMessage {
     SUCCESS(Section.COMMON_VALIDATION_FAILURE, "Success"),
     FIELD_NULL_OR_EMPTY("", ""),
     NOTHING_TO_VALIDATE(Section.COMMON_VALIDATION_FAILURE, "Nothing"),
+    DUPLICATE_ITEM(Section.COMMON_VALIDATION_FAILURE, "DuplicateItem"),
     INVALID_PARENT(Section.COMMON_VALIDATION_FAILURE, "invalidParent"),
     INVALID_CHILD(Section.COMMON_VALIDATION_FAILURE, "invalidChild"),
     UNKNOWN_EXCEPTION("", ""), 

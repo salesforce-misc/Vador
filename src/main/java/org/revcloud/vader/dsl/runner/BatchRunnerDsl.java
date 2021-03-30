@@ -1,10 +1,14 @@
 package org.revcloud.vader.dsl.runner;
 
 import io.vavr.Function1;
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
+import lombok.val;
 import org.revcloud.vader.dsl.lift.LiftDsl;
+import org.revcloud.vader.dsl.runner.config.BatchValidationConfig;
 import org.revcloud.vader.dsl.runner.config.ValidationConfig;
 import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.SimpleValidator;
@@ -12,6 +16,7 @@ import org.revcloud.vader.types.validators.SimpleValidator;
 /**
  * DSL for different ways to run validations against a List of validatables (Batch).
  *
+ * TODO: Rethink about splitting of Strategies and DSL methods. Is there any use?
  * @author gakshintala
  * @since 228
  */
@@ -125,6 +130,31 @@ public class BatchRunnerDsl {
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
         return validateAndFailFast(validatables, LiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, validationConfig);
+    }
+
+    public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFastForBatch(
+            List<ValidatableT> validatables,
+            List<SimpleValidator<ValidatableT, FailureT>> validators,
+            FailureT invalidValidatable,
+            FailureT none,
+            Function1<Throwable, FailureT> throwableMapper,
+            BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
+        return Strategies.failFastStrategyForBatch(LiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, batchValidationConfig)
+                .apply(validatables);
+    }
+
+    public static <FailureT, ValidatableT, PairT> List<Either<Tuple2<PairT, FailureT>, ValidatableT>> validateAndFailFastForBatch(
+            List<ValidatableT> validatables,
+            List<SimpleValidator<ValidatableT, FailureT>> validators,
+            FailureT invalidValidatable,
+            FailureT none,
+            Function1<Throwable, FailureT> throwableMapper,
+            BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig,
+            Function1<ValidatableT, PairT> pairForInvalidMapper) {
+        val validationResults = Strategies.failFastStrategyForBatch(LiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, batchValidationConfig)
+                .apply(validatables);
+        return validationResults.zipWith(validatables, 
+                (result, validatable) -> result.mapLeft(failure -> Tuple.of(pairForInvalidMapper.apply(validatable), failure)));
     }
 
     /**

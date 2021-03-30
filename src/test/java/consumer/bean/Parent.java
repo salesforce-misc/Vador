@@ -25,4 +25,8 @@ public class Parent extends BaseParent {
     public Parent(int id, Child child) {
         super(id, child);
     }
+    
+    public Parent(int id) {
+        super(id, null);
+    }
 }
