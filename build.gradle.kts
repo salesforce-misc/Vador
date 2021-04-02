@@ -26,7 +26,7 @@ dependencies {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.2.5"
+version = "2.2.5-SNAPSHOT"
 description = "Vader - An FP framework for Bean validation"
 java.sourceCompatibility = JavaVersion.VERSION_11
 

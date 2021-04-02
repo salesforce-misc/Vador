@@ -58,10 +58,10 @@ class Strategies {
             Function1<Throwable, FailureT> throwableMapper) {
         return toBeValidated -> {
             if (toBeValidated == null) return Either.left(invalidValidatable);
-            
-            return fireValidations(toBeValidated, validations.iterator(), throwableMapper)
+            val toBeValidatedRight = Either.<FailureT, ValidatableT>right(toBeValidated);
+            return fireValidations(toBeValidatedRight, validations.iterator(), throwableMapper)
                     .find(Either::isLeft)
-                    .getOrElse(Either.right(toBeValidated)); // TODO: 26/03/21 do either-wrapper here and not in applyValidations, so that it can be reused here
+                    .getOrElse(toBeValidatedRight); // TODO: 26/03/21 do either-wrapper here and not in applyValidations, so that it can be reused here
         };
     }
 
@@ -72,9 +72,10 @@ class Strategies {
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
         return toBeValidated -> {
             if (toBeValidated == null) return Either.left(invalidValidatable);
-            return fireValidations(toBeValidated, Iterator.concat(toValidations(validationConfig), validations), throwableMapper)
+            val toBeValidatedRight = Either.<FailureT, ValidatableT>right(toBeValidated);
+            return fireValidations(toBeValidatedRight, Iterator.concat(toValidations(validationConfig), validations), throwableMapper)
                     .find(Either::isLeft)
-                    .getOrElse(Either.right(toBeValidated));
+                    .getOrElse(toBeValidatedRight);
         };
     }
 
@@ -114,23 +115,15 @@ class Strategies {
             Function1<Throwable, FailureT> throwableMapper) {
         return toBeValidated -> toBeValidated == null
                 ? List.of(Either.left(invalidValidatable))
-                : fireValidations(toBeValidated, validations.iterator(), throwableMapper).toList();
+                : fireValidations(Either.right(toBeValidated), validations.iterator(), throwableMapper).toList();
     }
 
     private static <FailureT, ValidatableT> Iterator<Either<FailureT, ValidatableT>> fireValidations(
-            ValidatableT toBeValidated, // TODO: 28/03/21 toBeValidated vs Validatable naming consistency
+            Either<FailureT, ValidatableT> toBeValidatedRight, // TODO: 28/03/21 toBeValidated vs Validatable naming consistency
             Iterator<Validator<ValidatableT, FailureT>> validations,
             Function1<Throwable, FailureT> throwableMapper) {
         return validations
-                .map(currentValidation -> fireValidation(currentValidation, toBeValidated, throwableMapper));
-    }
-
-    private static <FailureT, ValidatableT> Either<FailureT, ValidatableT> fireValidation(
-            Validator<ValidatableT, FailureT> validation,
-            ValidatableT validatable,
-            Function1<Throwable, FailureT> throwableMapper) {
-        Either<FailureT, ValidatableT> toBeValidatedRight = Either.right(validatable);
-        return fireValidation(validation, toBeValidatedRight, throwableMapper);
+                .map(currentValidation -> fireValidation(currentValidation, toBeValidatedRight, throwableMapper));
     }
 
     private static <FailureT, ValidatableT> Either<FailureT, ValidatableT> fireValidation(
@@ -240,7 +233,7 @@ class Strategies {
                 partition._2.flatMap(identity()).map(duplicate -> Tuple.of(Either.left(failureForDuplicate), duplicate._2));
         Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> nonDuplicates =
                 partition._1.flatMap(identity()).map(tuple2 -> tuple2.map1(Either::right));
-        
+
         return duplicates.appendAll(nonDuplicates).appendAll(invalidValidatables).sortBy(Tuple2::_2).map(Tuple2::_1);
     }
 
