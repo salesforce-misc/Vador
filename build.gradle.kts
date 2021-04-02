@@ -43,6 +43,7 @@ tasks.withType<PublishToMavenRepository>().configureEach {
     }
 }
 
+
 tasks.withType<PublishToMavenLocal>().configureEach {
     doLast {
         logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to MavenLocal.")

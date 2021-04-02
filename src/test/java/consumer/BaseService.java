@@ -26,7 +26,7 @@ public abstract class BaseService<InputRepresentationT> {
     }
 
     public ValidationFailure validateNonBulk() {
-        val parentInputRepresentation = new BaseParent(0, null);
+        val parentInputRepresentation = new BaseParent(0, null, null);
         return RunnerDsl.validateAndFailFast(
                 parentInputRepresentation,
                 ValidationConfig.getServiceValidations(),

@@ -8,8 +8,9 @@ package consumer.config;
 
 
 import consumer.bean.BaseParent;
+import consumer.bean.Parent;
 import consumer.failure.ValidationFailure;
-import consumer.validators.batch.ParentBatchRequestValidator;
+import consumer.validators.batch.BaseParentBatchRequestValidator;
 import consumer.validators.simple.BaseParentRequestValidator;
 import consumer.validators.simple.ParentRequestValidator;
 import io.vavr.collection.List;
@@ -26,8 +27,14 @@ public class ValidationConfig {
     
     public static List<Validator<BaseParent, ValidationFailure>> getServiceValidations() {
         return List.of(
-                ParentBatchRequestValidator.batchValidation1,
-                ParentBatchRequestValidator.batchValidation2);
+                BaseParentBatchRequestValidator.batchValidation1,
+                BaseParentBatchRequestValidator.batchValidation2);
+    }
+
+    public static List<SimpleValidator<Parent, ValidationFailure>> getParentValidations() {
+        return List.of(
+                ParentRequestValidator.validation1,
+                ParentRequestValidator.validation2);
     }
 
     public static List<SimpleValidator<? extends BaseParent, ValidationFailure>> getSimpleServiceValidations() {

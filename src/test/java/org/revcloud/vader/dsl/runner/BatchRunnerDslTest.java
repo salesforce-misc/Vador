@@ -26,8 +26,8 @@ class BatchRunnerDslTest {
 
     @Test
     void failFastPartialFailures() {
-        val validatables = List.of(new BaseParent(0, null), new BaseParent(1, null), new BaseParent(2, null),
-                new BaseParent(3, null), new BaseParent(4, null));
+        val validatables = List.of(new BaseParent(0, null, null), new BaseParent(1, null, null), new BaseParent(2, null, null),
+                new BaseParent(3, null, null), new BaseParent(4, null, null));
         Predicate<Integer> predicateForValidId1 = id -> id >= 2;
         Predicate<Integer> predicateForValidId2 = id -> id <= 2;
         List<Validator<BaseParent, ValidationFailure>> validators = List.of(
@@ -39,15 +39,15 @@ class BatchRunnerDslTest {
         results.forEach(result -> log.info(result.toString()));
         Assertions.assertEquals(results.size(), validatables.size());
         Assertions.assertTrue(results.get(2).isRight());
-        Assertions.assertEquals(results.get(2), Either.right(new BaseParent(2, null)));
+        Assertions.assertEquals(results.get(2), Either.right(new BaseParent(2, null, null)));
         Assertions.assertTrue(results.take(2).forAll(vf -> vf.isLeft() && vf.getLeft() == VALIDATION_FAILURE_1));
         Assertions.assertTrue(results.takeRight(2).forAll(vf -> vf.isLeft() && vf.getLeft() == VALIDATION_FAILURE_2));
     }
 
     @Test
     void failFastPartialFailuresForSimpleValidators() {
-        val validatables = List.of(new BaseParent(0, null), new BaseParent(1, null), new BaseParent(2, null),
-                new BaseParent(3, null), new BaseParent(4, null));
+        val validatables = List.of(new BaseParent(0, null, null), new BaseParent(1, null, null), new BaseParent(2, null, null),
+                new BaseParent(3, null, null), new BaseParent(4, null, null));
         Predicate<Integer> predicateForValidId1 = id -> id >= 2;
         Predicate<Integer> predicateForValidId2 = id -> id <= 2;
         List<SimpleValidator<BaseParent, ValidationFailure>> simpleValidators = List.of(
@@ -58,15 +58,15 @@ class BatchRunnerDslTest {
         val result = BatchRunnerDsl.validateAndFailFast(validatables, simpleValidators, null, NONE, throwable -> null);
         Assertions.assertEquals(result.size(), validatables.size());
         Assertions.assertTrue(result.get(2).isRight());
-        Assertions.assertEquals(result.get(2), Either.right(new BaseParent(2, null)));
+        Assertions.assertEquals(result.get(2), Either.right(new BaseParent(2, null, null)));
         Assertions.assertTrue(result.take(2).forAll(vf -> vf.isLeft() && vf.getLeft() == VALIDATION_FAILURE_1));
         Assertions.assertTrue(result.takeRight(2).forAll(vf -> vf.isLeft() && vf.getLeft() == VALIDATION_FAILURE_2));
     }
 
     @Test
     void errorAccumulateForSimpleValidators() {
-        val validatables = List.of(new BaseParent(0, null), new BaseParent(1, null), new BaseParent(2, null),
-                new BaseParent(3, null), new BaseParent(4, null));
+        val validatables = List.of(new BaseParent(0, null, null), new BaseParent(1, null, null), new BaseParent(2, null, null),
+                new BaseParent(3, null, null), new BaseParent(4, null, null));
         Predicate<Integer> predicateForValidId1 = id -> id >= 2;
         Predicate<Integer> predicateForValidId2 = id -> id <= 2;
         Predicate<Integer> predicateForValidId3 = id -> id >= 1;
@@ -82,15 +82,15 @@ class BatchRunnerDslTest {
         Assertions.assertTrue(result.forAll(r -> r.size() == simpleValidators.size()));
 
         Assertions.assertTrue(result.get(2).forAll(Either::isRight));
-        Assertions.assertTrue(result.get(2).forAll(resultPerValidation -> Either.right(new BaseParent(2, null)).equals(resultPerValidation)));
+        Assertions.assertTrue(result.get(2).forAll(resultPerValidation -> Either.right(new BaseParent(2, null, null)).equals(resultPerValidation)));
 
         Assertions.assertTrue(result.take(2).forAll(vf -> vf.get(1).isLeft() && vf.get(1).getLeft() == VALIDATION_FAILURE_1));
         result.take(2).forEachWithIndex((vf, index) -> 
-                Assertions.assertTrue(vf.get(2).isRight() && Either.right(new BaseParent(index, null)).equals(vf.get(2))));
+                Assertions.assertTrue(vf.get(2).isRight() && Either.right(new BaseParent(index, null, null)).equals(vf.get(2))));
 
         Assertions.assertTrue(result.takeRight(2).forAll(vf -> vf.get(2).isLeft() && vf.get(2).getLeft() == VALIDATION_FAILURE_2));
         result.takeRight(2).forEachWithIndex((vf, index) ->
-                Assertions.assertTrue(vf.get(1).isRight() && Either.right(new BaseParent(validatables.size() - 2 + index, null)).equals(vf.get(1))));
+                Assertions.assertTrue(vf.get(1).isRight() && Either.right(new BaseParent(validatables.size() - 2 + index, null, null)).equals(vf.get(1))));
         
         Assertions.assertEquals(result.get(0).get(3), Either.left(VALIDATION_FAILURE_3));
     }

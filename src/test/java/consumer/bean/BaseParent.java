@@ -27,6 +27,7 @@ import lombok.ToString;
 @Getter
 public class BaseParent {
     final int id;
+    final ID sfId;
     final Child child;
     
     Integer requiredField1;

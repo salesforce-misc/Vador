@@ -18,6 +18,7 @@ import io.vavr.control.Either;
 import io.vavr.control.Try;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.revcloud.vader.dsl.runner.config.BaseValidationConfig;
 import org.revcloud.vader.dsl.runner.config.BatchValidationConfig;
@@ -32,12 +33,13 @@ import static io.vavr.Function1.identity;
 
 /**
  * These Strategies compose multiple validations and return a single function which can be applied on the Validatable.
- *
+ * <p>
  * TODO: Cleanup this class, this is too clumsy
- * 
+ *
  * @author gakshintala
  * @since 228
  */
+@Slf4j
 @UtilityClass
 class Strategies {
 
@@ -51,17 +53,18 @@ class Strategies {
      * @return Composed Fail-Fast Strategy
      */
     static <FailureT, ValidatableT> FailFastStrategy<ValidatableT, FailureT> failFastStrategy(
-            @NonNull List<Validator<ValidatableT, FailureT>> validations, // TODO: 26/03/21 validators vs validations naming consistency 
+            @NonNull List<Validator<ValidatableT, FailureT>> validations, // TODO: 26/03/21 validators vs validations naming consistency
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper) {
         return toBeValidated -> {
             if (toBeValidated == null) return Either.left(invalidValidatable);
+            
             return fireValidations(toBeValidated, validations.iterator(), throwableMapper)
                     .find(Either::isLeft)
-                    .getOrElse(Either.right(toBeValidated)); // TODO: 26/03/21 do either wrapper here and not applyValidations, so that it can be reused here 
+                    .getOrElse(Either.right(toBeValidated)); // TODO: 26/03/21 do either-wrapper here and not in applyValidations, so that it can be reused here
         };
     }
-    
+
     static <FailureT, ValidatableT> FailFastStrategy<ValidatableT, FailureT> failFastStrategy(
             @NonNull List<Validator<ValidatableT, FailureT>> validations,
             FailureT invalidValidatable,
@@ -115,7 +118,7 @@ class Strategies {
     }
 
     private static <FailureT, ValidatableT> Iterator<Either<FailureT, ValidatableT>> fireValidations(
-            ValidatableT toBeValidated, // TODO: 28/03/21 toBeValidated vs Validatable naming consistency 
+            ValidatableT toBeValidated, // TODO: 28/03/21 toBeValidated vs Validatable naming consistency
             Iterator<Validator<ValidatableT, FailureT>> validations,
             Function1<Throwable, FailureT> throwableMapper) {
         return validations
@@ -199,8 +202,8 @@ class Strategies {
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper,
             BatchValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return validatables -> { 
-            final Seq<Either<FailureT, ValidatableT>> validatablesEither = 
+        return validatables -> {
+            final Seq<Either<FailureT, ValidatableT>> validatablesEither =
                     filterInvalidatablesAndDuplicates(validatables, invalidValidatable, validationConfig);
             return validatablesEither.map(validatableEither -> Iterator.concat(toValidations(validationConfig), validators).iterator()
                     .map(currentValidation -> fireValidation(currentValidation, validatableEither, throwableMapper))
@@ -213,13 +216,20 @@ class Strategies {
             List<ValidatableT> validatables,
             FailureT invalidValidatable,
             BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
+        if (validatables.isEmpty()) {
+            return List.empty();
+        } else if (validatables.size() == 1) {
+            val validatable = validatables.get(0);
+            return validatable == null ? List.of(Either.left(invalidValidatable)) : List.of(Either.right(validatables.get(0)));
+        }
         final var filterDuplicatesConfig = batchValidationConfig.getFilterDuplicates();
-        val keyMapperForDuplicates = filterDuplicatesConfig == null 
+        val keyMapperForDuplicates = filterDuplicatesConfig == null
                 ? Function1.<ValidatableT>identity()
                 : filterDuplicatesConfig._2;
         val groups = validatables.zipWithIndex()
                 .groupBy(tuple2 -> tuple2._1 == null ? null : keyMapperForDuplicates.apply(tuple2._1));
-        
+
+        groups.forEach(group -> log.info(group.toString()));
         Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> invalidValidatables = groups.get(null)
                 .map(nullValidatables -> invalidate(nullValidatables, invalidValidatable))
                 .getOrElse(List.empty());
@@ -230,7 +240,7 @@ class Strategies {
                 partition._2.flatMap(identity()).map(duplicate -> Tuple.of(Either.left(failureForDuplicate), duplicate._2));
         Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> nonDuplicates =
                 partition._1.flatMap(identity()).map(tuple2 -> tuple2.map1(Either::right));
-
+        
         return duplicates.appendAll(nonDuplicates).appendAll(invalidValidatables).sortBy(Tuple2::_2).map(Tuple2::_1);
     }
 

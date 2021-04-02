@@ -27,7 +27,7 @@ class RunnerDslTest {
         val result = validateAndFailFast(
                 NONE,
                 NOTHING_TO_VALIDATE,
-                new BaseParent(0, null),
+                new BaseParent(0, null, null),
                 UNKNOWN_EXCEPTION
         );
         Assertions.assertSame(UNKNOWN_EXCEPTION, result);
@@ -56,7 +56,7 @@ class RunnerDslTest {
 
     @Test
     void failFastWithFirstFailureForSimpleValidators() {
-        final var validatable = new BaseParent(0, null);
+        final var validatable = new BaseParent(0, null, null);
         val result = validateAndFailFastForSimpleValidators(
                 NONE,
                 NOTHING_TO_VALIDATE,
@@ -101,7 +101,7 @@ class RunnerDslTest {
                                 Tuple.of(BaseParent::getSfId1, FIELD_INTEGRITY_EXCEPTION),
                                 Tuple.of(BaseParent::getSfId2, FIELD_INTEGRITY_EXCEPTION));
         
-        final var validatableWithBlankReqField = new BaseParent(0, null, 1, "", null, null, null);
+        final var validatableWithBlankReqField = new BaseParent(0, null, null, 1, "", null, null, null);
         val result1 = validateAndFailFastForSimpleValidatorsWithConfig(
                 NONE,
                 NOTHING_TO_VALIDATE,
@@ -111,7 +111,7 @@ class RunnerDslTest {
         );
         Assertions.assertSame(REQUIRED_FIELD_MISSING, result1);
 
-        final var validatableWithNullReqField = new BaseParent(0, null, 1, "str", null, null, null);
+        final var validatableWithNullReqField = new BaseParent(0, null, null, 1, "str", null, null, null);
         val result2 = validateAndFailFastForSimpleValidatorsWithConfig(
                 NONE,
                 NOTHING_TO_VALIDATE,
@@ -134,7 +134,7 @@ class RunnerDslTest {
                                 Tuple.of(BaseParent::getSfId1, FIELD_INTEGRITY_EXCEPTION),
                                 Tuple.of(BaseParent::getSfId2, FIELD_INTEGRITY_EXCEPTION));
 
-        final var validatableWithInvalidSfId = new BaseParent(0, null, 1, "str", "str", new ID("1ttxx00000000hZAAQ"), new ID("invalidSfId"));
+        final var validatableWithInvalidSfId = new BaseParent(0, null, null, 1, "str", "str", new ID("1ttxx00000000hZAAQ"), new ID("invalidSfId"));
         val result1 = validateAndFailFastForSimpleValidatorsWithConfig(
                 NONE,
                 NOTHING_TO_VALIDATE,

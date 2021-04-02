@@ -27,7 +27,7 @@ public class ParentRequestValidator {
                 }
             };
 
-    static final SimpleValidator<Parent, ValidationFailure> validation2 =
+    public static final SimpleValidator<Parent, ValidationFailure> validation2 =
             parent -> {
                 if (parent.getChild() == null) {
                     return null;

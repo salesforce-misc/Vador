@@ -22,7 +22,7 @@ class SimpleParentChildLiftDslTest {
                         ValidationFailure.INVALID_PARENT,
                         ValidationFailure.INVALID_CHILD
                 );
-        assertSame(ValidationFailure.INVALID_CHILD, liftedParentValidation.apply(new BaseParent(0, null)));
+        assertSame(ValidationFailure.INVALID_CHILD, liftedParentValidation.apply(new BaseParent(0, null, null)));
     }
 
     @Test
@@ -48,7 +48,7 @@ class SimpleParentChildLiftDslTest {
                         ValidationFailure.INVALID_PARENT,
                         ValidationFailure.INVALID_CHILD
                 );
-        assertSame(ValidationFailure.NONE, liftedParentValidation.apply(new BaseParent(0, new Child(0))));
+        assertSame(ValidationFailure.NONE, liftedParentValidation.apply(new BaseParent(0, null, new Child(0))));
     }
 
     @Test
@@ -63,7 +63,7 @@ class SimpleParentChildLiftDslTest {
                         BaseParent::getChild,
                         ValidationFailure.INVALID_PARENT
                 );
-        final BaseParent parentWithNullChild = new BaseParent(0, null);
+        final BaseParent parentWithNullChild = new BaseParent(0, null, null);
         assertThrows(NullPointerException.class, () -> liftedParentValidation.apply(parentWithNullChild));
     }
 
@@ -94,7 +94,7 @@ class SimpleParentChildLiftDslTest {
                         BaseParent::getChild,
                         ValidationFailure.INVALID_PARENT
                 );
-        val validatable = new BaseParent(0, new Child(-1));
+        val validatable = new BaseParent(0, null, new Child(-1));
         assertSame(ValidationFailure.VALIDATION_FAILURE_1,liftedParentValidation.apply(validatable));
     }
 

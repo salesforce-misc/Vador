@@ -89,7 +89,7 @@ public class BatchRunnerDsl {
      * @return This list is a bag of results for both Valids and Invalids.
      * Valids are represented by right state of Either and Invalids with left (holding Validation Failures).
      */
-    // TODO: 25/03/21 rename this method
+    // TODO: 25/03/21 rename this method and work on renaming other methods
     public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFast(
             List<ValidatableT> validatables,
             List<SimpleValidator<ValidatableT, FailureT>> validators,

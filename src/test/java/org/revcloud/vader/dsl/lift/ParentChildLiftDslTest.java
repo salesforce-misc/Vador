@@ -16,7 +16,7 @@ class ParentChildLiftDslTest {
         val failure = Either.left(ValidationFailure.VALIDATION_FAILURE_1);
         Validator<Child, ValidationFailure> childValidator = child -> failure;
         val liftedParentValidator = ParentChildLiftDsl.liftToParentValidationType(childValidator, BaseParent::getChild, null, null);
-        val toBeValidated = new BaseParent(0, new Child(0));
+        val toBeValidated = new BaseParent(0, null, new Child(0));
         Assertions.assertSame(failure, liftedParentValidator.apply(Either.right(toBeValidated)));
     }
 
@@ -31,7 +31,7 @@ class ParentChildLiftDslTest {
     void liftToParentValidationTypeInvalidChild() {
         Validator<Child, ValidationFailure> childValidator = child -> Either.left(ValidationFailure.VALIDATION_FAILURE_1);
         val liftedParentValidator = ParentChildLiftDsl.liftToParentValidationType(childValidator, BaseParent::getChild, null, ValidationFailure.INVALID_CHILD);
-        Assertions.assertEquals(Either.left(ValidationFailure.INVALID_CHILD), liftedParentValidator.apply(Either.right(new BaseParent(0, null))));
+        Assertions.assertEquals(Either.left(ValidationFailure.INVALID_CHILD), liftedParentValidator.apply(Either.right(new BaseParent(0, null, null))));
     }
 
     @Test
@@ -40,7 +40,7 @@ class ParentChildLiftDslTest {
                 .flatMap(c -> c.getId() >= 0 ? child : Either.left(ValidationFailure.VALIDATION_FAILURE_1));
         val liftedParentValidator = ParentChildLiftDsl.liftToParentValidationType(childValidator, BaseParent::getChild, null);
         final Child toBeValidatedChild = new Child(0);
-        val toBeValidated = new BaseParent(0, toBeValidatedChild);
+        val toBeValidated = new BaseParent(0, null, toBeValidatedChild);
         Assertions.assertEquals(Either.right(toBeValidatedChild), liftedParentValidator.apply(Either.right(toBeValidated)));
     }
     
@@ -50,7 +50,7 @@ class ParentChildLiftDslTest {
         Validator<Child, ValidationFailure> childValidator = child -> child
                 .flatMap(c -> c.getId() >= 0 ? child : failure);
         val liftedParentValidator = ParentChildLiftDsl.liftToParentValidationType(childValidator, BaseParent::getChild, null);
-        val toBeValidated = new BaseParent(0, new Child(-1));
+        val toBeValidated = new BaseParent(0, null, new Child(-1));
         Assertions.assertSame(failure, liftedParentValidator.apply(Either.right(toBeValidated)));
     }
 
@@ -66,7 +66,7 @@ class ParentChildLiftDslTest {
         Validator<Child, ValidationFailure> childValidator = child -> child
                 .map(c -> c.getId() >= 0 ? ValidationFailure.NONE : ValidationFailure.VALIDATION_FAILURE_1);
         val liftedParentValidator = ParentChildLiftDsl.liftToParentValidationType(childValidator, BaseParent::getChild, null);
-        val validated = Either.<ValidationFailure, BaseParent>right(new BaseParent(0, null));
+        val validated = Either.<ValidationFailure, BaseParent>right(new BaseParent(0, null, null));
         Assertions.assertThrows(NullPointerException.class, () -> liftedParentValidator.apply(validated));
     }
 
