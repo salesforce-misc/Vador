@@ -10,9 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.dsl.runner.config.BatchValidationConfig;
 
-import java.util.Collections;
-import java.util.function.Function;
-
 import static consumer.failure.ValidationFailure.DUPLICATE_ITEM;
 import static consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +26,7 @@ class StrategiesTest {
         
         val batchValidationConfig = BatchValidationConfig.toValidate(Parent.class, ValidationFailure.class)
                 .failDuplicatesWith(DUPLICATE_ITEM, parent -> parent.getSfId().toString());
-        val results = Strategies.filterInvalidatablesAndDuplicates(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
+        val results = Utils.filterInvalidatablesAndDuplicates(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
         
         val failedInvalids = results.take(2);
         Assertions.assertTrue(failedInvalids.forAll(Either::isLeft) && 

@@ -1,7 +1,10 @@
 plugins {
+    kotlin("jvm")
     `java-library`
     `maven-publish`
-    id("io.freefair.lombok") version "5.3.0"
+    id("io.freefair.lombok") version "5.3.3.3"
+    id("io.gitlab.arturbosch.detekt") version "1.16.0"
+    id("com.adarshr.test-logger") version "3.0.0"
 }
 
 java {
@@ -14,15 +17,17 @@ repositories {
 }
 
 dependencies {
-    implementation("io.vavr:vavr:0.10.3")
+    api("io.vavr:vavr:0.10.3")
     implementation("org.slf4j:slf4j-api:2.0.0-alpha1")
     implementation("com.force.api:swag:0.3.9")
+    implementation("io.vavr:vavr-kotlin:0.10.2")
 
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j18-impl:2.14.1")
 
     testImplementation(platform("org.junit:junit-bom:5.8.0-M1"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("org.assertj:assertj-vavr:0.4.1")
 }
 
 group = "com.salesforce.ccspayments"

@@ -25,7 +25,7 @@ public final class ValidationConfig<ValidatableT, FailureT> extends BaseValidati
 
     @SafeVarargs
     public final ValidationConfig<ValidatableT, FailureT> shouldHaveValidSFIds(Tuple2<Function1<ValidatableT, ID>, FailureT>... sfIdFieldMappers) {
-        this.sfIdFieldMappers = this.sfIdFieldMappers.appendAll(List.of(sfIdFieldMappers));
+        this.mandatorySfIdFieldMappers = this.mandatorySfIdFieldMappers.appendAll(List.of(sfIdFieldMappers));
         return this;
     }
 }

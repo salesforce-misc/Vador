@@ -10,13 +10,13 @@ import lombok.val;
 import org.revcloud.vader.dsl.lift.LiftDsl;
 import org.revcloud.vader.dsl.runner.config.BatchValidationConfig;
 import org.revcloud.vader.dsl.runner.config.ValidationConfig;
-import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.SimpleValidator;
+import org.revcloud.vader.types.validators.Validator;
 
 /**
  * DSL for different ways to run validations against a List of validatables (Batch).
  *
- * TODO: Rethink about splitting of Strategies and DSL methods. Is there any use?
+ * TODO: Rethink about splitting of Accumulation and DSL methods. Is there any use?
  * @author gakshintala
  * @since 228
  */
@@ -40,7 +40,7 @@ public class BatchRunnerDsl {
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper) {
         return validatables.iterator()
-                .map(Strategies.failFastStrategy(validators, invalidValidatable, throwableMapper))
+                .map(FailFast.failFastStrategy(validators, invalidValidatable, throwableMapper))
                 .toList();
     }
 
@@ -51,7 +51,7 @@ public class BatchRunnerDsl {
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
         return validatables.iterator()
-                .map(Strategies.failFastStrategy(validators, invalidValidatable, throwableMapper, validationConfig))
+                .map(FailFast.failFastStrategy(validators, invalidValidatable, throwableMapper, validationConfig))
                 .toList();
     }
 
@@ -71,7 +71,7 @@ public class BatchRunnerDsl {
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper) {
         return validatables.iterator()
-                .map(Strategies.accumulationStrategy(validators, invalidValidatable, throwableMapper))
+                .map(Accumulation.accumulationStrategy(validators, invalidValidatable, throwableMapper))
                 .toList();
     }
 
@@ -106,7 +106,7 @@ public class BatchRunnerDsl {
             FailureT none,
             Function1<Throwable, FailureT> throwableMapper) {
         return validatables.iterator()
-                .map(Strategies.failFastStrategy(validators, invalidValidatable, none, throwableMapper))
+                .map(FailFastSimple.failFastStrategy(validators, invalidValidatable, none, throwableMapper))
                 .toList();
     }
 
@@ -118,7 +118,7 @@ public class BatchRunnerDsl {
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
         return validatables.iterator()
-                .map(Strategies.failFastStrategy(validators, invalidValidatable, none, throwableMapper, validationConfig))
+                .map(FailFastSimple.failFastStrategy(validators, invalidValidatable, none, throwableMapper, validationConfig))
                 .toList();
     }
 
@@ -139,7 +139,7 @@ public class BatchRunnerDsl {
             FailureT none,
             Function1<Throwable, FailureT> throwableMapper,
             BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
-        return Strategies.failFastStrategyForBatch(LiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, batchValidationConfig)
+        return FailFast.failFastStrategyForBatch(LiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, batchValidationConfig)
                 .apply(validatables);
     }
 
@@ -151,7 +151,7 @@ public class BatchRunnerDsl {
             Function1<Throwable, FailureT> throwableMapper,
             BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig,
             Function1<ValidatableT, PairT> pairForInvalidMapper) {
-        val validationResults = Strategies.failFastStrategyForBatch(LiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, batchValidationConfig)
+        val validationResults = FailFast.failFastStrategyForBatch(LiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, batchValidationConfig)
                 .apply(validatables);
         return validationResults.zipWith(validatables, 
                 (result, validatable) -> result.mapLeft(failure -> Tuple.of(pairForInvalidMapper.apply(validatable), failure)));

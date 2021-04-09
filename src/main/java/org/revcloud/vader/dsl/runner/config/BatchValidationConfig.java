@@ -28,7 +28,7 @@ public final class BatchValidationConfig<ValidatableT, FailureT> extends BaseVal
 
     @SafeVarargs
     public final BatchValidationConfig<ValidatableT, FailureT> shouldHaveValidSFIds(Tuple2<Function1<ValidatableT, ID>, FailureT>... sfIdFieldMappers) {
-        this.sfIdFieldMappers = this.sfIdFieldMappers.appendAll(List.of(sfIdFieldMappers));
+        this.mandatorySfIdFieldMappers = this.mandatorySfIdFieldMappers.appendAll(List.of(sfIdFieldMappers));
         return this;
     }
     

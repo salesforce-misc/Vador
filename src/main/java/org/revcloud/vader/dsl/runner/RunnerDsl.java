@@ -34,7 +34,7 @@ public class RunnerDsl {
             FailureT invalidValidatable,
             FailureT none,
             Function1<Throwable, FailureT> throwableMapper) {
-        return Strategies.failFastStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
+        return FailFast.failFastStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
                 .fold(Function1.identity(), ignore -> none);
     }
 
@@ -44,7 +44,7 @@ public class RunnerDsl {
             FailureT none,
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return Strategies.failFastStrategy(validators, invalidValidatable, throwableMapper, validationConfig).apply(validatable)
+        return FailFast.failFastStrategy(validators, invalidValidatable, throwableMapper, validationConfig).apply(validatable)
                 .fold(Function1.identity(), ignore -> none);
     }
 
@@ -63,7 +63,7 @@ public class RunnerDsl {
     public static <FailureT, ValidatableT> List<FailureT> validateAndAccumulateErrors(
             ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
-        final var results = Strategies.accumulationStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
+        final var results = Accumulation.accumulationStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
                 .map(validationResult -> validationResult.fold(Function1.identity(), ignore -> none));
         return results.forAll(result -> ((result == none) || result.equals(none))) ? List.empty(): results;
     }
@@ -85,7 +85,7 @@ public class RunnerDsl {
             FailureT invalidValidatable,
             FailureT none,
             Function1<Throwable, FailureT> throwableMapper) {
-        return Strategies.failFastStrategy(validators, invalidValidatable, none, throwableMapper).apply(validatable);
+        return FailFastSimple.failFastStrategy(validators, invalidValidatable, none, throwableMapper).apply(validatable);
     }
 
     public static <FailureT, ValidatableT> FailureT validateAndFailFastForSimpleValidators(
@@ -95,7 +95,7 @@ public class RunnerDsl {
             FailureT none,
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return Strategies.failFastStrategy(validators, invalidValidatable, none, throwableMapper, validationConfig).apply(validatable);
+        return FailFastSimple.failFastStrategy(validators, invalidValidatable, none, throwableMapper, validationConfig).apply(validatable);
     }
 
     public static <FailureT, ValidatableT> FailureT validateAndFailFastForSimpleValidatorsForHeader(
@@ -105,7 +105,7 @@ public class RunnerDsl {
             FailureT none,
             Function1<Throwable, FailureT> throwableMapper,
             HeaderValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return Strategies.failFastStrategyForHeader(validators, invalidValidatable, none, throwableMapper, validationConfig).apply(validatable);
+        return FailFastSimple.failFastStrategyForHeader(validators, invalidValidatable, none, throwableMapper, validationConfig).apply(validatable);
     }
 
     /**
