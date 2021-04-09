@@ -14,7 +14,7 @@ class LiftDslTest {
     void liftSimpleForFailure() {
         SimpleValidator<BaseParent, ValidationFailure> simpleValidator = parent -> ValidationFailure.VALIDATION_FAILURE_1;
         val liftedValidator = LiftDsl.liftSimple(simpleValidator, ValidationFailure.NONE);
-        Assertions.assertEquals(liftedValidator.apply(Either.right(new BaseParent(0, null, null))),
+        Assertions.assertEquals(liftedValidator.unchecked().apply(Either.right(new BaseParent(0, null, null))),
                 Either.left(ValidationFailure.VALIDATION_FAILURE_1));
     }
 
@@ -23,7 +23,7 @@ class LiftDslTest {
         SimpleValidator<BaseParent, ValidationFailure> simpleValidator = parent -> ValidationFailure.NONE;
         val liftedValidator = LiftDsl.liftSimple(simpleValidator, ValidationFailure.NONE);
         final BaseParent toBeValidated = new BaseParent(0, null, null);
-        Assertions.assertEquals(liftedValidator.apply(Either.right(toBeValidated)),
+        Assertions.assertEquals(liftedValidator.unchecked().apply(Either.right(toBeValidated)),
                 Either.right(toBeValidated));
     }
 }

@@ -1,4 +1,4 @@
-package org.revcloud.vader.dsl.runner.config;
+package org.revcloud.vader.config;
 
 import com.force.swag.id.ID;
 import io.vavr.Function1;
@@ -27,7 +27,7 @@ public final class BatchValidationConfig<ValidatableT, FailureT> extends BaseVal
     }
 
     @SafeVarargs
-    public final BatchValidationConfig<ValidatableT, FailureT> shouldHaveValidSFIds(Tuple2<Function1<ValidatableT, ID>, FailureT>... sfIdFieldMappers) {
+    public final BatchValidationConfig<ValidatableT, FailureT> shouldHaveMandatoryValidSFIds(Tuple2<Function1<ValidatableT, ID>, FailureT>... sfIdFieldMappers) {
         this.mandatorySfIdFieldMappers = this.mandatorySfIdFieldMappers.appendAll(List.of(sfIdFieldMappers));
         return this;
     }

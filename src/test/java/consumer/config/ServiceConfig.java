@@ -14,7 +14,6 @@ import consumer.failure.ValidationFailure;
 import io.vavr.collection.List;
 import org.revcloud.vader.types.validators.Validator;
 
-
 /**
  * gakshintala created on 4/13/20.
  */

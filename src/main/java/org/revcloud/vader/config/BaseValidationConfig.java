@@ -1,4 +1,4 @@
-package org.revcloud.vader.dsl.runner.config;
+package org.revcloud.vader.config;
 
 import com.force.swag.id.ID;
 import io.vavr.Function1;

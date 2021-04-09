@@ -10,7 +10,7 @@ import io.vavr.control.Either;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.dsl.runner.config.ValidationConfig;
+import org.revcloud.vader.config.ValidationConfig;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
@@ -97,7 +97,7 @@ class RunnerDslTest {
                                 Tuple.of(BaseParent::getRequiredField1, REQUIRED_FIELD_MISSING),
                                 Tuple.of(BaseParent::getRequiredField2, REQUIRED_FIELD_MISSING),
                                 Tuple.of(BaseParent::getRequiredField3, REQUIRED_FIELD_MISSING))
-                        .shouldHaveValidSFIds(
+                        .shouldHaveMandatoryValidSFIds(
                                 Tuple.of(BaseParent::getSfId1, FIELD_INTEGRITY_EXCEPTION),
                                 Tuple.of(BaseParent::getSfId2, FIELD_INTEGRITY_EXCEPTION));
         
@@ -130,7 +130,7 @@ class RunnerDslTest {
                                 Tuple.of(BaseParent::getRequiredField1, REQUIRED_FIELD_MISSING),
                                 Tuple.of(BaseParent::getRequiredField2, REQUIRED_FIELD_MISSING),
                                 Tuple.of(BaseParent::getRequiredField3, REQUIRED_FIELD_MISSING))
-                        .shouldHaveValidSFIds(
+                        .shouldHaveMandatoryValidSFIds(
                                 Tuple.of(BaseParent::getSfId1, FIELD_INTEGRITY_EXCEPTION),
                                 Tuple.of(BaseParent::getSfId2, FIELD_INTEGRITY_EXCEPTION));
 

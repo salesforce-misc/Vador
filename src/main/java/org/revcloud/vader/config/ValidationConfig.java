@@ -1,4 +1,4 @@
-package org.revcloud.vader.dsl.runner.config;
+package org.revcloud.vader.config;
 
 import com.force.swag.id.ID;
 import io.vavr.Function1;
@@ -24,8 +24,14 @@ public final class ValidationConfig<ValidatableT, FailureT> extends BaseValidati
     }
 
     @SafeVarargs
-    public final ValidationConfig<ValidatableT, FailureT> shouldHaveValidSFIds(Tuple2<Function1<ValidatableT, ID>, FailureT>... sfIdFieldMappers) {
+    public final ValidationConfig<ValidatableT, FailureT> shouldHaveMandatoryValidSFIds(Tuple2<Function1<ValidatableT, ID>, FailureT>... sfIdFieldMappers) {
         this.mandatorySfIdFieldMappers = this.mandatorySfIdFieldMappers.appendAll(List.of(sfIdFieldMappers));
+        return this;
+    }
+    
+    @SafeVarargs
+    public final ValidationConfig<ValidatableT, FailureT> withNonMandatorySFIds(Tuple2<Function1<ValidatableT, ID>, FailureT>... sfIdFieldMappers) {
+        this.nonMandatorySfIdFieldMappers = this.nonMandatorySfIdFieldMappers.appendAll(List.of(sfIdFieldMappers));
         return this;
     }
 }

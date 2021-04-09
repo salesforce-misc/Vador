@@ -28,7 +28,7 @@ public class LiftDsl {
     public static <FailureT, ValidatableT> Validator<ValidatableT, FailureT> liftSimple(
             SimpleValidator<ValidatableT, FailureT> toBeLifted, FailureT none) {
         return validatable -> validatable.flatMap(toBeValidated -> {
-            val result = toBeLifted.apply(toBeValidated);
+            val result = toBeLifted.unchecked().apply(toBeValidated);
             return ((result == none) || result.equals(none)) ? validatable : Either.left(result);
         });
     }

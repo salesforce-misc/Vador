@@ -9,8 +9,8 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.revcloud.vader.dsl.runner.config.BatchValidationConfig;
-import org.revcloud.vader.dsl.runner.config.ValidationConfig;
+import org.revcloud.vader.config.BatchValidationConfig;
+import org.revcloud.vader.config.ValidationConfig;
 import org.revcloud.vader.types.validators.Validator;
 
 @Slf4j

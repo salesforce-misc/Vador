@@ -4,8 +4,8 @@ import io.vavr.Function1;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
 import org.revcloud.vader.dsl.lift.LiftDsl;
-import org.revcloud.vader.dsl.runner.config.HeaderValidationConfig;
-import org.revcloud.vader.dsl.runner.config.ValidationConfig;
+import org.revcloud.vader.config.HeaderValidationConfig;
+import org.revcloud.vader.config.ValidationConfig;
 import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.SimpleValidator;
 

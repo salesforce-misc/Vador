@@ -10,45 +10,45 @@ import org.revcloud.vader.types.validators.SimpleValidator;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class SimpleParentChildLiftDslTest {
+class SimpleAggregationLiftDslTest {
 
     @Test
     void liftToParentValidationTypeWithNullChild() {
         SimpleValidator<Child, ValidationFailure> childValidator = child -> ValidationFailure.NONE;
         val liftedParentValidation =
-                SimpleParentChildLiftDsl.liftToParentValidationType(
+                AggregationLiftSimpleDsl.liftToParentValidationType(
                         childValidator,
                         BaseParent::getChild,
                         ValidationFailure.INVALID_PARENT,
                         ValidationFailure.INVALID_CHILD
                 );
-        assertSame(ValidationFailure.INVALID_CHILD, liftedParentValidation.apply(new BaseParent(0, null, null)));
+        assertSame(ValidationFailure.INVALID_CHILD, liftedParentValidation.unchecked().apply(new BaseParent(0, null, null)));
     }
 
     @Test
     void liftToParentValidationTypeWithNullParent() {
         SimpleValidator<Child, ValidationFailure> childValidator = child -> ValidationFailure.NONE;
         val liftedParentValidation =
-                SimpleParentChildLiftDsl.liftToParentValidationType(
+                AggregationLiftSimpleDsl.liftToParentValidationType(
                         childValidator,
                         BaseParent::getChild,
                         ValidationFailure.INVALID_PARENT,
                         ValidationFailure.INVALID_CHILD
                 );
-        assertSame(ValidationFailure.INVALID_PARENT, liftedParentValidation.apply(null));
+        assertSame(ValidationFailure.INVALID_PARENT, liftedParentValidation.unchecked().apply(null));
     }
 
     @Test
     void liftToParentValidationType() {
         SimpleValidator<Child, ValidationFailure> childValidator = child -> ValidationFailure.NONE;
         val liftedParentValidation =
-                SimpleParentChildLiftDsl.liftToParentValidationType(
+                AggregationLiftSimpleDsl.liftToParentValidationType(
                         childValidator,
                         BaseParent::getChild,
                         ValidationFailure.INVALID_PARENT,
                         ValidationFailure.INVALID_CHILD
                 );
-        assertSame(ValidationFailure.NONE, liftedParentValidation.apply(new BaseParent(0, null, new Child(0))));
+        assertSame(ValidationFailure.NONE, liftedParentValidation.unchecked().apply(new BaseParent(0, null, new Child(0))));
     }
 
     @Test
@@ -58,7 +58,7 @@ class SimpleParentChildLiftDslTest {
             return ValidationFailure.VALIDATION_FAILURE_1;
         };
         val liftedParentValidation =
-                SimpleParentChildLiftDsl.liftToParentValidationType(
+                AggregationLiftSimpleDsl.liftToParentValidationType(
                         childValidator,
                         BaseParent::getChild,
                         ValidationFailure.INVALID_PARENT
@@ -74,12 +74,12 @@ class SimpleParentChildLiftDslTest {
             return ValidationFailure.VALIDATION_FAILURE_1;
         };
         val liftedParentValidation =
-                SimpleParentChildLiftDsl.liftToParentValidationType(
+                AggregationLiftSimpleDsl.liftToParentValidationType(
                         childValidator,
                         BaseParent::getChild,
                         ValidationFailure.INVALID_PARENT
                 );
-        assertSame(ValidationFailure.INVALID_PARENT,liftedParentValidation.apply(null));
+        assertSame(ValidationFailure.INVALID_PARENT,liftedParentValidation.unchecked().apply(null));
     }
     
     @Test
@@ -89,13 +89,13 @@ class SimpleParentChildLiftDslTest {
             return ValidationFailure.VALIDATION_FAILURE_1;
         };
         val liftedParentValidation =
-                SimpleParentChildLiftDsl.liftToParentValidationType(
+                AggregationLiftSimpleDsl.liftToParentValidationType(
                         childValidator,
                         BaseParent::getChild,
                         ValidationFailure.INVALID_PARENT
                 );
         val validatable = new BaseParent(0, null, new Child(-1));
-        assertSame(ValidationFailure.VALIDATION_FAILURE_1,liftedParentValidation.apply(validatable));
+        assertSame(ValidationFailure.VALIDATION_FAILURE_1,liftedParentValidation.unchecked().apply(validatable));
     }
 
 }

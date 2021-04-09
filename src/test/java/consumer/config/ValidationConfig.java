@@ -8,12 +8,15 @@ package consumer.config;
 
 
 import consumer.bean.BaseParent;
+import consumer.bean.Child;
 import consumer.bean.Parent;
 import consumer.failure.ValidationFailure;
 import consumer.validators.batch.BaseParentBatchRequestValidator;
+import consumer.validators.batch.ParentBatchRequestValidator;
 import consumer.validators.simple.BaseParentRequestValidator;
 import consumer.validators.simple.ParentRequestValidator;
 import io.vavr.collection.List;
+import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
@@ -31,7 +34,11 @@ public class ValidationConfig {
                 BaseParentBatchRequestValidator.batchValidation2);
     }
 
-    public static List<SimpleValidator<Parent, ValidationFailure>> getParentValidations() {
+    public static List<Validator<Parent, ValidationFailure>> getParentValidations() {
+        return null;   
+    }
+
+    public static List<SimpleValidator<Parent, ValidationFailure>> getParentSimpleValidations() {
         return List.of(
                 ParentRequestValidator.validation1,
                 ParentRequestValidator.validation2);

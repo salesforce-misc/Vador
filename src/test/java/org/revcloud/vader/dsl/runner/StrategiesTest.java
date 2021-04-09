@@ -8,7 +8,7 @@ import io.vavr.control.Either;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.dsl.runner.config.BatchValidationConfig;
+import org.revcloud.vader.config.BatchValidationConfig;
 
 import static consumer.failure.ValidationFailure.DUPLICATE_ITEM;
 import static consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;

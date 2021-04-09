@@ -13,16 +13,17 @@ import io.vavr.control.Try;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.revcloud.vader.dsl.runner.config.BaseValidationConfig;
-import org.revcloud.vader.dsl.runner.config.BatchValidationConfig;
-import org.revcloud.vader.dsl.runner.config.HeaderValidationConfig;
-import org.revcloud.vader.dsl.runner.config.ValidationConfig;
+import org.revcloud.vader.config.BaseValidationConfig;
+import org.revcloud.vader.config.BatchValidationConfig;
+import org.revcloud.vader.config.HeaderValidationConfig;
+import org.revcloud.vader.config.ValidationConfig;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
 import java.util.Objects;
 import java.util.function.Predicate;
 
+import static io.vavr.CheckedFunction1.liftTry;
 import static io.vavr.Function1.identity;
 
 @Slf4j
@@ -41,7 +42,7 @@ class Utils {
             Validator<ValidatableT, FailureT> validator,
             Either<FailureT, ValidatableT> toBeValidatedRight,
             Function1<Throwable, FailureT> throwableMapper) {
-        return Try.of(() -> validator.apply(toBeValidatedRight))
+        return liftTry(validator).apply(toBeValidatedRight)
                 .fold(throwable -> Either.left(throwableMapper.apply(throwable)), Function1.identity())
                 .flatMap(ignore -> toBeValidatedRight); // Put the original Validatable in the right state
     }
