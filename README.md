@@ -189,15 +189,15 @@ Vader allows validations to align with the Bean Structure, which is hierarchical
 
 - You instantly know where the problem is if a validation misbehaves.
 - It's easy to extend validations of a Validatable at any level, without worrying about its Parent and Children.
-- A validatable is agnostic of its parent or children. This gives immense flexibility when your Bean restructures or new Children are added at various levels. The Stitching of all these validations can happen in a config, which will be the only place of change in this case. Let's see how it's done.
+- A validatable is agnostic of its container or children. This gives immense flexibility when your Bean restructures or new Children are added at various levels. The Stitching of all these validations can happen in a config, which will be the only place of change in this case. Let's see how it's done.
 
 ---
 
 # How to Stitch all these in a config 🏋🏻‍♂️
 
 Using these Data types for lambdas, we essentially use functions as values. So, all we need is an Ordered List (like `java.util.list`) to maintain the sequence of validations. We can compose all the validation functions, in the order of preference. This order is easily **Configurable**.
-However, there is a complexity. A List of Validations for a parent node consists of a mix of parent node and child node validations. But they can't be put under one `List`, as they are functions on different Data Types. So child validations need to be ported to the parent context. We can achieve this with **Higher-Order Functions**, which act as DSL (Domain Specific Language) to **lift** child validation to the parent type.
-This is a powerful technique, which enables us to see the code through the lens of **Algebra**. This way, we can configure a **Chain** of validations in-order, sorting out all the parent-child dependencies. This is nothing but the most popular **Chain of Responsibility** Design pattern, with a functional touch.
+However, there is a complexity. A List of Validations for a container node consists of a mix of container node and member node validations. But they can't be put under one `List`, as they are functions on different Data Types. So member validations need to be ported to the container context. We can achieve this with **Higher-Order Functions**, which act as DSL (Domain Specific Language) to **lift** member validation to the container type.
+This is a powerful technique, which enables us to see the code through the lens of **Algebra**. This way, we can configure a **Chain** of validations in-order, sorting out all the container-member dependencies. This is nothing but the most popular **Chain of Responsibility** Design pattern, with a functional touch.
 If the inter-dependencies between Parent-Child happens to be more complex, we may end-up with *Graph* relationship, but we can easily *flatten* it into a Chain with simple *Topological Sort*.
 Similarly, Vader has DSL to port Simple Validator types to Non-Simple ones. This is handy, when you have a mix of validations, and they all need to be of the same type to stitch them together.
 Below are the DSLs currently available, with self-explanatory names. There are multiple overloads suitable for simple/non-simple. The Java Docs should guide you to use proper overload:

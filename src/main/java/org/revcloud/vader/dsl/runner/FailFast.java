@@ -9,8 +9,6 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.revcloud.vader.config.BatchValidationConfig;
-import org.revcloud.vader.config.ValidationConfig;
 import org.revcloud.vader.types.validators.Validator;
 
 @Slf4j
@@ -39,6 +37,16 @@ class FailFast {
         };
     }
 
+    /**
+     * Config
+     * @param validators
+     * @param invalidValidatable
+     * @param throwableMapper
+     * @param validationConfig
+     * @param <FailureT>
+     * @param <ValidatableT>
+     * @return
+     */
     static <FailureT, ValidatableT> FailFastStrategy<ValidatableT, FailureT> failFastStrategy(
             @NonNull List<Validator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable,
@@ -53,6 +61,16 @@ class FailFast {
         };
     }
 
+    /**
+     * Batch + Simple + Config  
+     * @param validators
+     * @param invalidValidatable
+     * @param throwableMapper
+     * @param validationConfig
+     * @param <FailureT>
+     * @param <ValidatableT>
+     * @return
+     */
     static <FailureT, ValidatableT> FailFastStrategyForBatch<ValidatableT, FailureT> failFastStrategyForBatch(
             List<Validator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable,

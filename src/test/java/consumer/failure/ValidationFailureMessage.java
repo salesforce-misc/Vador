@@ -19,7 +19,7 @@ import java.util.Objects;
  * @since 220
  */
 public enum ValidationFailureMessage {
-    SUCCESS(Section.COMMON_VALIDATION_FAILURE, "Success"),
+    NONE(Section.COMMON_VALIDATION_FAILURE, "Success"),
     FIELD_NULL_OR_EMPTY("", ""),
     NOTHING_TO_VALIDATE(Section.COMMON_VALIDATION_FAILURE, "Nothing"),
     DUPLICATE_ITEM(Section.COMMON_VALIDATION_FAILURE, "DuplicateItem"),
@@ -30,6 +30,7 @@ public enum ValidationFailureMessage {
     VALIDATION_FAILURE_2("", ""),
     VALIDATION_FAILURE_3("", ""),
     REQUIRED_FIELD_MISSING("", ""),
+    INVALID_COMBO("", ""),
     FIELD_INTEGRITY_EXCEPTION("", ""),
     ;
     

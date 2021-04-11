@@ -7,7 +7,7 @@
 package consumer.validators.batch;
 
 
-import consumer.bean.BaseParent;
+import consumer.bean.Parent;
 import consumer.failure.ValidationFailure;
 import org.revcloud.vader.types.validators.Validator;
 
@@ -19,12 +19,12 @@ public class BaseParentBatchRequestValidator {
      * Validates if Auth id in request has a status PROCESSED.
      * This is a lambda function implementation.
      */
-    public static final Validator<BaseParent, ValidationFailure> batchValidation1 =
+    public static final Validator<Parent, ValidationFailure> batchValidation1 =
             parentInputRepresentation -> parentInputRepresentation
-                    .filterOrElse(parent -> parent.getChild() != null, ignore -> new ValidationFailure(FIELD_NULL_OR_EMPTY));
+                    .filterOrElse(parent -> parent.getMember() != null, ignore -> new ValidationFailure(FIELD_NULL_OR_EMPTY));
 
-    public static final Validator<BaseParent, ValidationFailure> batchValidation2 =
+    public static final Validator<Parent, ValidationFailure> batchValidation2 =
             parentInputRepresentation -> parentInputRepresentation
-                    .filterOrElse(parent -> parent.getChild() != null, ignore -> new ValidationFailure(FIELD_NULL_OR_EMPTY));
+                    .filterOrElse(parent -> parent.getMember() != null, ignore -> new ValidationFailure(FIELD_NULL_OR_EMPTY));
 
 }

@@ -7,7 +7,7 @@
 package consumer.validators.simple;
 
 
-import consumer.bean.Parent;
+import consumer.bean.Container;
 import consumer.failure.ValidationFailure;
 import org.revcloud.vader.types.validators.SimpleValidator;
 
@@ -18,18 +18,18 @@ public class ParentRequestValidator {
      * Validates if Auth id in request has a status PROCESSED.
      * This is a lambda function implementation.
      */
-    public static final SimpleValidator<Parent, ValidationFailure> validation1 =
-            parent -> {
-                if (parent.getChild() == null) {
+    public static final SimpleValidator<Container, ValidationFailure> validation1 =
+            container -> {
+                if (container.getMember() == null) {
                     return null;
                 } else {
                     return new ValidationFailure(FIELD_NULL_OR_EMPTY);
                 }
             };
 
-    public static final SimpleValidator<Parent, ValidationFailure> validation2 =
-            parent -> {
-                if (parent.getChild() == null) {
+    public static final SimpleValidator<Container, ValidationFailure> validation2 =
+            container -> {
+                if (container.getMember() == null) {
                     return null;
                 } else {
                     return new ValidationFailure(FIELD_NULL_OR_EMPTY);

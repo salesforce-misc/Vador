@@ -8,8 +8,6 @@ import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.revcloud.vader.dsl.lift.LiftDsl;
-import org.revcloud.vader.config.BatchValidationConfig;
-import org.revcloud.vader.config.ValidationConfig;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 

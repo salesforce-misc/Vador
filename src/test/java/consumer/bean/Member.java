@@ -17,6 +17,6 @@ import lombok.Value;
  * @since 228
  */
 @Value
-public class Child {
+public class Member {
     int id;
 }

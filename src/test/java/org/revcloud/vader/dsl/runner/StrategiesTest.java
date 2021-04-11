@@ -1,31 +1,31 @@
 package org.revcloud.vader.dsl.runner;
 
 import com.force.swag.id.ID;
-import consumer.bean.Parent;
+import consumer.bean.Container;
 import consumer.failure.ValidationFailure;
+import io.vavr.Tuple;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.config.BatchValidationConfig;
 
 import static consumer.failure.ValidationFailure.DUPLICATE_ITEM;
 import static consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StrategiesTest {
 
     @Test
     void filterInvalidatablesAndDuplicates() {
-        final List<Parent> invalidValidatables = List.of(null, null);
-        final var duplicateValidatables = List.of(new Parent(new ID("0")), new Parent(new ID("0")), new Parent(new ID("0")));
+        final List<Container> invalidValidatables = List.of(null, null);
+        final var duplicateValidatables = List.of(new Container(new ID("0")), new Container(new ID("0")), new Container(new ID("0")));
         val validatables = invalidValidatables.appendAll(duplicateValidatables).appendAll(List.of(
-                new Parent(new ID("1")), new Parent(new ID("2")), new Parent(new ID("3"))
+                new Container(new ID("1")), new Container(new ID("2")), new Container(new ID("3"))
         ));
         
-        val batchValidationConfig = BatchValidationConfig.toValidate(Parent.class, ValidationFailure.class)
-                .failDuplicatesWith(DUPLICATE_ITEM, parent -> parent.getSfId().toString());
+        val batchValidationConfig = BatchValidationConfig.<Container, ValidationFailure>toValidate()
+                .shouldFilterDuplicates(Tuple.of(DUPLICATE_ITEM, container -> container.getSfId().toString())).prepare();
         val results = Utils.filterInvalidatablesAndDuplicates(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
         
         val failedInvalids = results.take(2);

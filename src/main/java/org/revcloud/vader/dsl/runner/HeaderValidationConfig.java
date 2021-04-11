@@ -1,4 +1,4 @@
-package org.revcloud.vader.config;
+package org.revcloud.vader.dsl.runner;
 
 import io.vavr.Function1;
 import io.vavr.Tuple;

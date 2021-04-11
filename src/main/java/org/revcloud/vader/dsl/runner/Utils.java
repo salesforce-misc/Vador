@@ -13,10 +13,6 @@ import io.vavr.control.Try;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.revcloud.vader.config.BaseValidationConfig;
-import org.revcloud.vader.config.BatchValidationConfig;
-import org.revcloud.vader.config.HeaderValidationConfig;
-import org.revcloud.vader.config.ValidationConfig;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
@@ -72,18 +68,15 @@ class Utils {
         return Try.of(() -> validator.apply(validatable)).fold(throwableMapper, identity());
     }
 
-    static <ValidatableT, FailureT> Iterator<Validator<ValidatableT, FailureT>> toValidators(
-            BaseValidationConfig<ValidatableT, FailureT> validationConfig) {
-        Iterator<Validator<ValidatableT, FailureT>> mandatoryFieldValidators = validationConfig.getMandatoryFieldMappers().iterator()
-                .map(tuple2 -> validatableRight -> validatableRight.map(tuple2._1).filterOrElse(isPresent, ignore -> tuple2._2));
-        Iterator<Validator<ValidatableT, FailureT>> mandatorySfIdValidators = validationConfig.getMandatorySfIdFieldMappers().iterator()
-                .map(tuple2 -> validatableRight -> validatableRight.map(tuple2._1).map(ID::toString)
-                        .filterOrElse(IdTraits::isValidId, ignore -> tuple2._2));
-        Iterator<Validator<ValidatableT, FailureT>> nonMandatorySfIdValidators = validationConfig.getNonMandatorySfIdFieldMappers().iterator()
-                .map(tuple2 -> validatableRight -> validatableRight.map(tuple2._1).map(ID::toString)
-                        .filter(Objects::nonNull) // Ignore if null
-                        .fold(() -> validatableRight, id -> id.filterOrElse(IdTraits::isValidId, ignore -> tuple2._2)));
-        return mandatoryFieldValidators.concat(mandatorySfIdValidators).concat(nonMandatorySfIdValidators);
+    private static <ValidatableT, FailureT> Predicate<ValidatableT> isValid(Condition<ValidatableT, FailureT> condition) {
+        return validatable -> {
+            val actualFieldValue = condition.getWhen().apply(validatable);
+            if (actualFieldValue != condition.getIs()) {
+                return true;
+            }
+            val actualDependentFieldValue = condition.getThen().apply(validatable);
+            return condition.getShouldBe().matches(actualDependentFieldValue);
+        };
     }
 
     private static final Predicate<Object> isPresent = fieldValue -> {
@@ -106,7 +99,7 @@ class Utils {
             val validatable = validatables.get(0);
             return validatable == null ? List.of(Either.left(invalidValidatable)) : List.of(Either.right(validatables.get(0)));
         }
-        final var filterDuplicatesConfig = batchValidationConfig.getFilterDuplicates();
+        final var filterDuplicatesConfig = batchValidationConfig.getShouldFilterDuplicates();
         val keyMapperForDuplicates = filterDuplicatesConfig == null
                 ? Function1.<ValidatableT>identity()
                 : filterDuplicatesConfig._2;
@@ -117,14 +110,18 @@ class Utils {
         Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> invalidValidatables = groups.get(null)
                 .map(nullValidatables -> invalidate(nullValidatables, invalidValidatable))
                 .getOrElse(List.empty());
-
+        // TODO 11/04/21 gopala.akshintala: refactor 
+        if (filterDuplicatesConfig == null) {
+            final Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> map = 
+                    groups.remove(null).values().flatMap(identity()).map(tuple2 -> tuple2.map1(Either::right));
+            return map.appendAll(invalidValidatables).sortBy(Tuple2::_2).map(Tuple2::_1);
+        }
         val partition = groups.remove(null).values().partition(group -> group.size() == 1);
-        val failureForDuplicate = batchValidationConfig.getFilterDuplicates()._1;
+        val failureForDuplicate = filterDuplicatesConfig._1;
         Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> duplicates =
                 partition._2.flatMap(identity()).map(duplicate -> Tuple.of(Either.left(failureForDuplicate), duplicate._2));
         Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> nonDuplicates =
                 partition._1.flatMap(identity()).map(tuple2 -> tuple2.map1(Either::right));
-
         return duplicates.appendAll(nonDuplicates).appendAll(invalidValidatables).sortBy(Tuple2::_2).map(Tuple2::_1);
     }
 
@@ -133,12 +130,36 @@ class Utils {
         return nullValidatables.map(nullValidatable -> nullValidatable.map1(ignore -> Either.left(invalidValidatable)));
     }
 
+    static <ValidatableT, FailureT> Iterator<Validator<ValidatableT, FailureT>> toValidators(
+            BaseValidationConfig<ValidatableT, FailureT> validationConfig) {
+        Iterator<Validator<ValidatableT, FailureT>> mandatoryFieldValidators = validationConfig.getShouldHaveFields().iterator()
+                .map(tuple2 -> validatableRight -> validatableRight.map(tuple2._1).filterOrElse(isPresent, ignore -> tuple2._2));
+        Iterator<Validator<ValidatableT, FailureT>> mandatorySfIdValidators = validationConfig.getShouldHaveValidSFIds().iterator()
+                .map(tuple2 -> validatableRight -> validatableRight.map(tuple2._1).map(ID::toString)
+                        .filterOrElse(IdTraits::isValidId, ignore -> tuple2._2));
+        Iterator<Validator<ValidatableT, FailureT>> nonMandatorySfIdValidators = validationConfig.getMayHaveValidSFIds().iterator()
+                .map(tuple2 -> validatableRight -> validatableRight.map(tuple2._1).map(ID::toString)
+                        .filter(Objects::nonNull) // Ignore if null
+                        .fold(() -> validatableRight, id -> id.filterOrElse(IdTraits::isValidId, ignore -> tuple2._2)));
+        Iterator<Validator<ValidatableT, FailureT>> conditionValidators = validationConfig.getWithConditions().iterator()
+                .map(condition -> validatableRight -> validatableRight
+                        .filterOrElse(isValid(condition), ignore -> condition.getOrFailWith()));
+        return mandatoryFieldValidators.concat(mandatorySfIdValidators).concat(nonMandatorySfIdValidators).concat(conditionValidators);
+    }
+
     static <ValidatableT, FailureT> Iterator<SimpleValidator<ValidatableT, FailureT>> toSimpleValidators(
             ValidationConfig<ValidatableT, FailureT> validationConfig, FailureT none) {
-        Iterator<SimpleValidator<ValidatableT, FailureT>> mandatoryFieldValidators = validationConfig.getMandatoryFieldMappers().iterator()
+        Iterator<SimpleValidator<ValidatableT, FailureT>> mandatoryFieldValidators = validationConfig.getShouldHaveFields().iterator()
                 .map(tuple2 -> validatable -> isPresent.test(tuple2._1.apply(validatable)) ? none : tuple2._2);
-        Iterator<SimpleValidator<ValidatableT, FailureT>> sfIdValidators = validationConfig.getMandatorySfIdFieldMappers().iterator()
+        Iterator<SimpleValidator<ValidatableT, FailureT>> mandatorySfIdValidators = validationConfig.getShouldHaveValidSFIds().iterator()
                 .map(tuple2 -> validatable -> IdTraits.isValidId(tuple2._1.apply(validatable).toString()) ? none : tuple2._2);
-        return mandatoryFieldValidators.concat(sfIdValidators);
+        Iterator<SimpleValidator<ValidatableT, FailureT>> nonMandatorySfIdValidators = validationConfig.getMayHaveValidSFIds().iterator()
+                .map(tuple2 -> validatable -> {
+                    final var idValue = tuple2._1.apply(validatable);
+                    return idValue == null || IdTraits.isValidId(idValue.toString()) ? none : tuple2._2;
+                });
+        Iterator<SimpleValidator<ValidatableT, FailureT>> conditionValidators = validationConfig.getWithConditions().iterator()
+                .map(condition -> validatable -> isValid(condition).test(validatable) ? none : condition.getOrFailWith());
+        return mandatoryFieldValidators.concat(mandatorySfIdValidators).concat(nonMandatorySfIdValidators).concat(conditionValidators);
     }
 }

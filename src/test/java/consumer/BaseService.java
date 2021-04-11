@@ -7,7 +7,7 @@
 package consumer;
 
 
-import consumer.bean.BaseParent;
+import consumer.bean.Parent;
 import consumer.config.ValidationConfig;
 import consumer.failure.ValidationFailure;
 import io.vavr.collection.List;
@@ -26,7 +26,7 @@ public abstract class BaseService<InputRepresentationT> {
     }
 
     public ValidationFailure validateNonBulk() {
-        val parentInputRepresentation = new BaseParent(0, null, null);
+        val parentInputRepresentation = new Parent(0, null, null);
         return RunnerDsl.validateAndFailFast(
                 parentInputRepresentation,
                 ValidationConfig.getServiceValidations(),

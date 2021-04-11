@@ -17,21 +17,22 @@ import lombok.ToString;
 /**
  * Connect API input bean.
  *
- * @author gopala.akshintala
- * @since 232
+ * @author gakshintala
+ * @since 228
  */
-@ToString(callSuper=true)
-public class Parent extends BaseParent {
-
-    public Parent(int id, Child child) {
-        super(id, null, child);
-    }
+@AllArgsConstructor
+@RequiredArgsConstructor
+@EqualsAndHashCode
+@ToString
+@Getter
+public class Parent {
+    final int id;
+    final ID sfId;
+    final Member member;
     
-    public Parent(int id) {
-        super(id, null, null);
-    }
-
-    public Parent(ID sfId1) {
-        super(0, sfId1, null);
-    }
+    Integer requiredField1;
+    String requiredField2;
+    String requiredField3;
+    ID sfId1;
+    ID sfId2;
 }

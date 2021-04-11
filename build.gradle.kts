@@ -21,13 +21,15 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.0-alpha1")
     implementation("com.force.api:swag:0.3.9")
     implementation("io.vavr:vavr-kotlin:0.10.2")
+    implementation("org.hamcrest:hamcrest:2.2")
 
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j18-impl:2.14.1")
 
     testImplementation(platform("org.junit:junit-bom:5.8.0-M1"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.assertj:assertj-vavr:0.4.1")
+    testImplementation("org.assertj:assertj-core:3.19.0")
 }
 
 group = "com.salesforce.ccspayments"
@@ -104,5 +106,29 @@ publishing {
         }
         isFailOnError = false
         options.encoding("UTF-8")
+    }
+
+    testlogger {
+        setTheme("mocha")
+        showExceptions = true
+        showStackTraces = true
+        showFullStackTraces = true
+        showCauses = true
+        slowThreshold = 2000
+        showSummary = true
+        showSimpleNames = true
+        showPassed = true
+        showSkipped = true
+        showFailed = true
+        showStandardStreams = true
+        showPassedStandardStreams = true
+        showSkippedStandardStreams = true
+        showFailedStandardStreams = true
+    }
+
+    detekt {
+        baseline = file("${rootProject.projectDir}/config/baseline.xml")
+        config = files("config/detekt/detekt.yml")
+        buildUponDefaultConfig = true
     }
 }

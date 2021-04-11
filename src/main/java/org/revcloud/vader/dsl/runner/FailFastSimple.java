@@ -6,8 +6,6 @@ import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.revcloud.vader.config.HeaderValidationConfig;
-import org.revcloud.vader.config.ValidationConfig;
 import org.revcloud.vader.types.validators.SimpleValidator;
 
 @Slf4j
