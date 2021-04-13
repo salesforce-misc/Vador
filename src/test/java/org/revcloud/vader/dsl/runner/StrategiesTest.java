@@ -3,7 +3,6 @@ package org.revcloud.vader.dsl.runner;
 import com.force.swag.id.ID;
 import consumer.bean.Container;
 import consumer.failure.ValidationFailure;
-import io.vavr.Tuple;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.val;
@@ -25,7 +24,7 @@ class StrategiesTest {
         ));
         
         val batchValidationConfig = BatchValidationConfig.<Container, ValidationFailure>toValidate()
-                .shouldFilterDuplicates(Tuple.of(DUPLICATE_ITEM, container -> container.getSfId().toString())).prepare();
+                .findDuplicatesWith(container -> container.getSfId().toString()).andFailDuplicatesWith(DUPLICATE_ITEM).prepare();
         val results = Utils.filterInvalidatablesAndDuplicates(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
         
         val failedInvalids = results.take(2);

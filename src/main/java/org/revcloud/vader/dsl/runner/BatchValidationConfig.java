@@ -1,12 +1,14 @@
 package org.revcloud.vader.dsl.runner;
 
 import io.vavr.Function1;
-import io.vavr.Tuple2;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 import lombok.experimental.SuperBuilder;
 
-@Getter
+@Value
+@EqualsAndHashCode(callSuper = true)
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate")
-public final class BatchValidationConfig<ValidatableT, FailureT> extends BaseValidationConfig<ValidatableT, FailureT> {
-    private final Tuple2<FailureT, Function1<ValidatableT, ?>> shouldFilterDuplicates;
+public class BatchValidationConfig<ValidatableT, FailureT> extends BaseValidationConfig<ValidatableT, FailureT> {
+    Function1<ValidatableT, ?> findDuplicatesWith;
+    FailureT andFailDuplicatesWith;
 }

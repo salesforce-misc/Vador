@@ -7,7 +7,7 @@ import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.revcloud.vader.dsl.lift.LiftDsl;
+import org.revcloud.vader.dsl.lift.ValidatorLiftDsl;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
@@ -94,7 +94,7 @@ public class BatchRunnerDsl {
             FailureT invalidValidatable,
             FailureT none,
             Function1<Throwable, FailureT> throwableMapper) {
-        return validateAndFailFast(validatables, LiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper);
+        return validateAndFailFast(validatables, ValidatorLiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper);
     }
 
     public static <FailureT, ValidatableT> List<FailureT> validateAndFailFastForSimpleValidators(
@@ -127,7 +127,7 @@ public class BatchRunnerDsl {
             FailureT none,
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return validateAndFailFast(validatables, LiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, validationConfig);
+        return validateAndFailFast(validatables, ValidatorLiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, validationConfig);
     }
 
     public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFastForBatch(
@@ -137,7 +137,7 @@ public class BatchRunnerDsl {
             FailureT none,
             Function1<Throwable, FailureT> throwableMapper,
             BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
-        return FailFast.failFastStrategyForBatch(LiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, batchValidationConfig)
+        return FailFast.failFastStrategyForBatch(ValidatorLiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, batchValidationConfig)
                 .apply(validatables);
     }
 
@@ -149,7 +149,7 @@ public class BatchRunnerDsl {
             Function1<Throwable, FailureT> throwableMapper,
             BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig,
             Function1<ValidatableT, PairT> pairForInvalidMapper) {
-        val validationResults = FailFast.failFastStrategyForBatch(LiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, batchValidationConfig)
+        val validationResults = FailFast.failFastStrategyForBatch(ValidatorLiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, batchValidationConfig)
                 .apply(validatables);
         return validationResults.zipWith(validatables, 
                 (result, validatable) -> result.mapLeft(failure -> Tuple.of(pairForInvalidMapper.apply(validatable), failure)));
@@ -171,6 +171,6 @@ public class BatchRunnerDsl {
             FailureT invalidValidatable,
             FailureT none,
             Function1<Throwable, FailureT> throwableMapper) {
-        return validateAndAccumulateErrors(validatables, LiftDsl.liftAllSimple(simpleValidators, none), invalidValidatable, throwableMapper);
+        return validateAndAccumulateErrors(validatables, ValidatorLiftDsl.liftAllSimple(simpleValidators, none), invalidValidatable, throwableMapper);
     }
 }

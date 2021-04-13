@@ -3,7 +3,7 @@ package org.revcloud.vader.dsl.runner;
 import io.vavr.Function1;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
-import org.revcloud.vader.dsl.lift.LiftDsl;
+import org.revcloud.vader.dsl.lift.ValidatorLiftDsl;
 import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.SimpleValidator;
 
@@ -120,7 +120,7 @@ public class RunnerDsl {
     public static <FailureT, ValidatableT> List<FailureT> validateAndAccumulateErrorsForSimpleValidators(
             ValidatableT validatable, List<SimpleValidator<ValidatableT, FailureT>> simpleValidators,
             FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
-        return validateAndAccumulateErrors(validatable, LiftDsl.liftAllSimple(simpleValidators, none), invalidValidatable, none, throwableMapper);
+        return validateAndAccumulateErrors(validatable, ValidatorLiftDsl.liftAllSimple(simpleValidators, none), invalidValidatable, none, throwableMapper);
     }
 
 }

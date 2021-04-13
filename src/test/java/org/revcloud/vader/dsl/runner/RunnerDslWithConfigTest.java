@@ -5,11 +5,10 @@ import consumer.bean.Parent;
 import consumer.failure.ValidationFailure;
 import io.vavr.Function1;
 import io.vavr.Tuple;
-import io.vavr.collection.List;
+import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.types.validators.SimpleValidator;
 
 import static consumer.failure.ValidationFailure.FIELD_INTEGRITY_EXCEPTION;
 import static consumer.failure.ValidationFailure.NONE;
@@ -83,7 +82,7 @@ class RunnerDslWithConfigTest {
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
         return RunnerDsl.validateAndFailFastForSimpleValidators(
                 validatable,
-                List.empty(),
+                io.vavr.collection.List.empty(),
                 nothingToValidate,
                 none,
                 throwableMapper,

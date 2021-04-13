@@ -1,6 +1,6 @@
 package org.revcloud.vader.dsl.lift;
 
-import consumer.bean.Parent;
+import consumer.bean.Container;
 import consumer.bean.Member;
 import consumer.failure.ValidationFailure;
 import lombok.val;
@@ -10,92 +10,93 @@ import org.revcloud.vader.types.validators.SimpleValidator;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class SimpleAggregationLiftDslTest {
+class SimpleAggregationValidatorLiftDslTest {
 
     @Test
-    void liftToParentValidationTypeWithNullChild() {
+    void liftToContainerValidationTypeWithNullMember() {
         SimpleValidator<Member, ValidationFailure> childValidator = child -> ValidationFailure.NONE;
-        val liftedParentValidation =
-                AggregationLiftSimpleDsl.liftToParentValidationType(
+        val liftedContainerValidation =
+                AggregationLiftSimpleDsl.liftToContainerValidatorType(
                         childValidator,
-                        Parent::getMember,
+                        Container::getMember,
                         ValidationFailure.INVALID_PARENT,
                         ValidationFailure.INVALID_CHILD
                 );
-        assertSame(ValidationFailure.INVALID_CHILD, liftedParentValidation.unchecked().apply(new Parent(0, null, null)));
+        assertSame(ValidationFailure.INVALID_CHILD, liftedContainerValidation.unchecked().apply(new Container(0, null)));
     }
 
     @Test
-    void liftToParentValidationTypeWithNullParent() {
+    void liftToContainerValidationTypeWithNullContainer() {
         SimpleValidator<Member, ValidationFailure> childValidator = child -> ValidationFailure.NONE;
-        val liftedParentValidation =
-                AggregationLiftSimpleDsl.liftToParentValidationType(
+        val liftedContainerValidation =
+                AggregationLiftSimpleDsl.liftToContainerValidatorType(
                         childValidator,
-                        Parent::getMember,
+                        Container::getMember,
                         ValidationFailure.INVALID_PARENT,
                         ValidationFailure.INVALID_CHILD
                 );
-        assertSame(ValidationFailure.INVALID_PARENT, liftedParentValidation.unchecked().apply(null));
+        assertSame(ValidationFailure.INVALID_PARENT, liftedContainerValidation.unchecked().apply(null));
     }
 
     @Test
-    void liftToParentValidationType() {
+    void liftToContainerValidationType() {
         SimpleValidator<Member, ValidationFailure> childValidator = child -> ValidationFailure.NONE;
-        val liftedParentValidation =
-                AggregationLiftSimpleDsl.liftToParentValidationType(
+        val liftedContainerValidation =
+                AggregationLiftSimpleDsl.liftToContainerValidatorType(
                         childValidator,
-                        Parent::getMember,
+                        Container::getMember,
                         ValidationFailure.INVALID_PARENT,
                         ValidationFailure.INVALID_CHILD
                 );
-        assertSame(ValidationFailure.NONE, liftedParentValidation.unchecked().apply(new Parent(0, null, new Member(0))));
+        assertSame(ValidationFailure.NONE, liftedContainerValidation.unchecked().apply(new Container(0, new Member(0))));
     }
 
     @Test
-    void liftToParentValidationType2ThrowForNullChild() {
+    void liftToContainerValidationType2ThrowForNullMember() {
         SimpleValidator<Member, ValidationFailure> childValidator = child -> {
             if (child.getId() >= 0) return ValidationFailure.NONE; // accessing some child prop to cause NPE
             return ValidationFailure.VALIDATION_FAILURE_1;
         };
-        val liftedParentValidation =
-                AggregationLiftSimpleDsl.liftToParentValidationType(
+        val liftedContainerValidation =
+                AggregationLiftSimpleDsl.liftToContainerValidatorType(
                         childValidator,
-                        Parent::getMember,
+                        Container::getMember,
                         ValidationFailure.INVALID_PARENT
                 );
-        final Parent parentWithNullChild = new Parent(0, null, null);
-        assertThrows(NullPointerException.class, () -> liftedParentValidation.apply(parentWithNullChild));
+        final Container parentWithNullMember = new Container(0, null);
+        assertThrows(NullPointerException.class, () -> liftedContainerValidation.apply(parentWithNullMember));
     }
 
     @Test
-    void liftToParentValidationType2NullParent() {
+    void liftToContainerValidationType2NullContainer() {
         SimpleValidator<Member, ValidationFailure> childValidator = child -> {
             if (child.getId() >= 0) return ValidationFailure.NONE; // accessing some child prop to cause NPE
             return ValidationFailure.VALIDATION_FAILURE_1;
         };
-        val liftedParentValidation =
-                AggregationLiftSimpleDsl.liftToParentValidationType(
+        val liftedContainerValidation =
+                AggregationLiftSimpleDsl.liftToContainerValidatorType(
                         childValidator,
-                        Parent::getMember,
+                        Container::getMember,
                         ValidationFailure.INVALID_PARENT
                 );
-        assertSame(ValidationFailure.INVALID_PARENT,liftedParentValidation.unchecked().apply(null));
+        assertSame(ValidationFailure.INVALID_PARENT,liftedContainerValidation.unchecked().apply(null));
     }
     
     @Test
-    void liftToParentValidationType2ForFailure() {
+    void liftToContainerValidationType2ForFailure() {
         SimpleValidator<Member, ValidationFailure> childValidator = child -> {
             if (child.getId() >= 0) return ValidationFailure.NONE; // accessing some child prop to cause NPE
             return ValidationFailure.VALIDATION_FAILURE_1;
         };
-        val liftedParentValidation =
-                AggregationLiftSimpleDsl.liftToParentValidationType(
+        val liftedContainerValidation =
+                AggregationLiftSimpleDsl.liftToContainerValidatorType(
                         childValidator,
-                        Parent::getMember,
+                        Container::getMember,
                         ValidationFailure.INVALID_PARENT
                 );
-        val validatable = new Parent(0, null, new Member(-1));
-        assertSame(ValidationFailure.VALIDATION_FAILURE_1,liftedParentValidation.unchecked().apply(validatable));
+        val validatable = new Container(0, new Member(-1));
+        assertSame(ValidationFailure.VALIDATION_FAILURE_1,liftedContainerValidation.unchecked().apply(validatable));
     }
 
+    // TODO 13/04/21 gopala.akshintala: Have bean specific to test 
 }

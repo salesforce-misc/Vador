@@ -31,6 +31,7 @@ public class ValidationFailure {
     public static final ValidationFailure VALIDATION_FAILURE_3 = new ValidationFailure(ValidationFailureMessage.VALIDATION_FAILURE_3);
     public static final ValidationFailure REQUIRED_FIELD_MISSING = new ValidationFailure(ValidationFailureMessage.REQUIRED_FIELD_MISSING);
     public static final ValidationFailure INVALID_COMBO = new ValidationFailure(ValidationFailureMessage.INVALID_COMBO);
+    public static final ValidationFailure INVALID_VALUE = new ValidationFailure(ValidationFailureMessage.INVALID_VALUE);
     public static final ValidationFailure FIELD_INTEGRITY_EXCEPTION = new ValidationFailure(ValidationFailureMessage.FIELD_INTEGRITY_EXCEPTION);
 
     /**

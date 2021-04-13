@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.types.validators.SimpleValidator;
 
-class LiftDslTest {
+class ValidatorLiftDslTest {
 
     @Test
     void liftSimpleForFailure() {
         SimpleValidator<Parent, ValidationFailure> simpleValidator = parent -> ValidationFailure.VALIDATION_FAILURE_1;
-        val liftedValidator = LiftDsl.liftSimple(simpleValidator, ValidationFailure.NONE);
+        val liftedValidator = ValidatorLiftDsl.liftSimple(simpleValidator, ValidationFailure.NONE);
         Assertions.assertEquals(liftedValidator.unchecked().apply(Either.right(new Parent(0, null, null))),
                 Either.left(ValidationFailure.VALIDATION_FAILURE_1));
     }
@@ -21,7 +21,7 @@ class LiftDslTest {
     @Test
     void liftSimpleForNoFailure() {
         SimpleValidator<Parent, ValidationFailure> simpleValidator = parent -> ValidationFailure.NONE;
-        val liftedValidator = LiftDsl.liftSimple(simpleValidator, ValidationFailure.NONE);
+        val liftedValidator = ValidatorLiftDsl.liftSimple(simpleValidator, ValidationFailure.NONE);
         final Parent toBeValidated = new Parent(0, null, null);
         Assertions.assertEquals(liftedValidator.unchecked().apply(Either.right(toBeValidated)),
                 Either.right(toBeValidated));

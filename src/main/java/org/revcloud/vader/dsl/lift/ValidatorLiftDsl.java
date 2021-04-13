@@ -14,7 +14,7 @@ import org.revcloud.vader.types.validators.SimpleValidator;
  * @since 228
  */
 @UtilityClass
-public class LiftDsl {
+public class ValidatorLiftDsl {
 
     /**
      * Lifts Simple Validator to Validator type.

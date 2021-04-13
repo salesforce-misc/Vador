@@ -35,11 +35,11 @@ public class AggregationLiftDsl {
      * @param <FailureT>
      * @return List of container type validations
      */
-    public static <ContainerT, MemberT, FailureT> List<Validator<ContainerT, FailureT>> liftAllToContainerValidationType(
+    public static <ContainerT, MemberT, FailureT> List<Validator<ContainerT, FailureT>> liftAllToContainerValidatorType(
             List<Validator<MemberT, FailureT>> childValidations,
             Function1<ContainerT, MemberT> toChildMapper, FailureT invalidParent, FailureT invalidChild) {
         return childValidations.map(childValidation ->
-                liftToContainerValidationType(childValidation, toChildMapper, invalidParent, invalidChild));
+                liftToContainerValidatorType(childValidation, toChildMapper, invalidParent, invalidChild));
     }
 
     /**
@@ -54,11 +54,11 @@ public class AggregationLiftDsl {
      * @param <FailureT>
      * @return List of container type validations
      */
-    public static <ContainerT, MemberT, FailureT> List<Validator<ContainerT, FailureT>> liftAllToContainerValidationType(
+    public static <ContainerT, MemberT, FailureT> List<Validator<ContainerT, FailureT>> liftAllToContainerValidatorType(
             List<Validator<MemberT, FailureT>> childValidations,
             Function1<ContainerT, MemberT> toChildMapper, FailureT invalidParent) {
         return childValidations.map(childValidation ->
-                liftToContainerValidationType(childValidation, toChildMapper, invalidParent));
+                liftToContainerValidatorType(childValidation, toChildMapper, invalidParent));
     }
 
     /**
@@ -73,7 +73,7 @@ public class AggregationLiftDsl {
      * @param <FailureT>
      * @return container type validation
      */
-    public static <ContainerT, MemberT, FailureT> Validator<ContainerT, FailureT> liftToContainerValidationType(
+    public static <ContainerT, MemberT, FailureT> Validator<ContainerT, FailureT> liftToContainerValidatorType(
             Validator<MemberT, FailureT> memberValidation,
             Function1<ContainerT, MemberT> toMemberMapper,
             FailureT invalidParent, FailureT invalidChild) {
@@ -108,7 +108,7 @@ public class AggregationLiftDsl {
      * @param <FailureT>
      * @return container type validation
      */
-    public static <ContainerT, MemberT, FailureT> Validator<ContainerT, FailureT> liftToContainerValidationType(
+    public static <ContainerT, MemberT, FailureT> Validator<ContainerT, FailureT> liftToContainerValidatorType(
             Validator<MemberT, FailureT> childValidation,
             Function1<ContainerT, MemberT> toChildMapper,
             FailureT invalidParent) {

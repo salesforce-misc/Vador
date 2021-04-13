@@ -1,9 +1,11 @@
 package org.revcloud.vader.dsl.runner;
 
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 import lombok.experimental.SuperBuilder;
 
-@Getter
+@Value
+@EqualsAndHashCode(callSuper = true)
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
-public final class ValidationConfig<ValidatableT, FailureT> extends BaseValidationConfig<ValidatableT, FailureT> {
+public class ValidationConfig<ValidatableT, FailureT> extends BaseValidationConfig<ValidatableT, FailureT> {
 }
