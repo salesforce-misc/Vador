@@ -1,3 +1,5 @@
+import com.adarshr.gradle.testlogger.theme.ThemeType
+
 plugins {
     kotlin("jvm")
     `java-library`
@@ -18,10 +20,9 @@ repositories {
 
 dependencies {
     api("io.vavr:vavr:0.10.3")
+    api("org.hamcrest:hamcrest:2.2")
     implementation("org.slf4j:slf4j-api:2.0.0-alpha1")
     implementation("com.force.api:swag:0.3.9")
-    implementation("io.vavr:vavr-kotlin:0.10.2")
-    implementation("org.hamcrest:hamcrest:2.2")
 
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j18-impl:2.14.1")
 
@@ -109,7 +110,7 @@ publishing {
     }
 
     testlogger {
-        setTheme("mocha")
+        theme = ThemeType.MOCHA
         showExceptions = true
         showStackTraces = true
         showFullStackTraces = true
@@ -124,6 +125,7 @@ publishing {
         showPassedStandardStreams = true
         showSkippedStandardStreams = true
         showFailedStandardStreams = true
+        logLevel = LogLevel.LIFECYCLE
     }
 
     detekt {

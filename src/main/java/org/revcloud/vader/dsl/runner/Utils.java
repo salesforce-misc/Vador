@@ -49,11 +49,14 @@ class Utils {
 
     static <FailureT> FailureT validateSize(java.util.List<?> validatables,
                                             FailureT none,
-                                            HeaderValidationConfig<?, FailureT> validationConfig) {
-        if (validatables.size() < validationConfig.getMinBatchSize()._1) {
-            return validationConfig.getMinBatchSize()._2;
-        } else if (validatables.size() > validationConfig.getMaxBatchSize()._1) {
-            return validationConfig.getMaxBatchSize()._2;
+                                            HeaderValidationConfig<?, FailureT> headerConfig) {
+        final var minBatchSize = headerConfig.getMinBatchSize();
+        if (minBatchSize != null && validatables.size() < minBatchSize._1) {
+            return minBatchSize._2;
+        }
+        final var maxBatchSize = headerConfig.getMaxBatchSize();
+        if (maxBatchSize != null && validatables.size() > maxBatchSize._1) {
+            return maxBatchSize._2;
         }
         return none;
     }
@@ -123,7 +126,7 @@ class Utils {
     };
 
     static <ValidatableT, FailureT> Seq<Either<FailureT, ValidatableT>> filterInvalidatablesAndDuplicates(
-            List<ValidatableT> validatables, 
+            List<ValidatableT> validatables,
             FailureT invalidValidatable,
             BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
         if (validatables.isEmpty()) {
@@ -173,10 +176,15 @@ class Utils {
                         .filter(Objects::nonNull) // Ignore if null
                         .fold(() -> validatableRight, id -> id.filterOrElse(IdTraits::isValidId, ignore -> tuple2._2)));
         Stream<Validator<ValidatableT, FailureT>> specValidators = validationConfig.getWithSpecs().stream()
-                .map(biSpec -> validatableRight -> validatableRight
-                        .filterOrElse(isValid(biSpec), ignore -> biSpec.getOrFailWith()));
+                .map(Utils::toValidator);
         // TODO 13/04/21 gopala.akshintala: Use Stream everywhere, now that java has immutable list built-in 
         return Iterator.ofAll(Stream.of(mandatoryFieldValidators, mandatorySfIdValidators, nonMandatorySfIdValidators, specValidators).flatMap(identity()).collect(Collectors.toList()));
+    }
+
+    private static <ValidatableT, FailureT> Validator<ValidatableT, FailureT> toValidator(BaseSpec.BaseSpecBuilder<ValidatableT, FailureT, ?, ?> baseSpecBuilder) {
+        val baseSpec = baseSpecBuilder.done();
+        return validatableRight -> validatableRight
+                .filterOrElse(isValid(baseSpec), ignore -> baseSpec.getOrFailWith());
     }
 
     static <ValidatableT, FailureT> Iterator<SimpleValidator<ValidatableT, FailureT>> toSimpleValidators(
@@ -191,8 +199,13 @@ class Utils {
                     return idValue == null || IdTraits.isValidId(idValue.toString()) ? none : tuple2._2;
                 });
         Stream<SimpleValidator<ValidatableT, FailureT>> specValidators = validationConfig.getWithSpecs().stream()
-                .map(spec -> validatable -> isValid(spec).test(validatable) ? none : spec.getOrFailWith());
+                .map(specBuilder -> toSimpleValidator(specBuilder, none));
         // TODO 13/04/21 gopala.akshintala: Use Stream everywhere, now that java has immutable list built-in 
         return Iterator.ofAll(Stream.of(mandatoryFieldValidators, mandatorySfIdValidators, nonMandatorySfIdValidators, specValidators).flatMap(identity()).collect(Collectors.toList()));
+    }
+
+    private static <ValidatableT, FailureT> SimpleValidator<ValidatableT, FailureT> toSimpleValidator(BaseSpec.BaseSpecBuilder<ValidatableT, FailureT, ?, ?> baseSpecBuilder, FailureT none) {
+        val baseSpec = baseSpecBuilder.done();
+        return validatable -> isValid(baseSpec).test(validatable) ? none : baseSpec.getOrFailWith();
     }
 }

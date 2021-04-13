@@ -6,6 +6,7 @@ import io.vavr.Tuple2;
 import lombok.Getter;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
+import org.revcloud.vader.dsl.runner.BaseSpec.BaseSpecBuilder;
 
 import java.util.Collection;
 
@@ -19,5 +20,5 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
     @Singular
     protected Collection<Tuple2<Function1<ValidatableT, ID>, FailureT>> mayHaveValidSFIds;
     @Singular
-    protected Collection<BaseSpec<ValidatableT, FailureT>> withSpecs;
+    protected Collection<BaseSpecBuilder<ValidatableT, FailureT, ?, ?>> withSpecs;
 }

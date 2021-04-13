@@ -55,7 +55,7 @@ class FailFastSimple {
             if (validatable == null) {
                 return invalidValidatable;
             }
-            val batch = validationConfig.getBatchMapper().apply(validatable);
+            val batch = validationConfig.getWithBatchMapper().apply(validatable);
             val batchSizeFailure = Utils.validateSize(batch, none, validationConfig);
             if (batchSizeFailure != none) {
                 return batchSizeFailure;

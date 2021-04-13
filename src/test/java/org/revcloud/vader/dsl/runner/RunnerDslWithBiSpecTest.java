@@ -22,7 +22,7 @@ class RunnerDslWithBiSpecTest {
                 ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(List.of(
                         BiSpec.<Bean, ValidationFailure>check().orFailWith(INVALID_COMBO)
                                 .when(Bean::getValue).is(1)
-                                .then(Bean::getValueStr).shouldBe(either(is("one")).or(is("1"))).done()))
+                                .then(Bean::getValueStr).shouldBe(either(is("one")).or(is("1")))))
                         .prepare();
         val invalidBean = new Bean(1, "a", null, null);
         val failureResult = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, invalidBean, ignore -> NONE, validationConfig);
@@ -39,8 +39,8 @@ class RunnerDslWithBiSpecTest {
                 ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(List.of(
                         BiSpec.<Bean, ValidationFailure>check().orFailWith(INVALID_COMBO)
                                 .when(Bean::getValueStr).is(null)
-                                .then(Bean::getValue).matchesField(Bean::getDependentValue1)
-                                .done())).prepare();
+                                .then(Bean::getValue).matchesField(Bean::getDependentValue1)))
+                        .prepare();
         val invalidBean = new Bean(1, null, 2, 1);
         val failureResult = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, invalidBean, ignore -> NONE, validationConfig);
         Assertions.assertEquals(INVALID_COMBO, failureResult);
@@ -56,8 +56,8 @@ class RunnerDslWithBiSpecTest {
                 ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(List.of(
                         BiSpec.<Bean, ValidationFailure>check().orFailWith(INVALID_COMBO)
                                 .when(Bean::getValueStr).is(null)
-                                .then(Bean::getValue).matchesField(Bean::getDependentValue1).orMatchesField(Bean::getDependentValue2)
-                                .done())).prepare();
+                                .then(Bean::getValue).matchesField(Bean::getDependentValue1).orMatchesField(Bean::getDependentValue2)))
+                        .prepare();
         val invalidBean = new Bean(1, null, 2, 2);
         val failureResult = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, invalidBean, ignore -> NONE, validationConfig);
         Assertions.assertEquals(INVALID_COMBO, failureResult);

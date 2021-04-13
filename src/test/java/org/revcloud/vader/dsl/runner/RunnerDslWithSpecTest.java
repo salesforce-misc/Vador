@@ -18,10 +18,10 @@ class RunnerDslWithSpecTest {
     @Test
     void failFastWithInvalidIdForSimpleValidators() {
         ValidationConfig<Bean, ValidationFailure> validationConfig =
-                ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(List.of(
+                ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(
                         Spec.<Bean, ValidationFailure>check().orFailWith(INVALID_VALUE)
                                 .given(Bean::getValue)
-                                .shouldBe(either(is(1)).or(is(2))).done()))
+                                .shouldBe(either(is(1)).or(is(2))))
                         .prepare();
         val invalidBean = new Bean(3);
         val failureResult = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, invalidBean, ignore -> NONE, validationConfig);
