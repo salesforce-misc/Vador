@@ -81,6 +81,7 @@ class RunnerDslWithBiSpecTest {
                 throwableMapper,
                 validationConfig);
     }
+    
     @Value
     static class Bean {
         Integer value;

@@ -21,6 +21,7 @@ repositories {
 dependencies {
     api("io.vavr:vavr:0.10.3")
     api("org.hamcrest:hamcrest:2.2")
+    api("org.exparity:hamcrest-date:2.0.7")
     implementation("org.slf4j:slf4j-api:2.0.0-alpha1")
     implementation("com.force.api:swag:0.3.9")
 

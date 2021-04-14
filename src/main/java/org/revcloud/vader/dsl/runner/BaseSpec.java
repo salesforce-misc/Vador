@@ -17,3 +17,6 @@ class BaseSpec<ValidatableT, FailureT> {
     @Singular
     Collection<Function1<ValidatableT, ?>> orMatchesFields;
 }
+
+// TODO 14/04/21 gopala.akshintala: Demo reuse of same spec for a change of one of the params 
+// TODO 14/04/21 gopala.akshintala: Demo unit testing Spec 

@@ -183,7 +183,7 @@ These 4 types that Vader provides, is to help developers focus only on their val
 
 ---
 
-#How to Structure these validations
+# How to Structure these validations
 
 Vader allows validations to align with the Bean Structure, which is hierarchical. The bean presented for validation (Validatable) can be seen as the root bean, and it can nest children and children can nest children too, to any level of depth. Having validations align to the same structure makes the design declarative and offers the following advantages:
 
@@ -249,20 +249,26 @@ Vader has a **RunnerDSL**, which has API methods for the below strategies. There
 
 # Source-code Setup
 
-- This is a simple Gradle project, so all you need is gradle on your system. As of writing this, Maven v6.8.3 is used.
-- **[Lombok](https://projectlombok.org/)** is used to generate boilerplate code. There are plugins available for Lombok for all popular IDEs, which you need to install. The latest version of the plugin should work.
-- The Java version used for both source and target - openjdk-15.0.2
-- If You want to use your own JDK, you can copy the certs from `~/BLT/tools/Darwin/jdk/openjdk{latest_version}/jre/lib/security/cacerts` to `$JAVA_HOME/jre/lib/security/cacerts`
+- This is a simple Gradle project, and has its own Gradle wrapper. So nothing to install. As of writing this, Gradle v7.0 is used.
+- For source code navigation you need to have **[Lombok](https://projectlombok.org/)** plugin, which is used to generate boilerplate code. 
+  There are plugins available for Lombok for all popular IDEs, which you need to install. The latest version of the plugin should work.
 
 ---
 
 # Jar release process
 
-- You need to have the necessary permissions to release jar into Nexus for both SNAPSHOTS and RELEASE channels. This Gus item was raised for Nexus access - https://gus.my.salesforce.com/a07B0000007Qt0BIAS. Please reach out to this team for any Nexus related permissions, problems, or requirements.
+## CI/CD
+
+- The CI/CD pipeline is all setup for this library. So, as soon as you push a commit (on any branch), a CI job starts and pushes the new jar into nexus. 
+- The job status can be monitored [here](https://ccspaymentsci.dop.sfdc.net/).
+
+## Manual
+
+- If you want to manually publish jar to nexus from you local, you need to have the necessary permissions to release jar into Nexus for both SNAPSHOTS and RELEASE channels. This Gus item was raised for Nexus access - https://gus.my.salesforce.com/a07B0000007Qt0BIAS. Please reach out to this team for any Nexus related permissions, problems, or requirements.
 - As of today, the permissions are maintained by providing a role `CCSPayments`. We are planning to create a AD group for this.
-- Run the below command to upgrade the version of the library and push it to Nexus. This command should walk you through a few steps where you may stick with default values.
+- Increment the version property `version = "<Version-Number>"` and run this command.
 
   ```shell
-  gradle publish
+  ./gradlew publish
   ```
-- After this step is successful, go to the [Nexus Repo](https://nexus.soma.salesforce.com/nexus/index.html#welcome), search with this jar name and verify if the current version is uploaded.
+- After publishing, you can verify it by searching in the [Nexus Repo](https://nexus.soma.salesforce.com/nexus/index.html#welcome).
