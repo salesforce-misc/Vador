@@ -1,14 +1,25 @@
 # 🦾 Vader 🦾
 
+[![Build Status](https://ccspaymentsci.dop.sfdc.net/buildStatus/icon?job=CCSPayments%2FVader%2Fmain)](https://ccspaymentsci.dop.sfdc.net/job/CCSPayments/job/vader/job/main/)
+[![Quality Gate Status](https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=alert_status)](https://sonarqube.soma.salesforce.com/dashboard?id=ccspayment.vader)
+[![Maintainability Rating](https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayment.vader&metric=sqale_rating)](https://sonarqube.soma.salesforce.com/dashboard?id=ccspayment.vader)
+[![Security Rating](https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayment.vader&metric=security_rating)](https://sonarqube.soma.salesforce.com/dashboard?id=ccspayment.vader)
+[![Coverage](https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayment.vader&metric=coverage)](https://sonarqube.soma.salesforce.com/dashboard?id=ccspayment.vader)
+<!-- [![Slack](https://img.shields.io/badge/slack-MoBE-informational.svg?logo=slack)](https://platformcloud.slack.com/messages/CF9EL7JJU/team/) -->
+
 ![inline](images/vader.png)
 
 ---
 
 # Why a new Framework for Bean validation?
 
-When it comes to Bean validation, [Spring Bean Validation](https://reflectoring.io/bean-validation-with-spring-boot/) is the most popular framework. But it comes with a lot of *Spring-baggage* and does a lot of *Annotation-Magic*. Although this is simple, simplicity comes at the cost of losing a lot of flexibility. It works well for simple Data validations like checking Min/Max, but as the validations get complex, the code turns convoluted and it gets difficult to manage all those validations popping up as annotations across your Domain objects.
+When it comes to Bean validation, [Java Bean validation](https://www.baeldung.com/javax-validation), [Spring Bean Validation](https://reflectoring.io/bean-validation-with-spring-boot/) 
+are some well-known 
+But, it comes with a lot of *Spring-baggage* and does a lot of *Annotation-Magic*.
+It works well for simple Data validations like checking Min/Max, but as the validations get complex, the code turns convoluted and it gets difficult to manage all those validations popping up as annotations across your Domain objects.
 
-There is no way to configure the order of validations, which is required when you need a *Fail-Fast* strategy and want to load validations in the ascending order of their cost. Especially, if your service accepts a batch of requests (A Batch service), it gets really difficult to manage partial failures.
+There is no way to configure the order of validations, which is required when you need a *Fail-Fast* strategy and want to load validations in the ascending order of their cost. 
+Especially, if your service accepts a batch of requests (A Batch service), it gets really difficult to manage partial failures.
 
 ### How is Salesforce core dealing with this?
 

@@ -4,9 +4,11 @@ plugins {
     kotlin("jvm")
     `java-library`
     `maven-publish`
+    jacoco
     id("io.freefair.lombok") version "5.3.3.3"
     id("io.gitlab.arturbosch.detekt") version "1.16.0"
     id("com.adarshr.test-logger") version "3.0.0"
+    id("com.diffplug.spotless") version "5.12.1"
 }
 
 java {
@@ -39,8 +41,26 @@ version = "2.2.5-SNAPSHOT"
 description = "Vader - An FP framework for Bean validation"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
-tasks.withType<Test> {
-    useJUnitPlatform()
+tasks {
+    withType<Test> {
+        useJUnitPlatform()
+    }
+
+    jacocoTestReport {
+        reports {
+            csv.isEnabled = false
+            html.isEnabled = false
+            xml.isEnabled = true
+        }
+    }
+}
+afterEvaluate {
+    tasks.named("check").configure {
+        dependsOn(tasks.named("jacocoTestReport"))
+    }
+    tasks.named("jacocoTestReport").configure {
+        dependsOn(tasks.named("test"))
+    }
 }
 
 /********************/
@@ -51,7 +71,6 @@ tasks.withType<PublishToMavenRepository>().configureEach {
         logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to ${repository.name}")
     }
 }
-
 
 tasks.withType<PublishToMavenLocal>().configureEach {
     doLast {
@@ -134,4 +153,19 @@ publishing {
         config = files("config/detekt/detekt.yml")
         buildUponDefaultConfig = true
     }
+    
+    
+    spotless {
+        isEnforceCheck = false
+        kotlin {
+            // by default the target is every '.kt' and '.kts` file in the java sourcesets
+            ktlint("0.41.0")
+        }
+        java {
+            importOrder() // standard import order
+            removeUnusedImports()
+            googleJavaFormat() // has its own section below
+        }
+    }
 }
+
