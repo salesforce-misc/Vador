@@ -9,6 +9,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.16.0"
     id("com.adarshr.test-logger") version "3.0.0"
     id("com.diffplug.spotless") version "5.12.1"
+    id("org.sonarqube") version "2.7"
 }
 
 java {
@@ -54,6 +55,7 @@ tasks {
         }
     }
 }
+
 afterEvaluate {
     tasks.named("check").configure {
         dependsOn(tasks.named("jacocoTestReport"))
