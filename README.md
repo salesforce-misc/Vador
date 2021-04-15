@@ -1,6 +1,6 @@
 # 🦾 Vader 🦾
 
-[![Build Status](https://ccspaymentsci.dop.sfdc.net/buildStatus/icon?job=CCSPayments%2FVader%2Fmain)](https://ccspaymentsci.dop.sfdc.net/job/CCSPayments/job/vader/job/main/)
+[![Build Status](https://ccspaymentsci.dop.sfdc.net/buildStatus/icon?job=validation%2FVader%2Fmain)](https://ccspaymentsci.dop.sfdc.net/job/validation/job/Vader/job/main/)
 [![Quality Gate Status](https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=alert_status)](https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader)
 [![Maintainability Rating](https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=sqale_rating)](https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader)
 [![Security Rating](https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=security_rating)](https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader)
