@@ -75,38 +75,7 @@ class Utils {
         return Try.of(() -> validator.apply(validatable)).fold(throwableMapper, identity());
     }
 
-    private static <ValidatableT, FailureT> Predicate<ValidatableT> isValid(BaseSpec<ValidatableT, FailureT> baseSpec) {
-        if (baseSpec instanceof BiSpec) {
-            return isValid((BiSpec<ValidatableT, FailureT>) baseSpec);
-        } else if (baseSpec instanceof Spec) {
-            return isValid((Spec<ValidatableT, FailureT>) baseSpec);
-        }
-        throw new UnsupportedOperationException();
-    }
-
-    private static <ValidatableT, FailureT> Predicate<ValidatableT> isValid(Spec<ValidatableT, FailureT> spec) {
-        return validatable -> {
-            val actualFieldValue = spec.getGiven().apply(validatable);
-            final Matcher<?> shouldBe = spec.getShouldBe();
-            return shouldBe != null && shouldBe.matches(actualFieldValue) ||
-                    matchFields(spec, validatable, actualFieldValue);
-        };
-    }
-
-    private static <ValidatableT, FailureT> Predicate<ValidatableT> isValid(BiSpec<ValidatableT, FailureT> biSpec) {
-        return validatable -> {
-            val actualFieldValue = biSpec.getWhen().apply(validatable);
-            if (actualFieldValue != biSpec.getIs()) {
-                return true;
-            }
-            val actualDependentFieldValue = biSpec.getThen().apply(validatable);
-            final Matcher<?> shouldBe = biSpec.getShouldBe();
-            return shouldBe != null && shouldBe.matches(actualDependentFieldValue) ||
-                    matchFields(biSpec, validatable, actualDependentFieldValue);
-        };
-    }
-
-    private static <ValidatableT, FailureT> boolean matchFields(BaseSpec<ValidatableT, FailureT> baseSpec, ValidatableT validatable, Object actualValue) {
+    static <ValidatableT, FailureT> boolean matchFields(BaseSpec<ValidatableT, FailureT> baseSpec, ValidatableT validatable, Object actualValue) {
         val expectedFieldMappers = new ArrayList<>(baseSpec.getOrMatchesFields());
         if (baseSpec.getMatchesField() != null) {
             expectedFieldMappers.add(baseSpec.getMatchesField());
@@ -184,7 +153,7 @@ class Utils {
     private static <ValidatableT, FailureT> Validator<ValidatableT, FailureT> toValidator(BaseSpec.BaseSpecBuilder<ValidatableT, FailureT, ?, ?> baseSpecBuilder) {
         val baseSpec = baseSpecBuilder.done();
         return validatableRight -> validatableRight
-                .filterOrElse(isValid(baseSpec), ignore -> baseSpec.getOrFailWith());
+                .filterOrElse(baseSpec.toPredicate(), ignore -> baseSpec.getOrFailWith());
     }
 
     static <ValidatableT, FailureT> Iterator<SimpleValidator<ValidatableT, FailureT>> toSimpleValidators(
@@ -206,6 +175,6 @@ class Utils {
 
     private static <ValidatableT, FailureT> SimpleValidator<ValidatableT, FailureT> toSimpleValidator(BaseSpec.BaseSpecBuilder<ValidatableT, FailureT, ?, ?> baseSpecBuilder, FailureT none) {
         val baseSpec = baseSpecBuilder.done();
-        return validatable -> isValid(baseSpec).test(validatable) ? none : baseSpec.getOrFailWith();
+        return validatable -> baseSpec.toPredicate().test(validatable) ? none : baseSpec.getOrFailWith();
     }
 }

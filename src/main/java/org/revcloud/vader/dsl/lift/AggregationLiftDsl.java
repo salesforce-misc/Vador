@@ -66,8 +66,8 @@ public class AggregationLiftDsl {
      *
      * @param memberValidation
      * @param toMemberMapper   Mapper function to extract member from container
-     * @param invalidParent   Failure to return if container is null
-     * @param invalidChild    Failure to return if member is null
+     * @param invalidParent    Failure to return if container is null
+     * @param invalidChild     Failure to return if member is null
      * @param <ContainerT>
      * @param <MemberT>
      * @param <FailureT>
