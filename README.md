@@ -7,6 +7,11 @@
 [![Coverage](https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=coverage)](https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader)
 [![Slack](https://img.shields.io/badge/QTC-Centaurus-eng.svg?logo=slack)](https://sfdc-salescloud.slack.com/messages/TFBAFAVPH/team/)
 
+
+### Work in progress
+![stability-wip](https://img.shields.io/badge/stability-work_in_progress-lightgrey.svg)
+
+
 ![inline](images/vader.png)
 
 ---
