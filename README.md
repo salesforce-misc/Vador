@@ -22,10 +22,19 @@
 When shopping for Bean validation frameworks, we stumbled-upon these well-known ones:
 
 - [Java Bean validation](https://www.baeldung.com/javax-validation): This is only suitable for simple data validations like `@NotNull, @Min, @Max`.
-
 - [Spring Bean validation](https://reflectoring.io/bean-validation-with-spring-boot/): It comes with a lot of *Spring-baggage* and works with Spring REST. But we predominantly use Connect framework on core.
 
-These frameworks don't solve the requirements of our APIs. Let's understand what kind of validations can services that belong to the same domain have.
+## Problem with `@Annotation` based validators
+
+Annotations are reflection based and they create a lot of *runtime magic*. They are not bad in-general, but using them for validations has these cons:
+
+- It's difficult to debug as you wouldn't know which `AnnotationProcessor` handles which `@Annotation` unless the Javadoc writer of that Annotation is gracious to provide those details. 
+- You can't use a simple *⌘+Click* to know what's going on underneath anymore.
+- Annotations offer limited type-safety. It’s not possible to specify contextual requirements. Any annotation can go any type. 
+- Use of Reflections for Annotations also incur a runtime cost.
+- Annotations are not testable.
+
+Let's understand what kind of validations can services that belong to the same domain have.
 
 ## Service validations that belong to a Domain
 
