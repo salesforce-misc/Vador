@@ -29,6 +29,7 @@ class RunnerDslWithBiSpecTest {
                                 .when(Bean::getValue).is(2)
                                 .then(Bean::getValueStr).shouldBe(either(is("two")).or(is("2"))).done()))
                         .prepare();
+        
         val invalidBean1 = new Bean(1, "a", null, null);
         val failureResult1 = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, invalidBean1, ignore -> NONE, validationConfig);
         Assertions.assertEquals(INVALID_COMBO_1, failureResult1);
@@ -80,6 +81,7 @@ class RunnerDslWithBiSpecTest {
         Assertions.assertEquals(NONE, noneResult);
     }
 
+    // TODO 19/04/21 gopala.akshintala: Replicate these tests for batch 
     private static <ValidatableT, FailureT> FailureT validateAndFailFastForSimpleValidatorsWithConfig(
             FailureT none,
             FailureT nothingToValidate,

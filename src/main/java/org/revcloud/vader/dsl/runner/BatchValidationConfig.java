@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate")
 public class BatchValidationConfig<ValidatableT, FailureT> extends BaseValidationConfig<ValidatableT, FailureT> {
+    // These two params are separated out, as `andFailDuplicatesWith` is not mandatory for filter duplicates
     Function1<ValidatableT, ?> findDuplicatesWith;
     FailureT andFailDuplicatesWith;
 }

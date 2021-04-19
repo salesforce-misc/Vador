@@ -26,11 +26,12 @@ public final class SpecFactory<ValidatableT, FailureT> {
     @Getter
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
     public abstract static class BaseSpec<ValidatableT, FailureT> {
-        FailureT orFailWith;
-        Matcher<?> shouldBe;
-        Function1<ValidatableT, ?> matchesField;
+        protected String nameForTest;
+        protected FailureT orFailWith;
+        protected Matcher<?> shouldBe;
+        protected Function1<ValidatableT, ?> matchesField;
         @Singular
-        Collection<Function1<ValidatableT, ?>> orMatchesFields;
+        protected Collection<Function1<ValidatableT, ?>> orMatchesFields;
     
         protected abstract Predicate<ValidatableT> toPredicate();
     }
@@ -38,8 +39,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
     @Value
     @EqualsAndHashCode(callSuper = true)
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
-    static
-    class Spec1<ValidatableT, FailureT> extends BaseSpec<ValidatableT, FailureT> {
+    static class Spec1<ValidatableT, FailureT> extends BaseSpec<ValidatableT, FailureT> {
         Function1<ValidatableT, ?> given;
 
         @Override
@@ -56,8 +56,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
     @Value
     @EqualsAndHashCode(callSuper = true)
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
-    static
-    class Spec2<ValidatableT, FailureT> extends BaseSpec<ValidatableT, FailureT> {
+    static class Spec2<ValidatableT, FailureT> extends BaseSpec<ValidatableT, FailureT> {
         Function1<ValidatableT, ?> when;
         Object is;
         Function1<ValidatableT, ?> then;
