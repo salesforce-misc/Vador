@@ -30,7 +30,8 @@ public enum ValidationFailureMessage {
     VALIDATION_FAILURE_2("", ""),
     VALIDATION_FAILURE_3("", ""),
     REQUIRED_FIELD_MISSING("", ""),
-    INVALID_COMBO("", ""),
+    INVALID_COMBO_1("", ""),
+    INVALID_COMBO_2("", ""),
     INVALID_VALUE("", ""),
     FIELD_INTEGRITY_EXCEPTION("", ""),
     ;

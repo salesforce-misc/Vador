@@ -1,4 +1,4 @@
-package org.revcloud.vader.dsl.runner;
+package org.revcloud.vader.dsl.runner.spec;
 
 import consumer.failure.ValidationFailure;
 import io.vavr.Function1;
@@ -6,6 +6,8 @@ import lombok.Value;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.revcloud.vader.dsl.runner.RunnerDsl;
+import org.revcloud.vader.dsl.runner.ValidationConfig;
 
 import static consumer.failure.ValidationFailure.INVALID_VALUE;
 import static consumer.failure.ValidationFailure.NONE;
@@ -16,10 +18,10 @@ class RunnerDslWithSpecTest {
     @Test
     void failFastWithInvalidIdForSimpleValidators() {
         ValidationConfig<Bean, ValidationFailure> validationConfig =
-                ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecBuilder(
-                        Spec.<Bean, ValidationFailure>check().orFailWith(INVALID_VALUE)
+                ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
+                        spec._1.orFailWith(INVALID_VALUE)
                                 .given(Bean::getValue)
-                                .shouldBe(either(is(1)).or(is(2))))
+                                .shouldBe(either(is(1)).or(is(2))).done())
                         .prepare();
         val invalidBean = new Bean(3);
         val failureResult = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, invalidBean, ignore -> NONE, validationConfig);
