@@ -7,8 +7,6 @@ import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static consumer.failure.ValidationFailure.INVALID_VALUE;
 import static consumer.failure.ValidationFailure.NONE;
 import static org.hamcrest.Matchers.either;
@@ -18,7 +16,7 @@ class RunnerDslWithSpecTest {
     @Test
     void failFastWithInvalidIdForSimpleValidators() {
         ValidationConfig<Bean, ValidationFailure> validationConfig =
-                ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(
+                ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecBuilder(
                         Spec.<Bean, ValidationFailure>check().orFailWith(INVALID_VALUE)
                                 .given(Bean::getValue)
                                 .shouldBe(either(is(1)).or(is(2))))

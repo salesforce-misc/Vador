@@ -13,7 +13,6 @@ import io.vavr.control.Try;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.hamcrest.Matcher;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
@@ -84,16 +83,6 @@ class Utils {
                 .anyMatch(expectedFieldMapper -> expectedFieldMapper.apply(validatable) == actualValue);
     }
 
-    private static final Predicate<Object> isPresent = fieldValue -> {
-        if (fieldValue != null) {
-            if (fieldValue instanceof String) {
-                return !((String) fieldValue).isBlank();
-            }
-            return true;
-        }
-        return false;
-    };
-
     static <ValidatableT, FailureT> Seq<Either<FailureT, ValidatableT>> filterInvalidatablesAndDuplicates(
             List<ValidatableT> validatables,
             FailureT invalidValidatable,
@@ -147,11 +136,12 @@ class Utils {
         Stream<Validator<ValidatableT, FailureT>> specValidators = validationConfig.getWithSpecs().stream()
                 .map(Utils::toValidator);
         // TODO 13/04/21 gopala.akshintala: Use Stream everywhere, now that java has immutable list built-in 
-        return Iterator.ofAll(Stream.of(mandatoryFieldValidators, mandatorySfIdValidators, nonMandatorySfIdValidators, specValidators).flatMap(identity()).collect(Collectors.toList()));
+        return Iterator.ofAll(Stream.of(mandatoryFieldValidators, mandatorySfIdValidators, nonMandatorySfIdValidators, specValidators, validationConfig.getValidators())
+                .flatMap(identity()).collect(Collectors.toList()));
     }
 
-    private static <ValidatableT, FailureT> Validator<ValidatableT, FailureT> toValidator(BaseSpec.BaseSpecBuilder<ValidatableT, FailureT, ?, ?> baseSpecBuilder) {
-        val baseSpec = baseSpecBuilder.done();
+
+    private static <ValidatableT, FailureT> Validator<ValidatableT, FailureT> toValidator(BaseSpec<ValidatableT, FailureT> baseSpec) {
         return validatableRight -> validatableRight
                 .filterOrElse(baseSpec.toPredicate(), ignore -> baseSpec.getOrFailWith());
     }
@@ -170,11 +160,21 @@ class Utils {
         Stream<SimpleValidator<ValidatableT, FailureT>> specValidators = validationConfig.getWithSpecs().stream()
                 .map(specBuilder -> toSimpleValidator(specBuilder, none));
         // TODO 13/04/21 gopala.akshintala: Use Stream everywhere, now that java has immutable list built-in 
-        return Iterator.ofAll(Stream.of(mandatoryFieldValidators, mandatorySfIdValidators, nonMandatorySfIdValidators, specValidators).flatMap(identity()).collect(Collectors.toList()));
+        return Iterator.ofAll(Stream.of(mandatoryFieldValidators, mandatorySfIdValidators, nonMandatorySfIdValidators, specValidators)
+                .flatMap(identity()).collect(Collectors.toList()));
     }
 
-    private static <ValidatableT, FailureT> SimpleValidator<ValidatableT, FailureT> toSimpleValidator(BaseSpec.BaseSpecBuilder<ValidatableT, FailureT, ?, ?> baseSpecBuilder, FailureT none) {
-        val baseSpec = baseSpecBuilder.done();
+    private static <ValidatableT, FailureT> SimpleValidator<ValidatableT, FailureT> toSimpleValidator(BaseSpec<ValidatableT, FailureT> baseSpec, FailureT none) {
         return validatable -> baseSpec.toPredicate().test(validatable) ? none : baseSpec.getOrFailWith();
     }
+
+    private static final Predicate<Object> isPresent = fieldValue -> {
+        if (fieldValue != null) {
+            if (fieldValue instanceof String) {
+                return !((String) fieldValue).isBlank();
+            }
+            return true;
+        }
+        return false;
+    };
 }

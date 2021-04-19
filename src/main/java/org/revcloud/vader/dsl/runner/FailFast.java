@@ -63,7 +63,6 @@ class FailFast {
 
     /**
      * Batch + Simple + Config  
-     * @param validators
      * @param invalidValidatable
      * @param throwableMapper
      * @param validationConfig
@@ -72,14 +71,13 @@ class FailFast {
      * @return
      */
     static <FailureT, ValidatableT> FailFastStrategyForBatch<ValidatableT, FailureT> failFastStrategyForBatch(
-            List<Validator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper,
             BatchValidationConfig<ValidatableT, FailureT> validationConfig) {
         return validatables -> {
             final Seq<Either<FailureT, ValidatableT>> validatablesEither =
                     Utils.filterInvalidatablesAndDuplicates(validatables, invalidValidatable, validationConfig);
-            return validatablesEither.map(validatableEither -> Iterator.concat(Utils.toValidators(validationConfig), validators).iterator()
+            return validatablesEither.map(validatableEither -> Utils.toValidators(validationConfig).iterator()
                     .map(currentValidation -> Utils.fireValidator(currentValidation, validatableEither, throwableMapper))
                     .find(Either::isLeft)
                     .getOrElse(validatableEither)).toList();

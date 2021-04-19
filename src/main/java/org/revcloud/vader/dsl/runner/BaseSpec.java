@@ -21,5 +21,5 @@ abstract class BaseSpec<ValidatableT, FailureT> {
     protected abstract Predicate<ValidatableT> toPredicate(); 
 }
 
-// TODO 14/04/21 gopala.akshintala: Demo reuse of same spec for a change of one of the params 
+// TODO 14/04/21 gopala.akshintala: Demo reuse of same spec with a change in one of the params 
 // TODO 14/04/21 gopala.akshintala: Demo unit testing Spec 

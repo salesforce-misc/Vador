@@ -7,10 +7,7 @@
 [![Coverage](https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=coverage)](https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader)
 [![Slack](https://img.shields.io/badge/QTC-Centaurus-eng.svg?logo=slack)](https://sfdc-salescloud.slack.com/messages/TFBAFAVPH/team/)
 
-
-### Work in progress
-![stability-wip](https://img.shields.io/badge/stability-work_in_progress-lightgrey.svg)
-
+🚧 ![stability-wip](https://img.shields.io/badge/stability-work_in_progress-lightgrey.svg)
 
 ![inline](images/vader.png)
 
@@ -45,7 +42,7 @@ Let's understand what kind of validations can services that belong to the same d
 
 We have a group of services under Payments-Platform domain, such as - Authorization, Capture, Refund, Void. Similar service groups exist in Tax, Billing, Invoice domains too. All of these are REST-APIs that accept JSON payload. Services that support *batch* accept list of JSON sub-requests. A simplified version of a batch payload looks like this:
 
-```json
+```jsonc
 [
     {
         "amount": 99,
@@ -205,7 +202,7 @@ public static final Validator<Container, ValidationFailure> batchValidation1 =
 ⚠️ Ofcourse, pre-wrapping into `Either` is just to avoid boiler-plate. You can very well use `SimpleValidator` and wrap/unwrap it yourself.
 
 
-## SimpleValidator vs Validator?
+## `SimpleValidator` vs `Validator`?
 
 These types only differ stylistically. They are there to help developers focus only on their validation logic, not worry about boiler-plate and use a programming style (imperative or functional) that they are comfortable in. You can essentially use any Data type for your validators and in-fact you can even have a mix, based on your needs. Vader leaves the choice to the developer. If you are using a mix, there's a little *Stitching* job you need to perform, which we shall see in the DSL section.
 

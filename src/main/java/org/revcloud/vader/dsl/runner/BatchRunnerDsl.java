@@ -132,24 +132,20 @@ public class BatchRunnerDsl {
 
     public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFastForBatch(
             List<ValidatableT> validatables,
-            List<SimpleValidator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable,
-            FailureT none,
             Function1<Throwable, FailureT> throwableMapper,
             BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
-        return FailFast.failFastStrategyForBatch(ValidatorLiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, batchValidationConfig)
+        return FailFast.failFastStrategyForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
                 .apply(validatables);
     }
 
     public static <FailureT, ValidatableT, PairT> List<Either<Tuple2<PairT, FailureT>, ValidatableT>> validateAndFailFastForBatch(
             List<ValidatableT> validatables,
-            List<SimpleValidator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable,
-            FailureT none,
             Function1<Throwable, FailureT> throwableMapper,
             BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig,
             Function1<ValidatableT, PairT> pairForInvalidMapper) {
-        val validationResults = FailFast.failFastStrategyForBatch(ValidatorLiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, batchValidationConfig)
+        val validationResults = FailFast.failFastStrategyForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
                 .apply(validatables);
         return validationResults.zipWith(validatables, 
                 (result, validatable) -> result.mapLeft(failure -> Tuple.of(pairForInvalidMapper.apply(validatable), failure)));
