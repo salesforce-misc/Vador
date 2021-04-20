@@ -7,8 +7,6 @@
 package consumer.failure;
 
 
-import lombok.Value;
-
 import java.util.Objects;
 
 
@@ -34,10 +32,12 @@ public enum ValidationFailureMessage {
     INVALID_COMBO_2("", ""),
     INVALID_VALUE("", ""),
     FIELD_INTEGRITY_EXCEPTION("", ""),
+    MSG_WITH_PARAMS("", ""),
     ;
     
     private final String section;
     private final String name;
+    private Object[] params;
 
     ValidationFailureMessage(String section, String name) {
         Objects.requireNonNull(section, "section for ValidationFailure cannot be null");
@@ -60,5 +60,10 @@ public enum ValidationFailureMessage {
 
     public String getMessage() {
         return section + " " + name;
+    }
+
+    ValidationFailureMessage getErrorMessageWithParams(Object[] params) {
+        this.params = params;
+        return this;
     }
 }

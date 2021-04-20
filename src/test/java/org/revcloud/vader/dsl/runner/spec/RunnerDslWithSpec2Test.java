@@ -17,14 +17,15 @@ import static consumer.failure.ValidationFailure.NONE;
 import static org.hamcrest.Matchers.either;
 import static org.hamcrest.Matchers.is;
 
-class RunnerDslWithBiSpecTest {
+class RunnerDslWithSpec2Test {
     @Test
     void failFastWithInvalidIdForSimpleValidators() {
         ValidationConfig<Bean, ValidationFailure> validationConfig =
                 ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(spec -> List.of(
                         spec._2().orFailWith(INVALID_COMBO_1)
                                 .when(Bean::getValue).is(1)
-                                .then(Bean::getValueStr).shouldBe(either(is("one")).or(is("1"))),
+                                .then(Bean::getValueStr)
+                                .shouldBe(either(is("one")).or(is("1"))),
                         spec._2().orFailWith(INVALID_COMBO_2)
                                 .when(Bean::getValue).is(2)
                                 .then(Bean::getValueStr).shouldBe(either(is("two")).or(is("2")))))
@@ -98,7 +99,7 @@ class RunnerDslWithBiSpecTest {
     }
     
     @Value
-    static class Bean {
+    private static class Bean {
         Integer value;
         String valueStr;
         Integer dependentValue1;

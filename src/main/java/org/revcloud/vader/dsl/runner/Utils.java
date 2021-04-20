@@ -142,7 +142,7 @@ class Utils {
 
     private static <ValidatableT, FailureT> Validator<ValidatableT, FailureT> toValidator(BaseSpec<ValidatableT, FailureT> baseSpec) {
         return validatableRight -> validatableRight
-                .filterOrElse(baseSpec.toPredicate(), ignore -> baseSpec.getOrFailWith());
+                .filterOrElse(baseSpec.toPredicate(), validatable -> baseSpec.getFailure(validatable));
     }
 
     static <ValidatableT, FailureT> Iterator<SimpleValidator<ValidatableT, FailureT>> toSimpleValidators(
@@ -164,7 +164,7 @@ class Utils {
     }
 
     private static <ValidatableT, FailureT> SimpleValidator<ValidatableT, FailureT> toSimpleValidator(BaseSpec<ValidatableT, FailureT> baseSpec, FailureT none) {
-        return validatable -> baseSpec.toPredicate().test(validatable) ? none : baseSpec.getOrFailWith();
+        return validatable -> baseSpec.toPredicate().test(validatable) ? none : baseSpec.getFailure(validatable);
     }
 
     private static final Predicate<Object> isPresent = fieldValue -> {

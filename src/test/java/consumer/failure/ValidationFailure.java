@@ -18,7 +18,6 @@ import lombok.val;
 @Data
 public class ValidationFailure {
     private final ValidationFailureMessage validationFailureMessage;
-    private String[] params;
     private String exceptionMsg;
 
     public static final ValidationFailure NONE = new ValidationFailure(ValidationFailureMessage.NONE);
@@ -47,5 +46,10 @@ public class ValidationFailure {
         val validationFailure = new ValidationFailure(unknownException);
         validationFailure.setExceptionMsg(e.getMessage());
         return validationFailure;
+    }
+
+    public static ValidationFailure getFailureWithParams(ValidationFailureMessage validationFailureMessage, Object[] params) {
+        validationFailureMessage = validationFailureMessage.getErrorMessageWithParams(params);
+        return new ValidationFailure(validationFailureMessage);
     }
 }
