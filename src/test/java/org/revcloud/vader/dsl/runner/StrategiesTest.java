@@ -18,7 +18,7 @@ class StrategiesTest {
     @Test
     void filterInvalidatablesAndDuplicates() {
         final List<Container> invalidValidatables = List.of(null, null);
-        final var duplicateValidatables = List.of(new Container(new ID("0")), new Container(new ID("0")), new Container(new ID("0")));
+        val duplicateValidatables = List.of(new Container(new ID("0")), new Container(new ID("0")), new Container(new ID("0")));
         val validatables = invalidValidatables.appendAll(duplicateValidatables).appendAll(List.of(
                 new Container(new ID("1")), new Container(new ID("2")), new Container(new ID("3"))
         ));

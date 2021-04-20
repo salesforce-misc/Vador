@@ -11,6 +11,8 @@
 
 ![inline](images/vader.png)
 
+> A piece-of-code is a costly solution to solve a simple problem - Lord Vader
+
 ---
 
 # Mission Statement
@@ -109,7 +111,7 @@ This problem is a 3-dimensional design problem stretching among - Sub-requests, 
 
 Watch this Tech-talk as a prerequisite to understanding, why `if-else-try-catch` is easy to start but difficult to manage and how Vader disciplines your code-base:
 
-Talk-Proposal: https://overfullstack.github.io/posts/fight-complexity-with-fp/
+Talk-Proposal: https://overfullstack.ga/posts/fight-complexity-with-fp/
 
 Recording: [Fight Complexity with Functional Programming - Gopal S. Akshintala - All Things Open, USA, 2020](https://www.youtube.com/watch?v=Dvr6gx4XaD8&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or)
 

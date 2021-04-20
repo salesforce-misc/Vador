@@ -16,18 +16,18 @@ import static org.hamcrest.Matchers.is;
 class SpecWithNameTest {
     @Test
     void spec2WithName() {
-        final var invalidCombo1 = "invalidCombo1";
-        final var invalidCombo2 = "invalidCombo2";
+        val invalidCombo1 = "invalidCombo1";
+        val invalidCombo2 = "invalidCombo2";
         ValidationConfig<RunnerDslWithBiSpecTest.Bean, ValidationFailure> validationConfig =
                 ValidationConfig.<RunnerDslWithBiSpecTest.Bean, ValidationFailure>toValidate().withSpecs(spec -> List.of(
-                        spec._2.nameForTest(invalidCombo1)
+                        spec._2().nameForTest(invalidCombo1)
                                 .orFailWith(INVALID_COMBO_1)
                                 .when(RunnerDslWithBiSpecTest.Bean::getValue).is(1)
-                                .then(RunnerDslWithBiSpecTest.Bean::getValueStr).shouldBe(either(is("one")).or(is("1"))).done(),
-                        spec._2.nameForTest(invalidCombo2)
+                                .then(RunnerDslWithBiSpecTest.Bean::getValueStr).shouldBe(either(is("one")).or(is("1"))),
+                        spec._2().nameForTest(invalidCombo2)
                                 .orFailWith(INVALID_COMBO_2)
                                 .when(RunnerDslWithBiSpecTest.Bean::getValue).is(2)
-                                .then(RunnerDslWithBiSpecTest.Bean::getValueStr).shouldBe(either(is("two")).or(is("2"))).done()))
+                                .then(RunnerDslWithBiSpecTest.Bean::getValueStr).shouldBe(either(is("two")).or(is("2")))))
                         .prepare();
         val invalidBean1 = new RunnerDslWithBiSpecTest.Bean(1, "a", null, null);
         Assertions.assertFalse(validationConfig.getSpecWithName(invalidCombo1).map(spec -> spec.test(invalidBean1)).orElse(true));

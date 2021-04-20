@@ -7,6 +7,7 @@
 package consumer.failure;
 
 import lombok.Data;
+import lombok.val;
 
 /**
  * Reference Validation Failure
@@ -42,8 +43,8 @@ public class ValidationFailure {
      * @return Respective Validation failure for the exception. 
      */
     public static ValidationFailure getValidationFailureForException(Throwable e) {
-        final var unknownException = ValidationFailureMessage.UNKNOWN_EXCEPTION;
-        final var validationFailure = new ValidationFailure(unknownException);
+        val unknownException = ValidationFailureMessage.UNKNOWN_EXCEPTION;
+        val validationFailure = new ValidationFailure(unknownException);
         validationFailure.setExceptionMsg(e.getMessage());
         return validationFailure;
     }

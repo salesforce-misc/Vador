@@ -18,11 +18,15 @@ public final class SpecFactory<ValidatableT, FailureT> {
     SpecFactory() {
     }
     
-    @SuppressWarnings("java:S116")
-    public final Spec1.Spec1Builder<ValidatableT, FailureT, ?, ?> _1 = Spec1.check();
-    @SuppressWarnings("java:S116")
-    public final Spec2.Spec2Builder<ValidatableT, FailureT, ?, ?> _2 = Spec2.check();
-
+    @SuppressWarnings({"java:S100", "java:S1452"})
+    public final Spec1.Spec1Builder<ValidatableT, FailureT, ?, ?> _1() {
+        return Spec1.check();
+    }
+    @SuppressWarnings({"java:S100", "java:S1452"})
+    public final Spec2.Spec2Builder<ValidatableT, FailureT, ?, ?> _2() {
+        return Spec2.check();
+    }
+    
     @Getter
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
     public abstract static class BaseSpec<ValidatableT, FailureT> {

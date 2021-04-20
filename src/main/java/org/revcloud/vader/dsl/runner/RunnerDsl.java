@@ -3,6 +3,7 @@ package org.revcloud.vader.dsl.runner;
 import io.vavr.Function1;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
+import lombok.val;
 import org.revcloud.vader.dsl.lift.ValidatorLiftDsl;
 import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.SimpleValidator;
@@ -61,7 +62,7 @@ public class RunnerDsl {
     public static <FailureT, ValidatableT> List<FailureT> validateAndAccumulateErrors(
             ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
-        final var results = Accumulation.accumulationStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
+        val results = Accumulation.accumulationStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
                 .map(validationResult -> validationResult.fold(Function1.identity(), ignore -> none));
         return results.forAll(result -> ((result == none) || result.equals(none))) ? List.empty(): results;
     }

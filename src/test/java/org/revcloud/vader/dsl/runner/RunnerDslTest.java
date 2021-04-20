@@ -50,7 +50,7 @@ class RunnerDslTest {
 
     @Test
     void failFastWithFirstFailureForSimpleValidators() {
-        final var validatable = new Parent(0, null, null);
+        val validatable = new Parent(0, null, null);
         val result = validateAndFailFastForSimpleValidators(
                 NONE,
                 NOTHING_TO_VALIDATE,

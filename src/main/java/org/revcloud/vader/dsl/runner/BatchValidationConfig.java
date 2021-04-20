@@ -12,4 +12,5 @@ public class BatchValidationConfig<ValidatableT, FailureT> extends BaseValidatio
     // These two params are separated out, as `andFailDuplicatesWith` is not mandatory for filter duplicates
     Function1<ValidatableT, ?> findDuplicatesWith;
     FailureT andFailDuplicatesWith;
+    boolean isAllOrNone;
 }

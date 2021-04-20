@@ -22,12 +22,12 @@ class RunnerDslWithBiSpecTest {
     void failFastWithInvalidIdForSimpleValidators() {
         ValidationConfig<Bean, ValidationFailure> validationConfig =
                 ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(spec -> List.of(
-                        spec._2.orFailWith(INVALID_COMBO_1)
+                        spec._2().orFailWith(INVALID_COMBO_1)
                                 .when(Bean::getValue).is(1)
-                                .then(Bean::getValueStr).shouldBe(either(is("one")).or(is("1"))).done(),
-                        spec._2.orFailWith(INVALID_COMBO_2)
+                                .then(Bean::getValueStr).shouldBe(either(is("one")).or(is("1"))),
+                        spec._2().orFailWith(INVALID_COMBO_2)
                                 .when(Bean::getValue).is(2)
-                                .then(Bean::getValueStr).shouldBe(either(is("two")).or(is("2"))).done()))
+                                .then(Bean::getValueStr).shouldBe(either(is("two")).or(is("2")))))
                         .prepare();
         
         val invalidBean1 = new Bean(1, "a", null, null);
@@ -51,9 +51,9 @@ class RunnerDslWithBiSpecTest {
     void failFastWithInvalidIdForSimpleValidators2() {
         ValidationConfig<Bean, ValidationFailure> validationConfig =
                 ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(spec -> List.of(
-                        spec._2.orFailWith(INVALID_COMBO_1)
+                        spec._2().orFailWith(INVALID_COMBO_1)
                                 .when(Bean::getValueStr).is(null)
-                                .then(Bean::getValue).matchesField(Bean::getDependentValue1).done()))
+                                .then(Bean::getValue).matchesField(Bean::getDependentValue1)))
                         .prepare();
         val invalidBean = new Bean(1, null, 2, 1);
         val failureResult = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, invalidBean, ignore -> NONE, validationConfig);
@@ -68,9 +68,9 @@ class RunnerDslWithBiSpecTest {
     void failFastWithInvalidIdForSimpleValidators3() {
         ValidationConfig<Bean, ValidationFailure> validationConfig =
                 ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(spec -> List.of(
-                        spec._2.orFailWith(INVALID_COMBO_1)
+                        spec._2().orFailWith(INVALID_COMBO_1)
                                 .when(Bean::getValueStr).is(null)
-                                .then(Bean::getValue).matchesField(Bean::getDependentValue1).orMatchesField(Bean::getDependentValue2).done()))
+                                .then(Bean::getValue).matchesField(Bean::getDependentValue1).orMatchesField(Bean::getDependentValue2)))
                         .prepare();
         val invalidBean = new Bean(1, null, 2, 2);
         val failureResult = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, invalidBean, ignore -> NONE, validationConfig);

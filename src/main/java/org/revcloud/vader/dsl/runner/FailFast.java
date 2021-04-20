@@ -1,7 +1,6 @@
 package org.revcloud.vader.dsl.runner;
 
 import io.vavr.Function1;
-import io.vavr.collection.Iterator;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.control.Either;
@@ -39,6 +38,7 @@ class FailFast {
 
     /**
      * Config
+     *
      * @param validators
      * @param invalidValidatable
      * @param throwableMapper
@@ -55,14 +55,13 @@ class FailFast {
         return toBeValidated -> {
             if (toBeValidated == null) return Either.left(invalidValidatable);
             val toBeValidatedRight = Either.<FailureT, ValidatableT>right(toBeValidated);
-            return Utils.fireValidators(toBeValidatedRight, Iterator.concat(Utils.toValidators(validationConfig), validators), throwableMapper)
-                    .find(Either::isLeft)
-                    .getOrElse(toBeValidatedRight);
+            return Utils.findFirstFailure(toBeValidatedRight, validationConfig, throwableMapper);
         };
     }
 
     /**
-     * Batch + Simple + Config  
+     * Batch + Simple + Config
+     *
      * @param invalidValidatable
      * @param throwableMapper
      * @param validationConfig
@@ -77,10 +76,8 @@ class FailFast {
         return validatables -> {
             final Seq<Either<FailureT, ValidatableT>> validatablesEither =
                     Utils.filterInvalidatablesAndDuplicates(validatables, invalidValidatable, validationConfig);
-            return validatablesEither.map(validatableEither -> Utils.toValidators(validationConfig).iterator()
-                    .map(currentValidation -> Utils.fireValidator(currentValidation, validatableEither, throwableMapper))
-                    .find(Either::isLeft)
-                    .getOrElse(validatableEither)).toList();
+            return validatablesEither.filter(Either::isRight)
+                    .map(toBeValidatedRight -> Utils.findFirstFailure(toBeValidatedRight, validationConfig, throwableMapper)).toList();
         };
     }
 

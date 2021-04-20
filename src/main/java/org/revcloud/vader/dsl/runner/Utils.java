@@ -11,8 +11,8 @@ import io.vavr.collection.Seq;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.revcloud.vader.dsl.runner.SpecFactory.BaseSpec;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
@@ -25,10 +25,9 @@ import java.util.stream.Stream;
 import static io.vavr.CheckedFunction1.liftTry;
 import static io.vavr.Function1.identity;
 
-@Slf4j
 @UtilityClass
+// TODO 20/04/21 gopala.akshintala: Split this class 
 class Utils {
-
     static <FailureT, ValidatableT> Iterator<Either<FailureT, ValidatableT>> fireValidators(
             Either<FailureT, ValidatableT> toBeValidatedRight, // TODO: 28/03/21 toBeValidated vs Validatable naming consistency
             Iterator<Validator<ValidatableT, FailureT>> validators,
@@ -49,11 +48,11 @@ class Utils {
     static <FailureT> FailureT validateSize(java.util.List<?> validatables,
                                             FailureT none,
                                             HeaderValidationConfig<?, FailureT> headerConfig) {
-        final var minBatchSize = headerConfig.getMinBatchSize();
+        val minBatchSize = headerConfig.getMinBatchSize();
         if (minBatchSize != null && validatables.size() < minBatchSize._1) {
             return minBatchSize._2;
         }
-        final var maxBatchSize = headerConfig.getMaxBatchSize();
+        val maxBatchSize = headerConfig.getMaxBatchSize();
         if (maxBatchSize != null && validatables.size() > maxBatchSize._1) {
             return maxBatchSize._2;
         }
@@ -74,7 +73,7 @@ class Utils {
         return Try.of(() -> validator.apply(validatable)).fold(throwableMapper, identity());
     }
 
-    static <ValidatableT, FailureT> boolean matchFields(SpecFactory.BaseSpec<ValidatableT, FailureT> baseSpec, ValidatableT validatable, Object actualValue) {
+    static <ValidatableT, FailureT> boolean matchFields(BaseSpec<ValidatableT, FailureT> baseSpec, ValidatableT validatable, Object actualValue) {
         val expectedFieldMappers = new ArrayList<>(baseSpec.getOrMatchesFields());
         if (baseSpec.getMatchesField() != null) {
             expectedFieldMappers.add(baseSpec.getMatchesField());
@@ -93,15 +92,15 @@ class Utils {
             val validatable = validatables.get(0);
             return validatable == null ? List.of(Either.left(invalidValidatable)) : List.of(Either.right(validatables.get(0)));
         }
-        final var duplicateFinder = batchValidationConfig.getFindDuplicatesWith();
+        val duplicateFinder = batchValidationConfig.getFindDuplicatesWith();
         val keyMapperForDuplicates = duplicateFinder == null ? Function1.<ValidatableT>identity() : duplicateFinder;
         val groups = validatables.zipWithIndex()
                 .groupBy(tuple2 -> tuple2._1 == null ? null : keyMapperForDuplicates.apply(tuple2._1));
 
-        groups.forEach(group -> log.info(group.toString()));
         Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> invalidValidatables = groups.get(null)
                 .map(nullValidatables -> invalidate(nullValidatables, invalidValidatable))
                 .getOrElse(List.empty());
+        
         // TODO 11/04/21 gopala.akshintala: refactor 
         if (duplicateFinder == null) {
             final Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> map =
@@ -141,7 +140,7 @@ class Utils {
     }
 
 
-    private static <ValidatableT, FailureT> Validator<ValidatableT, FailureT> toValidator(SpecFactory.BaseSpec<ValidatableT, FailureT> baseSpec) {
+    private static <ValidatableT, FailureT> Validator<ValidatableT, FailureT> toValidator(BaseSpec<ValidatableT, FailureT> baseSpec) {
         return validatableRight -> validatableRight
                 .filterOrElse(baseSpec.toPredicate(), ignore -> baseSpec.getOrFailWith());
     }
@@ -154,7 +153,7 @@ class Utils {
                 .map(tuple2 -> validatable -> IdTraits.isValidId(tuple2._1.apply(validatable).toString()) ? none : tuple2._2);
         Stream<SimpleValidator<ValidatableT, FailureT>> nonMandatorySfIdValidators = validationConfig.getMayHaveValidSFIds().stream()
                 .map(tuple2 -> validatable -> {
-                    final var idValue = tuple2._1.apply(validatable);
+                    val idValue = tuple2._1.apply(validatable);
                     return idValue == null || IdTraits.isValidId(idValue.toString()) ? none : tuple2._2;
                 });
         Stream<SimpleValidator<ValidatableT, FailureT>> specValidators = validationConfig.getSpecsStream()
@@ -164,7 +163,7 @@ class Utils {
                 .flatMap(identity()).collect(Collectors.toList()));
     }
 
-    private static <ValidatableT, FailureT> SimpleValidator<ValidatableT, FailureT> toSimpleValidator(SpecFactory.BaseSpec<ValidatableT, FailureT> baseSpec, FailureT none) {
+    private static <ValidatableT, FailureT> SimpleValidator<ValidatableT, FailureT> toSimpleValidator(BaseSpec<ValidatableT, FailureT> baseSpec, FailureT none) {
         return validatable -> baseSpec.toPredicate().test(validatable) ? none : baseSpec.getOrFailWith();
     }
 
@@ -177,4 +176,13 @@ class Utils {
         }
         return false;
     };
+
+    static <FailureT, ValidatableT> Either<FailureT, ValidatableT> findFirstFailure(
+            Either<FailureT, ValidatableT> toBeValidatedRight,
+            BaseValidationConfig<ValidatableT, FailureT> validationConfig,
+            Function1<Throwable, FailureT> throwableMapper) {
+        return fireValidators(toBeValidatedRight, toValidators(validationConfig), throwableMapper)
+                .find(Either::isLeft)
+                .getOrElse(toBeValidatedRight);
+    }
 }

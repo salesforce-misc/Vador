@@ -10,7 +10,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
+import lombok.val;
 import org.revcloud.vader.dsl.runner.SpecFactory.BaseSpec;
+import org.revcloud.vader.dsl.runner.SpecFactory.BaseSpec.BaseSpecBuilder;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
@@ -32,9 +34,9 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
     protected Collection<Tuple2<Function1<ValidatableT, ID>, FailureT>> shouldHaveValidSFIds;
     @Singular
     protected Collection<Tuple2<Function1<ValidatableT, ID>, FailureT>> mayHaveValidSFIds;
-    protected Function1<SpecFactory<ValidatableT, FailureT>, Collection<? extends BaseSpec<ValidatableT, FailureT>>> withSpecs;
+    protected Function1<SpecFactory<ValidatableT, FailureT>, Collection<? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>> withSpecs;
     @Singular("withSpec")
-    protected Collection<Function1<SpecFactory<ValidatableT, FailureT>, ? extends BaseSpec<ValidatableT, FailureT>>> withSpec;
+    protected Collection<Function1<SpecFactory<ValidatableT, FailureT>, ? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>> withSpec;
     @Singular
     Collection<Validator<ValidatableT, FailureT>> withValidators;
     @Builder.Default
@@ -48,9 +50,9 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
     }
 
     Stream<BaseSpec<ValidatableT, FailureT>> getSpecsStream() {
-        final var specFactory = new SpecFactory<ValidatableT, FailureT>();
-        return Stream.concat(Stream.ofNullable(withSpecs).flatMap(specs -> specs.apply(specFactory).stream()), 
-                Stream.ofNullable(withSpec).flatMap(specs -> specs.stream().map(spec -> spec.apply(specFactory))));
+        val specFactory = new SpecFactory<ValidatableT, FailureT>();
+        return Stream.concat(Stream.ofNullable(withSpecs).flatMap(specs -> specs.apply(specFactory).stream().map(BaseSpecBuilder::done)),
+                Stream.ofNullable(withSpec).flatMap(specs -> specs.stream().map(spec -> spec.apply(specFactory).done())));
     }
 
     public Optional<Predicate<ValidatableT>> getSpecWithName(@NonNull String nameForTest) {
