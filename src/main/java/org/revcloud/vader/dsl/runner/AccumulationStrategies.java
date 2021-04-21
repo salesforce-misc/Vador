@@ -15,7 +15,7 @@ import org.revcloud.vader.types.validators.Validator;
  * @since 228
  */
 @UtilityClass
-class Accumulation {
+class AccumulationStrategies {
 
     /**
      * Higher-order function to compose list of validators into Accumulation Strategy.
@@ -26,7 +26,7 @@ class Accumulation {
      * @param <ValidatableT>
      * @return Composed Accumulation Strategy
      */
-    static <FailureT, ValidatableT> AccumulationStrategy<ValidatableT, FailureT> accumulationStrategy(
+    static <FailureT, ValidatableT> Accumulation<ValidatableT, FailureT> accumulationStrategy(
             List<Validator<ValidatableT, FailureT>> validators, FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper) {
         return toBeValidated -> toBeValidated == null
@@ -35,6 +35,6 @@ class Accumulation {
     }
 
     @FunctionalInterface
-    interface AccumulationStrategy<ValidatableT, FailureT> extends Function1<ValidatableT, List<Either<FailureT, ValidatableT>>> {
+    interface Accumulation<ValidatableT, FailureT> extends Function1<ValidatableT, List<Either<FailureT, ValidatableT>>> {
     }
 }

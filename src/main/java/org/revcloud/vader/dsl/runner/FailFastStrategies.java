@@ -2,17 +2,15 @@ package org.revcloud.vader.dsl.runner;
 
 import io.vavr.Function1;
 import io.vavr.collection.List;
-import io.vavr.collection.Seq;
 import io.vavr.control.Either;
+import io.vavr.control.Option;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.revcloud.vader.types.validators.Validator;
 
-@Slf4j
 @UtilityClass
-class FailFast {
+class FailFastStrategies {
 
     /**
      * Higher-order function to compose list of validators into Fail-Fast Strategy.
@@ -23,7 +21,7 @@ class FailFast {
      * @param <ValidatableT>
      * @return Composed Fail-Fast Strategy
      */
-    static <FailureT, ValidatableT> FailFastStrategy<ValidatableT, FailureT> failFastStrategy(
+    static <FailureT, ValidatableT> FailFast<ValidatableT, FailureT> failFast(
             @NonNull List<Validator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper) {
@@ -46,7 +44,7 @@ class FailFast {
      * @param <ValidatableT>
      * @return
      */
-    static <FailureT, ValidatableT> FailFastStrategy<ValidatableT, FailureT> failFastStrategy(
+    static <FailureT, ValidatableT> FailFast<ValidatableT, FailureT> failFast(
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
@@ -67,7 +65,7 @@ class FailFast {
      * @param <ValidatableT>
      * @return
      */
-    static <FailureT, ValidatableT> FailFastStrategyForBatch<ValidatableT, FailureT> failFastStrategyForBatch(
+    static <FailureT, ValidatableT> FailFastForBatch<ValidatableT, FailureT> failFastForBatch(
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper,
             BatchValidationConfig<ValidatableT, FailureT> validationConfig) {
@@ -79,12 +77,26 @@ class FailFast {
         };
     }
 
-    @FunctionalInterface
-    interface FailFastStrategy<ValidatableT, FailureT> extends Function1<ValidatableT, Either<FailureT, ValidatableT>> {
+    static <FailureT, ValidatableT> FailFastAllOrNoneForBatch<ValidatableT, FailureT> failFastAllOrNoneForBatch(
+            FailureT invalidValidatable,
+            Function1<Throwable, FailureT> throwableMapper,
+            BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
+        return validatables -> Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables, invalidValidatable, batchValidationConfig)
+                .orElse(validatables.map(Either::<FailureT, ValidatableT>right)
+                        .map(validatable -> Utils.findFirstFailure(validatable, batchValidationConfig, throwableMapper))
+                        .find(Either::isLeft).map(Either::getLeft));
     }
 
     @FunctionalInterface
-    interface FailFastStrategyForBatch<ValidatableT, FailureT> extends Function1<List<ValidatableT>, List<Either<FailureT, ValidatableT>>> {
+    interface FailFast<ValidatableT, FailureT> extends Function1<ValidatableT, Either<FailureT, ValidatableT>> {
+    }
+
+    @FunctionalInterface
+    interface FailFastForBatch<ValidatableT, FailureT> extends Function1<List<ValidatableT>, List<Either<FailureT, ValidatableT>>> {
+    }
+
+    @FunctionalInterface
+    interface FailFastAllOrNoneForBatch<ValidatableT, FailureT> extends Function1<List<ValidatableT>, Option<FailureT>> {
     }
 }
 

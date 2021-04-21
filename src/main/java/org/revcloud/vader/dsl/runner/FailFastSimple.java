@@ -29,8 +29,8 @@ class FailFastSimple {
             Function1<Throwable, FailureT> throwableMapper) {
         return validatable -> validatable == null
                 ? invalidValidatable
-                : Utils.applySimpleValidators(validatable, validators.iterator(), throwableMapper)
-                .filter(result -> result != none).getOrElse(none);
+                : Utils.fireSimpleValidators(validatable, validators.iterator(), throwableMapper)
+                .find(result -> result != none).getOrElse(none);
     }
 
     static <FailureT, ValidatableT> SimpleFailFastStrategy<ValidatableT, FailureT> failFastStrategy(
@@ -41,8 +41,8 @@ class FailFastSimple {
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
         return validatable -> validatable == null
                 ? invalidValidatable
-                : Utils.applySimpleValidators(validatable, Iterator.concat(Utils.toSimpleValidators(validationConfig, none), validators), throwableMapper)
-                .filter(result -> result != none).getOrElse(none);
+                : Utils.fireSimpleValidators(validatable, Iterator.concat(Utils.toSimpleValidators(validationConfig, none), validators), throwableMapper)
+                .find(result -> result != none).getOrElse(none);
     }
 
     static <FailureT, ValidatableT> SimpleFailFastStrategy<ValidatableT, FailureT> failFastStrategyForHeader(
@@ -60,8 +60,8 @@ class FailFastSimple {
             if (batchSizeFailure != none) {
                 return batchSizeFailure;
             }
-            return Utils.applySimpleValidators(validatable, validators.iterator(), throwableMapper)
-                    .filter(result -> result != none).getOrElse(none);
+            return Utils.fireSimpleValidators(validatable, validators.iterator(), throwableMapper)
+                    .find(result -> result != none).getOrElse(none);
         };
     }
 

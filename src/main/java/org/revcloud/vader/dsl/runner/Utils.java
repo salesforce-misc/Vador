@@ -9,6 +9,7 @@ import io.vavr.collection.Iterator;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.control.Either;
+import io.vavr.control.Option;
 import io.vavr.control.Try;
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -59,7 +60,7 @@ class Utils {
         return none;
     }
 
-    static <FailureT, ValidatableT> Iterator<FailureT> applySimpleValidators(
+    static <FailureT, ValidatableT> Iterator<FailureT> fireSimpleValidators(
             ValidatableT toBeValidated,
             Iterator<SimpleValidator<ValidatableT, FailureT>> validators,
             Function1<Throwable, FailureT> throwableMapper) {
@@ -94,26 +95,59 @@ class Utils {
         }
         val duplicateFinder = batchValidationConfig.getFindDuplicatesWith();
         val keyMapperForDuplicates = duplicateFinder == null ? Function1.<ValidatableT>identity() : duplicateFinder;
-        val groups = validatables.zipWithIndex()
+        val groups = validatables.zipWithIndex() // groups: invalids, duplicates, non-duplicates
                 .groupBy(tuple2 -> tuple2._1 == null ? null : keyMapperForDuplicates.apply(tuple2._1));
 
-        Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> invalidValidatables = groups.get(null)
+        Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> invalids = groups.get(null)
                 .map(nullValidatables -> invalidate(nullValidatables, invalidValidatable))
                 .getOrElse(List.empty());
-        
-        // TODO 11/04/21 gopala.akshintala: refactor 
-        if (duplicateFinder == null) {
-            final Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> map =
+
+        // TODO 11/04/21 gopala.akshintala: add test 
+        if (duplicateFinder == null) { // Skip the rest if duplicateFinder is not defined
+            final Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> valids =
                     groups.remove(null).values().flatMap(identity()).map(tuple2 -> tuple2.map1(Either::right));
-            return map.appendAll(invalidValidatables).sortBy(Tuple2::_2).map(Tuple2::_1);
+            return valids.appendAll(invalids).sortBy(Tuple2::_2).map(Tuple2::_1);
         }
+
         val partition = groups.remove(null).values().partition(group -> group.size() == 1);
         val failureForDuplicate = batchValidationConfig.getAndFailDuplicatesWith();
-        Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> duplicates =
-                partition._2.flatMap(identity()).map(duplicate -> Tuple.of(Either.left(failureForDuplicate), duplicate._2));
-        Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> nonDuplicates =
-                partition._1.flatMap(identity()).map(tuple2 -> tuple2.map1(Either::right));
-        return duplicates.appendAll(nonDuplicates).appendAll(invalidValidatables).sortBy(Tuple2::_2).map(Tuple2::_1);
+        val duplicates = partition._2.flatMap(identity())
+                .map(duplicate -> Tuple.of(Either.<FailureT, ValidatableT>left(failureForDuplicate), duplicate._2));
+        val nonDuplicates = partition._1.flatMap(identity())
+                .map(tuple2 -> tuple2.map1(Either::<FailureT, ValidatableT>right));
+
+        return duplicates.appendAll(nonDuplicates).appendAll(invalids).sortBy(Tuple2::_2).map(Tuple2::_1);
+    }
+
+    static <ValidatableT, FailureT> Option<FailureT> filterInvalidatablesAndDuplicatesForAllOrNone(
+            List<ValidatableT> validatables,
+            FailureT invalidValidatable,
+            BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
+        if (validatables.isEmpty()) {
+            return Option.none();
+        } else if (validatables.size() == 1) {
+            val validatable = validatables.get(0);
+            return validatable == null ? Option.of(invalidValidatable) : Option.none();
+        }
+        val duplicateFinder = batchValidationConfig.getFindDuplicatesWith();
+        val keyMapperForDuplicates = duplicateFinder == null ? Function1.<ValidatableT>identity() : duplicateFinder;
+        val groups = validatables // groups: invalids, duplicates, non-duplicates
+                .groupBy(validatable -> validatable == null ? null : keyMapperForDuplicates.apply(validatable));
+
+        val invalids = groups.get(null);
+        if (invalids.isDefined() && !invalids.get().isEmpty()) {
+            return Option.of(invalidValidatable);
+        }
+
+        val valids = groups.remove(null).values();
+        if (duplicateFinder != null) {
+            val partition = valids.partition(group -> group.size() == 1);
+            val failureForDuplicate = batchValidationConfig.getAndFailDuplicatesWith();
+            if (!partition._2.isEmpty()) {
+                return Option.of(failureForDuplicate);
+            }
+        }
+        return Option.none();
     }
 
     private static <FailureT, ValidatableT> Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> invalidate(

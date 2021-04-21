@@ -5,6 +5,7 @@ import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
+import io.vavr.control.Option;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.revcloud.vader.dsl.lift.ValidatorLiftDsl;
@@ -38,7 +39,7 @@ public class BatchRunnerDsl {
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper) {
         return validatables.iterator()
-                .map(FailFast.failFastStrategy(validators, invalidValidatable, throwableMapper))
+                .map(FailFastStrategies.failFast(validators, invalidValidatable, throwableMapper))
                 .toList();
     }
 
@@ -49,7 +50,7 @@ public class BatchRunnerDsl {
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
         return validatables.iterator()
-                .map(FailFast.failFastStrategy(invalidValidatable, throwableMapper, validationConfig))
+                .map(FailFastStrategies.failFast(invalidValidatable, throwableMapper, validationConfig))
                 .toList();
     }
 
@@ -69,7 +70,7 @@ public class BatchRunnerDsl {
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper) {
         return validatables.iterator()
-                .map(Accumulation.accumulationStrategy(validators, invalidValidatable, throwableMapper))
+                .map(AccumulationStrategies.accumulationStrategy(validators, invalidValidatable, throwableMapper))
                 .toList();
     }
 
@@ -135,7 +136,7 @@ public class BatchRunnerDsl {
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper,
             BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
-        return FailFast.failFastStrategyForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
+        return FailFastStrategies.failFastForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
                 .apply(validatables);
     }
 
@@ -145,10 +146,19 @@ public class BatchRunnerDsl {
             Function1<Throwable, FailureT> throwableMapper,
             BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig,
             Function1<ValidatableT, PairT> pairForInvalidMapper) {
-        val validationResults = FailFast.failFastStrategyForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
+        val validationResults = FailFastStrategies.failFastForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
                 .apply(validatables);
         return validationResults.zipWith(validatables, 
                 (result, validatable) -> result.mapLeft(failure -> Tuple.of(pairForInvalidMapper.apply(validatable), failure)));
+    }
+
+    public static <FailureT, ValidatableT> Option<FailureT> validateAndFailFastAllOrNoneForBatch(
+            List<ValidatableT> validatables,
+            FailureT invalidValidatable,
+            Function1<Throwable, FailureT> throwableMapper,
+            BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
+        return FailFastStrategies.failFastAllOrNoneForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
+                .apply(validatables);
     }
 
     /**

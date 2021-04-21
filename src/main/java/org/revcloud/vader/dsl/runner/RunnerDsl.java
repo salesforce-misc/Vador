@@ -33,7 +33,7 @@ public class RunnerDsl {
             FailureT invalidValidatable,
             FailureT none,
             Function1<Throwable, FailureT> throwableMapper) {
-        return FailFast.failFastStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
+        return FailFastStrategies.failFast(validators, invalidValidatable, throwableMapper).apply(validatable)
                 .fold(Function1.identity(), ignore -> none);
     }
 
@@ -43,7 +43,7 @@ public class RunnerDsl {
             FailureT none,
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return FailFast.failFastStrategy(invalidValidatable, throwableMapper, validationConfig).apply(validatable)
+        return FailFastStrategies.failFast(invalidValidatable, throwableMapper, validationConfig).apply(validatable)
                 .fold(Function1.identity(), ignore -> none);
     }
 
@@ -62,7 +62,7 @@ public class RunnerDsl {
     public static <FailureT, ValidatableT> List<FailureT> validateAndAccumulateErrors(
             ValidatableT validatable, List<Validator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
-        val results = Accumulation.accumulationStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
+        val results = AccumulationStrategies.accumulationStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
                 .map(validationResult -> validationResult.fold(Function1.identity(), ignore -> none));
         return results.forAll(result -> ((result == none) || result.equals(none))) ? List.empty(): results;
     }

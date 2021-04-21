@@ -13,4 +13,5 @@ public class BatchValidationConfig<ValidatableT, FailureT> extends BaseValidatio
     Function1<ValidatableT, ?> findDuplicatesWith;
     FailureT andFailDuplicatesWith;
     boolean isAllOrNone;
+    Function1<ValidatableT, Boolean> isAllOrNoneAsPer;
 }
