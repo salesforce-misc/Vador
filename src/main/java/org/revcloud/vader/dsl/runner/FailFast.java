@@ -39,7 +39,6 @@ class FailFast {
     /**
      * Config
      *
-     * @param validators
      * @param invalidValidatable
      * @param throwableMapper
      * @param validationConfig
@@ -48,7 +47,6 @@ class FailFast {
      * @return
      */
     static <FailureT, ValidatableT> FailFastStrategy<ValidatableT, FailureT> failFastStrategy(
-            @NonNull List<Validator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
@@ -74,10 +72,10 @@ class FailFast {
             Function1<Throwable, FailureT> throwableMapper,
             BatchValidationConfig<ValidatableT, FailureT> validationConfig) {
         return validatables -> {
-            final Seq<Either<FailureT, ValidatableT>> validatablesEither =
+            val filteredValidatables =
                     Utils.filterInvalidatablesAndDuplicates(validatables, invalidValidatable, validationConfig);
-            return validatablesEither.filter(Either::isRight)
-                    .map(toBeValidatedRight -> Utils.findFirstFailure(toBeValidatedRight, validationConfig, throwableMapper)).toList();
+            return filteredValidatables
+                    .map(validatable -> Utils.findFirstFailure(validatable, validationConfig, throwableMapper)).toList();
         };
     }
 

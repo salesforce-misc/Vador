@@ -43,7 +43,7 @@ public class RunnerDsl {
             FailureT none,
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return FailFast.failFastStrategy(validators, invalidValidatable, throwableMapper, validationConfig).apply(validatable)
+        return FailFast.failFastStrategy(invalidValidatable, throwableMapper, validationConfig).apply(validatable)
                 .fold(Function1.identity(), ignore -> none);
     }
 

@@ -24,7 +24,7 @@ class Spec3Test {
         );
         ValidationConfig<Bean, ValidationFailure> validationConfig =
                 ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
-                        spec._3().nameForTest(invalidCombo)
+                        spec._1n_1n().nameForTest(invalidCombo)
                                 .orFailWith(INVALID_COMBO_1)
                                 .when(Bean::getValue)
                                 .then(Bean::getValueStr)

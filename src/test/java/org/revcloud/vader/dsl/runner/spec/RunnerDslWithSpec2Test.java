@@ -22,11 +22,11 @@ class RunnerDslWithSpec2Test {
     void failFastWithInvalidIdForSimpleValidators() {
         ValidationConfig<Bean, ValidationFailure> validationConfig =
                 ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(spec -> List.of(
-                        spec._2().orFailWith(INVALID_COMBO_1)
+                        spec._11_1n().orFailWith(INVALID_COMBO_1)
                                 .when(Bean::getValue).is(1)
                                 .then(Bean::getValueStr)
                                 .shouldBe(either(is("one")).or(is("1"))),
-                        spec._2().orFailWith(INVALID_COMBO_2)
+                        spec._11_1n().orFailWith(INVALID_COMBO_2)
                                 .when(Bean::getValue).is(2)
                                 .then(Bean::getValueStr).shouldBe(either(is("two")).or(is("2")))))
                         .prepare();
@@ -52,7 +52,7 @@ class RunnerDslWithSpec2Test {
     void failFastWithInvalidIdForSimpleValidators2() {
         ValidationConfig<Bean, ValidationFailure> validationConfig =
                 ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(spec -> List.of(
-                        spec._2().orFailWith(INVALID_COMBO_1)
+                        spec._11_1n().orFailWith(INVALID_COMBO_1)
                                 .when(Bean::getValueStr).is(null)
                                 .then(Bean::getValue).matchesField(Bean::getDependentValue1)))
                         .prepare();
@@ -69,7 +69,7 @@ class RunnerDslWithSpec2Test {
     void failFastWithInvalidIdForSimpleValidators3() {
         ValidationConfig<Bean, ValidationFailure> validationConfig =
                 ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(spec -> List.of(
-                        spec._2().orFailWith(INVALID_COMBO_1)
+                        spec._11_1n().orFailWith(INVALID_COMBO_1)
                                 .when(Bean::getValueStr).is(null)
                                 .then(Bean::getValue).matchesField(Bean::getDependentValue1).orMatchesField(Bean::getDependentValue2)))
                         .prepare();

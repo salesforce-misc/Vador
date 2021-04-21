@@ -21,11 +21,11 @@ class Spec2Test {
         val invalidCombo2 = "invalidCombo2";
         ValidationConfig<Bean, ValidationFailure> validationConfig =
                 ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(spec -> List.of(
-                        spec._2().nameForTest(invalidCombo1)
+                        spec._11_1n().nameForTest(invalidCombo1)
                                 .orFailWith(INVALID_COMBO_1)
                                 .when(Bean::getValue).is(1)
                                 .then(Bean::getValueStr).shouldBe(either(is("one")).or(is("1"))),
-                        spec._2().nameForTest(invalidCombo2)
+                        spec._11_1n().nameForTest(invalidCombo2)
                                 .orFailWith(INVALID_COMBO_2)
                                 .when(Bean::getValue).is(2)
                                 .then(Bean::getValueStr).shouldBe(either(is("two")).or(is("2")))))

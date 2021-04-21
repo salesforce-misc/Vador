@@ -22,17 +22,17 @@ public final class SpecFactory<ValidatableT, FailureT> {
     }
 
     @SuppressWarnings({"java:S100", "java:S1452"})
-    public final Spec1.Spec1Builder<ValidatableT, FailureT, ?, ?> _1() {
+    public final Spec1.Spec1Builder<ValidatableT, FailureT, ?, ?> _1n() {
         return Spec1.check();
     }
 
     @SuppressWarnings({"java:S100", "java:S1452"})
-    public final Spec2.Spec2Builder<ValidatableT, FailureT, ?, ?> _2() {
+    public final Spec2.Spec2Builder<ValidatableT, FailureT, ?, ?> _11_1n() {
         return Spec2.check();
     }
 
     @SuppressWarnings({"java:S100", "java:S1452"})
-    public final <WhenT, ThenT> Spec3.Spec3Builder<ValidatableT, FailureT, WhenT, ThenT, ?, ?> _3() {
+    public final <WhenT, ThenT> Spec3.Spec3Builder<ValidatableT, FailureT, WhenT, ThenT, ?, ?> _1n_1n() {
         return Spec3.check();
     }
 
@@ -76,7 +76,6 @@ public final class SpecFactory<ValidatableT, FailureT> {
         Function1<ValidatableT, ?> when;
         Object is;
         Function1<ValidatableT, ?> then;
-
 
         // TODO 15/04/21 gopala.akshintala: Check for non-null 
         @Override

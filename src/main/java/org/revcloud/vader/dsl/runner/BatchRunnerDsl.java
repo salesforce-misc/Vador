@@ -49,7 +49,7 @@ public class BatchRunnerDsl {
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
         return validatables.iterator()
-                .map(FailFast.failFastStrategy(validators, invalidValidatable, throwableMapper, validationConfig))
+                .map(FailFast.failFastStrategy(invalidValidatable, throwableMapper, validationConfig))
                 .toList();
     }
 

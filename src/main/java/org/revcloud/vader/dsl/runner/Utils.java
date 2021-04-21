@@ -142,7 +142,7 @@ class Utils {
 
     private static <ValidatableT, FailureT> Validator<ValidatableT, FailureT> toValidator(BaseSpec<ValidatableT, FailureT> baseSpec) {
         return validatableRight -> validatableRight
-                .filterOrElse(baseSpec.toPredicate(), validatable -> baseSpec.getFailure(validatable));
+                .filterOrElse(baseSpec.toPredicate(), baseSpec::getFailure);
     }
 
     static <ValidatableT, FailureT> Iterator<SimpleValidator<ValidatableT, FailureT>> toSimpleValidators(
@@ -178,11 +178,14 @@ class Utils {
     };
 
     static <FailureT, ValidatableT> Either<FailureT, ValidatableT> findFirstFailure(
-            Either<FailureT, ValidatableT> toBeValidatedRight,
+            Either<FailureT, ValidatableT> validatable,
             BaseValidationConfig<ValidatableT, FailureT> validationConfig,
             Function1<Throwable, FailureT> throwableMapper) {
-        return fireValidators(toBeValidatedRight, toValidators(validationConfig), throwableMapper)
+        if (validatable.isLeft()) {
+            return validatable;
+        }
+        return fireValidators(validatable, toValidators(validationConfig), throwableMapper)
                 .find(Either::isLeft)
-                .getOrElse(toBeValidatedRight);
+                .getOrElse(validatable);
     }
 }

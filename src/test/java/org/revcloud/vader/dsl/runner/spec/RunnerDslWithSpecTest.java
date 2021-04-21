@@ -19,7 +19,7 @@ class RunnerDslWithSpecTest {
     void failFastWithInvalidIdForSimpleValidators() {
         ValidationConfig<Bean, ValidationFailure> validationConfig =
                 ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
-                        spec._1().orFailWith(INVALID_VALUE)
+                        spec._1n().orFailWith(INVALID_VALUE)
                                 .given(Bean::getValue)
                                 .shouldBe(either(is(1)).or(is(2))))
                         .prepare();
