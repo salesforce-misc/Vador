@@ -18,30 +18,51 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class UtilsTest {
 
     @Test
-    void filterInvalidatablesAndDuplicates() {
+    void filterInvalidatablesAndFailDuplicates() {
         final List<Container> invalidValidatables = List.of(null, null);
         val duplicateValidatables = List.of(new Container(new ID("0")), new Container(new ID("0")), new Container(new ID("0")));
         val validatables = invalidValidatables.appendAll(duplicateValidatables).appendAll(List.of(
                 new Container(new ID("1")), new Container(new ID("2")), new Container(new ID("3"))));
-        
+
         val batchValidationConfig = BatchValidationConfig.<Container, ValidationFailure>toValidate()
-                .findDuplicatesWith(container -> container.getSfId().toString()).andFailDuplicatesWith(DUPLICATE_ITEM).prepare();
+                .findDuplicatesWith(container -> container.getSfId().toString())
+                .andFailDuplicatesWith(DUPLICATE_ITEM).prepare();
         val results = Utils.filterInvalidatablesAndDuplicates(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
         
         val failedInvalids = results.take(2);
-        Assertions.assertTrue(failedInvalids.forAll(Either::isLeft) && 
+        Assertions.assertTrue(failedInvalids.forAll(Either::isLeft) &&
                 failedInvalids.forAll(r -> r.getLeft() == NOTHING_TO_VALIDATE));
         val failedDuplicates = results.drop(2).take(3);
         Assertions.assertTrue(failedDuplicates.forAll(Either::isLeft) &&
                 failedDuplicates.forAll(r -> r.getLeft() == DUPLICATE_ITEM));
-        
+
         val valids = results.drop(5);
         Assertions.assertTrue(valids.forAll(Either::isRight));
         valids.forEachWithIndex((r, i) -> assertEquals(String.valueOf(i + 1), r.get().getSfId().toString()));
     }
 
     @Test
-    void filterInvalidatablesAndDuplicatesForAllOrNoneInvalidValidatables() {
+    void failInvalidatablesAndFilterDuplicates() {
+        final List<Container> invalidValidatables = List.of(null, null);
+        val duplicateValidatables = List.of(new Container(new ID("0")), new Container(new ID("0")), new Container(new ID("0")));
+        val validatables = invalidValidatables.appendAll(duplicateValidatables).appendAll(List.of(
+                new Container(new ID("1")), new Container(new ID("2")), new Container(new ID("3"))));
+
+        val batchValidationConfig = BatchValidationConfig.<Container, ValidationFailure>toValidate()
+                .findDuplicatesWith(container -> container.getSfId().toString()).prepare();
+        val results = Utils.filterInvalidatablesAndDuplicates(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
+
+        assertThat(results).hasSize(5);
+        val failedInvalids = results.take(2);
+        assertThat(failedInvalids).allMatch(r -> r.getLeft() == NOTHING_TO_VALIDATE);
+
+        val valids = results.drop(2);
+        Assertions.assertTrue(valids.forAll(Either::isRight));
+        valids.forEachWithIndex((r, i) -> assertEquals(String.valueOf(i + 1), r.get().getSfId().toString()));
+    }
+
+    @Test
+    void filterInvalidatablesAndFailDuplicatesForAllOrNoneInvalidValidatables() {
         final List<Container> invalidValidatables = List.of(null, null);
         val duplicateValidatables = List.of(new Container(new ID("0")), new Container(new ID("0")), new Container(new ID("0")));
         val validatables = invalidValidatables.appendAll(duplicateValidatables).appendAll(List.of(
@@ -52,6 +73,19 @@ class UtilsTest {
         val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
         assertThat(result).isEqualTo(Option.of(NOTHING_TO_VALIDATE));
     }
+
+    @Test
+    void filterInvalidatablesAndDuplicatesForAllOrNoneInvalidValidatables() {
+        val duplicateValidatables = List.of(new Container(new ID("0")), new Container(new ID("0")), new Container(new ID("0")));
+        val validatables = duplicateValidatables.appendAll(List.of(
+                new Container(new ID("1")), new Container(new ID("2")), new Container(new ID("3"))));
+
+        val batchValidationConfig = BatchValidationConfig.<Container, ValidationFailure>toValidate()
+                .findDuplicatesWith(container -> container.getSfId().toString()).prepare();
+        val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
+        assertThat(result).isEqualTo(Option.none());
+    }
+
 
     @Test
     void filterInvalidatablesAndDuplicatesForAllOrNoneDuplicate() {

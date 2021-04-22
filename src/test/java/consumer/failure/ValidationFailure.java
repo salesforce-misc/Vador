@@ -48,8 +48,8 @@ public class ValidationFailure {
         return validationFailure;
     }
 
-    public static ValidationFailure getFailureWithParams(ValidationFailureMessage validationFailureMessage, Object[] params) {
-        validationFailureMessage = validationFailureMessage.getErrorMessageWithParams(params);
+    public static ValidationFailure getFailureWithParams(ValidationFailureMessage validationFailureMessage, Object... params) {
+        validationFailureMessage.setParams(params);
         return new ValidationFailure(validationFailureMessage);
     }
 }

@@ -2,6 +2,7 @@ package org.revcloud.vader.dsl.runner;
 
 import com.force.swag.id.ID;
 import io.vavr.Function1;
+import io.vavr.Function2;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
@@ -18,6 +19,7 @@ import org.revcloud.vader.types.validators.Validator;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -30,6 +32,7 @@ import static org.revcloud.vader.dsl.lift.ValidatorLiftDsl.liftAllSimple;
 abstract class BaseValidationConfig<ValidatableT, FailureT> {
     @Singular
     protected Collection<Tuple2<Function1<ValidatableT, ?>, FailureT>> shouldHaveFields;
+    protected Tuple2<Map<String, Function1<ValidatableT, ?>>, Function2<String, Object, FailureT>> shouldHaveFieldsWithName;
     @Singular
     protected Collection<Tuple2<Function1<ValidatableT, ID>, FailureT>> shouldHaveValidSFIds;
     @Singular

@@ -7,7 +7,10 @@
 package consumer.failure;
 
 
-import java.util.Objects;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 
 /**
@@ -16,6 +19,9 @@ import java.util.Objects;
  * @author gakshintala
  * @since 220
  */
+@RequiredArgsConstructor
+@Getter
+@ToString
 public enum ValidationFailureMessage {
     NONE(Section.COMMON_VALIDATION_FAILURE, "Success"),
     FIELD_NULL_OR_EMPTY("", ""),
@@ -37,33 +43,10 @@ public enum ValidationFailureMessage {
     
     private final String section;
     private final String name;
+    @Setter
     private Object[] params;
-
-    ValidationFailureMessage(String section, String name) {
-        Objects.requireNonNull(section, "section for ValidationFailure cannot be null");
-        Objects.requireNonNull(name, "name for ValidationFailure cannot be null");
-        this.section = section;
-        this.name = name;
-    }
-
-    public String getSection() {
-        return section;
-    }
-
-    public String getName() {
-        return name;
-    }
 
     private static final class Section {
         static final String COMMON_VALIDATION_FAILURE = "CommonValidationFailure";
-    }
-
-    public String getMessage() {
-        return section + " " + name;
-    }
-
-    ValidationFailureMessage getErrorMessageWithParams(Object[] params) {
-        this.params = params;
-        return this;
     }
 }

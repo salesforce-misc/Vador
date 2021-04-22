@@ -82,7 +82,7 @@ class FailFastStrategies {
             Function1<Throwable, FailureT> throwableMapper,
             BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
         return validatables -> Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables, invalidValidatable, batchValidationConfig)
-                .orElse(validatables.map(Either::<FailureT, ValidatableT>right)
+                .orElse(validatables.iterator().map(Either::<FailureT, ValidatableT>right)
                         .map(validatable -> Utils.findFirstFailure(validatable, batchValidationConfig, throwableMapper))
                         .find(Either::isLeft).map(Either::getLeft));
     }

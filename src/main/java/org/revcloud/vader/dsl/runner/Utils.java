@@ -111,12 +111,10 @@ class Utils {
 
         val partition = groups.remove(null).values().partition(group -> group.size() == 1);
         val failureForDuplicate = batchValidationConfig.getAndFailDuplicatesWith();
-        val duplicates = partition._2.flatMap(identity())
-                .map(duplicate -> Tuple.of(Either.<FailureT, ValidatableT>left(failureForDuplicate), duplicate._2));
-        val nonDuplicates = partition._1.flatMap(identity())
-                .map(tuple2 -> tuple2.map1(Either::<FailureT, ValidatableT>right));
-
-        return duplicates.appendAll(nonDuplicates).appendAll(invalids).sortBy(Tuple2::_2).map(Tuple2::_1);
+        Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> duplicates = (failureForDuplicate == null) ? List.empty()
+                : partition._2.flatMap(identity()).map(duplicate -> Tuple.of(Either.left(failureForDuplicate), duplicate._2));
+        val nonDuplicates = partition._1.flatMap(identity()).map(tuple2 -> tuple2.map1(Either::<FailureT, ValidatableT>right));
+        return nonDuplicates.appendAll(duplicates).appendAll(invalids).sortBy(Tuple2::_2).map(Tuple2::_1);
     }
 
     static <ValidatableT, FailureT> Option<FailureT> filterInvalidatablesAndDuplicatesForAllOrNone(
@@ -140,9 +138,9 @@ class Utils {
         }
 
         val valids = groups.remove(null).values();
-        if (duplicateFinder != null) {
+        val failureForDuplicate = batchValidationConfig.getAndFailDuplicatesWith();
+        if (duplicateFinder != null && failureForDuplicate != null) {
             val partition = valids.partition(group -> group.size() == 1);
-            val failureForDuplicate = batchValidationConfig.getAndFailDuplicatesWith();
             if (!partition._2.isEmpty()) {
                 return Option.of(failureForDuplicate);
             }
@@ -157,8 +155,13 @@ class Utils {
 
     static <ValidatableT, FailureT> Iterator<Validator<ValidatableT, FailureT>> toValidators(
             BaseValidationConfig<ValidatableT, FailureT> validationConfig) {
-        Stream<Validator<ValidatableT, FailureT>> mandatoryFieldValidators = validationConfig.getShouldHaveFields().stream()
+        Stream<Validator<ValidatableT, FailureT>> mandatoryFieldValidators1 = validationConfig.getShouldHaveFields().stream()
                 .map(tuple2 -> validatableRight -> validatableRight.map(tuple2._1).filterOrElse(isPresent, ignore -> tuple2._2));
+        val shouldHaveFieldsWithName = validationConfig.getShouldHaveFieldsWithName()._1;
+        Stream<Validator<ValidatableT, FailureT>> mandatoryFieldValidators2 = shouldHaveFieldsWithName.entrySet().stream()
+                .map(entry -> validatableRight ->
+                        validatableRight.map(validatable -> entry.getValue().apply(validatable))
+                                .filterOrElse(isPresent, fieldValue -> validationConfig.getShouldHaveFieldsWithName()._2.apply(entry.getKey(), fieldValue)));
         Stream<Validator<ValidatableT, FailureT>> mandatorySfIdValidators = validationConfig.getShouldHaveValidSFIds().stream()
                 .map(tuple2 -> validatableRight -> validatableRight.map(tuple2._1).map(ID::toString)
                         .filterOrElse(IdTraits::isValidId, ignore -> tuple2._2));
@@ -169,7 +172,7 @@ class Utils {
         Stream<Validator<ValidatableT, FailureT>> specValidators = validationConfig.getSpecsStream()
                 .map(Utils::toValidator);
         // TODO 13/04/21 gopala.akshintala: Use Stream everywhere, now that java has immutable list built-in 
-        return Iterator.ofAll(Stream.of(mandatoryFieldValidators, mandatorySfIdValidators, nonMandatorySfIdValidators, specValidators, validationConfig.getValidatorsStream())
+        return Iterator.ofAll(Stream.of(mandatoryFieldValidators1, mandatoryFieldValidators2, mandatorySfIdValidators, nonMandatorySfIdValidators, specValidators, validationConfig.getValidatorsStream())
                 .flatMap(identity()).collect(Collectors.toList()));
     }
 
@@ -181,8 +184,14 @@ class Utils {
 
     static <ValidatableT, FailureT> Iterator<SimpleValidator<ValidatableT, FailureT>> toSimpleValidators(
             ValidationConfig<ValidatableT, FailureT> validationConfig, FailureT none) {
-        Stream<SimpleValidator<ValidatableT, FailureT>> mandatoryFieldValidators = validationConfig.getShouldHaveFields().stream()
+        Stream<SimpleValidator<ValidatableT, FailureT>> mandatoryFieldValidators1 = validationConfig.getShouldHaveFields().stream()
                 .map(tuple2 -> validatable -> isPresent.test(tuple2._1.apply(validatable)) ? none : tuple2._2);
+        val shouldHaveFieldsWithName = validationConfig.getShouldHaveFieldsWithName()._1;
+        Stream<SimpleValidator<ValidatableT, FailureT>> mandatoryFieldValidators2 = shouldHaveFieldsWithName.entrySet().stream()
+                .map(entry -> validatable -> {
+                    final Object fieldValue = entry.getValue().apply(validatable);
+                    return isPresent.test(fieldValue) ? none : validationConfig.getShouldHaveFieldsWithName()._2.apply(entry.getKey(), fieldValue);
+                });
         Stream<SimpleValidator<ValidatableT, FailureT>> mandatorySfIdValidators = validationConfig.getShouldHaveValidSFIds().stream()
                 .map(tuple2 -> validatable -> IdTraits.isValidId(tuple2._1.apply(validatable).toString()) ? none : tuple2._2);
         Stream<SimpleValidator<ValidatableT, FailureT>> nonMandatorySfIdValidators = validationConfig.getMayHaveValidSFIds().stream()
@@ -193,7 +202,7 @@ class Utils {
         Stream<SimpleValidator<ValidatableT, FailureT>> specValidators = validationConfig.getSpecsStream()
                 .map(specBuilder -> toSimpleValidator(specBuilder, none));
         // TODO 13/04/21 gopala.akshintala: Use Stream everywhere, now that java has immutable list built-in 
-        return Iterator.ofAll(Stream.of(mandatoryFieldValidators, mandatorySfIdValidators, nonMandatorySfIdValidators, specValidators)
+        return Iterator.ofAll(Stream.of(mandatoryFieldValidators1, mandatoryFieldValidators2, mandatorySfIdValidators, nonMandatorySfIdValidators, specValidators)
                 .flatMap(identity()).collect(Collectors.toList()));
     }
 
