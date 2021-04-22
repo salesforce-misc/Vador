@@ -30,8 +30,10 @@ import static org.revcloud.vader.dsl.lift.ValidatorLiftDsl.liftAllSimple;
 @Getter
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 abstract class BaseValidationConfig<ValidatableT, FailureT> {
+    // TODO 22/04/21 gopala.akshintala: replace collection<tuple2 with Map 
     @Singular
-    protected Collection<Tuple2<Function1<ValidatableT, ?>, FailureT>> shouldHaveFields;
+    @NonNull
+    protected Map<Function1<ValidatableT, ?>, FailureT> shouldHaveFields;
     protected Tuple2<Map<String, Function1<ValidatableT, ?>>, Function2<String, Object, FailureT>> shouldHaveFieldsWithName;
     @Singular
     protected Collection<Tuple2<Function1<ValidatableT, ID>, FailureT>> shouldHaveValidSFIds;

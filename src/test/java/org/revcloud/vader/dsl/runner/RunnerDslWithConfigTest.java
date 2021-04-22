@@ -44,9 +44,9 @@ class RunnerDslWithConfigTest {
     void failFastWithRequiredFieldsMissingForSimpleValidators() {
         val validationConfig =
                 ValidationConfig.<Bean, ValidationFailure>toValidate()
-                        .shouldHaveFields(List.of(
-                                Tuple.of(Bean::getRequiredField1, REQUIRED_FIELD_MISSING),
-                                Tuple.of(Bean::getRequiredField2, REQUIRED_FIELD_MISSING)))
+                        .shouldHaveFields(Map.of(
+                                Bean::getRequiredField1, REQUIRED_FIELD_MISSING,
+                                Bean::getRequiredField2, REQUIRED_FIELD_MISSING))
                         .shouldHaveValidSFIds(List.of(
                                 Tuple.of(Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION),
                                 Tuple.of(Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION))).prepare();
@@ -96,9 +96,9 @@ class RunnerDslWithConfigTest {
     void failFastWithInvalidIdForSimpleValidators() {
         ValidationConfig<Bean, ValidationFailure> validationConfig =
                 ValidationConfig.<Bean, ValidationFailure>toValidate()
-                        .shouldHaveFields(List.of(
-                                Tuple.of(Bean::getRequiredField1, REQUIRED_FIELD_MISSING),
-                                Tuple.of(Bean::getRequiredField2, REQUIRED_FIELD_MISSING)))
+                        .shouldHaveFields(Map.of(
+                                Bean::getRequiredField1, REQUIRED_FIELD_MISSING,
+                                Bean::getRequiredField2, REQUIRED_FIELD_MISSING))
                         .shouldHaveValidSFIds(List.of(
                                 Tuple.of(Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION),
                                 Tuple.of(Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION))).prepare();
