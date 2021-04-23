@@ -36,6 +36,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
         return Spec3.check();
     }
 
+    // TODO 23/04/21 gopala.akshintala: Check on the inheritance 
     @Getter
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
     public abstract static class BaseSpec<ValidatableT, FailureT> {
@@ -95,7 +96,6 @@ public final class SpecFactory<ValidatableT, FailureT> {
     @Value
     @EqualsAndHashCode(callSuper = true)
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
-    // TODO 20/04/21 gopala.akshintala: Rethink about inheritance 
     static class Spec3<ValidatableT, FailureT, WhenT, ThenT> extends BaseSpec<ValidatableT, FailureT> {
         Function1<ValidatableT, WhenT> when;
         Function1<ValidatableT, ThenT> then;

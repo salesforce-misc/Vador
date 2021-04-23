@@ -1,6 +1,8 @@
 package org.revcloud.vader.dsl.runner;
 
 import com.force.swag.id.ID;
+import de.cronn.reflection.util.PropertyUtils;
+import de.cronn.reflection.util.TypedPropertyGetter;
 import io.vavr.Function1;
 import io.vavr.Function2;
 import io.vavr.Tuple;
@@ -21,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,15 +33,16 @@ import static org.revcloud.vader.dsl.lift.ValidatorLiftDsl.liftAllSimple;
 @Getter
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 abstract class BaseValidationConfig<ValidatableT, FailureT> {
-    // TODO 22/04/21 gopala.akshintala: replace collection<tuple2 with Map 
-    @Singular
     @NonNull
-    protected Map<Function1<ValidatableT, ?>, FailureT> shouldHaveFields;
-    protected Tuple2<Map<String, Function1<ValidatableT, ?>>, Function2<String, Object, FailureT>> shouldHaveFieldsWithName;
-    @Singular
-    protected Collection<Tuple2<Function1<ValidatableT, ID>, FailureT>> shouldHaveValidSFIds;
-    @Singular
-    protected Collection<Tuple2<Function1<ValidatableT, ID>, FailureT>> mayHaveValidSFIds;
+    @Singular("shouldHaveFieldOrFailWith")
+    protected Map<TypedPropertyGetter<ValidatableT, ?>, FailureT> shouldHaveFieldsOrFailWith;
+    protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ?>>, Function2<String, Object, FailureT>> shouldHaveFieldsOrFailWithFn;
+    @Singular("shouldHaveValidSFIdFieldOrFailWith")
+    protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT> shouldHaveValidSFIdFieldsOrFailWith;
+    protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ID>>, Function2<String, ID, FailureT>> shouldHaveValidSFIdFieldsOrFailWithFn;
+    @Singular("mayHaveValidSFIdFieldOrFailWith")
+    protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT> mayHaveValidSFIdFieldsOrFailWith;
+    protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ID>>, Function2<String, ID, FailureT>> mayHaveValidSFIdFieldsOrFailWithFn;
     protected Function1<SpecFactory<ValidatableT, FailureT>, Collection<? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>> withSpecs;
     @Singular("withSpec")
     protected Collection<Function1<SpecFactory<ValidatableT, FailureT>, ? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>> withSpec;
@@ -62,5 +66,26 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
 
     public Optional<Predicate<ValidatableT>> getSpecWithName(@NonNull String nameForTest) {
         return getSpecsStream().filter(spec -> nameForTest.equals(spec.nameForTest)).findFirst().map(BaseSpec::toPredicate);
+    }
+
+    public Set<String> getRequiredFieldNames(Class<ValidatableT> beanClass) {
+        return Stream.concat(
+                Stream.ofNullable(shouldHaveFieldsOrFailWith).flatMap(f -> f.keySet().stream()),
+                Stream.ofNullable(shouldHaveFieldsOrFailWithFn).flatMap(f -> f._1.stream()))
+                .map(fieldMapper -> PropertyUtils.getPropertyName(beanClass, fieldMapper)).collect(Collectors.toSet());
+    }
+
+    public Set<String> getRequiredSFIdFieldNames(Class<ValidatableT> beanClass) {
+        return Stream.concat(
+                Stream.ofNullable(shouldHaveValidSFIdFieldsOrFailWith).flatMap(f -> f.keySet().stream()),
+                Stream.ofNullable(shouldHaveValidSFIdFieldsOrFailWithFn).flatMap(f -> f._1.stream()))
+                .map(fieldMapper -> PropertyUtils.getPropertyName(beanClass, fieldMapper)).collect(Collectors.toSet());
+    }
+
+    public Set<String> getNonRequiredSFIdFieldNames(Class<ValidatableT> beanClass) {
+        return Stream.concat(
+                Stream.ofNullable(mayHaveValidSFIdFieldsOrFailWith).flatMap(f -> f.keySet().stream()),
+                Stream.ofNullable(mayHaveValidSFIdFieldsOrFailWithFn).flatMap(f -> f._1.stream()))
+                .map(fieldMapper -> PropertyUtils.getPropertyName(beanClass, fieldMapper)).collect(Collectors.toSet());
     }
 }
