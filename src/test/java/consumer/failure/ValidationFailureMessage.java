@@ -29,7 +29,7 @@ public enum ValidationFailureMessage {
     DUPLICATE_ITEM(Section.COMMON_VALIDATION_FAILURE, "DuplicateItem"),
     INVALID_PARENT(Section.COMMON_VALIDATION_FAILURE, "invalidParent"),
     INVALID_CHILD(Section.COMMON_VALIDATION_FAILURE, "invalidChild"),
-    UNKNOWN_EXCEPTION("", ""), 
+    UNKNOWN_EXCEPTION("", ""),
     VALIDATION_FAILURE_1("", ""),
     VALIDATION_FAILURE_2("", ""),
     VALIDATION_FAILURE_3("", ""),
@@ -38,9 +38,10 @@ public enum ValidationFailureMessage {
     INVALID_COMBO_2("", ""),
     INVALID_VALUE("", ""),
     FIELD_INTEGRITY_EXCEPTION("", ""),
+    MIN_BATCH_SIZE_EXCEEDED("", ""),
     MSG_WITH_PARAMS("", ""),
     ;
-    
+
     private final String section;
     private final String name;
     @Setter

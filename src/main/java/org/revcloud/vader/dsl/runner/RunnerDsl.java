@@ -2,11 +2,12 @@ package org.revcloud.vader.dsl.runner;
 
 import io.vavr.Function1;
 import io.vavr.collection.List;
+import io.vavr.control.Option;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.revcloud.vader.dsl.lift.ValidatorLiftDsl;
-import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.SimpleValidator;
+import org.revcloud.vader.types.validators.Validator;
 
 /**
  * DSL for different ways to run validations against a Single validatable (Non-Batch).
@@ -97,14 +98,12 @@ public class RunnerDsl {
         return FailFastSimple.failFastStrategy(validators, invalidValidatable, none, throwableMapper, validationConfig).apply(validatable);
     }
 
-    public static <FailureT, ValidatableT> FailureT validateAndFailFastForSimpleValidatorsForHeader(
+    public static <FailureT, ValidatableT> Option<FailureT> validateAndFailFastForHeader(
             ValidatableT validatable,
-            List<SimpleValidator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable,
-            FailureT none,
             Function1<Throwable, FailureT> throwableMapper,
             HeaderValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return FailFastSimple.failFastStrategyForHeader(validators, invalidValidatable, none, throwableMapper, validationConfig).apply(validatable);
+        return FailFastSimple.failFastStrategyForHeader(invalidValidatable, throwableMapper, validationConfig).apply(validatable);
     }
 
     /**

@@ -45,7 +45,6 @@ public class BatchRunnerDsl {
 
     public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFast(
             List<ValidatableT> validatables,
-            List<Validator<ValidatableT, FailureT>> validators,
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
@@ -119,16 +118,6 @@ public class BatchRunnerDsl {
         return validatables.iterator()
                 .map(FailFastSimple.failFastStrategy(validators, invalidValidatable, none, throwableMapper, validationConfig))
                 .toList();
-    }
-
-    public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFast(
-            List<ValidatableT> validatables,
-            List<SimpleValidator<ValidatableT, FailureT>> validators,
-            FailureT invalidValidatable,
-            FailureT none,
-            Function1<Throwable, FailureT> throwableMapper,
-            ValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return validateAndFailFast(validatables, ValidatorLiftDsl.liftAllSimple(validators, none), invalidValidatable, throwableMapper, validationConfig);
     }
 
     public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFastForBatch(

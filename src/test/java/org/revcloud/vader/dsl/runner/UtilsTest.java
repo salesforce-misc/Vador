@@ -5,7 +5,6 @@ import consumer.bean.Container;
 import consumer.failure.ValidationFailure;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
-import io.vavr.control.Option;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -71,7 +70,7 @@ class UtilsTest {
         val batchValidationConfig = BatchValidationConfig.<Container, ValidationFailure>toValidate()
                 .findDuplicatesWith(container -> container.getSfId().toString()).andFailDuplicatesWith(DUPLICATE_ITEM).prepare();
         val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
-        assertThat(result).isEqualTo(Option.of(NOTHING_TO_VALIDATE));
+        assertThat(result).contains(NOTHING_TO_VALIDATE);
     }
 
     @Test
@@ -83,7 +82,7 @@ class UtilsTest {
         val batchValidationConfig = BatchValidationConfig.<Container, ValidationFailure>toValidate()
                 .findDuplicatesWith(container -> container.getSfId().toString()).prepare();
         val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
-        assertThat(result).isEqualTo(Option.none());
+        assertThat(result).isEmpty();
     }
 
 
@@ -96,7 +95,7 @@ class UtilsTest {
         val batchValidationConfig = BatchValidationConfig.<Container, ValidationFailure>toValidate()
                 .findDuplicatesWith(container -> container.getSfId().toString()).andFailDuplicatesWith(DUPLICATE_ITEM).prepare();
         val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
-        assertThat(result).isEqualTo(Option.of(DUPLICATE_ITEM));
+        assertThat(result).contains(DUPLICATE_ITEM);
     }
 
     @Test
@@ -107,6 +106,6 @@ class UtilsTest {
         val batchValidationConfig = BatchValidationConfig.<Container, ValidationFailure>toValidate()
                 .findDuplicatesWith(container -> container.getSfId().toString()).andFailDuplicatesWith(DUPLICATE_ITEM).prepare();
         val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
-        assertThat(result).isEqualTo(Option.none());
+        assertThat(result).isEmpty();
     }
 }

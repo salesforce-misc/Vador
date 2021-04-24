@@ -31,7 +31,7 @@ class AccumulationStrategies {
             Function1<Throwable, FailureT> throwableMapper) {
         return toBeValidated -> toBeValidated == null
                 ? List.of(Either.left(invalidValidatable))
-                : Utils.fireValidators(Either.right(toBeValidated), validators.iterator(), throwableMapper).toList();
+                : List.ofAll(Utils.fireValidators(Either.right(toBeValidated), validators.toJavaStream(), throwableMapper));
     }
 
     @FunctionalInterface

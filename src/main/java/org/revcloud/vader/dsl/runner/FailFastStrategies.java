@@ -27,10 +27,11 @@ class FailFastStrategies {
             Function1<Throwable, FailureT> throwableMapper) {
         return toBeValidated -> {
             if (toBeValidated == null) return Either.left(invalidValidatable);
-            val toBeValidatedRight = Either.<FailureT, ValidatableT>right(toBeValidated);
-            return Utils.fireValidators(toBeValidatedRight, validators.iterator(), throwableMapper)
-                    .find(Either::isLeft)
-                    .getOrElse(toBeValidatedRight);
+            val validatable = Either.<FailureT, ValidatableT>right(toBeValidated);
+            return Utils.fireValidators(validatable, validators.toJavaStream(), throwableMapper)
+                    .filter(Either::isLeft)
+                    .findFirst()
+                    .orElse(validatable);
         };
     }
 

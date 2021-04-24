@@ -43,14 +43,13 @@ class RunnerDslWithConfigTest {
 
     @Test
     void failFastWithRequiredFieldsMissingForSimpleValidators() {
-        val validationConfig =
-                ValidationConfig.<Bean, ValidationFailure>toValidate()
-                        .shouldHaveFieldsOrFailWith(Map.of(
-                                Bean::getRequiredField1, REQUIRED_FIELD_MISSING,
-                                Bean::getRequiredField2, REQUIRED_FIELD_MISSING))
-                        .shouldHaveValidSFIdFieldsOrFailWith(Map.of(
-                                Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION,
-                                Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION)).prepare();
+        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate()
+                .shouldHaveFieldsOrFailWith(Map.of(
+                        Bean::getRequiredField1, REQUIRED_FIELD_MISSING,
+                        Bean::getRequiredField2, REQUIRED_FIELD_MISSING))
+                .shouldHaveValidSFIdFieldsOrFailWith(Map.of(
+                        Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION,
+                        Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION)).prepare();
 
         val validatableWithBlankReqField = new Bean(0, "", null, null);
         val result1 = validateAndFailFastForSimpleValidatorsWithConfig(
@@ -73,8 +72,7 @@ class RunnerDslWithConfigTest {
 
     @Test
     void failFastWithRequiredFieldsWithNameMissingForSimpleValidators() {
-        final ValidationConfig.ValidationConfigBuilder<Bean, ValidationFailure, ?, ?> builder = ValidationConfig.toValidate();
-        val validationConfig = builder
+        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate()
                 .shouldHaveFieldsOrFailWithFn(Tuple.of(List.of(
                         Bean::getRequiredField1,
                         Bean::getRequiredField2),

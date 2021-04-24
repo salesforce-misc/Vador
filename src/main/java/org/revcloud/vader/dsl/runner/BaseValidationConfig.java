@@ -49,13 +49,13 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
     @Singular
     Collection<Validator<ValidatableT, FailureT>> withValidators;
     @Builder.Default
-    Tuple2<Collection<SimpleValidator<ValidatableT, FailureT>>, FailureT> withSimpleValidators = Tuple.of(Collections.emptyList(), null);
+    Tuple2<Collection<SimpleValidator<ValidatableT, FailureT>>, FailureT> withSimpleValidatorsOrFailWith = Tuple.of(Collections.emptyList(), null);
     @Singular("withSimpleValidator")
-    Collection<Tuple2<SimpleValidator<ValidatableT, FailureT>, FailureT>> withSimpleValidator;
+    Collection<Tuple2<SimpleValidator<ValidatableT, FailureT>, FailureT>> withSimpleValidators;
 
     Stream<Validator<ValidatableT, FailureT>> getValidatorsStream() {
-        var simpleValidators = Stream.concat(withSimpleValidators._1.stream(), withSimpleValidator.stream().map(Tuple2::_1)).collect(Collectors.toList());
-        return Stream.concat(withValidators.stream(), liftAllSimple(List.ofAll(simpleValidators), withSimpleValidators._2).toJavaStream());
+        var simpleValidators = Stream.concat(withSimpleValidatorsOrFailWith._1.stream(), withSimpleValidators.stream().map(Tuple2::_1)).collect(Collectors.toList());
+        return Stream.concat(withValidators.stream(), liftAllSimple(List.ofAll(simpleValidators), withSimpleValidatorsOrFailWith._2).toJavaStream());
     }
 
     Stream<BaseSpec<ValidatableT, FailureT>> getSpecsStream() {

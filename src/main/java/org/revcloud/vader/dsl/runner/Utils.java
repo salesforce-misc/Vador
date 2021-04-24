@@ -5,7 +5,6 @@ import de.cronn.reflection.util.PropertyUtils;
 import io.vavr.Function1;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
-import io.vavr.collection.Iterator;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.control.Either;
@@ -19,7 +18,6 @@ import org.revcloud.vader.types.validators.Validator;
 
 import java.util.ArrayList;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.vavr.CheckedFunction1.liftTry;
@@ -28,12 +26,12 @@ import static io.vavr.Function1.identity;
 @UtilityClass
 // TODO 20/04/21 gopala.akshintala: Split this class 
 class Utils {
-    static <FailureT, ValidatableT> Iterator<Either<FailureT, ValidatableT>> fireValidators(
-            Either<FailureT, ValidatableT> toBeValidatedRight, // TODO: 28/03/21 toBeValidated vs Validatable naming consistency
-            Iterator<Validator<ValidatableT, FailureT>> validators,
+    static <FailureT, ValidatableT> Stream<Either<FailureT, ValidatableT>> fireValidators(
+            Either<FailureT, ValidatableT> validatable,
+            Stream<Validator<ValidatableT, FailureT>> validators,
             Function1<Throwable, FailureT> throwableMapper) {
         return validators
-                .map(currentValidator -> fireValidator(currentValidator, toBeValidatedRight, throwableMapper));
+                .map(currentValidator -> fireValidator(currentValidator, validatable, throwableMapper));
     }
 
     static <FailureT, ValidatableT> Either<FailureT, ValidatableT> fireValidator(
@@ -45,23 +43,22 @@ class Utils {
                 .flatMap(ignore -> toBeValidatedRight); // Put the original Validatable in the right state
     }
 
-    static <FailureT> FailureT validateSize(java.util.List<?> validatables,
-                                            FailureT none,
-                                            HeaderValidationConfig<?, FailureT> headerConfig) {
+    static <FailureT> Option<FailureT> validateSize(java.util.Collection<?> validatables,
+                                                    HeaderValidationConfig<?, FailureT> headerConfig) {
         val minBatchSize = headerConfig.getMinBatchSize();
         if (minBatchSize != null && validatables.size() < minBatchSize._1) {
-            return minBatchSize._2;
+            return Option.of(minBatchSize._2);
         }
         val maxBatchSize = headerConfig.getMaxBatchSize();
         if (maxBatchSize != null && validatables.size() > maxBatchSize._1) {
-            return maxBatchSize._2;
+            return Option.of(maxBatchSize._2);
         }
-        return none;
+        return Option.none();
     }
 
-    static <FailureT, ValidatableT> Iterator<FailureT> fireSimpleValidators(
+    static <FailureT, ValidatableT> Stream<FailureT> fireSimpleValidators(
             ValidatableT toBeValidated,
-            Iterator<SimpleValidator<ValidatableT, FailureT>> validators,
+            Stream<SimpleValidator<ValidatableT, FailureT>> validators,
             Function1<Throwable, FailureT> throwableMapper) {
         return validators.map(validator -> fireSimpleValidator(validator, toBeValidated, throwableMapper));
     }
@@ -152,7 +149,7 @@ class Utils {
         return nullValidatables.map(nullValidatable -> nullValidatable.map1(ignore -> Either.left(invalidValidatable)));
     }
 
-    static <ValidatableT, FailureT> Iterator<Validator<ValidatableT, FailureT>> toValidators(
+    static <ValidatableT, FailureT> Stream<Validator<ValidatableT, FailureT>> toValidators(
             BaseValidationConfig<ValidatableT, FailureT> validationConfig) {
         Stream<Validator<ValidatableT, FailureT>> mandatoryFieldValidators1 = validationConfig.getShouldHaveFieldsOrFailWith().entrySet().stream()
                 .map(entry -> validatableRight -> validatableRight.map(entry.getKey()::get).filterOrElse(isPresent, ignore -> entry.getValue()));
@@ -160,7 +157,6 @@ class Utils {
                 .flatMap(tuple2 -> tuple2._1.stream())
                 .map(fieldMapper -> validatableRight -> validatableRight.map(fieldMapper::get)
                         .filterOrElse(isPresent, fieldValue -> validationConfig.getShouldHaveFieldsOrFailWithFn()._2.apply(PropertyUtils.getPropertyName(validatableRight.get(), fieldMapper), fieldValue)));
-
         Stream<Validator<ValidatableT, FailureT>> mandatorySfIdValidators1 = validationConfig.getShouldHaveValidSFIdFieldsOrFailWith().entrySet().stream()
                 .map(entry -> validatableRight -> validatableRight.map(entry.getKey()::get)
                         .filterOrElse(id -> id != null && IdTraits.isValidId(id.toString()), ignore -> entry.getValue()));
@@ -168,7 +164,6 @@ class Utils {
                 .flatMap(tuple2 -> tuple2._1.stream())
                 .map(fieldMapper -> validatableRight -> validatableRight.map(fieldMapper::get)
                         .filterOrElse(id -> id != null && IdTraits.isValidId(id.toString()), id -> validationConfig.getShouldHaveValidSFIdFieldsOrFailWithFn()._2.apply(PropertyUtils.getPropertyName(validatableRight.get(), fieldMapper), id)));
-
         Stream<Validator<ValidatableT, FailureT>> nonMandatorySfIdValidators1 = validationConfig.getMayHaveValidSFIdFieldsOrFailWith().entrySet().stream()
                 .map(entry -> validatableRight -> validatableRight.map(entry.getKey()::get)
                         .filterOrElse(id -> id == null || IdTraits.isValidId(id.toString()), ignore -> entry.getValue()));
@@ -179,8 +174,8 @@ class Utils {
 
         Stream<Validator<ValidatableT, FailureT>> specValidators = validationConfig.getSpecsStream().map(Utils::toValidator);
         // TODO 13/04/21 gopala.akshintala: Use Stream everywhere, now that java has immutable list built-in 
-        return Iterator.ofAll(Stream.of(mandatoryFieldValidators1, mandatoryFieldValidators2, mandatorySfIdValidators1, mandatorySfIdValidators2, nonMandatorySfIdValidators1, nonMandatorySfIdValidators2, specValidators, validationConfig.getValidatorsStream())
-                .flatMap(identity()).collect(Collectors.toList()));
+        return Stream.of(mandatoryFieldValidators1, mandatoryFieldValidators2, mandatorySfIdValidators1, mandatorySfIdValidators2, nonMandatorySfIdValidators1, nonMandatorySfIdValidators2, specValidators, validationConfig.getValidatorsStream())
+                .flatMap(identity());
     }
 
     private static <ValidatableT, FailureT> Validator<ValidatableT, FailureT> toValidator(BaseSpec<ValidatableT, FailureT> baseSpec) {
@@ -188,7 +183,7 @@ class Utils {
     }
 
     // TODO 22/04/21 gopala.akshintala: Refactor this method 
-    static <ValidatableT, FailureT> Iterator<SimpleValidator<ValidatableT, FailureT>> toSimpleValidators(
+    static <ValidatableT, FailureT> Stream<SimpleValidator<ValidatableT, FailureT>> toSimpleValidators(
             ValidationConfig<ValidatableT, FailureT> validationConfig, FailureT none) {
         Stream<SimpleValidator<ValidatableT, FailureT>> mandatoryFieldValidators1 = validationConfig.getShouldHaveFieldsOrFailWith().entrySet().stream()
                 .map(entry -> validatable -> isPresent.test(entry.getKey().get(validatable)) ? none : entry.getValue());
@@ -222,8 +217,8 @@ class Utils {
         Stream<SimpleValidator<ValidatableT, FailureT>> specValidators = validationConfig.getSpecsStream()
                 .map(specBuilder -> toSimpleValidator(specBuilder, none));
         // TODO 13/04/21 gopala.akshintala: Use Stream everywhere, now that java has immutable list built-in 
-        return Iterator.ofAll(Stream.of(mandatoryFieldValidators1, mandatoryFieldValidators2, mandatorySfIdValidators1, mandatorySfIdValidators2, nonMandatorySfIdValidators1, nonMandatorySfIdValidators2, specValidators)
-                .flatMap(identity()).collect(Collectors.toList()));
+        return Stream.of(mandatoryFieldValidators1, mandatoryFieldValidators2, mandatorySfIdValidators1, mandatorySfIdValidators2, nonMandatorySfIdValidators1, nonMandatorySfIdValidators2, specValidators)
+                .flatMap(identity());
     }
 
     private static <ValidatableT, FailureT> SimpleValidator<ValidatableT, FailureT> toSimpleValidator(BaseSpec<ValidatableT, FailureT> baseSpec, FailureT none) {
@@ -248,7 +243,8 @@ class Utils {
             return validatable;
         }
         return fireValidators(validatable, toValidators(validationConfig), throwableMapper)
-                .find(Either::isLeft)
-                .getOrElse(validatable);
+                .filter(Either::isLeft)
+                .findFirst()
+                .orElse(validatable);
     }
 }
