@@ -8,13 +8,13 @@ import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.control.Either;
-import io.vavr.control.Option;
 import io.vavr.control.Try;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -41,17 +41,17 @@ class Utils {
                 .flatMap(ignore -> toBeValidatedRight); // Put the original Validatable in the right state
     }
 
-    static <FailureT> Option<FailureT> validateSize(java.util.Collection<?> validatables,
+    static <FailureT> Optional<FailureT> validateSize(java.util.Collection<?> validatables,
                                                     HeaderValidationConfig<?, FailureT> headerConfig) {
         val minBatchSize = headerConfig.getMinBatchSize();
         if (minBatchSize != null && validatables.size() < minBatchSize._1) {
-            return Option.of(minBatchSize._2);
+            return Optional.of(minBatchSize._2);
         }
         val maxBatchSize = headerConfig.getMaxBatchSize();
         if (maxBatchSize != null && validatables.size() > maxBatchSize._1) {
-            return Option.of(maxBatchSize._2);
+            return Optional.of(maxBatchSize._2);
         }
-        return Option.none();
+        return Optional.empty();
     }
 
     static <FailureT, ValidatableT> Stream<FailureT> fireSimpleValidators(
@@ -69,7 +69,7 @@ class Utils {
     }
 
     static <ValidatableT, FailureT> Seq<Either<FailureT, ValidatableT>> filterInvalidatablesAndDuplicates(
-            List<ValidatableT> validatables,
+            java.util.List<ValidatableT> validatables,
             FailureT invalidValidatable,
             BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
         if (validatables.isEmpty()) {
@@ -80,10 +80,10 @@ class Utils {
         }
         val duplicateFinder = batchValidationConfig.getFindDuplicatesWith();
         val keyMapperForDuplicates = duplicateFinder == null ? Function1.<ValidatableT>identity() : duplicateFinder;
-        val groups = validatables.zipWithIndex() // groups: invalids, duplicates, non-duplicates
+        val groups = List.ofAll(validatables).zipWithIndex() // groups: invalids, duplicates, non-duplicates
                 .groupBy(tuple2 -> tuple2._1 == null ? null : keyMapperForDuplicates.apply(tuple2._1));
 
-        Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> invalids = groups.get(null)
+        val invalids = groups.get(null)
                 .map(nullValidatables -> invalidate(nullValidatables, invalidValidatable))
                 .getOrElse(List.empty());
 
@@ -102,24 +102,24 @@ class Utils {
         return nonDuplicates.appendAll(duplicates).appendAll(invalids).sortBy(Tuple2::_2).map(Tuple2::_1);
     }
 
-    static <ValidatableT, FailureT> Option<FailureT> filterInvalidatablesAndDuplicatesForAllOrNone(
-            List<ValidatableT> validatables,
+    static <ValidatableT, FailureT> Optional<FailureT> filterInvalidatablesAndDuplicatesForAllOrNone(
+            java.util.List<ValidatableT> validatables,
             FailureT invalidValidatable,
             BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
         if (validatables.isEmpty()) {
-            return Option.none();
+            return Optional.empty();
         } else if (validatables.size() == 1) {
             val validatable = validatables.get(0);
-            return validatable == null ? Option.of(invalidValidatable) : Option.none();
+            return validatable == null ? Optional.of(invalidValidatable) : Optional.empty();
         }
         val duplicateFinder = batchValidationConfig.getFindDuplicatesWith();
         val keyMapperForDuplicates = duplicateFinder == null ? Function1.<ValidatableT>identity() : duplicateFinder;
-        val groups = validatables // groups: invalids, duplicates, non-duplicates
+        val groups = List.ofAll(validatables) // groups: invalids, duplicates, non-duplicates
                 .groupBy(validatable -> validatable == null ? null : keyMapperForDuplicates.apply(validatable));
 
         val invalids = groups.get(null);
         if (invalids.isDefined() && !invalids.get().isEmpty()) {
-            return Option.of(invalidValidatable);
+            return Optional.of(invalidValidatable);
         }
 
         val valids = groups.remove(null).values();
@@ -127,10 +127,10 @@ class Utils {
         if (duplicateFinder != null && failureForDuplicate != null) {
             val partition = valids.partition(group -> group.size() == 1);
             if (!partition._2.isEmpty()) {
-                return Option.of(failureForDuplicate);
+                return Optional.of(failureForDuplicate);
             }
         }
-        return Option.none();
+        return Optional.empty();
     }
 
     private static <FailureT, ValidatableT> Seq<Tuple2<Either<FailureT, ValidatableT>, Integer>> invalidate(
@@ -162,7 +162,6 @@ class Utils {
                         .filterOrElse(id -> id == null || IdTraits.isValidId(id.toString()), id -> validationConfig.getShouldHaveValidSFIdFieldsOrFailWithFn()._2.apply(PropertyUtils.getPropertyName(validatableRight.get(), fieldMapper), id)));
 
         Stream<Validator<ValidatableT, FailureT>> specValidators = validationConfig.getSpecsStream().map(Utils::toValidator);
-        // TODO 13/04/21 gopala.akshintala: Use Stream everywhere, now that java has immutable list built-in 
         return Stream.of(mandatoryFieldValidators1, mandatoryFieldValidators2, mandatorySfIdValidators1, mandatorySfIdValidators2, nonMandatorySfIdValidators1, nonMandatorySfIdValidators2, specValidators, validationConfig.getValidatorsStream())
                 .flatMap(identity());
     }
@@ -205,7 +204,6 @@ class Utils {
                 });
         Stream<SimpleValidator<ValidatableT, FailureT>> specValidators = validationConfig.getSpecsStream()
                 .map(specBuilder -> toSimpleValidator(specBuilder, none));
-        // TODO 13/04/21 gopala.akshintala: Use Stream everywhere, now that java has immutable list built-in 
         return Stream.of(mandatoryFieldValidators1, mandatoryFieldValidators2, mandatorySfIdValidators1, mandatorySfIdValidators2, nonMandatorySfIdValidators1, nonMandatorySfIdValidators2, specValidators)
                 .flatMap(identity());
     }

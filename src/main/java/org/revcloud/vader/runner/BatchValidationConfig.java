@@ -12,6 +12,4 @@ public class BatchValidationConfig<ValidatableT, FailureT> extends BaseValidatio
     // These two params are separated out, as `andFailDuplicatesWith` is not mandatory for filter duplicates. You may want to just filter without failing duplicates. 
     Function1<ValidatableT, ?> findDuplicatesWith;
     FailureT andFailDuplicatesWith;
-    boolean isAllOrNone;
-    Function1<ValidatableT, Boolean> isAllOrNoneAsPer;
 }

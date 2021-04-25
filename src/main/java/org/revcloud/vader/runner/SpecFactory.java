@@ -45,7 +45,6 @@ public final class SpecFactory<ValidatableT, FailureT> {
         return Spec_1n_1n.check();
     }
 
-    // TODO 23/04/21 gopala.akshintala: Check on the inheritance 
     @Getter
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
     public abstract static class BaseSpec<ValidatableT, FailureT> {

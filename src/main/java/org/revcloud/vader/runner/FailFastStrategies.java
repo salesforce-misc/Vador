@@ -1,13 +1,19 @@
 package org.revcloud.vader.runner;
 
 import io.vavr.Function1;
-import io.vavr.collection.List;
+
+import java.util.List;
+import java.util.Optional;
+
 import io.vavr.control.Either;
 import io.vavr.control.Option;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.revcloud.vader.types.validators.Validator;
+
+import static org.revcloud.vader.runner.Utils.filterInvalidatablesAndDuplicates;
+import static org.revcloud.vader.runner.Utils.findFirstFailure;
 
 @UtilityClass
 class FailFastStrategies {
@@ -28,7 +34,7 @@ class FailFastStrategies {
         return toBeValidated -> {
             if (toBeValidated == null) return Either.left(invalidValidatable);
             val validatable = Either.<FailureT, ValidatableT>right(toBeValidated);
-            return Utils.fireValidators(validatable, validators.toJavaStream(), throwableMapper)
+            return Utils.fireValidators(validatable, validators.stream(), throwableMapper)
                     .filter(Either::isLeft)
                     .findFirst()
                     .orElse(validatable);
@@ -52,7 +58,7 @@ class FailFastStrategies {
         return toBeValidated -> {
             if (toBeValidated == null) return Either.left(invalidValidatable);
             val toBeValidatedRight = Either.<FailureT, ValidatableT>right(toBeValidated);
-            return Utils.findFirstFailure(toBeValidatedRight, validationConfig, throwableMapper);
+            return findFirstFailure(toBeValidatedRight, validationConfig, throwableMapper);
         };
     }
 
@@ -71,10 +77,9 @@ class FailFastStrategies {
             Function1<Throwable, FailureT> throwableMapper,
             BatchValidationConfig<ValidatableT, FailureT> validationConfig) {
         return validatables -> {
-            val filteredValidatables =
-                    Utils.filterInvalidatablesAndDuplicates(validatables, invalidValidatable, validationConfig);
+            val filteredValidatables = filterInvalidatablesAndDuplicates(validatables, invalidValidatable, validationConfig);
             return filteredValidatables
-                    .map(validatable -> Utils.findFirstFailure(validatable, validationConfig, throwableMapper)).toList();
+                    .map(validatable -> findFirstFailure(validatable, validationConfig, throwableMapper)).toJavaList();
         };
     }
 
@@ -83,9 +88,9 @@ class FailFastStrategies {
             Function1<Throwable, FailureT> throwableMapper,
             BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
         return validatables -> Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables, invalidValidatable, batchValidationConfig)
-                .orElse(validatables.iterator().map(Either::<FailureT, ValidatableT>right)
-                        .map(validatable -> Utils.findFirstFailure(validatable, batchValidationConfig, throwableMapper))
-                        .find(Either::isLeft).map(Either::getLeft));
+                .or(() -> validatables.stream().map(Either::<FailureT, ValidatableT>right)
+                        .map(validatable -> findFirstFailure(validatable, batchValidationConfig, throwableMapper))
+                        .filter(Either::isLeft).findFirst().map(Either::getLeft));
     }
 
     @FunctionalInterface
@@ -97,7 +102,7 @@ class FailFastStrategies {
     }
 
     @FunctionalInterface
-    interface FailFastAllOrNoneForBatch<ValidatableT, FailureT> extends Function1<List<ValidatableT>, Option<FailureT>> {
+    interface FailFastAllOrNoneForBatch<ValidatableT, FailureT> extends Function1<List<ValidatableT>, Optional<FailureT>> {
     }
 }
 

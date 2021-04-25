@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.revcloud.vader.types.validators.SimpleValidator;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -54,17 +55,13 @@ class FailFastSimple {
             HeaderValidationConfig<ValidatableT, FailureT> validationConfig) {
         return validatable -> {
             if (validatable == null) {
-                return Option.of(invalidValidatable);
+                return Optional.of(invalidValidatable);
             }
             val batch = validationConfig.getWithBatchMapper().apply(validatable);
-            val batchSizeFailure = Utils.validateSize(batch, validationConfig);
-            return batchSizeFailure.orElse(
+            return Utils.validateSize(batch, validationConfig).or(() ->
                     Utils.fireValidators(Either.right(validatable), validationConfig.getValidatorsStream(), throwableMapper)
-                            .filter(Either::isLeft)
-                            .findFirst()
-                            .map(Either::swap)
-                            .map(Either::toOption)
-                            .orElse(Option.none()));
+                            .filter(Either::isLeft).findFirst()
+                            .map(Either::swap).flatMap(Either::toJavaOptional));
         };
     }
 
@@ -73,7 +70,7 @@ class FailFastSimple {
     }
 
     @FunctionalInterface
-    interface SimpleFailFastStrategyForHeader<ValidatableT, FailureT> extends Function1<ValidatableT, Option<FailureT>> {
+    interface SimpleFailFastStrategyForHeader<ValidatableT, FailureT> extends Function1<ValidatableT, Optional<FailureT>> {
     }
 
 }

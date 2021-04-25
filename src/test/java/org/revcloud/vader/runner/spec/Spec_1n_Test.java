@@ -9,44 +9,45 @@ import org.junit.jupiter.api.Test;
 import org.revcloud.vader.runner.Runner;
 import org.revcloud.vader.runner.ValidationConfig;
 
+import java.util.Optional;
+
 import static consumer.failure.ValidationFailure.INVALID_VALUE;
 import static consumer.failure.ValidationFailure.NONE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.either;
 import static org.hamcrest.Matchers.is;
 
 class Spec_1n_Test {
-    @Test
-    void failFastWithInvalidIdForSimpleValidators() {
-        ValidationConfig<Bean, ValidationFailure> validationConfig =
-                ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
-                        spec._1n().orFailWith(INVALID_VALUE)
-                                .given(Bean::getValue)
-                                .shouldBe(either(is(1)).or(is(2))))
-                        .prepare();
-        val invalidBean = new Bean(3);
-        val failureResult = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, invalidBean, ignore -> NONE, validationConfig);
-        Assertions.assertEquals(INVALID_VALUE, failureResult);
-
-        val validBean = new Bean(1);
-        val noneResult = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, validBean, ignore -> NONE, validationConfig);
-        Assertions.assertEquals(NONE, noneResult);
-    }
     
-    private static <ValidatableT, FailureT> FailureT validateAndFailFastForSimpleValidatorsWithConfig(
+    private static <ValidatableT, FailureT> Optional<FailureT> validateAndFailFastForSimpleValidatorsWithConfig(
             FailureT none,
             FailureT nothingToValidate,
             ValidatableT validatable,
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return Runner.validateAndFailFastForSimpleValidators(
+        return Runner.validateAndFailFast(
                 validatable,
-                io.vavr.collection.List.empty(), // TODO 12/04/21 gopala.akshintala: migrate to use java immutable collection 
                 nothingToValidate,
-                none,
                 throwableMapper,
                 validationConfig);
     }
+    
+    @Test
+    void failFastWithInvalidIdForSimpleValidators() {
+        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
+                spec._1n().orFailWith(INVALID_VALUE)
+                        .given(Bean::getValue)
+                        .shouldBe(either(is(1)).or(is(2))))
+                .prepare();
+        val invalidBean = new Bean(3);
+        val failureResult = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, invalidBean, ignore -> NONE, validationConfig);
+        assertThat(failureResult).contains(INVALID_VALUE);
 
+        val validBean = new Bean(1);
+        val noneResult = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, validBean, ignore -> NONE, validationConfig);
+        assertThat(noneResult).isEmpty();
+    }
+    
     @Value
     static class Bean {
         Integer value;

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static consumer.failure.ValidationFailure.FIELD_INTEGRITY_EXCEPTION;
@@ -26,17 +27,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RunnerWithConfigTest {
 
     // TODO 22/04/21 gopala.akshintala: Make sure all flows in all strategies are tested 
-    private static <ValidatableT, FailureT> FailureT validateAndFailFastForSimpleValidatorsWithConfig(
+    private static <ValidatableT, FailureT> Optional<FailureT> validateAndFailFastForSimpleValidatorsWithConfig(
             FailureT none,
             FailureT nothingToValidate,
             ValidatableT validatable,
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return Runner.validateAndFailFastForSimpleValidators(
+        return Runner.validateAndFailFast(
                 validatable,
-                io.vavr.collection.List.empty(),
                 nothingToValidate,
-                none,
                 throwableMapper,
                 validationConfig);
     }
@@ -58,7 +57,7 @@ class RunnerWithConfigTest {
                 validatableWithBlankReqField,
                 throwable -> UNKNOWN_EXCEPTION,
                 validationConfig);
-        Assertions.assertSame(REQUIRED_FIELD_MISSING, result1);
+        assertThat(result1).contains(REQUIRED_FIELD_MISSING);
 
         val validatableWithNullReqField = new Bean(0, null, null, null);
         val result2 = validateAndFailFastForSimpleValidatorsWithConfig(
@@ -67,7 +66,7 @@ class RunnerWithConfigTest {
                 validatableWithNullReqField,
                 throwable -> UNKNOWN_EXCEPTION,
                 validationConfig);
-        Assertions.assertSame(REQUIRED_FIELD_MISSING, result2);
+        assertThat(result2).contains(REQUIRED_FIELD_MISSING);
     }
 
     @Test
@@ -87,7 +86,8 @@ class RunnerWithConfigTest {
                 withRequiredFieldNull,
                 throwable -> UNKNOWN_EXCEPTION,
                 validationConfig);
-        assertThat(result.getValidationFailureMessage().getParams()).containsExactly(Bean.Fields.requiredField2, "");
+        assertThat(result).isPresent();
+        assertThat(result.get().getValidationFailureMessage().getParams()).containsExactly(Bean.Fields.requiredField2, "");
     }
 
     @Test
@@ -107,7 +107,7 @@ class RunnerWithConfigTest {
                 validatableWithInvalidSfId,
                 ValidationFailure::getValidationFailureForException,
                 validationConfig);
-        Assertions.assertSame(FIELD_INTEGRITY_EXCEPTION, result1);
+        assertThat(result1).contains(FIELD_INTEGRITY_EXCEPTION);
     }
 
     @Test
@@ -118,7 +118,7 @@ class RunnerWithConfigTest {
                 .prepare();
         val expectedFieldNames = Set.of(Bean.Fields.sfId1, Bean.Fields.sfId2);
         assertThat(validationConfig.getRequiredSFIdFieldNames(Bean.class)).isEqualTo(expectedFieldNames);
-        final var invalidSfId = new ID("invalidSfId");
+        val invalidSfId = new ID("invalidSfId");
         val validatableWithInvalidSfId = new Bean(null, null, new ID("1ttxx00000000hZAAQ"), invalidSfId);
         val result = validateAndFailFastForSimpleValidatorsWithConfig(
                 NONE,
@@ -126,7 +126,8 @@ class RunnerWithConfigTest {
                 validatableWithInvalidSfId,
                 ValidationFailure::getValidationFailureForException,
                 validationConfig);
-        assertThat(result.getValidationFailureMessage().getParams()).containsExactly(Bean.Fields.sfId2, invalidSfId);
+        assertThat(result).isPresent();
+        assertThat(result.get().getValidationFailureMessage().getParams()).containsExactly(Bean.Fields.sfId2, invalidSfId);
     }
 
     @Data

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static consumer.failure.ValidationFailure.DUPLICATE_ITEM;
 import static consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
-import static org.assertj.vavr.api.VavrAssertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UtilsTest {
@@ -26,7 +26,7 @@ class UtilsTest {
         val batchValidationConfig = BatchValidationConfig.<Container, ValidationFailure>toValidate()
                 .findDuplicatesWith(container -> container.getSfId().toString())
                 .andFailDuplicatesWith(DUPLICATE_ITEM).prepare();
-        val results = Utils.filterInvalidatablesAndDuplicates(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
+        val results = Utils.filterInvalidatablesAndDuplicates(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
         
         val failedInvalids = results.take(2);
         Assertions.assertTrue(failedInvalids.forAll(Either::isLeft) &&
@@ -49,7 +49,7 @@ class UtilsTest {
 
         val batchValidationConfig = BatchValidationConfig.<Container, ValidationFailure>toValidate()
                 .findDuplicatesWith(container -> container.getSfId().toString()).prepare();
-        val results = Utils.filterInvalidatablesAndDuplicates(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
+        val results = Utils.filterInvalidatablesAndDuplicates(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
 
         assertThat(results).hasSize(5);
         val failedInvalids = results.take(2);
@@ -69,7 +69,7 @@ class UtilsTest {
 
         val batchValidationConfig = BatchValidationConfig.<Container, ValidationFailure>toValidate()
                 .findDuplicatesWith(container -> container.getSfId().toString()).andFailDuplicatesWith(DUPLICATE_ITEM).prepare();
-        val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
+        val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
         assertThat(result).contains(NOTHING_TO_VALIDATE);
     }
 
@@ -81,7 +81,7 @@ class UtilsTest {
 
         val batchValidationConfig = BatchValidationConfig.<Container, ValidationFailure>toValidate()
                 .findDuplicatesWith(container -> container.getSfId().toString()).prepare();
-        val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
+        val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
         assertThat(result).isEmpty();
     }
 
@@ -94,7 +94,7 @@ class UtilsTest {
 
         val batchValidationConfig = BatchValidationConfig.<Container, ValidationFailure>toValidate()
                 .findDuplicatesWith(container -> container.getSfId().toString()).andFailDuplicatesWith(DUPLICATE_ITEM).prepare();
-        val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
+        val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
         assertThat(result).contains(DUPLICATE_ITEM);
     }
 
@@ -105,7 +105,7 @@ class UtilsTest {
 
         val batchValidationConfig = BatchValidationConfig.<Container, ValidationFailure>toValidate()
                 .findDuplicatesWith(container -> container.getSfId().toString()).andFailDuplicatesWith(DUPLICATE_ITEM).prepare();
-        val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables, NOTHING_TO_VALIDATE, batchValidationConfig);
+        val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
         assertThat(result).isEmpty();
     }
 }

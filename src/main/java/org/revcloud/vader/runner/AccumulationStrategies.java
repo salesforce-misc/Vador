@@ -1,7 +1,9 @@
 package org.revcloud.vader.runner;
 
 import io.vavr.Function1;
-import io.vavr.collection.List;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
 import org.revcloud.vader.types.validators.Validator;
@@ -9,7 +11,6 @@ import org.revcloud.vader.types.validators.Validator;
 /**
  * These Accumulation compose multiple validations and return a single function which can be applied on the Validatable.
  * <p>
- * TODO: Cleanup this class, this is too clumsy
  *
  * @author gakshintala
  * @since 228
@@ -31,7 +32,7 @@ class AccumulationStrategies {
             Function1<Throwable, FailureT> throwableMapper) {
         return toBeValidated -> toBeValidated == null
                 ? List.of(Either.left(invalidValidatable))
-                : List.ofAll(Utils.fireValidators(Either.right(toBeValidated), validators.toJavaStream(), throwableMapper));
+                : Utils.fireValidators(Either.right(toBeValidated), validators.stream(), throwableMapper).collect(Collectors.toList());
     }
 
     @FunctionalInterface

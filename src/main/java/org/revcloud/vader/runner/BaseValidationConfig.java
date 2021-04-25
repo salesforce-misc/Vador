@@ -54,7 +54,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
 
     Stream<Validator<ValidatableT, FailureT>> getValidatorsStream() {
         var simpleValidators = Stream.concat(withSimpleValidatorsOrFailWith._1.stream(), withSimpleValidators.stream().map(Tuple2::_1)).collect(Collectors.toList());
-        return Stream.concat(withValidators.stream(), liftAllSimple(List.ofAll(simpleValidators), withSimpleValidatorsOrFailWith._2).toJavaStream());
+        return Stream.concat(withValidators.stream(), liftAllSimple(simpleValidators, withSimpleValidatorsOrFailWith._2).stream());
     }
 
     Stream<SpecFactory.BaseSpec<ValidatableT, FailureT>> getSpecsStream() {

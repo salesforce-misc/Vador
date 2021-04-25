@@ -1,6 +1,8 @@
 package org.revcloud.vader.lift;
 
-import io.vavr.collection.List;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -44,7 +46,7 @@ public class ValidatorLiftUtil {
      */
     public static <FailureT, ValidatableT> List<Validator<ValidatableT, FailureT>> liftAllSimple(
             List<SimpleValidator<ValidatableT, FailureT>> toBeLiftedFns, FailureT none) {
-        return toBeLiftedFns.map(toBeLifted -> liftSimple(toBeLifted, none));
+        return toBeLiftedFns.stream().map(toBeLifted -> liftSimple(toBeLifted, none)).collect(Collectors.toList());
     }
 
 }

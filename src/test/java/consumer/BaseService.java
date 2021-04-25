@@ -24,14 +24,5 @@ public abstract class BaseService<InputRepresentationT> {
     public void setRequestValidators(List<Validator<InputRepresentationT, ValidationFailure>> requestValidators) {
         this.requestValidators = requestValidators;
     }
-
-    public ValidationFailure validateNonBulk() {
-        val parentInputRepresentation = new Parent(0, null, null);
-        return Runner.validateAndFailFast(
-                parentInputRepresentation,
-                ValidationConfig.getServiceValidations(),
-                ValidationFailure.NOTHING_TO_VALIDATE,
-                ValidationFailure.NONE,
-                throwable -> ValidationFailure.NONE);
-    }
+    
 }

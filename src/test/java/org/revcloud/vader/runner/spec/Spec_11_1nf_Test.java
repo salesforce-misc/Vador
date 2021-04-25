@@ -10,24 +10,24 @@ import org.revcloud.vader.runner.Runner;
 import org.revcloud.vader.runner.ValidationConfig;
 
 import java.util.List;
+import java.util.Optional;
 
 import static consumer.failure.ValidationFailure.INVALID_COMBO_1;
 import static consumer.failure.ValidationFailure.NONE;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class Spec_11_1nf_Test {
 
     // TODO 19/04/21 gopala.akshintala: Replicate these tests for batch 
-    private static <ValidatableT, FailureT> FailureT validateAndFailFastForSimpleValidatorsWithConfig(
+    private static <ValidatableT, FailureT> Optional<FailureT> validateAndFailFastForSimpleValidatorsWithConfig(
             FailureT none,
             FailureT nothingToValidate,
             ValidatableT validatable,
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return Runner.validateAndFailFastForSimpleValidators(
+        return Runner.validateAndFailFast(
                 validatable,
-                io.vavr.collection.List.empty(), // TODO 12/04/21 gopala.akshintala: migrate to use java immutable collection 
                 nothingToValidate,
-                none,
                 throwableMapper,
                 validationConfig);
     }
@@ -43,11 +43,11 @@ class Spec_11_1nf_Test {
                         .prepare();
         val invalidBean = new Bean(1, null, 2, 1);
         val failureResult = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, invalidBean, ignore -> NONE, validationConfig);
-        Assertions.assertEquals(INVALID_COMBO_1, failureResult);
+        assertThat(failureResult).contains(INVALID_COMBO_1);
 
         val validBean = new Bean(1, null, 1, 2);
         val noneResult = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, validBean, ignore -> NONE, validationConfig);
-        Assertions.assertEquals(NONE, noneResult);
+        assertThat(noneResult).isEmpty();
     }
 
     @Test
@@ -61,11 +61,11 @@ class Spec_11_1nf_Test {
                         .prepare();
         val invalidBean = new Bean(1, null, 2, 2);
         val failureResult = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, invalidBean, ignore -> NONE, validationConfig);
-        Assertions.assertEquals(INVALID_COMBO_1, failureResult);
+        assertThat(failureResult).contains(INVALID_COMBO_1);
 
         val validBean = new Bean(1, null, 2, 1);
         val noneResult = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, validBean, ignore -> NONE, validationConfig);
-        Assertions.assertEquals(NONE, noneResult);
+        assertThat(noneResult).isEmpty();
     }
 
     @Value
