@@ -181,7 +181,8 @@ containerInputRepresentation -> {
 
 ### Either Monad
 
-Unlike Simple validation types (which work with Simple input/output types), these Data types work with `Either` types as input/output. The `Either` type is borrowed from [Vavr](https://docs.vavr.io/#_either).
+Unlike Simple validator types (which work with Simple input/output types), these Data types work with `Either` types as
+input/output. The `Either` type is borrowed from [Vavr](https://docs.vavr.io/#_either).
 
 ### But what's so powerful about `Either`?
 
@@ -206,7 +207,11 @@ public static final Validator<Container, ValidationFailure> batchValidation1 =
 
 ## `SimpleValidator` vs `Validator`?
 
-These types only differ stylistically. They are there to help developers focus only on their validation logic, not worry about boiler-plate and use a programming style (imperative or functional) that they are comfortable in. You can essentially use any Data type for your validators and in-fact you can even have a mix, based on your needs. Vader leaves the choice to the developer. If you are using a mix, there's a little *Stitching* job you need to perform, which we shall see in the DSL section.
+These types only differ stylistically. They are there to help developers focus only on their validation logic, not worry
+about boiler-plate and use a programming style (imperative or functional) that they are comfortable in. You can
+essentially use any Data type for your validators and in-fact you can even have a mix, based on your needs. Vader leaves
+the choice to the developer. If you are using a mix, there's a little *Stitching* job you need to perform, which we
+shall see in the Util section.
 
 ---
 
@@ -229,9 +234,11 @@ Validator<Member, ValidationFailure> memberValidator = ...
 List.of(containerValidator, memberValidator); // ^^^ Compile Error
 ```
 
-So all nested member validations need to be lifted to the container type, essentially changing their type matching with the Containers's, like: `Validator<Container, ValidationFailure>`.
+So all nested member validations need to be lifted to the container type, essentially changing their type matching with
+the Containers's, like: `Validator<Container, ValidationFailure>`.
 
-We can achieve this with **Higher-Order Functions**, which acts as DSL (Domain Specific Language) to **lift** member validation to the container type. This takes a `containerToMemberMapper` which is function to extract member from container.
+We can achieve this with **Higher-Order Functions**, which **lift** member validator to the container type. This takes
+a `containerToMemberMapper` which is function to extract member from container.
 
 ```java
 Validator<Member, ValidationFailure> memberValidator = ...
@@ -249,23 +256,24 @@ If the inter-dependencies between Container-Member happens to be more complex, w
 
 ## How to combine SimpleValidators & Validators?
 
-Similarly, Vader has DSL to lift `SimpleValidator` to `Validator`. This is handy, when you have a mix of validations, and they all need to be of the same type to stitch them together.
+Similarly, Vader has utils to lift `SimpleValidator` to `Validator`. This is handy, when you have a mix of validations,
+and they all need to be of the same type to stitch them together.
 
-## Lift DSL
+## Lift Util
 
 Below are the DSLs currently available, with self-explanatory names. There are multiple overloads suitable for simple/non-simple. The Java Docs should guide you to use proper overload:
 
-| Aggregation DSL: To lift Member validator to Container Validator type ||
+| Aggregation Util: To lift Member validator to Container Validator type ||
 | ---  | --- |
 | liftToContainerValidatorType | liftAllToContainerValidatorType |
 
-| Validator DSL: To lift Simple validator to Validator type ||
-| --- | :-- |
-| liftSimple | liftAllSimple |
+| Validator Util: To lift Simple validator to Validator type || | --- | :-- | | liftSimple | liftAllSimple |
 
 ## Deferred result
 
-If you skim through the source code, you can realize none of these DSL functions does any execution. These Higher-Order DSL functions simply take-in a function and return a lifted function, deferring the actual execution until you call any API method in the *RunnerDSL* below:
+If you skim through the source code, you can realize none of these Util functions does any execution. These Higher-Order
+functions simply take-in a function and return a lifted function, deferring the actual execution until you call any API
+method in the *RunnerDSL* below:
 
 ---
 
@@ -273,9 +281,12 @@ If you skim through the source code, you can realize none of these DSL functions
 
 Now that we know how to write & wire validations, the last step to execute these validations is to **call an execution method, passing this config as a parameter**.
 
-This can be seen as the **Edge** for validation bounded context, where the actual execution of validations happen and you get back the final results. *The complexity of how these valiadtors are orchestrated per strategy is abstracted away from the consumer.*
+This can be seen as the **Edge** for validation bounded context, where the actual execution of validations happen and
+you get back the final results. *The complexity of how these valiadtors are orchestrated per strategy is abstracted away
+from the consumer.*
 
-**There are various flavors (Overloads) in the Runner DSL for Batch/Non-Batch and Simple/Non-Simple (Please refer to Java Docs)**.
+**There are various flavors (Overloads) in the Runner for Batch/Non-Batch and Simple/Non-Simple (Please refer to Java
+Docs)**.
 
 ### `validateAndFailFast(validatorChain, ...)`
 
@@ -283,7 +294,9 @@ This can be seen as the **Edge** for validation bounded context, where the actua
 
 ## What about exceptions?
 
-These Runner DSL methods accept a parameter called `throwableMapper (Throwable) -> FailureT`.  If any of your validations throws a checked or unchecked exception, it shall be mapped into a failure representation using this throwableMapper function.
+These Runner methods accept a parameter called `throwableMapper (Throwable) -> FailureT`. If any of your validations
+throws a checked or unchecked exception, it shall be mapped into a failure representation using this throwableMapper
+function.
 
 ---
 

@@ -12,7 +12,7 @@ import consumer.config.ValidationConfig;
 import consumer.failure.ValidationFailure;
 import io.vavr.collection.List;
 import lombok.val;
-import org.revcloud.vader.dsl.runner.RunnerDsl;
+import org.revcloud.vader.runner.Runner;
 import org.revcloud.vader.types.validators.Validator;
 
 /**
@@ -27,7 +27,7 @@ public abstract class BaseService<InputRepresentationT> {
 
     public ValidationFailure validateNonBulk() {
         val parentInputRepresentation = new Parent(0, null, null);
-        return RunnerDsl.validateAndFailFast(
+        return Runner.validateAndFailFast(
                 parentInputRepresentation,
                 ValidationConfig.getServiceValidations(),
                 ValidationFailure.NOTHING_TO_VALIDATE,
