@@ -26,7 +26,7 @@ public class Runner {
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper,
             HeaderValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return FailFastSimple.failFastStrategyForHeader(invalidValidatable, throwableMapper, validationConfig).apply(validatable);
+        return FailFastStrategies.failFastStrategyForHeader(invalidValidatable, throwableMapper, validationConfig).apply(validatable);
     }
 
     public static <FailureT, ValidatableT> Optional<FailureT> validateAndFailFast(

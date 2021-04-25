@@ -8,10 +8,8 @@ import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.control.Either;
-import io.vavr.control.Try;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
 import java.util.Optional;
@@ -22,7 +20,6 @@ import static io.vavr.CheckedFunction1.liftTry;
 import static io.vavr.Function1.identity;
 
 @UtilityClass
-// TODO 20/04/21 gopala.akshintala: Split this class 
 class Utils {
     static <FailureT, ValidatableT> Stream<Either<FailureT, ValidatableT>> fireValidators(
             Either<FailureT, ValidatableT> validatable,
@@ -52,20 +49,6 @@ class Utils {
             return Optional.of(maxBatchSize._2);
         }
         return Optional.empty();
-    }
-
-    static <FailureT, ValidatableT> Stream<FailureT> fireSimpleValidators(
-            ValidatableT toBeValidated,
-            Stream<SimpleValidator<ValidatableT, FailureT>> validators,
-            Function1<Throwable, FailureT> throwableMapper) {
-        return validators.map(validator -> fireSimpleValidator(validator, toBeValidated, throwableMapper));
-    }
-
-    private static <FailureT, ValidatableT> FailureT fireSimpleValidator(
-            SimpleValidator<ValidatableT, FailureT> validator,
-            ValidatableT validatable,
-            Function1<Throwable, FailureT> throwableMapper) {
-        return Try.of(() -> validator.apply(validatable)).fold(throwableMapper, identity());
     }
 
     static <ValidatableT, FailureT> Seq<Either<FailureT, ValidatableT>> filterInvalidatablesAndDuplicates(
@@ -161,55 +144,13 @@ class Utils {
                 .map(fieldMapper -> validatableRight -> validatableRight.map(fieldMapper::get)
                         .filterOrElse(id -> id == null || IdTraits.isValidId(id.toString()), id -> validationConfig.getShouldHaveValidSFIdFieldsOrFailWithFn()._2.apply(PropertyUtils.getPropertyName(validatableRight.get(), fieldMapper), id)));
 
-        Stream<Validator<ValidatableT, FailureT>> specValidators = validationConfig.getSpecsStream().map(Utils::toValidator);
+        val specValidators = validationConfig.getSpecsStream().map(Utils::toValidator);
         return Stream.of(mandatoryFieldValidators1, mandatoryFieldValidators2, mandatorySfIdValidators1, mandatorySfIdValidators2, nonMandatorySfIdValidators1, nonMandatorySfIdValidators2, specValidators, validationConfig.getValidatorsStream())
                 .flatMap(identity());
     }
 
     private static <ValidatableT, FailureT> Validator<ValidatableT, FailureT> toValidator(SpecFactory.BaseSpec<ValidatableT, FailureT> baseSpec) {
         return validatableRight -> validatableRight.filterOrElse(baseSpec.toPredicate(), baseSpec::getFailure);
-    }
-
-    // TODO 22/04/21 gopala.akshintala: Refactor this method 
-    static <ValidatableT, FailureT> Stream<SimpleValidator<ValidatableT, FailureT>> toSimpleValidators(
-            ValidationConfig<ValidatableT, FailureT> validationConfig, FailureT none) {
-        Stream<SimpleValidator<ValidatableT, FailureT>> mandatoryFieldValidators1 = validationConfig.getShouldHaveFieldsOrFailWith().entrySet().stream()
-                .map(entry -> validatable -> isPresent.test(entry.getKey().get(validatable)) ? none : entry.getValue());
-        Stream<SimpleValidator<ValidatableT, FailureT>> mandatoryFieldValidators2 = Stream.ofNullable(validationConfig.getShouldHaveFieldsOrFailWithFn())
-                .flatMap(tuple2 -> tuple2._1.stream()).map(fieldMapper -> validatable -> {
-                    final Object fieldValue = fieldMapper.get(validatable);
-                    return isPresent.test(fieldValue) ? none : validationConfig.getShouldHaveFieldsOrFailWithFn()._2.apply(PropertyUtils.getPropertyName(validatable, fieldMapper), fieldValue);
-                });
-        Stream<SimpleValidator<ValidatableT, FailureT>> mandatorySfIdValidators1 = validationConfig.getShouldHaveValidSFIdFieldsOrFailWith().entrySet().stream()
-                .map(entry -> validatable -> {
-                    val idValue = entry.getKey().get(validatable);
-                    return idValue != null && IdTraits.isValidId(idValue.toString()) ? none : entry.getValue();
-                });
-        Stream<SimpleValidator<ValidatableT, FailureT>> mandatorySfIdValidators2 = Stream.ofNullable(validationConfig.getShouldHaveValidSFIdFieldsOrFailWithFn())
-                .flatMap(tuple2 -> tuple2._1.stream()).map(fieldMapper -> validatable -> {
-                    val idValue = fieldMapper.get(validatable);
-                    final var failure = validationConfig.getShouldHaveValidSFIdFieldsOrFailWithFn()._2.apply(PropertyUtils.getPropertyName(validatable, fieldMapper), idValue);
-                    return idValue != null && IdTraits.isValidId(idValue.toString()) ? none : failure;
-                });
-        Stream<SimpleValidator<ValidatableT, FailureT>> nonMandatorySfIdValidators1 = validationConfig.getMayHaveValidSFIdFieldsOrFailWith().entrySet().stream()
-                .map(entry -> validatable -> {
-                    val idValue = entry.getKey().get(validatable);
-                    return idValue == null || IdTraits.isValidId(idValue.toString()) ? none : entry.getValue();
-                });
-        Stream<SimpleValidator<ValidatableT, FailureT>> nonMandatorySfIdValidators2 = Stream.ofNullable(validationConfig.getMayHaveValidSFIdFieldsOrFailWithFn())
-                .flatMap(tuple2 -> tuple2._1.stream()).map(fieldMapper -> validatable -> {
-                    val idValue = fieldMapper.get(validatable);
-                    final var failure = validationConfig.getMayHaveValidSFIdFieldsOrFailWithFn()._2.apply(PropertyUtils.getPropertyName(validatable, fieldMapper), idValue);
-                    return idValue == null || IdTraits.isValidId(idValue.toString()) ? none : failure;
-                });
-        Stream<SimpleValidator<ValidatableT, FailureT>> specValidators = validationConfig.getSpecsStream()
-                .map(specBuilder -> toSimpleValidator(specBuilder, none));
-        return Stream.of(mandatoryFieldValidators1, mandatoryFieldValidators2, mandatorySfIdValidators1, mandatorySfIdValidators2, nonMandatorySfIdValidators1, nonMandatorySfIdValidators2, specValidators)
-                .flatMap(identity());
-    }
-
-    private static <ValidatableT, FailureT> SimpleValidator<ValidatableT, FailureT> toSimpleValidator(SpecFactory.BaseSpec<ValidatableT, FailureT> baseSpec, FailureT none) {
-        return validatable -> baseSpec.toPredicate().test(validatable) ? none : baseSpec.getFailure(validatable);
     }
 
     private static final Predicate<Object> isPresent = fieldValue -> {
