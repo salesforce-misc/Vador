@@ -7,7 +7,6 @@ import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.revcloud.vader.lift.ValidatorLiftUtil;
-import org.revcloud.vader.lift.ValidatorLiftUtil.*;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
  */
 @UtilityClass
 public class BatchRunner {
-    public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFastForBatch(
+    public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFast(
             List<ValidatableT> validatables,
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper,
@@ -33,7 +32,7 @@ public class BatchRunner {
                 .apply(validatables);
     }
 
-    public static <FailureT, ValidatableT, PairT> List<Either<Tuple2<PairT, FailureT>, ValidatableT>> validateAndFailFastForBatch(
+    public static <FailureT, ValidatableT, PairT> List<Either<Tuple2<PairT, FailureT>, ValidatableT>> validateAndFailFast(
             List<ValidatableT> validatables,
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper,
@@ -41,11 +40,11 @@ public class BatchRunner {
             Function1<ValidatableT, PairT> pairForInvalidMapper) {
         val validationResults = FailFastStrategies.failFastForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
                 .apply(validatables);
-        return io.vavr.collection.List.ofAll(validationResults).zipWith(validatables, 
+        return io.vavr.collection.List.ofAll(validationResults).zipWith(validatables,
                 (result, validatable) -> result.mapLeft(failure -> Tuple.of(pairForInvalidMapper.apply(validatable), failure))).toJavaList();
     }
 
-    public static <FailureT, ValidatableT> Optional<FailureT> validateAndFailFastAllOrNoneForBatch(
+    public static <FailureT, ValidatableT> Optional<FailureT> validateAndFailFastAllOrNone(
             List<ValidatableT> validatables,
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper,
@@ -55,6 +54,7 @@ public class BatchRunner {
     }
 
     // --- ERROR ACCUMULATION ---
+
     /**
      * Validates a list of validatables against a list of Simple validations, in error-accumulation mode, per validatable.
      *

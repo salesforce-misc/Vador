@@ -7,7 +7,6 @@ import io.vavr.Function1;
 import io.vavr.Function2;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
-import io.vavr.collection.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -49,7 +48,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
     Collection<Validator<ValidatableT, FailureT>> withValidators;
     @Builder.Default
     Tuple2<Collection<SimpleValidator<ValidatableT, FailureT>>, FailureT> withSimpleValidatorsOrFailWith = Tuple.of(Collections.emptyList(), null);
-    @Singular("withSimpleValidator")
+    @Singular("withSimpleValidatorOrFailWith")
     Collection<Tuple2<SimpleValidator<ValidatableT, FailureT>, FailureT>> withSimpleValidators;
 
     Stream<Validator<ValidatableT, FailureT>> getValidatorsStream() {
