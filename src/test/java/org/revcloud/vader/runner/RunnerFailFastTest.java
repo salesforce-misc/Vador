@@ -1,119 +1,56 @@
 package org.revcloud.vader.runner;
 
-import com.force.swag.id.ID;
 import consumer.failure.ValidationFailure;
-import consumer.failure.ValidationFailureMessage;
 import io.vavr.Tuple;
-import lombok.Data;
-import lombok.experimental.FieldNameConstants;
+import io.vavr.control.Either;
+import lombok.Value;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import static consumer.failure.ValidationFailure.FIELD_INTEGRITY_EXCEPTION;
+import static consumer.failure.ValidationFailure.NONE;
 import static consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
-import static consumer.failure.ValidationFailure.REQUIRED_FIELD_MISSING;
 import static consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
-import static consumer.failure.ValidationFailure.getFailureWithParams;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RunnerFailFastTest {
 
     @Test
-    void failFastWithRequiredFieldsMissingForSimpleValidators() {
-        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate()
-                .shouldHaveFieldsOrFailWith(Map.of(
-                        Bean::getRequiredField1, REQUIRED_FIELD_MISSING,
-                        Bean::getRequiredField2, REQUIRED_FIELD_MISSING))
-                .shouldHaveValidSFIdFormatOrFailWith(Map.of(
-                        Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION,
-                        Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION)).prepare();
-
-        val validatableWithBlankReqField = new Bean(0, "", null, null);
-        val result1 = Runner.validateAndFailFast(
-                validatableWithBlankReqField,
-                NOTHING_TO_VALIDATE,
-                throwable -> UNKNOWN_EXCEPTION,
-                validationConfig);
-        assertThat(result1).contains(REQUIRED_FIELD_MISSING);
-
-        val validatableWithNullReqField = new Bean(0, null, null, null);
-        val result2 = Runner.validateAndFailFast(
-                validatableWithNullReqField,
-                NOTHING_TO_VALIDATE,
-                throwable -> UNKNOWN_EXCEPTION,
-                validationConfig);
-        assertThat(result2).contains(REQUIRED_FIELD_MISSING);
-    }
-
-    @Test
-    void failFastWithRequiredFieldsWithNameMissingForSimpleValidators() {
-        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate()
-                .shouldHaveFieldsOrFailWithFn(Tuple.of(List.of(
-                        Bean::getRequiredField1,
-                        Bean::getRequiredField2),
-                        (name, value) -> getFailureWithParams(ValidationFailureMessage.MSG_WITH_PARAMS, name, value)))
-                .prepare();
-        val expectedFieldNames = Set.of(Bean.Fields.requiredField1, Bean.Fields.requiredField2);
-        assertThat(validationConfig.getRequiredFieldNames(Bean.class)).isEqualTo(expectedFieldNames);
-        val withRequiredFieldNull = new Bean(1, "", null, null);
+    void failFastWithFirstFailure() {
+        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withValidators(List.of(
+                bean -> Either.right(NONE),
+                bean -> Either.right(NONE),
+                bean -> Either.left(UNKNOWN_EXCEPTION)
+        )).prepare();
         val result = Runner.validateAndFailFast(
-                withRequiredFieldNull,
-                NOTHING_TO_VALIDATE,
-                throwable -> UNKNOWN_EXCEPTION,
-                validationConfig);
-        assertThat(result).isPresent();
-        assertThat(result.get().getValidationFailureMessage().getParams()).containsExactly(Bean.Fields.requiredField2, "");
-    }
-
-    @Test
-    void failFastWithInvalidIdForSimpleValidators() {
-        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate()
-                .shouldHaveFieldsOrFailWith(Map.of(
-                        Bean::getRequiredField1, REQUIRED_FIELD_MISSING,
-                        Bean::getRequiredField2, REQUIRED_FIELD_MISSING))
-                .shouldHaveValidSFIdFormatOrFailWith(Map.of(
-                        Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION,
-                        Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION)).prepare();
-
-        val validatableWithInvalidSfId = new Bean(0, "1", new ID("1ttxx00000000hZAAQ"), new ID("invalidSfId"));
-        val result1 = Runner.validateAndFailFast(
-                validatableWithInvalidSfId,
+                new Bean(0),
                 NOTHING_TO_VALIDATE,
                 ValidationFailure::getValidationFailureForException,
-                validationConfig);
-        assertThat(result1).contains(FIELD_INTEGRITY_EXCEPTION);
+                validationConfig
+        );
+        assertThat(result).contains(UNKNOWN_EXCEPTION);
     }
 
     @Test
-    void failFastWithInvalidIdWithNameForSimpleValidators() {
-        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate()
-                .shouldHaveValidSFIdFormatOrFailWithFn(Tuple.of(List.of(Bean::getSfId1, Bean::getSfId2),
-                        (name, value) -> getFailureWithParams(ValidationFailureMessage.MSG_WITH_PARAMS, name, value)))
-                .prepare();
-        val expectedFieldNames = Set.of(Bean.Fields.sfId1, Bean.Fields.sfId2);
-        assertThat(validationConfig.getRequiredSFIdFieldNames(Bean.class)).isEqualTo(expectedFieldNames);
-        val invalidSfId = new ID("invalidSfId");
-        val validatableWithInvalidSfId = new Bean(null, null, new ID("1ttxx00000000hZAAQ"), invalidSfId);
+    void failFastWithFirstFailureForSimpleValidators() {
+        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSimpleValidatorsOrFailWith(Tuple.of(List.of(
+                bean -> NONE,
+                bean -> NONE,
+                bean -> UNKNOWN_EXCEPTION
+        ), NONE)).prepare();
         val result = Runner.validateAndFailFast(
-                validatableWithInvalidSfId,
+                new Bean(0),
                 NOTHING_TO_VALIDATE,
                 ValidationFailure::getValidationFailureForException,
-                validationConfig);
-        assertThat(result).isPresent();
-        assertThat(result.get().getValidationFailureMessage().getParams()).containsExactly(Bean.Fields.sfId2, invalidSfId);
+                validationConfig
+        );
+        assertThat(result).contains(UNKNOWN_EXCEPTION);
     }
 
-    @Data
-    @FieldNameConstants
-    public static class Bean {
-        private final Integer requiredField1;
-        private final String requiredField2;
-        private final ID sfId1;
-        private final ID sfId2;
+    @Value
+    private static class Bean {
+        int id;
     }
 }
 
