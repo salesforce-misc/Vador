@@ -39,6 +39,7 @@ public enum ValidationFailureMessage {
     INVALID_VALUE("", ""),
     FIELD_INTEGRITY_EXCEPTION("", ""),
     MIN_BATCH_SIZE_EXCEEDED("", ""),
+    MAX_BATCH_SIZE_EXCEEDED("", ""),
     MSG_WITH_PARAMS("", ""),
     ;
 

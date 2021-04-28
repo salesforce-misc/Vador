@@ -16,6 +16,7 @@ import static consumer.failure.ValidationFailure.NONE;
 import static consumer.failure.ValidationFailure.VALIDATION_FAILURE_1;
 import static consumer.failure.ValidationFailure.VALIDATION_FAILURE_2;
 import static consumer.failure.ValidationFailure.VALIDATION_FAILURE_3;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,22 +27,32 @@ class BatchRunnerTest {
 
     @Test
     void failFastPartialFailures() {
-        val validatables = List.of(new Bean(0), new Bean(1), new Bean(2),
-                new Bean(3), new Bean(4));
-        Predicate<Integer> predicateForValidId1 = id -> id >= 2;
-        Predicate<Integer> predicateForValidId2 = id -> id <= 2;
+        val validatables = List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
         List<Validator<Bean, ValidationFailure>> validators = List.of(
                 bean -> Either.right(true),
-                bean -> bean.map(Bean::getId).filterOrElse(predicateForValidId1, ignore -> VALIDATION_FAILURE_1),
-                bean -> bean.map(Bean::getId).filterOrElse(predicateForValidId2, ignore -> VALIDATION_FAILURE_2)
+                bean -> bean.map(Bean::getId).filterOrElse(id -> id >= 2, ignore -> VALIDATION_FAILURE_1),
+                bean -> bean.map(Bean::getId).filterOrElse(id -> id <= 2, ignore -> VALIDATION_FAILURE_2)
         );
         val batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate().withValidators(validators).prepare();
         val results = BatchRunner.validateAndFailFast(validatables, NONE, ValidationFailure::getValidationFailureForException, batchValidationConfig);
-        assertEquals(results.size(), validatables.size());
+        assertEquals(validatables.size(), results.size());
         assertTrue(results.get(2).isRight());
         assertEquals(results.get(2), Either.right(new Bean(2)));
         assertTrue(results.stream().limit(2).allMatch(vf -> vf.isLeft() && vf.getLeft() == VALIDATION_FAILURE_1));
         assertTrue(results.stream().skip(results.size() - 2).allMatch(vf -> vf.isLeft() && vf.getLeft() == VALIDATION_FAILURE_2));
+    }
+
+    @Test
+    void failFastAllOrNone() {
+        val validatables = List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
+        List<Validator<Bean, ValidationFailure>> validators = List.of(
+                bean -> Either.right(true),
+                bean -> bean.map(Bean::getId).filterOrElse(id -> id >= 2, ignore -> VALIDATION_FAILURE_1),
+                bean -> bean.map(Bean::getId).filterOrElse(id -> id <= 2, ignore -> VALIDATION_FAILURE_2)
+        );
+        val batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate().withValidators(validators).prepare();
+        val result = BatchRunner.validateAndFailFastAllOrNone(validatables, NONE, ValidationFailure::getValidationFailureForException, batchValidationConfig);
+        assertThat(result).contains(VALIDATION_FAILURE_1);
     }
 
     @Test
