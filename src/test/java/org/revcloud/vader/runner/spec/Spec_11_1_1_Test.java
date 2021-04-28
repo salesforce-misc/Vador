@@ -1,7 +1,6 @@
 package org.revcloud.vader.runner.spec;
 
 import consumer.failure.ValidationFailure;
-import io.vavr.Tuple;
 import lombok.Value;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -23,8 +22,9 @@ class Spec_11_1_1_Test {
                 spec._11_1_1().nameForTest(specName)
                         .when(Bean::isCompareDates)
                         .is(true)
-                        .thenFields(Tuple.of(Bean::getDate1, Bean::getDate2))
-                        .shouldRelateWith(isBefore())).prepare();
+                        .thenField1(Bean::getDate1)
+                        .thenField2(Bean::getDate2)
+                        .shouldRelateWithFn(isBefore())).prepare();
 
         val validBean = new Bean(true, new GregorianCalendar(2021, Calendar.APRIL, 27).getTime(),
                 new GregorianCalendar(2021, Calendar.APRIL, 28).getTime());
@@ -42,8 +42,9 @@ class Spec_11_1_1_Test {
                 spec._11_1_1().nameForTest(specName)
                         .when(Bean::isCompareDates)
                         .is(true)
-                        .thenFields(Tuple.of(Bean::getDate1, Bean::getDate2))
-                        .shouldRelateWith(isBefore())).prepare();
+                        .thenField1(Bean::getDate1)
+                        .thenField2(Bean::getDate2)
+                        .shouldRelateWithFn(isBefore())).prepare();
         val invalidBean1 = new Bean(true, null, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime());
         assertFalse(validationConfig.getSpecWithName(specName).map(spec -> spec.test(invalidBean1)).orElse(true));
 
