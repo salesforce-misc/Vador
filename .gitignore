@@ -12,6 +12,7 @@
 
 # Package Files #
 *.jar
+!/libs-for-sonar/*
 *.war
 *.nar
 *.ear
