@@ -13,13 +13,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.either;
 import static org.hamcrest.Matchers.is;
 
-class Spec_1n_Test {
+class Spec1Test {
     @Test
-    void failFastWithInvalidIdForSimpleValidators() {
+    void spec1Test() {
         val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
-                spec._1n().orFailWith(INVALID_VALUE)
+                spec.<Integer>_1().orFailWith(INVALID_VALUE)
                         .given(Bean::getValue)
-                        .shouldBe(either(is(1)).or(is(2))))
+                        .shouldMatch(either(is(1)).or(is(2))))
                 .prepare();
         val invalidBean = new Bean(3);
         val failureResult = Runner.validateAndFailFast(invalidBean, NONE, ignore -> NONE, validationConfig);

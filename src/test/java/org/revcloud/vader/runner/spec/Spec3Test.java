@@ -14,12 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.revcloud.vader.DateMatchers.isBefore;
 
-class Spec_11_1_1_Test {
+class Spec3Test {
     @Test
     void testDates() {
         val specName = "CompareDates";
         val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
-                spec._11_1_1().nameForTest(specName)
+                spec._3().nameForTest(specName)
                         .when(Bean::isCompareDates)
                         .is(true)
                         .thenField1(Bean::getDate1)
@@ -39,7 +39,7 @@ class Spec_11_1_1_Test {
     void testDatesWithNulls() {
         val specName = "CompareDates";
         val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
-                spec._11_1_1().nameForTest(specName)
+                spec._3().nameForTest(specName)
                         .when(Bean::isCompareDates)
                         .is(true)
                         .thenField1(Bean::getDate1)

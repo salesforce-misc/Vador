@@ -14,7 +14,7 @@ class DateMatchersTest : StringSpec({
             row(null, GregorianCalendar(2014, Calendar.FEBRUARY, 1).time, false),
             row(null, null, false),
         ) { day, date, result ->
-            isEqualToDayOfDate(day, date) shouldBe result
+            isEqualToDayOfDate.apply(day, date) shouldBe result
         }
     }
 })

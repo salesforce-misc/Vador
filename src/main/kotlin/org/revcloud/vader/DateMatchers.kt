@@ -2,9 +2,10 @@
 
 package org.revcloud.vader
 
+import io.vavr.Function2
 import java.util.*
 
-val isBefore = { date1: Any?, date2: Any? ->
+val isBefore = Function2 { date1: Any?, date2: Any? ->
     when {
         date1 == null && date2 == null -> true
         date1 == null && date2 != null -> false
@@ -13,7 +14,7 @@ val isBefore = { date1: Any?, date2: Any? ->
     }
 }
 
-val isEqualToDayOfDate = { day: Any?, date: Any? ->
+val isEqualToDayOfDate = Function2 { day: Any?, date: Any? ->
     when {
         day == null && date == null -> false
         day != null && date == null -> false
