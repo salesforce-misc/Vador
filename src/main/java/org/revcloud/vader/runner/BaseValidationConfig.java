@@ -36,11 +36,11 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
     protected Map<TypedPropertyGetter<ValidatableT, ?>, FailureT> shouldHaveFieldsOrFailWith;
     protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ?>>, Function2<String, Object, FailureT>> shouldHaveFieldsOrFailWithFn;
     @Singular("shouldHaveValidSFIdFieldOrFailWith")
-    protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT> shouldHaveValidSFIdFieldsOrFailWith;
-    protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ID>>, Function2<String, ID, FailureT>> shouldHaveValidSFIdFieldsOrFailWithFn;
+    protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT> shouldHaveValidSFIdFormatOrFailWith;
+    protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ID>>, Function2<String, ID, FailureT>> shouldHaveValidSFIdFormatOrFailWithFn;
     @Singular("mayHaveValidSFIdFieldOrFailWith")
     protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT> mayHaveValidSFIdFieldsOrFailWith;
-    protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ID>>, Function2<String, ID, FailureT>> mayHaveValidSFIdFieldsOrFailWithFn;
+    protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ID>>, Function2<String, ID, FailureT>> blankOrHaveValidSFIdFormatOrFailWithFn;
     protected Function1<SpecFactory<ValidatableT, FailureT>, Collection<? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>> withSpecs;
     @Singular("withSpec")
     protected Collection<Function1<SpecFactory<ValidatableT, FailureT>, ? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>> withSpec;
@@ -75,15 +75,15 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
 
     public Set<String> getRequiredSFIdFieldNames(Class<ValidatableT> beanClass) {
         return Stream.concat(
-                Stream.ofNullable(shouldHaveValidSFIdFieldsOrFailWith).flatMap(f -> f.keySet().stream()),
-                Stream.ofNullable(shouldHaveValidSFIdFieldsOrFailWithFn).flatMap(f -> f._1.stream()))
+                Stream.ofNullable(shouldHaveValidSFIdFormatOrFailWith).flatMap(f -> f.keySet().stream()),
+                Stream.ofNullable(shouldHaveValidSFIdFormatOrFailWithFn).flatMap(f -> f._1.stream()))
                 .map(fieldMapper -> PropertyUtils.getPropertyName(beanClass, fieldMapper)).collect(Collectors.toSet());
     }
 
     public Set<String> getNonRequiredSFIdFieldNames(Class<ValidatableT> beanClass) {
         return Stream.concat(
                 Stream.ofNullable(mayHaveValidSFIdFieldsOrFailWith).flatMap(f -> f.keySet().stream()),
-                Stream.ofNullable(mayHaveValidSFIdFieldsOrFailWithFn).flatMap(f -> f._1.stream()))
+                Stream.ofNullable(blankOrHaveValidSFIdFormatOrFailWithFn).flatMap(f -> f._1.stream()))
                 .map(fieldMapper -> PropertyUtils.getPropertyName(beanClass, fieldMapper)).collect(Collectors.toSet());
     }
 }

@@ -1,6 +1,7 @@
 package org.revcloud.vader.runner;
 
 import io.vavr.Function1;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.revcloud.vader.lift.ValidatorLiftUtil;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 public class Runner {
 
     public static <FailureT, ValidatableT> Optional<FailureT> validateAndFailFastForHeader(
-            ValidatableT validatable,
+            @NonNull ValidatableT validatable,
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper,
             HeaderValidationConfig<ValidatableT, FailureT> validationConfig) {

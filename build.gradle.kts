@@ -37,6 +37,8 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.assertj:assertj-vavr:0.4.1")
     testImplementation("org.assertj:assertj-core:3.19.0")
+    testImplementation("io.kotest:kotest-runner-junit5:4.5.0.RC1")
+    testImplementation("io.kotest:kotest-assertions-core:4.5.0.RC1")
 }
 
 group = "com.salesforce.ccspayments"

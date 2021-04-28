@@ -1,7 +1,6 @@
 package org.revcloud.vader.runner.spec;
 
 import consumer.failure.ValidationFailure;
-import io.vavr.Function1;
 import lombok.Value;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
@@ -10,7 +9,6 @@ import org.revcloud.vader.runner.Runner;
 import org.revcloud.vader.runner.ValidationConfig;
 
 import java.util.List;
-import java.util.Optional;
 
 import static consumer.failure.ValidationFailure.INVALID_COMBO_1;
 import static consumer.failure.ValidationFailure.INVALID_COMBO_2;
@@ -20,20 +18,7 @@ import static org.hamcrest.Matchers.either;
 import static org.hamcrest.Matchers.is;
 
 class Spec_11_1n_Test {
-    // TODO 19/04/21 gopala.akshintala: Replicate these tests for batch 
-    private static <ValidatableT, FailureT> Optional<FailureT> validateAndFailFastForSimpleValidatorsWithConfig(
-            FailureT none,
-            FailureT nothingToValidate,
-            ValidatableT validatable,
-            Function1<Throwable, FailureT> throwableMapper,
-            ValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return Runner.validateAndFailFast(
-                validatable,
-                nothingToValidate,
-                throwableMapper,
-                validationConfig);
-    }
-
+    // TODO 27/04/21 gopala.akshintala: Replicate these tests for Batch 
     @Test
     void failFastWithInvalidIdForSimpleValidators() {
         val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(spec -> List.of(
@@ -47,19 +32,19 @@ class Spec_11_1n_Test {
                 .prepare();
 
         val invalidBean1 = new Bean(1, "a", null, null);
-        val failureResult1 = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, invalidBean1, ignore -> NONE, validationConfig);
+        val failureResult1 = Runner.validateAndFailFast(invalidBean1, NONE, ignore -> NONE, validationConfig);
         assertThat(failureResult1).contains(INVALID_COMBO_1);
 
         val invalidBean2 = new Bean(2, "b", null, null);
-        val failureResult2 = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, invalidBean2, ignore -> NONE, validationConfig);
+        val failureResult2 = Runner.validateAndFailFast(invalidBean2, NONE, ignore -> NONE, validationConfig);
         assertThat(failureResult2).contains(INVALID_COMBO_2);
 
         val validBean1 = new Bean(1, "one", null, null);
-        val noneResult1 = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, validBean1, ignore -> NONE, validationConfig);
+        val noneResult1 = Runner.validateAndFailFast(validBean1, NONE, ignore -> NONE, validationConfig);
         assertThat(noneResult1).isEmpty();
 
         val validBean2 = new Bean(2, "two", null, null);
-        val noneResult2 = validateAndFailFastForSimpleValidatorsWithConfig(NONE, NONE, validBean2, ValidationFailure::getValidationFailureForException, validationConfig);
+        val noneResult2 = Runner.validateAndFailFast(validBean2, NONE, ValidationFailure::getValidationFailureForException, validationConfig);
         assertThat(noneResult2).isEmpty();
     }
 

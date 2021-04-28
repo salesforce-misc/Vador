@@ -129,20 +129,20 @@ class Utils {
                 .flatMap(tuple2 -> tuple2._1.stream())
                 .map(fieldMapper -> validatableRight -> validatableRight.map(fieldMapper::get)
                         .filterOrElse(isPresent, fieldValue -> validationConfig.getShouldHaveFieldsOrFailWithFn()._2.apply(PropertyUtils.getPropertyName(validatableRight.get(), fieldMapper), fieldValue)));
-        Stream<Validator<ValidatableT, FailureT>> mandatorySfIdValidators1 = validationConfig.getShouldHaveValidSFIdFieldsOrFailWith().entrySet().stream()
+        Stream<Validator<ValidatableT, FailureT>> mandatorySfIdValidators1 = validationConfig.getShouldHaveValidSFIdFormatOrFailWith().entrySet().stream()
                 .map(entry -> validatableRight -> validatableRight.map(entry.getKey()::get)
                         .filterOrElse(id -> id != null && IdTraits.isValidId(id.toString()), ignore -> entry.getValue()));
-        Stream<Validator<ValidatableT, FailureT>> mandatorySfIdValidators2 = Stream.ofNullable(validationConfig.getShouldHaveValidSFIdFieldsOrFailWithFn())
+        Stream<Validator<ValidatableT, FailureT>> mandatorySfIdValidators2 = Stream.ofNullable(validationConfig.getShouldHaveValidSFIdFormatOrFailWithFn())
                 .flatMap(tuple2 -> tuple2._1.stream())
                 .map(fieldMapper -> validatableRight -> validatableRight.map(fieldMapper::get)
-                        .filterOrElse(id -> id != null && IdTraits.isValidId(id.toString()), id -> validationConfig.getShouldHaveValidSFIdFieldsOrFailWithFn()._2.apply(PropertyUtils.getPropertyName(validatableRight.get(), fieldMapper), id)));
+                        .filterOrElse(id -> id != null && IdTraits.isValidId(id.toString()), id -> validationConfig.getShouldHaveValidSFIdFormatOrFailWithFn()._2.apply(PropertyUtils.getPropertyName(validatableRight.get(), fieldMapper), id)));
         Stream<Validator<ValidatableT, FailureT>> nonMandatorySfIdValidators1 = validationConfig.getMayHaveValidSFIdFieldsOrFailWith().entrySet().stream()
                 .map(entry -> validatableRight -> validatableRight.map(entry.getKey()::get)
                         .filterOrElse(id -> id == null || IdTraits.isValidId(id.toString()), ignore -> entry.getValue()));
-        Stream<Validator<ValidatableT, FailureT>> nonMandatorySfIdValidators2 = Stream.ofNullable(validationConfig.getShouldHaveValidSFIdFieldsOrFailWithFn())
+        Stream<Validator<ValidatableT, FailureT>> nonMandatorySfIdValidators2 = Stream.ofNullable(validationConfig.getShouldHaveValidSFIdFormatOrFailWithFn())
                 .flatMap(tuple2 -> tuple2._1.stream())
                 .map(fieldMapper -> validatableRight -> validatableRight.map(fieldMapper::get)
-                        .filterOrElse(id -> id == null || IdTraits.isValidId(id.toString()), id -> validationConfig.getShouldHaveValidSFIdFieldsOrFailWithFn()._2.apply(PropertyUtils.getPropertyName(validatableRight.get(), fieldMapper), id)));
+                        .filterOrElse(id -> id == null || IdTraits.isValidId(id.toString()), id -> validationConfig.getShouldHaveValidSFIdFormatOrFailWithFn()._2.apply(PropertyUtils.getPropertyName(validatableRight.get(), fieldMapper), id)));
 
         val specValidators = validationConfig.getSpecsStream().map(Utils::toValidator);
         return Stream.of(mandatoryFieldValidators1, mandatoryFieldValidators2, mandatorySfIdValidators1, mandatorySfIdValidators2, nonMandatorySfIdValidators1, nonMandatorySfIdValidators2, specValidators, validationConfig.getValidatorsStream())

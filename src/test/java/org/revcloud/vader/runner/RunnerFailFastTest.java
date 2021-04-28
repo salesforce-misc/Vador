@@ -28,7 +28,7 @@ class RunnerFailFastTest {
                 .shouldHaveFieldsOrFailWith(Map.of(
                         Bean::getRequiredField1, REQUIRED_FIELD_MISSING,
                         Bean::getRequiredField2, REQUIRED_FIELD_MISSING))
-                .shouldHaveValidSFIdFieldsOrFailWith(Map.of(
+                .shouldHaveValidSFIdFormatOrFailWith(Map.of(
                         Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION,
                         Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION)).prepare();
 
@@ -75,7 +75,7 @@ class RunnerFailFastTest {
                 .shouldHaveFieldsOrFailWith(Map.of(
                         Bean::getRequiredField1, REQUIRED_FIELD_MISSING,
                         Bean::getRequiredField2, REQUIRED_FIELD_MISSING))
-                .shouldHaveValidSFIdFieldsOrFailWith(Map.of(
+                .shouldHaveValidSFIdFormatOrFailWith(Map.of(
                         Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION,
                         Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION)).prepare();
 
@@ -91,7 +91,7 @@ class RunnerFailFastTest {
     @Test
     void failFastWithInvalidIdWithNameForSimpleValidators() {
         val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate()
-                .shouldHaveValidSFIdFieldsOrFailWithFn(Tuple.of(List.of(Bean::getSfId1, Bean::getSfId2),
+                .shouldHaveValidSFIdFormatOrFailWithFn(Tuple.of(List.of(Bean::getSfId1, Bean::getSfId2),
                         (name, value) -> getFailureWithParams(ValidationFailureMessage.MSG_WITH_PARAMS, name, value)))
                 .prepare();
         val expectedFieldNames = Set.of(Bean.Fields.sfId1, Bean.Fields.sfId2);

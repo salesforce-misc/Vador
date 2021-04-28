@@ -22,15 +22,14 @@ class Spec_1n_1n_Test {
                 1, Set.of("1", "one"),
                 2, Set.of("2", "two")
         );
-        ValidationConfig<Bean, ValidationFailure> validationConfig =
-                ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
-                        spec._1n_1n().nameForTest(invalidCombo)
-                                .orFailWith(INVALID_COMBO_1)
-                                .given(Bean::getValue)
-                                .then(Bean::getValueStr)
-                                .shouldMatch(validComboMap)
-                                .orFailWithFn((value, valueStr) -> getFailureWithParams(MSG_WITH_PARAMS, value, valueStr)))
-                        .prepare();
+        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
+                spec._1n_1n().nameForTest(invalidCombo)
+                        .orFailWith(INVALID_COMBO_1)
+                        .given(Bean::getValue)
+                        .then(Bean::getValueStr)
+                        .shouldRelateWith(validComboMap)
+                        .orFailWithFn((value, valueStr) -> getFailureWithParams(MSG_WITH_PARAMS, value, valueStr)))
+                .prepare();
 
         val invalidBean1 = new Bean(1, "a", null, null);
         Assertions.assertFalse(validationConfig.getSpecWithName(invalidCombo).map(spec -> spec.test(invalidBean1)).orElse(true));
