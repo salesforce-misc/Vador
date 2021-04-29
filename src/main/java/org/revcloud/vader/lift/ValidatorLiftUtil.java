@@ -1,13 +1,14 @@
 package org.revcloud.vader.lift;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Dsl to lift simple, throwable validations to Validator type.
@@ -37,15 +38,15 @@ public class ValidatorLiftUtil {
 
     /**
      * Lifts a list of Simple validators to list of Validator type.
-     * 
-     * @param toBeLiftedFns List of Simple functions to be lifted.
-     * @param none          Value to be returned in case of no failure.
+     *
+     * @param toBeLiftedFns  List of Simple functions to be lifted.
+     * @param none           Value to be returned in case of no failure.
      * @param <FailureT>
      * @param <ValidatableT>
-     * @return              List of Validators
+     * @return List of Validators
      */
     public static <FailureT, ValidatableT> List<Validator<ValidatableT, FailureT>> liftAllSimple(
-            List<SimpleValidator<ValidatableT, FailureT>> toBeLiftedFns, FailureT none) {
+            Collection<SimpleValidator<ValidatableT, FailureT>> toBeLiftedFns, FailureT none) {
         return toBeLiftedFns.stream().map(toBeLifted -> liftSimple(toBeLifted, none)).collect(Collectors.toList());
     }
 

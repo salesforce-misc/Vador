@@ -25,8 +25,7 @@ class Utils {
             Either<FailureT, ValidatableT> validatable,
             Stream<Validator<ValidatableT, FailureT>> validators,
             Function1<Throwable, FailureT> throwableMapper) {
-        return validators
-                .map(currentValidator -> fireValidator(currentValidator, validatable, throwableMapper));
+        return validators.map(currentValidator -> fireValidator(currentValidator, validatable, throwableMapper));
     }
 
     static <FailureT, ValidatableT> Either<FailureT, ValidatableT> fireValidator(

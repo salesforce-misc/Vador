@@ -7,12 +7,15 @@
 package org.revcloud.vader.lift;
 
 import io.vavr.Function1;
-import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.experimental.UtilityClass;
+import lombok.val;
 import org.revcloud.vader.types.validators.Validator;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * DSL to lift member validations to container type.
@@ -36,10 +39,10 @@ public class AggregationLiftUtil {
      * @return List of container type validations
      */
     public static <ContainerT, MemberT, FailureT> List<Validator<ContainerT, FailureT>> liftAllToContainerValidatorType(
-            List<Validator<MemberT, FailureT>> childValidations,
+            Collection<Validator<MemberT, FailureT>> childValidations,
             Function1<ContainerT, MemberT> toChildMapper, FailureT invalidParent, FailureT invalidChild) {
-        return childValidations.map(childValidation ->
-                liftToContainerValidatorType(childValidation, toChildMapper, invalidParent, invalidChild));
+        return childValidations.stream().map(childValidation ->
+                liftToContainerValidatorType(childValidation, toChildMapper, invalidParent, invalidChild)).collect(Collectors.toList());
     }
 
     /**
@@ -55,10 +58,10 @@ public class AggregationLiftUtil {
      * @return List of container type validations
      */
     public static <ContainerT, MemberT, FailureT> List<Validator<ContainerT, FailureT>> liftAllToContainerValidatorType(
-            List<Validator<MemberT, FailureT>> childValidations,
+            Collection<Validator<MemberT, FailureT>> childValidations,
             Function1<ContainerT, MemberT> toChildMapper, FailureT invalidParent) {
-        return childValidations.map(childValidation ->
-                liftToContainerValidatorType(childValidation, toChildMapper, invalidParent));
+        return childValidations.stream().map(childValidation ->
+                liftToContainerValidatorType(childValidation, toChildMapper, invalidParent)).collect(Collectors.toList());
     }
 
     /**
@@ -78,7 +81,7 @@ public class AggregationLiftUtil {
             Function1<ContainerT, MemberT> toMemberMapper,
             FailureT invalidParent, FailureT invalidChild) {
         return validatedParent -> {
-            final Either<FailureT, MemberT> member = extractMember(toMemberMapper, invalidParent, validatedParent);
+            val member = extractMember(toMemberMapper, invalidParent, validatedParent);
             return member.isLeft() ? member
                     : member.filter(Objects::nonNull)
                     .fold(() -> Either.left(invalidChild), memberValidation.unchecked());
@@ -113,7 +116,7 @@ public class AggregationLiftUtil {
             Function1<ContainerT, MemberT> toChildMapper,
             FailureT invalidParent) {
         return validatedParent -> {
-            final Either<FailureT, MemberT> member = extractMember(toChildMapper, invalidParent, validatedParent);
+            val member = extractMember(toChildMapper, invalidParent, validatedParent);
             return member.isLeft() ? member : childValidation.apply(member);
         };
     }

@@ -7,34 +7,34 @@ import lombok.Builder;
 import lombok.NonNull;
 import lombok.Singular;
 import lombok.Value;
+import org.revcloud.vader.lift.ValidatorLiftUtil;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.revcloud.vader.lift.ValidatorLiftUtil.liftAllSimple;
+import static java.util.function.Function.identity;
 
 @Value
 @Builder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
-public class HeaderValidationConfig<ValidatableT, FailureT> {
+public class HeaderValidationConfig<HeaderValidatableT, FailureT> {
     @Builder.Default
     Tuple2<Integer, FailureT> minBatchSize = Tuple.of(Integer.MIN_VALUE, null);
     @Builder.Default
     Tuple2<Integer, FailureT> maxBatchSize = Tuple.of(Integer.MAX_VALUE, null);
     @NonNull
-    Function1<ValidatableT, Collection<?>> withBatchMapper;
+    Function1<HeaderValidatableT, Collection<?>> withBatchMapper;
     @Singular
-    Collection<Validator<ValidatableT, FailureT>> withValidators;
-    @Builder.Default
-    Tuple2<Collection<SimpleValidator<ValidatableT, FailureT>>, FailureT> withSimpleValidatorsOrFailWith = Tuple.of(Collections.emptyList(), null);
+    Collection<Validator<HeaderValidatableT, FailureT>> withValidators;
+    Tuple2<Collection<SimpleValidator<HeaderValidatableT, FailureT>>, FailureT> withSimpleValidatorsOrFailWith;
     @Singular("withSimpleValidator")
-    Collection<Tuple2<SimpleValidator<ValidatableT, FailureT>, FailureT>> withSimpleValidators;
+    Collection<Tuple2<SimpleValidator<HeaderValidatableT, FailureT>, FailureT>> withSimpleValidators;
 
-    Stream<Validator<ValidatableT, FailureT>> getValidatorsStream() {
-        var simpleValidators = Stream.concat(withSimpleValidatorsOrFailWith._1.stream(), withSimpleValidators.stream().map(Tuple2::_1)).collect(Collectors.toList());
-        return Stream.concat(withValidators.stream(), liftAllSimple(simpleValidators, withSimpleValidatorsOrFailWith._2).stream());
+    Stream<Validator<HeaderValidatableT, FailureT>> getValidatorsStream() {
+        var withSimpleValidatorsOrFailWithStream = Stream.ofNullable(withSimpleValidatorsOrFailWith)
+                .map(s -> s.apply(ValidatorLiftUtil::liftAllSimple)).flatMap(Collection::stream);
+        var withSimpleValidatorStream = withSimpleValidators.stream().map(sv -> sv.apply(ValidatorLiftUtil::liftSimple));
+        return Stream.of(withSimpleValidatorsOrFailWithStream, withSimpleValidatorStream, withValidators.stream()).flatMap(identity());
     }
 }
