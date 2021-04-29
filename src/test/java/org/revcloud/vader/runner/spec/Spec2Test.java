@@ -88,11 +88,11 @@ class Spec2Test {
         val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(spec -> List.of(
                 spec.<Integer, String>_2().nameForTest(invalidCombo1)
                         .orFailWith(INVALID_COMBO_1)
-                        .when(Bean::getValue).is(1)
+                        .when(Bean::getValue).matches(is(1))
                         .then(Bean::getValueStr).shouldMatch(either(is("one")).or(is("1"))),
                 spec.<Integer, String>_2().nameForTest(invalidCombo2)
                         .orFailWith(INVALID_COMBO_2)
-                        .when(Bean::getValue).is(2)
+                        .when(Bean::getValue).matches(is(2))
                         .then(Bean::getValueStr).shouldMatch(either(is("two")).or(is("2")))))
                 .prepare();
         val invalidBean1 = new Bean(1, "a", null, null);

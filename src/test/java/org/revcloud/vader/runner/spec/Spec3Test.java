@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.revcloud.vader.DateMatchers.isBefore;
@@ -21,7 +22,7 @@ class Spec3Test {
         val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
                 spec._3().nameForTest(specName)
                         .when(Bean::isCompareDates)
-                        .is(true)
+                        .matches(is(true))
                         .thenField1(Bean::getDate1)
                         .thenField2(Bean::getDate2)
                         .shouldRelateWithFn(isBefore())).prepare();
@@ -41,7 +42,7 @@ class Spec3Test {
         val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
                 spec._3().nameForTest(specName)
                         .when(Bean::isCompareDates)
-                        .is(true)
+                        .matches(is(true))
                         .thenField1(Bean::getDate1)
                         .thenField2(Bean::getDate2)
                         .shouldRelateWithFn(isBefore())).prepare();

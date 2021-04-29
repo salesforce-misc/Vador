@@ -63,6 +63,12 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
     }
 
     public Optional<Predicate<ValidatableT>> getSpecWithName(@NonNull String nameForTest) {
+        // TODO 29/04/21 gopala.akshintala: Move this duplicate check to prepare 
+        val specNameToSpecs = getSpecsStream().collect(Collectors.groupingBy(SpecFactory.BaseSpec::getNameForTest));
+        val duplicateSpecNames = specNameToSpecs.entrySet().stream().filter(entry -> entry.getValue().size() > 1).map(Map.Entry::getKey).collect(Collectors.toSet());
+        if (!duplicateSpecNames.isEmpty()) {
+            throw new IllegalArgumentException("Duplicate Spec Names found" + String.join(",", duplicateSpecNames));
+        }
         return getSpecsStream().filter(spec -> nameForTest.equals(spec.nameForTest)).findFirst().map(SpecFactory.BaseSpec::toPredicate);
     }
 

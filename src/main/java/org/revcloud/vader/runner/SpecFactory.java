@@ -17,8 +17,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static org.hamcrest.Matchers.is;
-
 public final class SpecFactory<ValidatableT, FailureT> {
     SpecFactory() {
     }
@@ -58,7 +56,6 @@ public final class SpecFactory<ValidatableT, FailureT> {
     static class Spec1<ValidatableT, FailureT, GivenT> extends BaseSpec<ValidatableT, FailureT> {
         @NonNull
         Function1<ValidatableT, GivenT> given;
-        GivenT shouldBe;
         @Singular("shouldMatchField")
         protected Collection<Function1<ValidatableT, ?>> shouldMatchAnyOfFields;
         @Singular("shouldMatch")
@@ -68,8 +65,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
         public Predicate<ValidatableT> toPredicate() {
             return validatable -> {
                 val givenValue = getGiven().apply(validatable);
-                return is(shouldBe).matches(givenValue) ||
-                        getShouldMatchAnyOf().stream().anyMatch(m -> m.matches(givenValue)) ||
+                return getShouldMatchAnyOf().stream().anyMatch(m -> m.matches(givenValue)) ||
                         getShouldMatchAnyOfFields().stream()
                                 .anyMatch(expectedFieldMapper -> expectedFieldMapper.apply(validatable) == givenValue);
             };
@@ -82,13 +78,10 @@ public final class SpecFactory<ValidatableT, FailureT> {
     static class Spec2<ValidatableT, FailureT, WhenT, ThenT> extends BaseSpec<ValidatableT, FailureT> {
         @NonNull
         Function1<ValidatableT, WhenT> when;
-        WhenT is;
         @Singular("matches")
         Collection<Matcher<WhenT>> matchesAnyOf;
-        // TODO 28/04/21 gopala.akshintala: add match fields 
         @NonNull
         Function1<ValidatableT, ThenT> then;
-        ThenT shouldBe;
         // TODO 28/04/21 gopala.akshintala: Think about having `or` prefix 
         @Singular("shouldMatch")
         Collection<? extends Matcher<ThenT>> shouldMatchAnyOf;
@@ -101,13 +94,12 @@ public final class SpecFactory<ValidatableT, FailureT> {
             return validatable -> {
                 val whenValue = getWhen().apply(validatable);
                 if ((shouldRelateWith == null && shouldRelateWithFn == null) &&
-                        (!is(getIs()).matches(whenValue) && getMatchesAnyOf().stream().noneMatch(m -> m.matches(whenValue)))) {
+                        (getMatchesAnyOf().stream().noneMatch(m -> m.matches(whenValue)))) {
                     return true;
                 }
                 val thenValue = getThen().apply(validatable);
 
-                val result = is(shouldBe).matches(thenValue) ||
-                        getShouldMatchAnyOf().stream().anyMatch(m -> m.matches(thenValue));
+                val result = getShouldMatchAnyOf().stream().anyMatch(m -> m.matches(thenValue));
                 if (!result) {
                     return (getShouldRelateWith() != null && getShouldRelateWith().get(whenValue) != null && getShouldRelateWith().get(whenValue).contains(thenValue)) ||
                             (getShouldRelateWithFn() != null && getShouldRelateWithFn().apply(whenValue, thenValue));
@@ -123,29 +115,26 @@ public final class SpecFactory<ValidatableT, FailureT> {
     static class Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T> extends BaseSpec<ValidatableT, FailureT> {
         @NonNull
         Function1<ValidatableT, WhenT> when;
-        WhenT is;
         @Singular("matches")
         Collection<Matcher<WhenT>> matchesAnyOf;
         @NonNull
         Function1<ValidatableT, Then1T> thenField1;
         @NonNull
         Function1<ValidatableT, Then2T> thenField2;
-        Then1T field1ShouldBe;
-        @Singular("field1ShouldMatch")
-        Collection<Matcher<?>> field1ShouldMatchAnyOf;
-        Then2T field2ShouldBe;
-        @Singular("field2ShouldMatch")
-        Collection<Matcher<?>> field2ShouldMatchAnyOf;
-        Function2<Then1T, Then2T, Boolean> shouldRelateWithFn;
         Map<? extends Then1T, ? extends Set<? extends Then2T>> shouldRelateWith;
+        Function2<Then1T, Then2T, Boolean> shouldRelateWithFn;
+        @Singular("orField1ShouldMatch")
+        Collection<Matcher<?>> orField1ShouldMatchAnyOf;
+        @Singular("orField2ShouldMatch")
+        Collection<Matcher<?>> orField2ShouldMatchAnyOf;
         Function3<WhenT, Then1T, Then2T, FailureT> orFailWithFn;
 
         @Override
         public Predicate<ValidatableT> toPredicate() {
             return validatable -> {
                 val whenValue = getWhen().apply(validatable);
-                if ((shouldRelateWith == null && shouldRelateWithFn == null) &&
-                        (!is(getIs()).matches(whenValue) && getMatchesAnyOf().stream().noneMatch(m -> m.matches(whenValue)))) {
+                if (shouldRelateWith == null && shouldRelateWithFn == null &&
+                        getMatchesAnyOf().stream().noneMatch(m -> m.matches(whenValue))) {
                     return true;
                 }
                 val thenValue1 = getThenField1().apply(validatable);
@@ -158,8 +147,8 @@ public final class SpecFactory<ValidatableT, FailureT> {
                     relationResult = validThen2Values != null && validThen2Values.contains(thenValue2);
                 }
                 return relationResult ||
-                        getField1ShouldMatchAnyOf().stream().anyMatch(matcher -> matcher.matches(thenValue1)) ||
-                        getField2ShouldMatchAnyOf().stream().anyMatch(matcher -> matcher.matches(thenValue2));
+                        getOrField1ShouldMatchAnyOf().stream().anyMatch(matcher -> matcher.matches(thenValue1)) ||
+                        getOrField2ShouldMatchAnyOf().stream().anyMatch(matcher -> matcher.matches(thenValue2));
             };
         }
 
