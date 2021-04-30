@@ -13,7 +13,7 @@ import java.util.GregorianCalendar;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.revcloud.vader.DateMatchers.isBefore;
+import static org.revcloud.vader.DateMatchers.isOnOrBefore;
 
 class Spec3Test {
     @Test
@@ -25,7 +25,7 @@ class Spec3Test {
                         .matches(is(true))
                         .thenField1(Bean::getDate1)
                         .thenField2(Bean::getDate2)
-                        .shouldRelateWithFn(isBefore())).prepare();
+                        .shouldRelateWithFn(isOnOrBefore())).prepare();
 
         val validBean = new Bean(true, new GregorianCalendar(2021, Calendar.APRIL, 27).getTime(),
                 new GregorianCalendar(2021, Calendar.APRIL, 28).getTime());
@@ -45,7 +45,7 @@ class Spec3Test {
                         .matches(is(true))
                         .thenField1(Bean::getDate1)
                         .thenField2(Bean::getDate2)
-                        .shouldRelateWithFn(isBefore())).prepare();
+                        .shouldRelateWithFn(isOnOrBefore())).prepare();
         val invalidBean1 = new Bean(true, null, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime());
         assertFalse(validationConfig.getSpecWithName(specName).map(spec -> spec.test(invalidBean1)).orElse(true));
 

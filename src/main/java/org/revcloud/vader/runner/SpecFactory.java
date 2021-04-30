@@ -60,6 +60,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
         protected Collection<Function1<ValidatableT, ?>> shouldMatchAnyOfFields;
         @Singular("shouldMatch")
         Collection<? extends Matcher<GivenT>> shouldMatchAnyOf;
+        Function1<GivenT, FailureT> orFailWithFn;
 
         @Override
         public Predicate<ValidatableT> toPredicate() {
@@ -69,6 +70,17 @@ public final class SpecFactory<ValidatableT, FailureT> {
                         getShouldMatchAnyOfFields().stream()
                                 .anyMatch(expectedFieldMapper -> expectedFieldMapper.apply(validatable) == givenValue);
             };
+        }
+
+        @Override
+        protected FailureT getFailure(ValidatableT validatable) {
+            if ((orFailWith == null) && (orFailWithFn == null)) {
+                throw new IllegalArgumentException("For Spec with: " + nameForTest + " Either 'orFailWith' or 'orFailWithFn' should be passed, but not both");
+            }
+            if (orFailWith != null) {
+                return orFailWith;
+            }
+            return orFailWithFn.apply(getGiven().apply(validatable));
         }
     }
 
@@ -106,6 +118,17 @@ public final class SpecFactory<ValidatableT, FailureT> {
                 }
                 return true;
             };
+        }
+
+        @Override
+        protected FailureT getFailure(ValidatableT validatable) {
+            if ((orFailWith == null) && (orFailWithFn == null)) {
+                throw new IllegalArgumentException("For Spec with: " + nameForTest + " Either 'orFailWith' or 'orFailWithFn' should be passed, but not both");
+            }
+            if (orFailWith != null) {
+                return orFailWith;
+            }
+            return orFailWithFn.apply(getWhen().apply(validatable), getThen().apply(validatable));
         }
     }
 
@@ -154,6 +177,12 @@ public final class SpecFactory<ValidatableT, FailureT> {
 
         @Override
         protected FailureT getFailure(ValidatableT validatable) {
+            if ((orFailWith == null) && (orFailWithFn == null)) {
+                throw new IllegalArgumentException("For Spec with: " + nameForTest + " Either 'orFailWith' or 'orFailWithFn' should be passed, but not both");
+            }
+            if (orFailWith != null) {
+                return orFailWith;
+            }
             return orFailWithFn.apply(getWhen().apply(validatable), getThenField1().apply(validatable), getThenField2().apply(validatable));
         }
     }
