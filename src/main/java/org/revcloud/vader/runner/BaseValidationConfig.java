@@ -79,14 +79,14 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
                 .map(fieldMapper -> PropertyUtils.getPropertyName(beanClass, fieldMapper)).collect(Collectors.toSet());
     }
 
-    public Set<String> getRequiredSFIdFieldNames(Class<ValidatableT> beanClass) {
+    public Set<String> getRequiredFieldNamesForSFIdFormat(Class<ValidatableT> beanClass) {
         return Stream.concat(
                 Stream.ofNullable(shouldHaveValidSFIdFormatOrFailWith).flatMap(f -> f.keySet().stream()),
                 Stream.ofNullable(shouldHaveValidSFIdFormatOrFailWithFn).flatMap(f -> f._1.stream()))
                 .map(fieldMapper -> PropertyUtils.getPropertyName(beanClass, fieldMapper)).collect(Collectors.toSet());
     }
 
-    public Set<String> getNonRequiredSFIdFieldNames(Class<ValidatableT> beanClass) {
+    public Set<String> getNonRequiredFieldNamesForSFIdFormat(Class<ValidatableT> beanClass) {
         return Stream.concat(
                 Stream.ofNullable(mayHaveValidSFIdFieldsOrFailWith).flatMap(f -> f.keySet().stream()),
                 Stream.ofNullable(blankOrHaveValidSFIdFormatOrFailWithFn).flatMap(f -> f._1.stream()))

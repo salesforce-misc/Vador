@@ -28,10 +28,10 @@ class FailFastStrategies {
             FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return toBeValidated -> {
-            if (toBeValidated == null) return Either.left(invalidValidatable);
-            val toBeValidatedRight = Either.<FailureT, ValidatableT>right(toBeValidated);
-            return findFirstFailure(toBeValidatedRight, validationConfig, throwableMapper);
+        return validatable -> {
+            if (validatable == null) return Either.left(invalidValidatable);
+            val validatableRight = Either.<FailureT, ValidatableT>right(validatable);
+            return findFirstFailure(validatableRight, validationConfig, throwableMapper);
         };
     }
 
@@ -74,9 +74,9 @@ class FailFastStrategies {
             if (validatable == null) {
                 return Optional.of(invalidValidatable);
             }
-            val batch = validationConfig.getWithBatchMapper().apply(validatable);
+            val batch = validationConfig.getWithBatchMapper().get(validatable);
             return Utils.validateSize(batch, validationConfig).or(() ->
-                    Utils.fireValidators(Either.right(validatable), validationConfig.getValidatorsStream(), throwableMapper)
+                    Utils.fireValidators(Either.right(validatable), validationConfig.getHeaderValidatorsStream(), throwableMapper)
                             .filter(Either::isLeft).findFirst()
                             .map(Either::swap).flatMap(Either::toJavaOptional));
         };

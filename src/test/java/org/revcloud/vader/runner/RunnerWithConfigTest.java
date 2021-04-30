@@ -95,7 +95,7 @@ class RunnerWithConfigTest {
                         (name, value) -> getFailureWithParams(ValidationFailureMessage.MSG_WITH_PARAMS, name, value)))
                 .prepare();
         val expectedFieldNames = Set.of(Bean.Fields.sfId1, Bean.Fields.sfId2);
-        assertThat(validationConfig.getRequiredSFIdFieldNames(Bean.class)).isEqualTo(expectedFieldNames);
+        assertThat(validationConfig.getRequiredFieldNamesForSFIdFormat(Bean.class)).isEqualTo(expectedFieldNames);
         val invalidSfId = new ID("invalidSfId");
         val validatableWithInvalidSfId = new Bean(null, null, new ID("1ttxx00000000hZAAQ"), invalidSfId);
         val result = Runner.validateAndFailFast(

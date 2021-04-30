@@ -24,18 +24,19 @@ class RunnerWithHeaderConfigTest {
         val headerConfig = HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
                 .withBatchMapper(HeaderBean::getBeans)
                 .withSimpleValidator(Tuple.of(ignore -> UNKNOWN_EXCEPTION, NONE)).prepare();
-        val beans = Collections.<Bean>emptyList();
+        val beans = List.of(new Bean());
         val headerBean = new HeaderBean(beans);
         val result = Runner.validateAndFailFastForHeader(headerBean, NOTHING_TO_VALIDATE, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).contains(UNKNOWN_EXCEPTION);
     }
 
+    // TODO 29/04/21 gopala.akshintala: Write display names for tests
     @Test
     void failFastForHeaderConfigWithValidators2() {
         val headerConfig = HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
                 .withBatchMapper(HeaderBean::getBeans)
                 .withSimpleValidator(Tuple.of(ignore -> NONE, NONE)).prepare();
-        val beans = Collections.<Bean>emptyList();
+        val beans = List.of(new Bean());
         val headerBean = new HeaderBean(beans);
         val result = Runner.validateAndFailFastForHeader(headerBean, NOTHING_TO_VALIDATE, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).isEmpty();
