@@ -1,4 +1,4 @@
-package org.revcloud.vader
+package org.revcloud.vader.matchers
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll

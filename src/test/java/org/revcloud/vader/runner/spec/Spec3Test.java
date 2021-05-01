@@ -13,7 +13,7 @@ import java.util.GregorianCalendar;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.revcloud.vader.DateMatchers.isOnOrBefore;
+import static org.revcloud.vader.matchers.DateMatchers.isOnOrBefore;
 
 class Spec3Test {
     @Test

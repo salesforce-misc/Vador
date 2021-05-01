@@ -3,13 +3,8 @@ package org.revcloud.vader.runner;
 import io.vavr.Function1;
 import io.vavr.Function2;
 import io.vavr.Function3;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Singular;
-import lombok.Value;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
-import lombok.val;
 import org.hamcrest.Matcher;
 
 import java.util.Collection;
@@ -55,12 +50,12 @@ public final class SpecFactory<ValidatableT, FailureT> {
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
     static class Spec1<ValidatableT, FailureT, GivenT> extends BaseSpec<ValidatableT, FailureT> {
         @NonNull
-        Function1<ValidatableT, GivenT> given;
+        Function1<ValidatableT, ? extends GivenT> given;
         @Singular("shouldMatchField")
         protected Collection<Function1<ValidatableT, ?>> shouldMatchAnyOfFields;
         @Singular("shouldMatch")
-        Collection<? extends Matcher<GivenT>> shouldMatchAnyOf;
-        Function1<GivenT, FailureT> orFailWithFn;
+        Collection<? extends Matcher<? extends GivenT>> shouldMatchAnyOf;
+        Function1<GivenT, ? extends FailureT> orFailWithFn;
 
         @Override
         public Predicate<ValidatableT> toPredicate() {
@@ -89,17 +84,17 @@ public final class SpecFactory<ValidatableT, FailureT> {
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
     static class Spec2<ValidatableT, FailureT, WhenT, ThenT> extends BaseSpec<ValidatableT, FailureT> {
         @NonNull
-        Function1<ValidatableT, WhenT> when;
+        Function1<ValidatableT, ? extends WhenT> when;
         @Singular("matches")
-        Collection<Matcher<WhenT>> matchesAnyOf;
+        Collection<Matcher<? extends WhenT>> matchesAnyOf;
         @NonNull
-        Function1<ValidatableT, ThenT> then;
+        Function1<ValidatableT, ? extends ThenT> then;
         // TODO 28/04/21 gopala.akshintala: Think about having `or` prefix 
         @Singular("shouldMatch")
-        Collection<? extends Matcher<ThenT>> shouldMatchAnyOf;
+        Collection<? extends Matcher<? extends ThenT>> shouldMatchAnyOf;
         Map<? extends WhenT, ? extends Set<? extends ThenT>> shouldRelateWith;
         Function2<WhenT, ThenT, Boolean> shouldRelateWithFn;
-        Function2<WhenT, ThenT, FailureT> orFailWithFn;
+        Function2<WhenT, ThenT, ? extends FailureT> orFailWithFn;
 
         @Override
         public Predicate<ValidatableT> toPredicate() {
@@ -137,20 +132,20 @@ public final class SpecFactory<ValidatableT, FailureT> {
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
     static class Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T> extends BaseSpec<ValidatableT, FailureT> {
         @NonNull
-        Function1<ValidatableT, WhenT> when;
+        Function1<ValidatableT, ? extends WhenT> when;
         @Singular("matches")
-        Collection<Matcher<WhenT>> matchesAnyOf;
+        Collection<Matcher<? extends WhenT>> matchesAnyOf;
         @NonNull
-        Function1<ValidatableT, Then1T> thenField1;
+        Function1<ValidatableT, ? extends Then1T> thenField1;
         @NonNull
-        Function1<ValidatableT, Then2T> thenField2;
+        Function1<ValidatableT, ? extends Then2T> thenField2;
         Map<? extends Then1T, ? extends Set<? extends Then2T>> shouldRelateWith;
         Function2<Then1T, Then2T, Boolean> shouldRelateWithFn;
         @Singular("orField1ShouldMatch")
-        Collection<Matcher<?>> orField1ShouldMatchAnyOf;
+        Collection<Matcher<? extends Then1T>> orField1ShouldMatchAnyOf;
         @Singular("orField2ShouldMatch")
-        Collection<Matcher<?>> orField2ShouldMatchAnyOf;
-        Function3<WhenT, Then1T, Then2T, FailureT> orFailWithFn;
+        Collection<Matcher<? extends Then2T>> orField2ShouldMatchAnyOf;
+        Function3<WhenT, Then1T, Then2T, ? extends FailureT> orFailWithFn;
 
         @Override
         public Predicate<ValidatableT> toPredicate() {
