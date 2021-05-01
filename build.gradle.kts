@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm")
     `java-library`
     `maven-publish`
-    jacoco
+    //jacoco
     id("io.freefair.lombok") version "5.3.3.3"
     id("io.gitlab.arturbosch.detekt") version "1.16.0"
     id("com.adarshr.test-logger") version "3.0.0"
@@ -52,23 +52,23 @@ tasks {
         useJUnitPlatform()
     }
 
-    jacocoTestReport {
+    /*jacocoTestReport {
         reports {
             csv.isEnabled = false
             html.isEnabled = false
             xml.isEnabled = true
         }
-    }
+    }*/
 }
 
-afterEvaluate {
+/*afterEvaluate {
     tasks.named("check").configure {
         dependsOn(tasks.named("jacocoTestReport"))
     }
     tasks.named("jacocoTestReport").configure {
         dependsOn(tasks.named("test"))
     }
-}
+}*/
 
 /********************/
 /* Publish to Nexus */

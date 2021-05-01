@@ -10,6 +10,5 @@ import org.hamcrest.core.IsNull
 
 fun <T> anyOf(vararg ts: T): AnyOf<T> = anyOf(ts.map { `is`(it) })
 fun <T> anyOf(vararg matchers: Matcher<T>): AnyOf<T> = anyOf(*matchers)
-
 @SafeVarargs
 fun <T> anyOfOrNull(vararg matchers: Matcher<T>): AnyOf<T> = anyOf(matchers.toList() + IsNull())
