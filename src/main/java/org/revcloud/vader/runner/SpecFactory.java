@@ -74,7 +74,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
 
         @Override
         protected FailureT getFailure(ValidatableT validatable) {
-            if ((orFailWith == null) && (orFailWithFn == null)) {
+            if ((orFailWith == null) == (orFailWithFn == null)) {
                 throw new IllegalArgumentException("For Spec with: " + nameForTest + " Either 'orFailWith' or 'orFailWithFn' should be passed, but not both");
             }
             if (orFailWith != null) {
@@ -105,8 +105,8 @@ public final class SpecFactory<ValidatableT, FailureT> {
         public Predicate<ValidatableT> toPredicate() {
             return validatable -> {
                 val whenValue = getWhen().apply(validatable);
-                if ((shouldRelateWith == null && shouldRelateWithFn == null) &&
-                        (getMatchesAnyOf().stream().noneMatch(m -> m.matches(whenValue)))) {
+                if (shouldRelateWith == null && shouldRelateWithFn == null &&
+                        getMatchesAnyOf().stream().noneMatch(m -> m.matches(whenValue))) {
                     return true;
                 }
                 val thenValue = getThen().apply(validatable);
@@ -122,7 +122,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
 
         @Override
         protected FailureT getFailure(ValidatableT validatable) {
-            if ((orFailWith == null) && (orFailWithFn == null)) {
+            if ((orFailWith == null) == (orFailWithFn == null)) {
                 throw new IllegalArgumentException("For Spec with: " + nameForTest + " Either 'orFailWith' or 'orFailWithFn' should be passed, but not both");
             }
             if (orFailWith != null) {
@@ -156,8 +156,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
         public Predicate<ValidatableT> toPredicate() {
             return validatable -> {
                 val whenValue = getWhen().apply(validatable);
-                if (shouldRelateWith == null && shouldRelateWithFn == null &&
-                        getMatchesAnyOf().stream().noneMatch(m -> m.matches(whenValue))) {
+                if (getMatchesAnyOf().stream().noneMatch(m -> m.matches(whenValue))) {
                     return true;
                 }
                 val thenValue1 = getThenField1().apply(validatable);
