@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm")
     `java-library`
     `maven-publish`
-    //jacoco
+    jacoco
     id("io.freefair.lombok") version "5.3.3.3"
     id("io.gitlab.arturbosch.detekt") version "1.16.0"
     id("com.adarshr.test-logger") version "3.0.0"
@@ -42,33 +42,37 @@ dependencies {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.3.5"
+version = "2.3.6-SNAPSHOT"
 description = "Vader - An FP framework for Bean validation"
 
 java.sourceCompatibility = JavaVersion.VERSION_11
+
+jacoco {
+    toolVersion = "0.8.7-SNAPSHOT"
+}
 
 tasks {
     withType<Test> {
         useJUnitPlatform()
     }
 
-    /*jacocoTestReport {
+    jacocoTestReport {
         reports {
             csv.isEnabled = false
             html.isEnabled = false
             xml.isEnabled = true
         }
-    }*/
+    }
 }
 
-/*afterEvaluate {
+afterEvaluate {
     tasks.named("check").configure {
         dependsOn(tasks.named("jacocoTestReport"))
     }
     tasks.named("jacocoTestReport").configure {
         dependsOn(tasks.named("test"))
     }
-}*/
+}
 
 /********************/
 /* Publish to Nexus */
