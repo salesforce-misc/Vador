@@ -141,7 +141,9 @@ class UtilsTest {
         val validatables = duplicateValidatables.appendAll(nullKeyValidatables).appendAll(List.of(
                 new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
         val batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
-                .findAndFilterDuplicatesWith(container -> container.getId().toString()).prepare();
+                .findAndFilterDuplicatesWith(container -> container.getId() == null ? null : container.getId().toString())
+                .andFailNullKeysWith(NULL_KEY)
+                .prepare();
         val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
         assertThat(result).contains(NULL_KEY);
     }

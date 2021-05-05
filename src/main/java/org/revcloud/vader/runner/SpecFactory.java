@@ -102,7 +102,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
         public Predicate<ValidatableT> toPredicate() {
             return validatable -> {
                 val whenValue = getWhen().apply(validatable);
-                if (shouldRelateWith == null && shouldRelateWithFn == null &&
+                if (shouldRelateWith.isEmpty() && shouldRelateWithFn == null &&
                         getMatchesAnyOf().stream().noneMatch(m -> m.matches(whenValue))) {
                     return true;
                 }
@@ -117,7 +117,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
                         return getShouldRelateWithFn().apply(whenValue, thenValue);
                     }
                 }
-                return true;
+                return isThenMatches;
             };
         }
 

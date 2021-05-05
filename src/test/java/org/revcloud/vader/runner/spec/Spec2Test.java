@@ -62,7 +62,6 @@ class Spec2Test {
         );
         val validationConfig = ValidationConfig.<Bean2, ValidationFailure>toValidate().withSpec(spec ->
                 spec._2().nameForTest(invalidComboSpec)
-                        .orFailWith(INVALID_COMBO_1)
                         .when(Bean2::getBt)
                         .then(Bean2::getValueStr)
                         .shouldRelateWith(validComboMap)
@@ -75,13 +74,16 @@ class Spec2Test {
     @Test
     void multiSpec2Test() {
         val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(spec -> List.of(
-                spec.<Integer, String>_2().orFailWith(INVALID_COMBO_1)
-                        .when(Bean::getValue).matches(is(1))
+                spec.<Integer, String>_2().when(Bean::getValue)
+                        .matches(is(1))
                         .then(Bean::getValueStr)
-                        .shouldMatch(either(is("one")).or(is("1"))),
-                spec.<Integer, String>_2().orFailWith(INVALID_COMBO_2)
-                        .when(Bean::getValue).matches(is(2))
-                        .then(Bean::getValueStr).shouldMatch(either(is("two")).or(is("2")))))
+                        .shouldMatch(either(is("one")).or(is("1")))
+                        .orFailWith(INVALID_COMBO_1),
+                spec.<Integer, String>_2().when(Bean::getValue)
+                        .matches(is(2))
+                        .then(Bean::getValueStr)
+                        .shouldMatch(either(is("two")).or(is("2")))
+                        .orFailWith(INVALID_COMBO_2)))
                 .prepare();
 
         val invalidBean1 = new Bean(1, "a", null, null);
