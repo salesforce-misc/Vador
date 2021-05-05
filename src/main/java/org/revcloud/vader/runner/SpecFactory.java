@@ -16,20 +16,24 @@ public final class SpecFactory<ValidatableT, FailureT> {
     SpecFactory() {
     }
 
+    @SuppressWarnings({"java:S100", "java:S1452"})
     public final <GivenT> Spec1.Spec1Builder<ValidatableT, FailureT, GivenT, ?, ?> _1() {
         return Spec1.check();
     }
 
+    @SuppressWarnings({"java:S100", "java:S1452"})
     public final <WhenT, ThenT> Spec2.Spec2Builder<ValidatableT, FailureT, WhenT, ThenT, ?, ?> _2() {
         return Spec2.check();
     }
 
+    @SuppressWarnings({"java:S100", "java:S1452"})
     public final <WhenT, Then1T, Then2T> Spec3.Spec3Builder<ValidatableT, FailureT, WhenT, Then1T, Then2T, ?, ?> _3() {
         return Spec3.check();
     }
 
     @Getter
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
+    // This public is required for consumer to access
     public abstract static class BaseSpec<ValidatableT, FailureT> {
         protected String nameForTest;
         protected FailureT orFailWith;
@@ -83,12 +87,13 @@ public final class SpecFactory<ValidatableT, FailureT> {
         @NonNull
         Function1<ValidatableT, ? extends WhenT> when;
         @Singular("matches")
-        Collection<Matcher<? extends WhenT>> matchesAnyOf;
+        Collection<? extends Matcher<? extends WhenT>> matchesAnyOf;
         @NonNull
         Function1<ValidatableT, ? extends ThenT> then;
         // TODO 28/04/21 gopala.akshintala: Think about having `or` prefix 
         @Singular("shouldMatch")
         Collection<? extends Matcher<? extends ThenT>> shouldMatchAnyOf;
+        @Singular("shouldRelateWithEntry")
         Map<? extends WhenT, ? extends Set<? extends ThenT>> shouldRelateWith;
         Function2<WhenT, ThenT, Boolean> shouldRelateWithFn;
         Function2<WhenT, ThenT, ? extends FailureT> orFailWithFn;
@@ -102,11 +107,15 @@ public final class SpecFactory<ValidatableT, FailureT> {
                     return true;
                 }
                 val thenValue = getThen().apply(validatable);
-
-                val result = getShouldMatchAnyOf().stream().anyMatch(m -> m.matches(thenValue));
-                if (!result) {
-                    return (getShouldRelateWith() != null && getShouldRelateWith().get(whenValue) != null && getShouldRelateWith().get(whenValue).contains(thenValue)) ||
-                            (getShouldRelateWithFn() != null && getShouldRelateWithFn().apply(whenValue, thenValue));
+                val isThenMatches = getShouldMatchAnyOf().stream().anyMatch(m -> m.matches(thenValue));
+                if (!isThenMatches) {
+                    if (getShouldRelateWith() != null && getShouldRelateWith().get(whenValue) != null) {
+                        val validThenValues = getShouldRelateWith().get(whenValue);
+                        return validThenValues.contains(thenValue);
+                    }
+                    if (getShouldRelateWithFn() != null) {
+                        return getShouldRelateWithFn().apply(whenValue, thenValue);
+                    }
                 }
                 return true;
             };
@@ -131,7 +140,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
         @NonNull
         Function1<ValidatableT, ? extends WhenT> when;
         @Singular("matches")
-        Collection<Matcher<? extends WhenT>> matchesAnyOf;
+        Collection<? extends Matcher<? extends WhenT>> matchesAnyOf;
         @NonNull
         Function1<ValidatableT, ? extends Then1T> thenField1;
         @NonNull
@@ -139,9 +148,9 @@ public final class SpecFactory<ValidatableT, FailureT> {
         Map<? extends Then1T, ? extends Set<? extends Then2T>> shouldRelateWith;
         Function2<Then1T, Then2T, Boolean> shouldRelateWithFn;
         @Singular("orField1ShouldMatch")
-        Collection<Matcher<? extends Then1T>> orField1ShouldMatchAnyOf;
+        Collection<? extends Matcher<? extends Then1T>> orField1ShouldMatchAnyOf;
         @Singular("orField2ShouldMatch")
-        Collection<Matcher<? extends Then2T>> orField2ShouldMatchAnyOf;
+        Collection<? extends Matcher<? extends Then2T>> orField2ShouldMatchAnyOf;
         Function3<WhenT, Then1T, Then2T, ? extends FailureT> orFailWithFn;
 
         @Override

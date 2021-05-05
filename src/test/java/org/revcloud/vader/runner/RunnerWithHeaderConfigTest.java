@@ -13,7 +13,6 @@ import java.util.List;
 import static consumer.failure.ValidationFailure.MAX_BATCH_SIZE_EXCEEDED;
 import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_EXCEEDED;
 import static consumer.failure.ValidationFailure.NONE;
-import static consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
 import static consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,7 +25,7 @@ class RunnerWithHeaderConfigTest {
                 .withSimpleValidator(Tuple.of(ignore -> UNKNOWN_EXCEPTION, NONE)).prepare();
         val beans = List.of(new Bean());
         val headerBean = new HeaderBean(beans);
-        val result = Runner.validateAndFailFastForHeader(headerBean, NOTHING_TO_VALIDATE, ValidationFailure::getValidationFailureForException, headerConfig);
+        val result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).contains(UNKNOWN_EXCEPTION);
     }
 
@@ -38,7 +37,7 @@ class RunnerWithHeaderConfigTest {
                 .withSimpleValidator(Tuple.of(ignore -> NONE, NONE)).prepare();
         val beans = List.of(new Bean());
         val headerBean = new HeaderBean(beans);
-        val result = Runner.validateAndFailFastForHeader(headerBean, NOTHING_TO_VALIDATE, ValidationFailure::getValidationFailureForException, headerConfig);
+        val result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).isEmpty();
     }
 
@@ -50,7 +49,7 @@ class RunnerWithHeaderConfigTest {
                 .withSimpleValidator(Tuple.of(ignore -> NONE, NONE)).prepare();
         val beans = Collections.<Bean>emptyList();
         val headerBean = new HeaderBean(beans);
-        val result = Runner.validateAndFailFastForHeader(headerBean, NOTHING_TO_VALIDATE, ValidationFailure::getValidationFailureForException, headerConfig);
+        val result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).contains(MIN_BATCH_SIZE_EXCEEDED);
     }
 
@@ -62,7 +61,7 @@ class RunnerWithHeaderConfigTest {
                 .withSimpleValidator(Tuple.of(ignore -> NONE, NONE)).prepare();
         val beans = List.of(new Bean());
         val headerBean = new HeaderBean(beans);
-        val result = Runner.validateAndFailFastForHeader(headerBean, NOTHING_TO_VALIDATE, ValidationFailure::getValidationFailureForException, headerConfig);
+        val result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).contains(MAX_BATCH_SIZE_EXCEEDED);
     }
 
@@ -77,7 +76,6 @@ class RunnerWithHeaderConfigTest {
                 .prepare();
         val result = Runner.validateAndFailFastForHeader(
                 new HeaderBean(Collections.emptyList()),
-                NOTHING_TO_VALIDATE,
                 ValidationFailure::getValidationFailureForException,
                 validationConfig
         );

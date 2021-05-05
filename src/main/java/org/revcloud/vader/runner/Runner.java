@@ -24,18 +24,16 @@ public class Runner {
 
     public static <FailureT, ValidatableT> Optional<FailureT> validateAndFailFastForHeader(
             @NonNull ValidatableT validatable,
-            FailureT invalidValidatable,
             Function1<Throwable, FailureT> throwableMapper,
             HeaderValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return FailFastStrategies.failFastStrategyForHeader(invalidValidatable, throwableMapper, validationConfig).apply(validatable);
+        return FailFastStrategies.failFastForHeader(throwableMapper, validationConfig).apply(validatable);
     }
 
     public static <FailureT, ValidatableT> Optional<FailureT> validateAndFailFast(
-            ValidatableT validatable,
-            FailureT invalidValidatable,
+            @NonNull ValidatableT validatable,
             Function1<Throwable, FailureT> throwableMapper,
             ValidationConfig<ValidatableT, FailureT> validationConfig) {
-        return FailFastStrategies.failFast(invalidValidatable, throwableMapper, validationConfig).apply(validatable)
+        return FailFastStrategies.failFast(throwableMapper, validationConfig).apply(validatable)
                 .swap().toJavaOptional();
     }
     

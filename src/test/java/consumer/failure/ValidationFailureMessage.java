@@ -27,6 +27,7 @@ public enum ValidationFailureMessage {
     FIELD_NULL_OR_EMPTY("", ""),
     NOTHING_TO_VALIDATE(Section.COMMON_VALIDATION_FAILURE, "Nothing"),
     DUPLICATE_ITEM(Section.COMMON_VALIDATION_FAILURE, "DuplicateItem"),
+    NULL_KEY(Section.COMMON_VALIDATION_FAILURE, "NullKey"),
     INVALID_PARENT(Section.COMMON_VALIDATION_FAILURE, "invalidParent"),
     INVALID_CHILD(Section.COMMON_VALIDATION_FAILURE, "invalidChild"),
     UNKNOWN_EXCEPTION("", ""),

@@ -4,6 +4,7 @@ import io.vavr.Function1;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.control.Either;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.revcloud.vader.lift.ValidatorLiftUtil;
@@ -24,20 +25,20 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class BatchRunner {
     public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFast(
-            List<ValidatableT> validatables,
-            FailureT invalidValidatable,
-            Function1<Throwable, FailureT> throwableMapper,
-            BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
+            @NonNull List<ValidatableT> validatables,
+            @NonNull FailureT invalidValidatable,
+            @NonNull Function1<Throwable, FailureT> throwableMapper,
+            @NonNull BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
         return FailFastStrategies.failFastForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
                 .apply(validatables);
     }
 
     public static <FailureT, ValidatableT, PairT> List<Either<Tuple2<PairT, FailureT>, ValidatableT>> validateAndFailFast(
-            List<ValidatableT> validatables,
-            FailureT invalidValidatable,
-            Function1<Throwable, FailureT> throwableMapper,
-            BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig,
-            Function1<ValidatableT, PairT> pairForInvalidMapper) {
+            @NonNull List<@NonNull ValidatableT> validatables,
+            @NonNull FailureT invalidValidatable,
+            @NonNull Function1<Throwable, FailureT> throwableMapper,
+            @NonNull BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig,
+            @NonNull Function1<ValidatableT, PairT> pairForInvalidMapper) {
         val validationResults = FailFastStrategies.failFastForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
                 .apply(validatables);
         return io.vavr.collection.List.ofAll(validationResults).zipWith(validatables,
@@ -45,10 +46,10 @@ public class BatchRunner {
     }
 
     public static <FailureT, ValidatableT> Optional<FailureT> validateAndFailFastAllOrNone(
-            List<ValidatableT> validatables,
-            FailureT invalidValidatable,
-            Function1<Throwable, FailureT> throwableMapper,
-            BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
+            @NonNull List<ValidatableT> validatables,
+            @NonNull FailureT invalidValidatable,
+            @NonNull Function1<Throwable, FailureT> throwableMapper,
+            @NonNull BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
         return FailFastStrategies.failFastAllOrNoneForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
                 .apply(validatables);
     }

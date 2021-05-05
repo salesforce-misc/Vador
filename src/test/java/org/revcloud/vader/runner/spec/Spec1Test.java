@@ -22,11 +22,11 @@ class Spec1Test {
                         .shouldMatch(either(is(1)).or(is(2))))
                 .prepare();
         val invalidBean = new Bean(3);
-        val failureResult = Runner.validateAndFailFast(invalidBean, NONE, ignore -> NONE, validationConfig);
+        val failureResult = Runner.validateAndFailFast(invalidBean, ignore -> NONE, validationConfig);
         assertThat(failureResult).contains(INVALID_VALUE);
 
         val validBean = new Bean(1);
-        val noneResult = Runner.validateAndFailFast(validBean, NONE, ignore -> NONE, validationConfig);
+        val noneResult = Runner.validateAndFailFast(validBean, ignore -> NONE, validationConfig);
         assertThat(noneResult).isEmpty();
     }
     

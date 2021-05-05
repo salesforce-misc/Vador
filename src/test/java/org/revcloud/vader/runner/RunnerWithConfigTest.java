@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static consumer.failure.ValidationFailure.FIELD_INTEGRITY_EXCEPTION;
-import static consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
 import static consumer.failure.ValidationFailure.REQUIRED_FIELD_MISSING;
 import static consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 import static consumer.failure.ValidationFailure.getFailureWithParams;
@@ -35,7 +34,6 @@ class RunnerWithConfigTest {
         val validatableWithBlankReqField = new Bean(0, "", null, null);
         val result1 = Runner.validateAndFailFast(
                 validatableWithBlankReqField,
-                NOTHING_TO_VALIDATE,
                 throwable -> UNKNOWN_EXCEPTION,
                 validationConfig);
         assertThat(result1).contains(REQUIRED_FIELD_MISSING);
@@ -43,7 +41,6 @@ class RunnerWithConfigTest {
         val validatableWithNullReqField = new Bean(0, null, null, null);
         val result2 = Runner.validateAndFailFast(
                 validatableWithNullReqField,
-                NOTHING_TO_VALIDATE,
                 throwable -> UNKNOWN_EXCEPTION,
                 validationConfig);
         assertThat(result2).contains(REQUIRED_FIELD_MISSING);
@@ -62,7 +59,6 @@ class RunnerWithConfigTest {
         val withRequiredFieldNull = new Bean(1, "", null, null);
         val result = Runner.validateAndFailFast(
                 withRequiredFieldNull,
-                NOTHING_TO_VALIDATE,
                 throwable -> UNKNOWN_EXCEPTION,
                 validationConfig);
         assertThat(result).isPresent();
@@ -82,7 +78,6 @@ class RunnerWithConfigTest {
         val validatableWithInvalidSfId = new Bean(0, "1", new ID("1ttxx00000000hZAAQ"), new ID("invalidSfId"));
         val result1 = Runner.validateAndFailFast(
                 validatableWithInvalidSfId,
-                NOTHING_TO_VALIDATE,
                 ValidationFailure::getValidationFailureForException,
                 validationConfig);
         assertThat(result1).contains(FIELD_INTEGRITY_EXCEPTION);
@@ -100,7 +95,6 @@ class RunnerWithConfigTest {
         val validatableWithInvalidSfId = new Bean(null, null, new ID("1ttxx00000000hZAAQ"), invalidSfId);
         val result = Runner.validateAndFailFast(
                 validatableWithInvalidSfId,
-                NOTHING_TO_VALIDATE,
                 ValidationFailure::getValidationFailureForException,
                 validationConfig);
         assertThat(result).isPresent();
