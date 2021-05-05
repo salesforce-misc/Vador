@@ -109,8 +109,8 @@ public final class SpecFactory<ValidatableT, FailureT> {
                 val thenValue = getThen().apply(validatable);
                 val isThenMatches = getShouldMatchAnyOf().stream().anyMatch(m -> m.matches(thenValue));
                 if (!isThenMatches) {
-                    if (getShouldRelateWith() != null && getShouldRelateWith().get(whenValue) != null) {
-                        val validThenValues = getShouldRelateWith().get(whenValue);
+                    val validThenValues = getShouldRelateWith().get(whenValue);
+                    if (validThenValues != null) {
                         return validThenValues.contains(thenValue);
                     }
                     if (getShouldRelateWithFn() != null) {
@@ -145,6 +145,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
         Function1<ValidatableT, ? extends Then1T> thenField1;
         @NonNull
         Function1<ValidatableT, ? extends Then2T> thenField2;
+        @Singular("shouldRelateWithEntry")
         Map<? extends Then1T, ? extends Set<? extends Then2T>> shouldRelateWith;
         Function2<Then1T, Then2T, Boolean> shouldRelateWithFn;
         @Singular("orField1ShouldMatch")
@@ -165,7 +166,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
                 var relationResult = false;
                 if (getShouldRelateWithFn() != null) {
                     relationResult = getShouldRelateWithFn().apply(thenValue1, thenValue2);
-                } else if (getShouldRelateWith() != null) {
+                } else {
                     val validThen2Values = getShouldRelateWith().get(thenValue1);
                     relationResult = validThen2Values != null && validThen2Values.contains(thenValue2);
                 }

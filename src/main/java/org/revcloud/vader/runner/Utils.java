@@ -39,11 +39,11 @@ class Utils {
 
     static <FailureT> Optional<FailureT> validateSize(java.util.Collection<?> validatables,
                                                       HeaderValidationConfig<?, FailureT> headerConfig) {
-        val minBatchSize = headerConfig.getMinBatchSize();
+        val minBatchSize = headerConfig.getShouldHaveMinBatchSize();
         if (minBatchSize != null && validatables.size() < minBatchSize._1) {
             return Optional.of(minBatchSize._2);
         }
-        val maxBatchSize = headerConfig.getMaxBatchSize();
+        val maxBatchSize = headerConfig.getShouldHaveMaxBatchSize();
         if (maxBatchSize != null && validatables.size() > maxBatchSize._1) {
             return Optional.of(maxBatchSize._2);
         }

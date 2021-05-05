@@ -42,13 +42,13 @@ dependencies {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.3.7"
+version = "2.3.8"
 description = "Vader - An FP framework for Bean validation"
 
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 jacoco {
-    toolVersion = "0.8.7-SNAPSHOT"
+    toolVersion = "0.8.7"
 }
 
 tasks {

@@ -35,7 +35,7 @@ public class ValidationFailure {
     public static final ValidationFailure INVALID_COMBO_2 = new ValidationFailure(ValidationFailureMessage.INVALID_COMBO_2);
     public static final ValidationFailure INVALID_VALUE = new ValidationFailure(ValidationFailureMessage.INVALID_VALUE);
     public static final ValidationFailure FIELD_INTEGRITY_EXCEPTION = new ValidationFailure(ValidationFailureMessage.FIELD_INTEGRITY_EXCEPTION);
-    public static final ValidationFailure MIN_BATCH_SIZE_EXCEEDED = new ValidationFailure(ValidationFailureMessage.MIN_BATCH_SIZE_EXCEEDED);
+    public static final ValidationFailure MIN_BATCH_SIZE_NOT_MET = new ValidationFailure(ValidationFailureMessage.MIN_BATCH_SIZE_EXCEEDED);
     public static final ValidationFailure MAX_BATCH_SIZE_EXCEEDED = new ValidationFailure(ValidationFailureMessage.MAX_BATCH_SIZE_EXCEEDED);
 
     /**

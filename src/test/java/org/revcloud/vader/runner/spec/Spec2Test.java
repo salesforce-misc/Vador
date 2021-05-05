@@ -57,8 +57,8 @@ class Spec2Test {
     void spec2TestWithNullValue() {
         val invalidComboSpec = "invalidComboSpec";
         val validComboMap = Map.of(
-                BillingTerm.OneTime, HashSet.of(null, "1", "one").toJavaSet(),
-                BillingTerm.Month, Set.of("2", "two")
+                BillingTerm.OneTime, HashSet.of(null, 1).toJavaSet(),
+                BillingTerm.Month, Set.of(2)
         );
         val validationConfig = ValidationConfig.<Bean2, ValidationFailure>toValidate().withSpec(spec ->
                 spec._2().nameForTest(invalidComboSpec)
