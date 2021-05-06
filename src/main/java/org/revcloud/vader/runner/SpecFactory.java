@@ -111,7 +111,8 @@ public final class SpecFactory<ValidatableT, FailureT> {
                 if (!isThenMatches) {
                     val validThenValues = getShouldRelateWith().get(whenValue);
                     if (validThenValues != null) {
-                        return validThenValues.contains(thenValue);
+                        // TODO 06/05/21 gopala.akshintala: This is a hack, as ImmutableCollections.$Set12.contains(null) throws NPE 
+                        return validThenValues.stream().anyMatch(validThenValue -> thenValue == validThenValue);
                     }
                     if (getShouldRelateWithFn() != null) {
                         return getShouldRelateWithFn().apply(whenValue, thenValue);

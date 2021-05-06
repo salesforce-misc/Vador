@@ -1,11 +1,12 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
     `java-library`
     `maven-publish`
     jacoco
-    id("io.freefair.lombok") version "5.3.3.3"
+    id("io.freefair.lombok") version "6.0.0-m2"
     id("io.gitlab.arturbosch.detekt") version "1.16.0"
     id("com.adarshr.test-logger") version "3.0.0"
     id("com.diffplug.spotless") version "5.12.1"
@@ -15,6 +16,7 @@ plugins {
 java {
     withJavadocJar()
     withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_11
 }
 
 repositories {
@@ -42,14 +44,15 @@ dependencies {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.3.8"
+version = "2.3.10"
 description = "Vader - An FP framework for Bean validation"
-
-java.sourceCompatibility = JavaVersion.VERSION_11
 
 jacoco {
     toolVersion = "0.8.7"
 }
+
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions.jvmTarget = "11"
 
 tasks {
     withType<Test> {

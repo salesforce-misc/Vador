@@ -7,6 +7,7 @@ import lombok.val;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -67,7 +68,9 @@ class FailFastStrategies {
             Function1<Throwable, FailureT> throwableMapper,
             HeaderValidationConfig<ValidatableT, FailureT> validationConfig) {
         return validatable -> {
-            val batch = validationConfig.getWithBatchMappers().stream().map(mapper -> mapper.get(validatable))
+            val batch = validationConfig.getWithBatchMappers().stream()
+                    .map(mapper -> mapper.get(validatable))
+                    .filter(Objects::nonNull)
                     .flatMap(Collection::stream).collect(Collectors.toList());
             return Utils.validateSize(batch, validationConfig).or(() ->
                     Utils.fireValidators(Either.right(validatable), validationConfig.getHeaderValidatorsStream(), throwableMapper)

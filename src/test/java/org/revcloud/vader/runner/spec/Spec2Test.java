@@ -69,6 +69,9 @@ class Spec2Test {
                 .prepare();
         val validBean = new Bean2(BillingTerm.OneTime, null);
         Assertions.assertTrue(validationConfig.getSpecWithName(invalidComboSpec).map(spec -> spec.test(validBean)).orElse(false));
+
+        val inValidBean = new Bean2(BillingTerm.Month, null);
+        assertFalse(validationConfig.getSpecWithName(invalidComboSpec).map(spec -> spec.test(inValidBean)).orElse(true));
     }
 
     @Test

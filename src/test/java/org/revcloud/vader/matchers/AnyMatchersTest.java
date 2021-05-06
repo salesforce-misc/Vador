@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.revcloud.vader.matchers.AnyMatchers.anyOfOrNull;
 import static org.revcloud.vader.matchers.IntMatchers.inRangeInclusive;
 
-class AnyMatchersJTest {
+class AnyMatchersTest {
 
     @Test
     void anyOfOrNullMatchersTest() {
