@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class BatchRunner {
     public static <FailureT, ValidatableT> List<Either<FailureT, ValidatableT>> validateAndFailFast(
-            @NonNull List<ValidatableT> validatables,
+            @NonNull List<@NonNull ValidatableT> validatables,
             @NonNull FailureT invalidValidatable,
             @NonNull Function1<Throwable, FailureT> throwableMapper,
             @NonNull BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
@@ -46,7 +46,7 @@ public class BatchRunner {
     }
 
     public static <FailureT, ValidatableT> Optional<FailureT> validateAndFailFastAllOrNone(
-            @NonNull List<ValidatableT> validatables,
+            @NonNull List<@NonNull ValidatableT> validatables,
             @NonNull FailureT invalidValidatable,
             @NonNull Function1<Throwable, FailureT> throwableMapper,
             @NonNull BatchValidationConfig<ValidatableT, FailureT> batchValidationConfig) {
