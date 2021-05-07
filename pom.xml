@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.salesforce.ccspayments</groupId>
     <artifactId>vader</artifactId>
-    <version>2.3.10-SNAPSHOT</version>
+    <version>2.3.11-SNAPSHOT</version>
     <name>Vader</name>
     <description>An FP framework for Bean validation</description>
     <url>https://git.soma.salesforce.com/CCSPayments/Vader</url>
@@ -39,42 +39,9 @@
         <url>https://git.soma.salesforce.com/ccspayments/vader</url>
     </scm>
     <build>
-        <sourceDirectory>${project.build.directory}/delombok</sourceDirectory>
-        <testSourceDirectory>${project.build.directory}/delombok-test</testSourceDirectory>
+        <sourceDirectory>${project.build.directory}/generated-sources/delombok</sourceDirectory>
+        <testSourceDirectory>${project.build.directory}/generated-test-sources/delombok</testSourceDirectory>
         <plugins>
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
-                <configuration>
-                    <jvmTarget>${kotlin.compiler.jvmTarget}</jvmTarget>
-                    <jdkHome>${kotlin.compiler.jdkHome}</jdkHome>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <sourceDir>${project.build.directory}/delombok</sourceDir>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <sourceDir>${project.build.directory}/delombok-test</sourceDir>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
@@ -91,8 +58,12 @@
                         </goals>
                         <configuration>
                             <sourceDirectory>src/main/java</sourceDirectory>
-                            <outputDirectory>${project.build.directory}/delombok</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-sources/delombok</outputDirectory>
                             <addOutputDirectory>false</addOutputDirectory>
+                            <formatPreferences>
+                                <javaLangAsFQN>skip</javaLangAsFQN>
+                            </formatPreferences>
+                            <verbose>true</verbose>
                         </configuration>
                     </execution>
                     <execution>
@@ -103,8 +74,42 @@
                         </goals>
                         <configuration>
                             <sourceDirectory>src/test/java</sourceDirectory>
-                            <outputDirectory>${project.build.directory}/delombok-test</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/delombok
+                            </outputDirectory>
                             <addOutputDirectory>false</addOutputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <configuration>
+                    <jvmTarget>${kotlin.compiler.jvmTarget}</jvmTarget>
+                    <jdkHome>${kotlin.compiler.jdkHome}</jdkHome>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.build.directory}/generated-sources/delombok</sourceDir>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.build.directory}/generated-test-sources/delombok</sourceDir>
+                            </sourceDirs>
                         </configuration>
                     </execution>
                 </executions>

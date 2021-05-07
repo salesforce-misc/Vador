@@ -13,6 +13,10 @@ plugins {
     id("org.sonarqube") version "3.1.1"
 }
 
+group = "com.salesforce.ccspayments"
+version = "2.3.11-SNAPSHOT"
+description = "Vader - An FP framework for Bean validation"
+
 java {
     withJavadocJar()
     withSourcesJar()
@@ -42,10 +46,6 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:4.5.0.RC1")
     testImplementation("io.kotest:kotest-assertions-core:4.5.0.RC1")
 }
-
-group = "com.salesforce.ccspayments"
-version = "2.3.10"
-description = "Vader - An FP framework for Bean validation"
 
 jacoco {
     toolVersion = "0.8.7"
