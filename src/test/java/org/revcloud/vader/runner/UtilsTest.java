@@ -20,21 +20,21 @@ class UtilsTest {
     @Test
     void filterInvalidatablesAndFailDuplicates() {
         final List<Bean> invalidValidatables = List.of(null, null);
-        val duplicateValidatables = List.of(new Bean(new ID("802xx000001ni4xAAA")), new Bean(new ID("802xx000001ni4x")), new Bean(new ID("802xx000001ni4x")));
-        val validatables = invalidValidatables.appendAll(duplicateValidatables).appendAll(List.of(
+        final var duplicateValidatables = List.of(new Bean(new ID("802xx000001ni4xAAA")), new Bean(new ID("802xx000001ni4x")), new Bean(new ID("802xx000001ni4x")));
+        final var validatables = invalidValidatables.appendAll(duplicateValidatables).appendAll(List.of(
                 new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
 
-        val batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        final var batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
                 .findAndFilterDuplicatesWith(container -> container.getId().get18CharIdIfValid())
                 .andFailDuplicatesWith(DUPLICATE_ITEM).prepare();
-        val results = Utils.filterInvalidatablesAndDuplicates(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
+        final var results = Utils.filterInvalidatablesAndDuplicates(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
 
-        val failedInvalids = results.take(2);
+        final var failedInvalids = results.take(2);
         assertThat(failedInvalids).allMatch(r -> r.getLeft() == NOTHING_TO_VALIDATE);
-        val failedDuplicates = results.drop(2).take(3);
+        final var failedDuplicates = results.drop(2).take(3);
         assertThat(failedDuplicates).allMatch(r -> r.getLeft() == DUPLICATE_ITEM);
 
-        val valids = results.drop(5);
+        final var valids = results.drop(5);
         assertTrue(valids.forAll(Either::isRight));
         valids.forEachWithIndex((r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId().toString()));
     }
@@ -42,19 +42,19 @@ class UtilsTest {
     @Test
     void failInvalidatablesAndFilterDuplicates() {
         final List<Bean> invalidValidatables = List.of(null, null);
-        val duplicateValidatables = List.of(new Bean(new ID("802xx000001ni4xAAA")), new Bean(new ID("802xx000001ni4x")), new Bean(new ID("802xx000001ni4x")));
-        val validatables = invalidValidatables.appendAll(duplicateValidatables).appendAll(List.of(
+        final var duplicateValidatables = List.of(new Bean(new ID("802xx000001ni4xAAA")), new Bean(new ID("802xx000001ni4x")), new Bean(new ID("802xx000001ni4x")));
+        final var validatables = invalidValidatables.appendAll(duplicateValidatables).appendAll(List.of(
                 new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
 
-        val batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        final var batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
                 .findAndFilterDuplicatesWith(container -> container.getId().get18CharIdIfValid()).prepare();
-        val results = Utils.filterInvalidatablesAndDuplicates(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
+        final var results = Utils.filterInvalidatablesAndDuplicates(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
 
         assertThat(results).hasSize(5);
-        val failedInvalids = results.take(2);
+        final var failedInvalids = results.take(2);
         assertThat(failedInvalids).allMatch(r -> r.getLeft() == NOTHING_TO_VALIDATE);
 
-        val valids = results.drop(2);
+        final var valids = results.drop(2);
         assertTrue(valids.forAll(Either::isRight));
         valids.forEachWithIndex((r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId().toString()));
     }
@@ -62,25 +62,25 @@ class UtilsTest {
     @Test
     void failInvalidatablesAndNullKeysAndFilterDuplicates() {
         final List<Bean> invalidValidatables = List.of(null, null);
-        val duplicateValidatables = List.of(new Bean(new ID("802xx000001ni4xAAA")), new Bean(new ID("802xx000001ni4x")), new Bean(new ID("802xx000001ni4x")));
-        val validatablesWithNullKeys = List.of(new Bean(null), new Bean(null));
-        val validatables = invalidValidatables.appendAll(duplicateValidatables).appendAll(validatablesWithNullKeys)
+        final var duplicateValidatables = List.of(new Bean(new ID("802xx000001ni4xAAA")), new Bean(new ID("802xx000001ni4x")), new Bean(new ID("802xx000001ni4x")));
+        final var validatablesWithNullKeys = List.of(new Bean(null), new Bean(null));
+        final var validatables = invalidValidatables.appendAll(duplicateValidatables).appendAll(validatablesWithNullKeys)
                 .appendAll(List.of(new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
 
-        val batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        final var batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
                 .findAndFilterDuplicatesWith(container -> container.getId() == null ? null : container.getId().get18CharIdIfValid())
                 .andFailNullKeysWith(NULL_KEY)
                 .prepare();
-        val results = Utils.filterInvalidatablesAndDuplicates(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
+        final var results = Utils.filterInvalidatablesAndDuplicates(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
 
         assertThat(results).hasSize(validatables.size() - duplicateValidatables.size());
-        val failedInvalids = results.take(2);
+        final var failedInvalids = results.take(2);
         assertThat(failedInvalids).allMatch(r -> r.getLeft() == NOTHING_TO_VALIDATE);
 
-        val nullKeyInvalids = results.drop(2).take(2);
+        final var nullKeyInvalids = results.drop(2).take(2);
         assertThat(nullKeyInvalids).allMatch(r -> r.getLeft() == NULL_KEY);
 
-        val valids = results.drop(4);
+        final var valids = results.drop(4);
         assertTrue(valids.forAll(Either::isRight));
         valids.forEachWithIndex((r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId().toString()));
     }
@@ -88,24 +88,24 @@ class UtilsTest {
     @Test
     void failInvalidatablesAndPassNullKeysAndFilterDuplicates() {
         final List<Bean> invalidValidatables = List.of(null, null);
-        val duplicateValidatables = List.of(new Bean(new ID("802xx000001ni4xAAA")), new Bean(new ID("802xx000001ni4x")), new Bean(new ID("802xx000001ni4x")));
-        val validatablesWithNullKeys = List.of(new Bean(null), new Bean(null));
-        val validatables = invalidValidatables.appendAll(duplicateValidatables).appendAll(validatablesWithNullKeys)
+        final var duplicateValidatables = List.of(new Bean(new ID("802xx000001ni4xAAA")), new Bean(new ID("802xx000001ni4x")), new Bean(new ID("802xx000001ni4x")));
+        final var validatablesWithNullKeys = List.of(new Bean(null), new Bean(null));
+        final var validatables = invalidValidatables.appendAll(duplicateValidatables).appendAll(validatablesWithNullKeys)
                 .appendAll(List.of(new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
 
-        val batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        final var batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
                 .findAndFilterDuplicatesWith(container -> container.getId() == null ? null : container.getId().get18CharIdIfValid())
                 .prepare();
-        val results = Utils.filterInvalidatablesAndDuplicates(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
+        final var results = Utils.filterInvalidatablesAndDuplicates(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
 
         assertThat(results).hasSize(validatables.size() - duplicateValidatables.size());
-        val failedInvalids = results.take(2);
+        final var failedInvalids = results.take(2);
         assertThat(failedInvalids).allMatch(r -> r.getLeft() == NOTHING_TO_VALIDATE);
 
-        val nullKeyInvalids = results.drop(2).take(2);
+        final var nullKeyInvalids = results.drop(2).take(2);
         assertThat(nullKeyInvalids).allMatch(r -> r.get().equals(new Bean(null)));
 
-        val valids = results.drop(4);
+        final var valids = results.drop(4);
         assertTrue(valids.forAll(Either::isRight));
         valids.forEachWithIndex((r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId().toString()));
     }
@@ -113,59 +113,59 @@ class UtilsTest {
     @Test
     void filterInvalidatablesAndFailDuplicatesForAllOrNoneInvalidValidatables() {
         final List<Bean> invalidValidatables = List.of(null, null);
-        val duplicateValidatables = List.of(new Bean(new ID("802xx000001ni4xAAA")), new Bean(new ID("802xx000001ni4x")), new Bean(new ID("802xx000001ni4x")));
-        val validatables = invalidValidatables.appendAll(duplicateValidatables).appendAll(List.of(
+        final var duplicateValidatables = List.of(new Bean(new ID("802xx000001ni4xAAA")), new Bean(new ID("802xx000001ni4x")), new Bean(new ID("802xx000001ni4x")));
+        final var validatables = invalidValidatables.appendAll(duplicateValidatables).appendAll(List.of(
                 new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
 
-        val batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        final var batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
                 .findAndFilterDuplicatesWith(container -> container.getId().toString()).andFailDuplicatesWith(DUPLICATE_ITEM).prepare();
-        val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
+        final var result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
         assertThat(result).contains(NOTHING_TO_VALIDATE);
     }
 
     @Test
     void filterInvalidatablesAndDuplicatesForAllOrNone() {
-        val duplicateValidatables = List.of(new Bean(new ID("0")), new Bean(new ID("0")), new Bean(new ID("0")));
-        val validatables = duplicateValidatables.appendAll(List.of(
+        final var duplicateValidatables = List.of(new Bean(new ID("0")), new Bean(new ID("0")), new Bean(new ID("0")));
+        final var validatables = duplicateValidatables.appendAll(List.of(
                 new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
-        val batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        final var batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
                 .findAndFilterDuplicatesWith(container -> container.getId().toString()).prepare();
-        val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
+        final var result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
         assertThat(result).isEmpty();
     }
 
     @Test
     void filterInvalidatablesAndDuplicatesAndFailNullKeysForAllOrNone() {
-        val duplicateValidatables = List.of(new Bean(new ID("0")), new Bean(new ID("0")), new Bean(new ID("0")));
-        val nullKeyValidatables = List.of(new Bean(null), new Bean(null));
-        val validatables = duplicateValidatables.appendAll(nullKeyValidatables).appendAll(List.of(
+        final var duplicateValidatables = List.of(new Bean(new ID("0")), new Bean(new ID("0")), new Bean(new ID("0")));
+        final var nullKeyValidatables = List.of(new Bean(null), new Bean(null));
+        final var validatables = duplicateValidatables.appendAll(nullKeyValidatables).appendAll(List.of(
                 new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
-        val batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        final var batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
                 .findAndFilterDuplicatesWith(container -> container.getId() == null ? null : container.getId().toString())
                 .andFailNullKeysWith(NULL_KEY)
                 .prepare();
-        val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
+        final var result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
         assertThat(result).contains(NULL_KEY);
     }
 
     @Test
     void filterInvalidatablesAndDuplicatesForAllOrNoneDuplicate() {
-        val duplicateValidatables = List.of(new Bean(new ID("0")), new Bean(new ID("0")), new Bean(new ID("0")));
-        val validatables = duplicateValidatables.appendAll(List.of(
+        final var duplicateValidatables = List.of(new Bean(new ID("0")), new Bean(new ID("0")), new Bean(new ID("0")));
+        final var validatables = duplicateValidatables.appendAll(List.of(
                 new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
 
-        val batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        final var batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
                 .findAndFilterDuplicatesWith(container -> container.getId().toString()).andFailDuplicatesWith(DUPLICATE_ITEM).prepare();
-        val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
+        final var result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
         assertThat(result).contains(DUPLICATE_ITEM);
     }
 
     @Test
     void filterInvalidatablesAndDuplicatesForAllOrNoneAllValid() {
-        val validatables = List.of(new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3")));
-        val batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        final var validatables = List.of(new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3")));
+        final var batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
                 .findAndFilterDuplicatesWith(container -> container.getId().toString()).andFailDuplicatesWith(DUPLICATE_ITEM).prepare();
-        val result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
+        final var result = Utils.filterInvalidatablesAndDuplicatesForAllOrNone(validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
         assertThat(result).isEmpty();
     }
 

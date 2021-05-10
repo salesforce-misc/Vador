@@ -111,7 +111,7 @@ fun <ValidatableT, FailureT> filterInvalidatablesAndDuplicates(
             )
         }
     } else withNullKeys.map { tuple2: Tuple2<ValidatableT, Int> ->
-        tuple2.map1 { ignore: ValidatableT ->
+        tuple2.map1 {
             Either.left<FailureT, ValidatableT>(
                 failureForNullKeys
             )
@@ -185,7 +185,7 @@ private fun <FailureT, ValidatableT> invalidate(
     nullValidatables: Seq<Tuple2<ValidatableT, Int>>, invalidValidatable: FailureT
 ): Seq<Tuple2<Either<FailureT, ValidatableT>, Int>> =
     nullValidatables.map { nullValidatable: Tuple2<ValidatableT, Int> ->
-        nullValidatable.map1 { ignore: ValidatableT ->
+        nullValidatable.map1 {
             Either.left(
                 invalidValidatable
             )

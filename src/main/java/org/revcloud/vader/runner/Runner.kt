@@ -68,7 +68,7 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
         .map { validationResult: Either<FailureT, ValidatableT> ->
             validationResult.fold(
                 Function1.identity()
-            ) { ignore: ValidatableT -> none }
+            ) { _ -> none }
         }
     return if (results.allMatch { result: FailureT -> result == none }) emptyList() else results.collect(
         Collectors.toList()

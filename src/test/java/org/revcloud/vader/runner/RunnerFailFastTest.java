@@ -17,12 +17,12 @@ class RunnerFailFastTest {
 
     @Test
     void failFastWithFirstFailure() {
-        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withValidators(List.of(
+        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withValidators(List.of(
                 bean -> Either.right(NONE),
                 bean -> Either.right(NONE),
                 bean -> Either.left(UNKNOWN_EXCEPTION)
         )).prepare();
-        val result = Runner.validateAndFailFast(
+        final var result = Runner.validateAndFailFast(
                 new Bean(0),
                 ValidationFailure::getValidationFailureForException,
                 validationConfig
@@ -32,12 +32,12 @@ class RunnerFailFastTest {
 
     @Test
     void failFastWithFirstFailureForSimpleValidators() {
-        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSimpleValidatorsOrFailWith(Tuple.of(List.of(
+        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSimpleValidatorsOrFailWith(Tuple.of(List.of(
                 bean -> NONE,
                 bean -> NONE,
                 bean -> UNKNOWN_EXCEPTION
         ), NONE)).prepare();
-        val result = Runner.validateAndFailFast(
+        final var result = Runner.validateAndFailFast(
                 new Bean(0),
                 ValidationFailure::getValidationFailureForException,
                 validationConfig

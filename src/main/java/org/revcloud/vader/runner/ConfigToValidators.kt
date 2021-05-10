@@ -10,8 +10,8 @@ import io.vavr.control.Either
 import lombok.NonNull
 import org.revcloud.vader.runner.SpecFactory.BaseSpec
 import org.revcloud.vader.types.validators.Validator
+import java.util.stream.Collectors
 import java.util.stream.Stream
-import kotlin.streams.toList
 
 internal fun <ValidatableT, FailureT, FieldT> toValidators1(
     fieldMapperToFailure: Map<out TypedPropertyGetter<in ValidatableT, out FieldT>, FailureT>,
@@ -42,8 +42,8 @@ internal fun <ValidatableT, FailureT> toValidators(validationConfig: BaseValidat
             toValidators2(validationConfig.shouldHaveValidSFIdFormatOrFailWithFn, isSFIdPresentAndValidFormat) +
             toValidators1(validationConfig.absentOrHaveValidSFIdFieldsOrFailWith, isSFIdAbsentOrValidFormat) +
             toValidators2(validationConfig.absentOrHaveValidSFIdFormatOrFailWithFn, isSFIdAbsentOrValidFormat) +
-            validationConfig.specsStream.map { toValidator(it) }.toList() +
-            validationConfig.getValidatorsStream().toList()).stream()
+            validationConfig.specsStream.collect(Collectors.toList()).map { toValidator(it) } +
+            validationConfig.validatorsStream.collect(Collectors.toList())).stream()
 
 
 val isFieldPresent: (Any?) -> Boolean = {

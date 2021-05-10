@@ -18,8 +18,8 @@ import static org.revcloud.vader.matchers.DateMatchers.isBeforeIfBothArePresent;
 class Spec3Test {
     @Test
     void testDates() {
-        val specName = "CompareDates";
-        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
+        final var specName = "CompareDates";
+        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
                 spec._3().nameForTest(specName)
                         .when(Bean::isCompareDates)
                         .matches(is(true))
@@ -27,29 +27,29 @@ class Spec3Test {
                         .thenField2(Bean::getDate2)
                         .shouldRelateWithFn(isBeforeIfBothArePresent())).prepare();
 
-        val validBean = new Bean(true, new GregorianCalendar(2021, Calendar.APRIL, 27).getTime(),
+        final var validBean = new Bean(true, new GregorianCalendar(2021, Calendar.APRIL, 27).getTime(),
                 new GregorianCalendar(2021, Calendar.APRIL, 28).getTime());
         assertTrue(validationConfig.getSpecWithName(specName).map(spec -> spec.test(validBean)).orElse(false));
 
-        val invalidBean = new Bean(true, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime(),
+        final var invalidBean = new Bean(true, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime(),
                 new GregorianCalendar(2021, Calendar.APRIL, 28).getTime());
         assertFalse(validationConfig.getSpecWithName(specName).map(spec -> spec.test(invalidBean)).orElse(true));
     }
 
     @Test
     void testDatesWithNulls() {
-        val specName = "CompareDates";
-        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
+        final var specName = "CompareDates";
+        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(spec ->
                 spec._3().nameForTest(specName)
                         .when(Bean::isCompareDates)
                         .matches(is(true))
                         .thenField1(Bean::getDate1)
                         .thenField2(Bean::getDate2)
                         .shouldRelateWithFn(isBeforeIfBothArePresent())).prepare();
-        val invalidBean1 = new Bean(true, null, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime());
+        final var invalidBean1 = new Bean(true, null, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime());
         assertFalse(validationConfig.getSpecWithName(specName).map(spec -> spec.test(invalidBean1)).orElse(true));
 
-        val invalidBean2 = new Bean(true, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime(), null);
+        final var invalidBean2 = new Bean(true, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime(), null);
         assertFalse(validationConfig.getSpecWithName(specName).map(spec -> spec.test(invalidBean2)).orElse(true));
     }
 

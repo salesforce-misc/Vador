@@ -27,14 +27,14 @@ class BatchRunnerTest {
 
     @Test
     void failFastPartialFailures() {
-        val validatables = List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
+        final var validatables = List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
         List<Validator<Bean, ValidationFailure>> validators = List.of(
                 bean -> Either.right(true),
                 bean -> bean.map(Bean::getId).filterOrElse(id -> id >= 2, ignore -> VALIDATION_FAILURE_1),
                 bean -> bean.map(Bean::getId).filterOrElse(id -> id <= 2, ignore -> VALIDATION_FAILURE_2)
         );
-        val batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate().withValidators(validators).prepare();
-        val results = BatchRunner.validateAndFailFast(validatables, NONE, ValidationFailure::getValidationFailureForException, batchValidationConfig);
+        final var batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate().withValidators(validators).prepare();
+        final var results = BatchRunner.validateAndFailFast(validatables, NONE, ValidationFailure::getValidationFailureForException, batchValidationConfig);
         assertEquals(validatables.size(), results.size());
         assertTrue(results.get(2).isRight());
         assertEquals(results.get(2), Either.right(new Bean(2)));
@@ -44,20 +44,20 @@ class BatchRunnerTest {
 
     @Test
     void failFastAllOrNone() {
-        val validatables = List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
+        final var validatables = List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
         List<Validator<Bean, ValidationFailure>> validators = List.of(
                 bean -> Either.right(true),
                 bean -> bean.map(Bean::getId).filterOrElse(id -> id >= 2, ignore -> VALIDATION_FAILURE_1),
                 bean -> bean.map(Bean::getId).filterOrElse(id -> id <= 2, ignore -> VALIDATION_FAILURE_2)
         );
-        val batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate().withValidators(validators).prepare();
-        val result = BatchRunner.validateAndFailFastAllOrNone(validatables, NONE, ValidationFailure::getValidationFailureForException, batchValidationConfig);
+        final var batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate().withValidators(validators).prepare();
+        final var result = BatchRunner.validateAndFailFastAllOrNone(validatables, NONE, ValidationFailure::getValidationFailureForException, batchValidationConfig);
         assertThat(result).contains(VALIDATION_FAILURE_1);
     }
 
     @Test
     void failFastPartialFailuresForSimpleValidators() {
-        val validatables = List.of(new Bean(0), new Bean(1), new Bean(2),
+        final var validatables = List.of(new Bean(0), new Bean(1), new Bean(2),
                 new Bean(3), new Bean(4));
         Predicate<Integer> predicateForValidId1 = id -> id >= 2;
         Predicate<Integer> predicateForValidId2 = id -> id <= 2;
@@ -66,9 +66,9 @@ class BatchRunnerTest {
                 bean -> predicateForValidId1.test(bean.getId()) ? NONE : VALIDATION_FAILURE_1,
                 bean -> predicateForValidId2.test(bean.getId()) ? NONE : VALIDATION_FAILURE_2
         );
-        val batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        final var batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
                 .withSimpleValidatorsOrFailWith(Tuple.of(simpleValidators, NONE)).prepare();
-        val results = BatchRunner.validateAndFailFast(validatables, NONE, ValidationFailure::getValidationFailureForException, batchValidationConfig);
+        final var results = BatchRunner.validateAndFailFast(validatables, NONE, ValidationFailure::getValidationFailureForException, batchValidationConfig);
         assertEquals(results.size(), validatables.size());
         assertTrue(results.get(2).isRight());
         assertEquals(results.get(2), Either.right(new Bean(2)));
@@ -78,7 +78,7 @@ class BatchRunnerTest {
 
     @Test
     void errorAccumulateForSimpleValidators() {
-        val validatables = List.of(new Bean(0), new Bean(1), new Bean(2),
+        final var validatables = List.of(new Bean(0), new Bean(1), new Bean(2),
                 new Bean(3), new Bean(4));
         Predicate<Integer> predicateForValidId1 = id -> id >= 2;
         Predicate<Integer> predicateForValidId2 = id -> id <= 2;
@@ -89,7 +89,7 @@ class BatchRunnerTest {
                 bean -> predicateForValidId2.test(bean.getId()) ? NONE : VALIDATION_FAILURE_2,
                 bean -> predicateForValidId3.test(bean.getId()) ? NONE : VALIDATION_FAILURE_3
         );
-        val result = BatchRunner.validateAndAccumulateErrors(validatables, simpleValidators, null, NONE, throwable -> null);
+        final var result = BatchRunner.validateAndAccumulateErrors(validatables, simpleValidators, null, NONE, throwable -> null);
 
         assertEquals(result.size(), validatables.size());
         assertTrue(result.stream().allMatch(r -> r.size() == simpleValidators.size()));

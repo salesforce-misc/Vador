@@ -45,8 +45,8 @@ public class ValidationFailure {
      * @return Respective Validation failure for the exception. 
      */
     public static ValidationFailure getValidationFailureForException(Throwable e) {
-        val unknownException = ValidationFailureMessage.UNKNOWN_EXCEPTION;
-        val validationFailure = new ValidationFailure(unknownException);
+        final var unknownException = ValidationFailureMessage.UNKNOWN_EXCEPTION;
+        final var validationFailure = new ValidationFailure(unknownException);
         validationFailure.setExceptionMsg(e.getMessage());
         return validationFailure;
     }

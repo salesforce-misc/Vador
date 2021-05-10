@@ -23,7 +23,7 @@ class RunnerWithConfigTest {
 
     @Test
     void failFastWithRequiredFieldsMissingForSimpleValidators() {
-        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate()
+        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate()
                 .shouldHaveFieldsOrFailWith(Map.of(
                         Bean::getRequiredField1, REQUIRED_FIELD_MISSING,
                         Bean::getRequiredField2, REQUIRED_FIELD_MISSING))
@@ -31,15 +31,15 @@ class RunnerWithConfigTest {
                         Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION,
                         Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION)).prepare();
 
-        val validatableWithBlankReqField = new Bean(0, "", null, null);
-        val result1 = Runner.validateAndFailFast(
+        final var validatableWithBlankReqField = new Bean(0, "", null, null);
+        final var result1 = Runner.validateAndFailFast(
                 validatableWithBlankReqField,
                 throwable -> UNKNOWN_EXCEPTION,
                 validationConfig);
         assertThat(result1).contains(REQUIRED_FIELD_MISSING);
 
-        val validatableWithNullReqField = new Bean(0, null, null, null);
-        val result2 = Runner.validateAndFailFast(
+        final var validatableWithNullReqField = new Bean(0, null, null, null);
+        final var result2 = Runner.validateAndFailFast(
                 validatableWithNullReqField,
                 throwable -> UNKNOWN_EXCEPTION,
                 validationConfig);
@@ -48,16 +48,16 @@ class RunnerWithConfigTest {
 
     @Test
     void failFastWithRequiredFieldsWithNameMissingForSimpleValidators() {
-        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate()
+        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate()
                 .shouldHaveFieldsOrFailWithFn(Tuple.of(List.of(
                         Bean::getRequiredField1,
                         Bean::getRequiredField2),
                         (name, value) -> getFailureWithParams(ValidationFailureMessage.MSG_WITH_PARAMS, name, value)))
                 .prepare();
-        val expectedFieldNames = Set.of(Bean.Fields.requiredField1, Bean.Fields.requiredField2);
+        final var expectedFieldNames = Set.of(Bean.Fields.requiredField1, Bean.Fields.requiredField2);
         assertThat(validationConfig.getRequiredFieldNames(Bean.class)).isEqualTo(expectedFieldNames);
-        val withRequiredFieldNull = new Bean(1, "", null, null);
-        val result = Runner.validateAndFailFast(
+        final var withRequiredFieldNull = new Bean(1, "", null, null);
+        final var result = Runner.validateAndFailFast(
                 withRequiredFieldNull,
                 throwable -> UNKNOWN_EXCEPTION,
                 validationConfig);
@@ -67,7 +67,7 @@ class RunnerWithConfigTest {
 
     @Test
     void failFastWithInvalidIdForSimpleValidators() {
-        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate()
+        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate()
                 .shouldHaveFieldsOrFailWith(Map.of(
                         Bean::getRequiredField1, REQUIRED_FIELD_MISSING,
                         Bean::getRequiredField2, REQUIRED_FIELD_MISSING))
@@ -75,8 +75,8 @@ class RunnerWithConfigTest {
                         Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION,
                         Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION)).prepare();
 
-        val validatableWithInvalidSfId = new Bean(0, "1", new ID("1ttxx00000000hZAAQ"), new ID("invalidSfId"));
-        val result1 = Runner.validateAndFailFast(
+        final var validatableWithInvalidSfId = new Bean(0, "1", new ID("1ttxx00000000hZAAQ"), new ID("invalidSfId"));
+        final var result1 = Runner.validateAndFailFast(
                 validatableWithInvalidSfId,
                 ValidationFailure::getValidationFailureForException,
                 validationConfig);
@@ -85,15 +85,15 @@ class RunnerWithConfigTest {
 
     @Test
     void failFastWithInvalidIdWithNameForSimpleValidators() {
-        val validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate()
+        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate()
                 .shouldHaveValidSFIdFormatOrFailWithFn(Tuple.of(List.of(Bean::getSfId1, Bean::getSfId2),
                         (name, value) -> getFailureWithParams(ValidationFailureMessage.MSG_WITH_PARAMS, name, value)))
                 .prepare();
-        val expectedFieldNames = Set.of(Bean.Fields.sfId1, Bean.Fields.sfId2);
+        final var expectedFieldNames = Set.of(Bean.Fields.sfId1, Bean.Fields.sfId2);
         assertThat(validationConfig.getRequiredFieldNamesForSFIdFormat(Bean.class)).isEqualTo(expectedFieldNames);
-        val invalidSfId = new ID("invalidSfId");
-        val validatableWithInvalidSfId = new Bean(null, null, new ID("1ttxx00000000hZAAQ"), invalidSfId);
-        val result = Runner.validateAndFailFast(
+        final var invalidSfId = new ID("invalidSfId");
+        final var validatableWithInvalidSfId = new Bean(null, null, new ID("1ttxx00000000hZAAQ"), invalidSfId);
+        final var result = Runner.validateAndFailFast(
                 validatableWithInvalidSfId,
                 ValidationFailure::getValidationFailureForException,
                 validationConfig);

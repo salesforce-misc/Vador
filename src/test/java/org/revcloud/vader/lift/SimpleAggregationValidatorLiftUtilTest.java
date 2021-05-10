@@ -15,7 +15,7 @@ class SimpleAggregationValidatorLiftUtilTest {
     @Test
     void liftToContainerValidationTypeWithNullMember() {
         SimpleValidator<Member, ValidationFailure> childValidator = child -> ValidationFailure.NONE;
-        val liftedContainerValidation = AggregationLiftSimpleUtil.liftToContainerValidatorType(
+        final var liftedContainerValidation = AggregationLiftSimpleUtil.liftToContainerValidatorType(
                 childValidator,
                 Container::getMember,
                 ValidationFailure.INVALID_CONTAINER,
@@ -26,7 +26,7 @@ class SimpleAggregationValidatorLiftUtilTest {
     @Test
     void liftToContainerValidationTypeWithNullContainer() {
         SimpleValidator<Member, ValidationFailure> childValidator = child -> ValidationFailure.NONE;
-        val liftedContainerValidation = AggregationLiftSimpleUtil.liftToContainerValidatorType(
+        final var liftedContainerValidation = AggregationLiftSimpleUtil.liftToContainerValidatorType(
                         childValidator,
                         Container::getMember,
                         ValidationFailure.INVALID_CONTAINER,
@@ -37,7 +37,7 @@ class SimpleAggregationValidatorLiftUtilTest {
     @Test
     void liftToContainerValidationType() {
         SimpleValidator<Member, ValidationFailure> childValidator = child -> ValidationFailure.NONE;
-        val liftedContainerValidation = AggregationLiftSimpleUtil.liftToContainerValidatorType(
+        final var liftedContainerValidation = AggregationLiftSimpleUtil.liftToContainerValidatorType(
                         childValidator,
                         Container::getMember,
                         ValidationFailure.INVALID_CONTAINER,

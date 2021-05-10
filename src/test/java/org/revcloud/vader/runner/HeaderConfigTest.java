@@ -20,70 +20,70 @@ class HeaderConfigTest {
 
     @Test
     void failFastForHeaderConfigWithValidators() {
-        val headerConfig = HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
+        final var headerConfig = HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
                 .withBatchMapper(HeaderBean::getBatch)
                 .withSimpleHeaderValidator(Tuple.of(ignore -> UNKNOWN_EXCEPTION, NONE)).prepare();
-        val batch = List.of(new Bean1());
-        val headerBean = new HeaderBean(batch);
-        val result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
+        final var batch = List.of(new Bean1());
+        final var headerBean = new HeaderBean(batch);
+        final var result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).contains(UNKNOWN_EXCEPTION);
     }
 
     // TODO 29/04/21 gopala.akshintala: Write display names for tests
     @Test
     void failFastForHeaderConfigWithValidators2() {
-        val headerConfig = HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
+        final var headerConfig = HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
                 .withBatchMapper(HeaderBean::getBatch)
                 .withSimpleHeaderValidator(Tuple.of(ignore -> NONE, NONE)).prepare();
-        val batch = List.of(new Bean1());
-        val headerBean = new HeaderBean(batch);
-        val result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
+        final var batch = List.of(new Bean1());
+        final var headerBean = new HeaderBean(batch);
+        final var result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).isEmpty();
     }
 
     @Test
     void failFastForHeaderConfigMinBatchSize() {
-        val headerConfig = HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
+        final var headerConfig = HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
                 .withBatchMapper(HeaderBean::getBatch)
                 .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET))
                 .withSimpleHeaderValidator(Tuple.of(ignore -> NONE, NONE)).prepare();
-        val headerBean = new HeaderBean(Collections.emptyList());
-        val result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
+        final var headerBean = new HeaderBean(Collections.emptyList());
+        final var result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
     }
 
     @Test
     void failFastForHeaderConfigMinBatchSizeForMultiBatch() {
-        val headerConfig = HeaderValidationConfig.<HeaderBeanMultiBatch, ValidationFailure>toValidate()
+        final var headerConfig = HeaderValidationConfig.<HeaderBeanMultiBatch, ValidationFailure>toValidate()
                 .withBatchMappers(List.of(HeaderBeanMultiBatch::getBatch1, HeaderBeanMultiBatch::getBatch2))
                 .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET))
                 .withSimpleHeaderValidator(Tuple.of(ignore -> NONE, NONE)).prepare();
-        val headerBean = new HeaderBeanMultiBatch(Collections.emptyList(), Collections.emptyList());
-        val result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
+        final var headerBean = new HeaderBeanMultiBatch(Collections.emptyList(), Collections.emptyList());
+        final var result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
     }
 
     @Test
     void failFastForHeaderConfigMaxBatchSize() {
-        val headerConfig = HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
+        final var headerConfig = HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
                 .withBatchMapper(HeaderBean::getBatch)
                 .shouldHaveMaxBatchSize(Tuple.of(0, MAX_BATCH_SIZE_EXCEEDED))
                 .withSimpleHeaderValidator(Tuple.of(ignore -> NONE, NONE)).prepare();
-        val headerBean = new HeaderBean(List.of(new Bean1()));
-        val result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
+        final var headerBean = new HeaderBean(List.of(new Bean1()));
+        final var result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).contains(MAX_BATCH_SIZE_EXCEEDED);
     }
 
     @Test
     void headerWithFailure() {
-        val validationConfig = HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
+        final var validationConfig = HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
                 .withHeaderValidators(List.of(
                         headerBean -> Either.right(NONE),
                         headerBean -> Either.left(UNKNOWN_EXCEPTION),
                         headerBean -> Either.right(NONE)))
                 .withBatchMapper(HeaderBean::getBatch)
                 .prepare();
-        val result = Runner.validateAndFailFastForHeader(
+        final var result = Runner.validateAndFailFastForHeader(
                 new HeaderBean(Collections.emptyList()),
                 ValidationFailure::getValidationFailureForException,
                 validationConfig
