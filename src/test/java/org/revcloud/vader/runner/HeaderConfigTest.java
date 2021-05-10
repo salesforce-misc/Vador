@@ -16,7 +16,7 @@ import static consumer.failure.ValidationFailure.NONE;
 import static consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class RunnerWithHeaderConfigTest {
+class HeaderConfigTest {
 
     @Test
     void failFastForHeaderConfigWithValidators() {

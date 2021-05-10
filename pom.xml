@@ -24,7 +24,6 @@
         <kotest.version>4.5.0.RC1</kotest.version>
         <lombok.version>1.18.20</lombok.version>
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
-        <kotlin.compiler.jdkHome>${HOME}/blt/tools/Darwin/jdk/openjdk_11.0.9_11.43.54_x64</kotlin.compiler.jdkHome>
     </properties>
     <developers>
         <developer>
@@ -201,6 +200,12 @@
             <groupId>io.vavr</groupId>
             <artifactId>vavr</artifactId>
             <version>0.10.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr-kotlin</artifactId>
+            <version>0.10.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

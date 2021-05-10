@@ -30,6 +30,7 @@ repositories {
 
 dependencies {
     api("io.vavr:vavr:0.10.3")
+    api("io.vavr:vavr-kotlin:0.10.2")
     api("org.hamcrest:hamcrest:2.2")
     api("org.exparity:hamcrest-date:2.0.7")
     api("de.cronn:reflection-util:2.10.0")
@@ -47,12 +48,10 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:4.5.0.RC1")
 }
 
-jacoco {
-    toolVersion = "0.8.7"
-}
+jacoco.toolVersion = "0.8.7"
 
 val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "11"
+compileKotlin.kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
 
 tasks {
     withType<Test> {
@@ -80,15 +79,17 @@ afterEvaluate {
 /********************/
 /* Publish to Nexus */
 /********************/
-tasks.withType<PublishToMavenRepository>().configureEach {
-    doLast {
-        logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to ${repository.name}")
+tasks {
+    withType<PublishToMavenRepository>().configureEach {
+        doLast {
+            logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to ${repository.name}")
+        }
     }
-}
 
-tasks.withType<PublishToMavenLocal>().configureEach {
-    doLast {
-        logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to MavenLocal.")
+    withType<PublishToMavenLocal>().configureEach {
+        doLast {
+            logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to MavenLocal.")
+        }
     }
 }
 publishing {
@@ -167,8 +168,8 @@ publishing {
         config = files("config/detekt/detekt.yml")
         buildUponDefaultConfig = true
     }
-    
-    
+
+
     spotless {
         isEnforceCheck = false
         kotlin {

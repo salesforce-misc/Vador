@@ -13,6 +13,7 @@ import lombok.NonNull;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
+import org.jetbrains.annotations.Nullable;
 import org.revcloud.vader.runner.SpecFactory.BaseSpec.BaseSpecBuilder;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
@@ -31,16 +32,18 @@ import static org.revcloud.vader.lift.ValidatorLiftUtil.liftAllSimple;
 @Getter
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 abstract class BaseValidationConfig<ValidatableT, FailureT> {
-    @NonNull
     @Singular("shouldHaveFieldOrFailWith")
     protected Map<TypedPropertyGetter<ValidatableT, ?>, FailureT> shouldHaveFieldsOrFailWith;
+    @Nullable
     protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ?>>, Function2<String, Object, FailureT>> shouldHaveFieldsOrFailWithFn;
     @Singular("shouldHaveValidSFIdFieldOrFailWith")
     protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT> shouldHaveValidSFIdFormatOrFailWith;
-    protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ID>>, Function2<String, ID, FailureT>> shouldHaveValidSFIdFormatOrFailWithFn;
+    @Nullable
+    protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ID>>, @NonNull Function2<String, ID, FailureT>> shouldHaveValidSFIdFormatOrFailWithFn;
     @Singular("mayHaveValidSFIdFieldOrFailWith")
-    protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT> mayHaveValidSFIdFieldsOrFailWith;
-    protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ID>>, Function2<String, ID, FailureT>> blankOrHaveValidSFIdFormatOrFailWithFn;
+    protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT> absentOrHaveValidSFIdFieldsOrFailWith;
+    @Nullable
+    protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ID>>, Function2<String, ID, FailureT>> absentOrHaveValidSFIdFormatOrFailWithFn;
     protected Function1<SpecFactory<ValidatableT, FailureT>, Collection<? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>> withSpecs;
     @Singular("withSpec")
     protected Collection<Function1<SpecFactory<ValidatableT, FailureT>, ? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>> withSpec;
@@ -88,8 +91,8 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
 
     public Set<String> getNonRequiredFieldNamesForSFIdFormat(Class<ValidatableT> beanClass) {
         return Stream.concat(
-                Stream.ofNullable(mayHaveValidSFIdFieldsOrFailWith).flatMap(f -> f.keySet().stream()),
-                Stream.ofNullable(blankOrHaveValidSFIdFormatOrFailWithFn).flatMap(f -> f._1.stream()))
+                Stream.ofNullable(absentOrHaveValidSFIdFieldsOrFailWith).flatMap(f -> f.keySet().stream()),
+                Stream.ofNullable(absentOrHaveValidSFIdFormatOrFailWithFn).flatMap(f -> f._1.stream()))
                 .map(fieldMapper -> PropertyUtils.getPropertyName(beanClass, fieldMapper)).collect(Collectors.toSet());
     }
 }

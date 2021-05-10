@@ -8,6 +8,7 @@ package org.revcloud.vader.lift;
 
 import io.vavr.Function1;
 import io.vavr.collection.List;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.revcloud.vader.types.validators.SimpleValidator;
@@ -33,7 +34,7 @@ public class AggregationLiftSimpleUtil {
      * @return                  List of container type validations
      */
     public static <ContainerT, MemberT, FailureT> List<SimpleValidator<ContainerT, FailureT>> liftAllToContainerValidatorType(
-            List<SimpleValidator<MemberT, FailureT>> memberValidations,
+            List<@NonNull SimpleValidator<MemberT, FailureT>> memberValidations,
             Function1<ContainerT, MemberT> toMemberMapper, FailureT invalidContainer, FailureT invalidMember) {
         return memberValidations.map(memberValidation ->
                 liftToContainerValidatorType(memberValidation, toMemberMapper, invalidContainer, invalidMember));

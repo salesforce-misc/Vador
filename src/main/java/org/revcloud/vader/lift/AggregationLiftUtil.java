@@ -80,8 +80,8 @@ public class AggregationLiftUtil {
             Validator<MemberT, FailureT> memberValidation,
             Function1<ContainerT, MemberT> toMemberMapper,
             FailureT invalidParent, FailureT invalidChild) {
-        return validatedParent -> {
-            val member = extractMember(toMemberMapper, invalidParent, validatedParent);
+        return validatedContainer -> {
+            val member = extractMember(toMemberMapper, invalidParent, validatedContainer);
             return member.isLeft() ? member
                     : member.filter(Objects::nonNull)
                     .fold(() -> Either.left(invalidChild), memberValidation.unchecked());
@@ -91,8 +91,8 @@ public class AggregationLiftUtil {
     private static <ContainerT, MemberT, FailureT> Either<FailureT, MemberT> extractMember(
             Function1<ContainerT, MemberT> toMemberMapper,
             FailureT invalidParent,
-            Either<FailureT, ContainerT> validatedParent) {
-        return validatedParent
+            Either<FailureT, ContainerT> validatedContainer) {
+        return validatedContainer
                 .flatMap(container -> container == null ? Either.left(invalidParent) : Either.right(container))
                 .map(toMemberMapper);
     }
@@ -115,8 +115,8 @@ public class AggregationLiftUtil {
             Validator<MemberT, FailureT> childValidation,
             Function1<ContainerT, MemberT> toChildMapper,
             FailureT invalidParent) {
-        return validatedParent -> {
-            val member = extractMember(toChildMapper, invalidParent, validatedParent);
+        return validatedContainer -> {
+            val member = extractMember(toChildMapper, invalidParent, validatedContainer);
             return member.isLeft() ? member : childValidation.apply(member);
         };
     }

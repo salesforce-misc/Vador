@@ -37,7 +37,7 @@ public class Runner {
                 .swap().toJavaOptional();
     }
     
-    // --- ERROR ACCUMULTATION ---
+    // --- ERROR ACCUMULATION ---
     
     /**
      * Applies the Simple validators on a Single validatable in error-accumulation mode.
@@ -74,7 +74,7 @@ public class Runner {
             FailureT invalidValidatable, FailureT none, Function1<Throwable, FailureT> throwableMapper) {
         val results = AccumulationStrategies.accumulationStrategy(validators, invalidValidatable, throwableMapper).apply(validatable).stream()
                 .map(validationResult -> validationResult.fold(Function1.identity(), ignore -> none));
-        return results.allMatch(result -> ((result == none) || result.equals(none))) ? Collections.emptyList() : results.collect(Collectors.toList());
+        return results.allMatch(result -> result == none || none.equals(result)) ? Collections.emptyList() : results.collect(Collectors.toList());
     }
 
 }
