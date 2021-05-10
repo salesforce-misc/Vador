@@ -1,3 +1,4 @@
+@file:JvmName("AggregationLiftSimpleUtil")
 package org.revcloud.vader.lift
 
 import io.vavr.Function1

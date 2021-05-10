@@ -4,9 +4,11 @@ import de.cronn.reflection.util.PropertyUtils;
 import de.cronn.reflection.util.TypedPropertyGetter;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
+import lombok.experimental.FieldDefaults;
 import org.revcloud.vader.lift.ValidatorLiftUtil;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
@@ -19,6 +21,7 @@ import java.util.stream.Stream;
 import static java.util.function.Function.identity;
 
 @Value
+@FieldDefaults(level = AccessLevel.PACKAGE)
 @Builder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 public class HeaderValidationConfig<HeaderValidatableT, FailureT> {
     @Singular

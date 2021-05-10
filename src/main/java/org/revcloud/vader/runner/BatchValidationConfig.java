@@ -1,12 +1,15 @@
 package org.revcloud.vader.runner;
 
 import io.vavr.Function1;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.Nullable;
 
 @Value
+@FieldDefaults(level = AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate")
 public class BatchValidationConfig<ValidatableT, FailureT> extends BaseValidationConfig<ValidatableT, FailureT> {

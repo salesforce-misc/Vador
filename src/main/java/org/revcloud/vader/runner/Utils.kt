@@ -1,3 +1,5 @@
+@file:JvmName("Utils")
+
 package org.revcloud.vader.runner
 
 import io.vavr.CheckedFunction1
@@ -16,29 +18,27 @@ fun <FailureT, ValidatableT> fireValidators(
     validatable: Either<FailureT, ValidatableT>,
     validators: Stream<Validator<ValidatableT, FailureT>>,
     throwableMapper: Function1<Throwable, FailureT>
-): Stream<Either<FailureT, ValidatableT>> {
-    return validators.map { currentValidator: Validator<ValidatableT, FailureT> ->
+): Stream<Either<FailureT, ValidatableT>> =
+    validators.map { currentValidator ->
         fireValidator(
             currentValidator,
             validatable,
             throwableMapper
         )
     }
-}
 
 fun <FailureT, ValidatableT> fireValidator(
     validator: Validator<ValidatableT, FailureT>,
-    toBeValidatedRight: Either<FailureT, ValidatableT>,
+    validatable: Either<FailureT, ValidatableT>,
     throwableMapper: Function1<Throwable, FailureT>
-): Either<FailureT, ValidatableT> {
-    return CheckedFunction1.liftTry(validator).apply(toBeValidatedRight)
+): Either<FailureT, ValidatableT> =
+    CheckedFunction1.liftTry(validator).apply(validatable)
         .fold({ throwable: Throwable ->
             left<FailureT, ValidatableT>(
                 throwableMapper.apply(throwable)
             )
         }, Function1.identity())
-        .flatMap { toBeValidatedRight } // Put the original Validatable in the right state
-}
+        .flatMap { validatable } // Put the original Validatable in the right state
 
 fun <FailureT> validateSize(
     validatables: Collection<*>,
@@ -191,4 +191,16 @@ private fun <FailureT, ValidatableT> invalidate(
             )
         }
     }
+
+internal fun <FailureT, ValidatableT> findFirstFailure(
+    validatable: Either<FailureT, ValidatableT>,
+    validationConfig: BaseValidationConfig<ValidatableT, FailureT>,
+    throwableMapper: Function1<Throwable, FailureT>
+): Either<FailureT, ValidatableT> =
+    fireValidators(
+        validatable,
+        toValidators(validationConfig),
+        throwableMapper
+    ).filter { it.isLeft }
+        .findFirst().orElse(validatable)
 

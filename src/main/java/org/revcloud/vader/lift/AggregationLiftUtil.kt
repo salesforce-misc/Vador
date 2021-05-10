@@ -1,3 +1,4 @@
+@file:JvmName("AggregationLiftUtil")
 package org.revcloud.vader.lift
 
 import io.vavr.Function1
@@ -11,8 +12,8 @@ import org.revcloud.vader.types.validators.Validator
  *
  * @param memberValidation
  * @param toMemberMapper   Mapper function to extract member from container
- * @param invalidParent    Failure to return if container is null
- * @param invalidChild     Failure to return if member is null
+ * @param nullContainer    Failure to return if container is null
+ * @param nullMember     Failure to return if member is null
  * @param <ContainerT>
  * @param <MemberT>
  * @param <FailureT>
@@ -21,25 +22,25 @@ import org.revcloud.vader.types.validators.Validator
 fun <ContainerT, MemberT, FailureT> liftToContainerValidatorType(
     memberValidation: Validator<MemberT, FailureT>,
     toMemberMapper: Function1<ContainerT, MemberT>,
-    invalidParent: FailureT,
-    invalidChild: FailureT
+    nullContainer: FailureT,
+    nullMember: FailureT
 ): Validator<ContainerT, FailureT> =
     Validator { validatedContainer ->
-        val member = extractMember(toMemberMapper, invalidParent, validatedContainer)
+        val member = extractMember(toMemberMapper, nullContainer, validatedContainer)
         when {
-            member == null -> left<FailureT, ContainerT>(invalidChild)
             member.isLeft -> member
+            member.contains(null) -> left<FailureT, ContainerT>(nullMember)
             else -> memberValidation.unchecked().apply(member)
         }
     } // This whole function is inside a CheckedFunction, so no problem with `uncChecked()` above
 
 private fun <ContainerT, MemberT, FailureT> extractMember(
     toMemberMapper: Function1<ContainerT, MemberT>,
-    invalidParent: FailureT,
+    nullContainer: FailureT,
     validatedContainer: Either<FailureT, ContainerT>
-): Either<FailureT, MemberT>? =
+): Either<FailureT, MemberT> =
     validatedContainer.flatMap { container ->
-        if (container == null) left(invalidParent) else right(container)
+        if (container == null) left(nullContainer) else right(container)
     }.map(toMemberMapper)
 
 /**

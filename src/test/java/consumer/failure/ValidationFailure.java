@@ -24,8 +24,8 @@ public class ValidationFailure {
     public static final ValidationFailure NOTHING_TO_VALIDATE = new ValidationFailure(ValidationFailureMessage.NOTHING_TO_VALIDATE);
     public static final ValidationFailure DUPLICATE_ITEM = new ValidationFailure(ValidationFailureMessage.DUPLICATE_ITEM);
     public static final ValidationFailure NULL_KEY = new ValidationFailure(ValidationFailureMessage.NULL_KEY);
-    public static final ValidationFailure INVALID_PARENT = new ValidationFailure(ValidationFailureMessage.INVALID_PARENT);
-    public static final ValidationFailure INVALID_CHILD = new ValidationFailure(ValidationFailureMessage.INVALID_CHILD);
+    public static final ValidationFailure INVALID_CONTAINER = new ValidationFailure(ValidationFailureMessage.INVALID_PARENT);
+    public static final ValidationFailure INVALID_MEMBER = new ValidationFailure(ValidationFailureMessage.INVALID_CHILD);
     public static final ValidationFailure UNKNOWN_EXCEPTION = new ValidationFailure(ValidationFailureMessage.UNKNOWN_EXCEPTION);
     public static final ValidationFailure VALIDATION_FAILURE_1 = new ValidationFailure(ValidationFailureMessage.VALIDATION_FAILURE_1);
     public static final ValidationFailure VALIDATION_FAILURE_2 = new ValidationFailure(ValidationFailureMessage.VALIDATION_FAILURE_2);

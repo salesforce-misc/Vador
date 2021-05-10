@@ -1,3 +1,4 @@
+@file:JvmName("AccumulationStrategies")
 package org.revcloud.vader.runner
 
 import io.vavr.Function1
@@ -20,7 +21,7 @@ internal fun <FailureT, ValidatableT> accumulationStrategy(
 ): Accumulation<ValidatableT, FailureT> = Accumulation { toBeValidated ->
     if (toBeValidated == null) listOf(
         Either.left(invalidValidatable)
-    ) else Utils.fireValidators(
+    ) else fireValidators(
         Either.right(toBeValidated),
         validators.stream(),
         throwableMapper

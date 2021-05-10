@@ -1,9 +1,9 @@
+@file:JvmName("ValidatorLiftUtil")
 package org.revcloud.vader.lift
 
 import io.vavr.control.Either
 import org.revcloud.vader.types.validators.SimpleValidator
 import org.revcloud.vader.types.validators.Validator
-
 
 /**
  * Lifts Simple Validator to Validator type.

@@ -1,3 +1,4 @@
+@file:JvmName("InheritanceLiftUtil")
 package org.revcloud.vader.lift
 
 import io.vavr.control.Either
