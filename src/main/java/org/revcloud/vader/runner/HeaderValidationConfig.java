@@ -1,6 +1,5 @@
 package org.revcloud.vader.runner;
 
-import de.cronn.reflection.util.PropertyUtils;
 import de.cronn.reflection.util.TypedPropertyGetter;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
@@ -9,16 +8,12 @@ import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
-import org.revcloud.vader.lift.ValidatorLiftUtil;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.function.Function.identity;
 
 @Value
 @FieldDefaults(level = AccessLevel.PACKAGE)
@@ -37,13 +32,10 @@ public class HeaderValidationConfig<HeaderValidatableT, FailureT> {
     Collection<Tuple2<SimpleValidator<HeaderValidatableT, FailureT>, FailureT>> withSimpleHeaderValidators;
 
     Stream<Validator<HeaderValidatableT, FailureT>> getHeaderValidatorsStream() {
-        var withSimpleValidatorsOrFailWithStream = Stream.ofNullable(withSimpleHeaderValidatorsOrFailWith)
-                .map(s -> s.apply(ValidatorLiftUtil::liftAllSimple)).flatMap(Collection::stream);
-        var withSimpleValidatorStream = withSimpleHeaderValidators.stream().map(sv -> sv.apply(ValidatorLiftUtil::liftSimple));
-        return Stream.of(withSimpleValidatorsOrFailWithStream, withSimpleValidatorStream, withHeaderValidators.stream()).flatMap(identity());
+        return Extensions.getHeaderValidatorsStream(this);
     }
 
     public Set<String> getFieldNamesForBatch(Class<HeaderValidatableT> validatableClazz) {
-        return withBatchMappers.stream().map(mapper -> PropertyUtils.getPropertyName(validatableClazz, mapper)).collect(Collectors.toSet());
+        return Extensions.getFieldNamesForBatch(this, validatableClazz);
     }
 }

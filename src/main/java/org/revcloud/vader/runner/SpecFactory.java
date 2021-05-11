@@ -4,6 +4,7 @@ import io.vavr.Function1;
 import io.vavr.Function2;
 import io.vavr.Function3;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import org.hamcrest.Matcher;
 
@@ -48,6 +49,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
 
     @Value
     @EqualsAndHashCode(callSuper = true)
+    @FieldDefaults(level = AccessLevel.PACKAGE)
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
     static class Spec1<ValidatableT, FailureT, GivenT> extends BaseSpec<ValidatableT, FailureT> {
         @NonNull
@@ -60,12 +62,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
 
         @Override
         public Predicate<ValidatableT> toPredicate() {
-            return validatable -> {
-                val givenValue = getGiven().apply(validatable);
-                return getShouldMatchAnyOf().stream().anyMatch(m -> m.matches(givenValue)) ||
-                        getShouldMatchAnyOfFields().stream()
-                                .anyMatch(expectedFieldMapper -> expectedFieldMapper.apply(validatable) == givenValue);
-            };
+            return Extensions.toPredicateEx(this);
         }
 
         @Override
@@ -82,6 +79,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
 
     @Value
     @EqualsAndHashCode(callSuper = true)
+    @FieldDefaults(level = AccessLevel.PACKAGE)
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
     static class Spec2<ValidatableT, FailureT, WhenT, ThenT> extends BaseSpec<ValidatableT, FailureT> {
         @NonNull
@@ -100,26 +98,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
 
         @Override
         public Predicate<ValidatableT> toPredicate() {
-            return validatable -> {
-                val whenValue = getWhen().apply(validatable);
-                if (shouldRelateWith.isEmpty() && shouldRelateWithFn == null &&
-                        getMatchesAnyOf().stream().noneMatch(m -> m.matches(whenValue))) {
-                    return true;
-                }
-                val thenValue = getThen().apply(validatable);
-                val isThenMatches = getShouldMatchAnyOf().stream().anyMatch(m -> m.matches(thenValue));
-                if (!isThenMatches) {
-                    val validThenValues = getShouldRelateWith().get(whenValue);
-                    if (validThenValues != null) {
-                        // TODO 06/05/21 gopala.akshintala: This is a hack, as ImmutableCollections.$Set12.contains(null) throws NPE 
-                        return validThenValues.stream().anyMatch(validThenValue -> thenValue == validThenValue);
-                    }
-                    if (getShouldRelateWithFn() != null) {
-                        return getShouldRelateWithFn().apply(whenValue, thenValue);
-                    }
-                }
-                return isThenMatches;
-            };
+            return Extensions.toPredicateEx(this);
         }
 
         @Override
@@ -136,6 +115,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
 
     @Value
     @EqualsAndHashCode(callSuper = true)
+    @FieldDefaults(level = AccessLevel.PACKAGE)
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
     static class Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T> extends BaseSpec<ValidatableT, FailureT> {
         @NonNull
@@ -157,24 +137,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
 
         @Override
         public Predicate<ValidatableT> toPredicate() {
-            return validatable -> {
-                val whenValue = getWhen().apply(validatable);
-                if (getMatchesAnyOf().stream().noneMatch(m -> m.matches(whenValue))) {
-                    return true;
-                }
-                val thenValue1 = getThenField1().apply(validatable);
-                val thenValue2 = getThenField2().apply(validatable);
-                var relationResult = false;
-                if (getShouldRelateWithFn() != null) {
-                    relationResult = getShouldRelateWithFn().apply(thenValue1, thenValue2);
-                } else {
-                    val validThen2Values = getShouldRelateWith().get(thenValue1);
-                    relationResult = validThen2Values != null && validThen2Values.contains(thenValue2);
-                }
-                return relationResult ||
-                        getOrField1ShouldMatchAnyOf().stream().anyMatch(matcher -> matcher.matches(thenValue1)) ||
-                        getOrField2ShouldMatchAnyOf().stream().anyMatch(matcher -> matcher.matches(thenValue2));
-            };
+            return Extensions.toPredicateEx(this);
         }
 
         @Override

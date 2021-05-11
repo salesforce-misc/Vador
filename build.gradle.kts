@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.3.11-SNAPSHOT"
+version = "2.4.0-SNAPSHOT"
 description = "Vader - An FP framework for Bean validation"
 
 java {

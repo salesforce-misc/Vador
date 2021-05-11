@@ -54,11 +54,6 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
     @Singular("withSimpleValidatorOrFailWith")
     Collection<Tuple2<SimpleValidator<ValidatableT, FailureT>, FailureT>> withSimpleValidators;
 
-    Stream<Validator<ValidatableT, FailureT>> getValidatorsStream() {
-        var simpleValidators = Stream.concat(withSimpleValidatorsOrFailWith._1.stream(), withSimpleValidators.stream().map(Tuple2::_1)).collect(Collectors.toList());
-        return Stream.concat(withValidators.stream(), liftAllSimple(simpleValidators, withSimpleValidatorsOrFailWith._2).stream());
-    }
-
     Stream<SpecFactory.BaseSpec<ValidatableT, FailureT>> getSpecsStream() {
         val specFactory = new SpecFactory<ValidatableT, FailureT>();
         return Stream.concat(Stream.ofNullable(withSpecs).flatMap(specs -> specs.apply(specFactory).stream().map(BaseSpecBuilder::done)),
@@ -77,7 +72,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
 
     public Set<String> getRequiredFieldNames(Class<ValidatableT> beanClass) {
         return Stream.concat(
-                Stream.ofNullable(shouldHaveFieldsOrFailWith).flatMap(f -> f.keySet().stream()),
+                Stream.of(shouldHaveFieldsOrFailWith).flatMap(f -> f.keySet().stream()),
                 Stream.ofNullable(shouldHaveFieldsOrFailWithFn).flatMap(f -> f._1.stream()))
                 .map(fieldMapper -> PropertyUtils.getPropertyName(beanClass, fieldMapper)).collect(Collectors.toSet());
     }

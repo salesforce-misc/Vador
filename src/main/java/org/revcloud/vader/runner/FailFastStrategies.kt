@@ -106,7 +106,7 @@ internal fun <FailureT, ValidatableT> failFastForHeader(
     validateSize(batch, validationConfig).or {
         fireValidators(
             Either.right(validatable),
-            validationConfig.headerValidatorsStream,
+            validationConfig.getHeaderValidatorsStream(),
             throwableMapper
         ).filter { it.isLeft }
             .findFirst()

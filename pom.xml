@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.salesforce.ccspayments</groupId>
     <artifactId>vader</artifactId>
-    <version>2.3.11-SNAPSHOT</version>
+    <version>2.4.0-SNAPSHOT</version>
     <name>Vader</name>
     <description>An FP framework for Bean validation</description>
     <url>https://git.soma.salesforce.com/CCSPayments/Vader</url>

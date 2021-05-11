@@ -3,6 +3,8 @@ package org.revcloud.vader.runner
 
 import io.vavr.Function1
 import io.vavr.control.Either
+import io.vavr.kotlin.left
+import io.vavr.kotlin.right
 import org.revcloud.vader.types.validators.Validator
 import java.util.stream.Collectors
 
@@ -20,9 +22,9 @@ internal fun <FailureT, ValidatableT> accumulationStrategy(
     throwableMapper: Function1<Throwable, FailureT>
 ): Accumulation<ValidatableT, FailureT> = Accumulation { toBeValidated ->
     if (toBeValidated == null) listOf(
-        Either.left(invalidValidatable)
+        left(invalidValidatable)
     ) else fireValidators(
-        Either.right(toBeValidated),
+        right(toBeValidated),
         validators.stream(),
         throwableMapper
     ).collect(Collectors.toList())

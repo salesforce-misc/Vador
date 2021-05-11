@@ -1,4 +1,5 @@
 @file:JvmName("ValidatorLiftUtil")
+
 package org.revcloud.vader.lift
 
 import io.vavr.control.Either
@@ -33,6 +34,7 @@ fun <FailureT, ValidatableT> liftSimple(
  * @return List of Validators
 </ValidatableT></FailureT> */
 fun <FailureT, ValidatableT> liftAllSimple(
-    toBeLiftedFns: Collection<SimpleValidator<ValidatableT, FailureT>>, none: FailureT
+    toBeLiftedFns: Collection<SimpleValidator<ValidatableT, FailureT>>,
+    none: FailureT
 ): List<Validator<ValidatableT, FailureT>> =
     toBeLiftedFns.map { liftSimple(it, none) }

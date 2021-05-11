@@ -3,9 +3,9 @@ pluginManagement {
         gradlePluginPortal() // This is for other community plugins
         mavenCentral()
     }
-    val kotlinEap: String by settings
+    val kotlinVersion: String by settings
     plugins {
-        kotlin("jvm") version kotlinEap // This is handy if there are multiple modules. This lets you declare version at one place.
+        kotlin("jvm") version kotlinVersion
     }
 }
 

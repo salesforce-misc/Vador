@@ -43,7 +43,7 @@ internal fun <ValidatableT, FailureT> toValidators(validationConfig: BaseValidat
             toValidators1(validationConfig.absentOrHaveValidSFIdFieldsOrFailWith, isSFIdAbsentOrValidFormat) +
             toValidators2(validationConfig.absentOrHaveValidSFIdFormatOrFailWithFn, isSFIdAbsentOrValidFormat) +
             validationConfig.specsStream.collect(Collectors.toList()).map { toValidator(it) } +
-            validationConfig.validatorsStream.collect(Collectors.toList())).stream()
+            validationConfig.getValidatorsStream().collect(Collectors.toList())).stream()
 
 
 val isFieldPresent: (Any?) -> Boolean = {
@@ -64,3 +64,4 @@ private fun <ValidatableT, FailureT> toValidator(baseSpec: BaseSpec<ValidatableT
             baseSpec.toPredicate()
         ) { ignore: ValidatableT -> baseSpec.getFailure(ignore) }
     }
+
