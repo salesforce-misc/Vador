@@ -80,7 +80,7 @@ internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> SpecFactory.Spec3<V
     }
 }
 
-fun <HeaderValidatableT, FailureT> HeaderValidationConfig<HeaderValidatableT, FailureT>.getHeaderValidatorsStream(): Stream<Validator<HeaderValidatableT, FailureT>> {
+fun <HeaderValidatableT, FailureT> HeaderValidationConfig<HeaderValidatableT, FailureT>.getHeaderValidatorsStream(): Stream<Validator<HeaderValidatableT?, FailureT?>> {
     val withSimpleValidatorsOrFailWithStream = Stream.ofNullable(withSimpleHeaderValidatorsOrFailWith).flatMap { it!!.apply(::liftAllSimple).stream() }
     val withSimpleValidatorStream = withSimpleHeaderValidators.stream().map { it!!.apply(::liftSimple) }
     return Stream.of(withSimpleValidatorsOrFailWithStream, withSimpleValidatorStream, withHeaderValidators.stream()).flatMap { it }
@@ -90,7 +90,7 @@ fun <HeaderValidatableT, FailureT> HeaderValidationConfig<HeaderValidatableT, Fa
     return withBatchMappers.stream().map { PropertyUtils.getPropertyName(validatableClazz, it) }.collect(Collectors.toSet())
 }
 
-internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.getValidatorsStream(): Stream<Validator<ValidatableT, FailureT>> {
+internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.getValidatorsStream(): Stream<Validator<ValidatableT?, FailureT?>> {
     val simpleValidators = withSimpleValidatorsOrFailWith._1 + withSimpleValidators.map { it._1 }
     return Stream.concat(
         withValidators.stream(),

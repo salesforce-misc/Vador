@@ -2,7 +2,7 @@
 
 package org.revcloud.vader.lift
 
-import io.vavr.control.Either
+import io.vavr.kotlin.left
 import org.revcloud.vader.types.validators.SimpleValidator
 import org.revcloud.vader.types.validators.Validator
 
@@ -16,12 +16,13 @@ import org.revcloud.vader.types.validators.Validator
  * @return Validator
 </ValidatableT></FailureT> */
 fun <FailureT, ValidatableT> liftSimple(
-    toBeLifted: SimpleValidator<ValidatableT, FailureT>, none: FailureT
-): Validator<ValidatableT, FailureT> = Validator { validatable ->
-    validatable.flatMap { toBeValidated: ValidatableT ->
-        val result = toBeLifted.unchecked().apply(toBeValidated)
-        if (result == none) validatable else Either.left(result)
-    }
+    toBeLifted: SimpleValidator<ValidatableT?, FailureT?>,
+    none: FailureT?
+): Validator<ValidatableT?, FailureT?> = Validator {
+     it.flatMap { validatable ->
+         val result = toBeLifted.unchecked().apply(validatable)
+         if (result == none) it else left(result)
+     }
 }
 
 /**
@@ -34,7 +35,7 @@ fun <FailureT, ValidatableT> liftSimple(
  * @return List of Validators
 </ValidatableT></FailureT> */
 fun <FailureT, ValidatableT> liftAllSimple(
-    toBeLiftedFns: Collection<SimpleValidator<ValidatableT, FailureT>>,
+    toBeLiftedFns: Collection<SimpleValidator<ValidatableT?, FailureT?>>,
     none: FailureT
-): List<Validator<ValidatableT, FailureT>> =
+): List<Validator<ValidatableT?, FailureT?>> =
     toBeLiftedFns.map { liftSimple(it, none) }

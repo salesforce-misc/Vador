@@ -16,24 +16,24 @@ fun <FailureT, ValidatableT> validateAndFailFast(
     invalidValidatable: FailureT,
     throwableMapper: Function1<Throwable, FailureT>,
     batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT>
-): List<Either<FailureT, ValidatableT>> =
+): List<Either<FailureT?, ValidatableT?>> =
     failFastForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
         .apply(validatables)
 
 fun <FailureT, ValidatableT, PairT> validateAndFailFast(
     validatables: List<ValidatableT>,
     invalidValidatable: FailureT,
-    throwableMapper: Function1<Throwable, FailureT>,
-    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT>,
+    throwableMapper: Function1<Throwable, FailureT?>,
+    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
     pairForInvalidMapper: Function1<ValidatableT, PairT>
-): List<Either<Tuple2<PairT, FailureT>, ValidatableT>> {
+): List<Either<Tuple2<PairT?, FailureT?>, ValidatableT?>> {
     val validationResults =
         failFastForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
             .apply(validatables)
     return io.vavr.collection.List.ofAll(validationResults).zipWith(
         validatables
-    ) { result: Either<FailureT, ValidatableT>, validatable: ValidatableT ->
-        result.mapLeft { failure: FailureT ->
+    ) { result, validatable ->
+        result.mapLeft { failure ->
             Tuple.of(
                 pairForInvalidMapper.apply(validatable),
                 failure
@@ -64,11 +64,11 @@ fun <FailureT, ValidatableT> validateAndFailFastAllOrNone(
 </ValidatableT></FailureT> */
 fun <FailureT, ValidatableT> validateAndAccumulateErrors(
     validatables: List<ValidatableT>,
-    simpleValidators: List<SimpleValidator<ValidatableT, FailureT>>,
+    simpleValidators: List<SimpleValidator<ValidatableT?, FailureT?>>,
     invalidValidatable: FailureT,
     none: FailureT,
-    throwableMapper: Function1<Throwable, FailureT>
-): List<List<Either<FailureT, ValidatableT>>> = validateAndAccumulateErrors(
+    throwableMapper: Function1<Throwable, FailureT?>
+): List<List<Either<FailureT?, ValidatableT?>>> = validateAndAccumulateErrors(
     validatables,
     liftAllSimple(simpleValidators, none),
     invalidValidatable,
@@ -87,9 +87,9 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
 </ValidatableT></FailureT> */
 fun <FailureT, ValidatableT> validateAndAccumulateErrors(
     validatables: List<ValidatableT>,
-    validators: List<Validator<ValidatableT, FailureT>>,
+    validators: List<Validator<ValidatableT?, FailureT?>>,
     invalidValidatable: FailureT,
-    throwableMapper: Function1<Throwable, FailureT>
-): List<List<Either<FailureT, ValidatableT>>> = validatables.stream()
+    throwableMapper: Function1<Throwable, FailureT?>
+): List<List<Either<FailureT?, ValidatableT?>>> = validatables.stream()
     .map(accumulationStrategy(validators, invalidValidatable, throwableMapper))
     .collect(Collectors.toList())

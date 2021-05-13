@@ -18,8 +18,9 @@ import java.util.stream.Collectors
  * @return Composed Accumulation Strategy
  */
 internal fun <FailureT, ValidatableT> accumulationStrategy(
-    validators: List<Validator<ValidatableT, FailureT>>, invalidValidatable: FailureT,
-    throwableMapper: Function1<Throwable, FailureT>
+    validators: List<Validator<ValidatableT?, FailureT?>>,
+    invalidValidatable: FailureT,
+    throwableMapper: Function1<Throwable, FailureT?>
 ): Accumulation<ValidatableT, FailureT> = Accumulation { toBeValidated ->
     if (toBeValidated == null) listOf(
         left(invalidValidatable)
@@ -31,4 +32,4 @@ internal fun <FailureT, ValidatableT> accumulationStrategy(
 }
 
 internal fun interface Accumulation<ValidatableT, FailureT> :
-    Function1<ValidatableT, List<Either<FailureT, ValidatableT>>>
+    Function1<ValidatableT, List<Either<FailureT?, ValidatableT?>>>

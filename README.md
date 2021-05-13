@@ -261,7 +261,7 @@ and they all need to be of the same type to stitch them together.
 
 ## Lift Util
 
-Below are the DSLs currently available, with self-explanatory names. There are multiple overloads suitable for simple/non-simple. The Java Docs should guide you to use proper overload:
+Below are the utils currently available, with self-explanatory names. There are multiple overloads suitable for simple/non-simple. The Java Docs should guide you to use proper overload:
 
 | Aggregation Util: To lift Member validator to Container Validator type ||
 | ---  | --- |
@@ -273,7 +273,7 @@ Below are the DSLs currently available, with self-explanatory names. There are m
 
 If you skim through the source code, you can realize none of these Util functions does any execution. These Higher-Order
 functions simply take-in a function and return a lifted function, deferring the actual execution until you call any API
-method in the *RunnerDSL* below:
+method in the *Runner* API below:
 
 ---
 

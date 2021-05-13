@@ -9,6 +9,7 @@ import org.revcloud.vader.types.validators.SimpleValidator
 import org.revcloud.vader.types.validators.Validator
 import java.util.*
 import java.util.stream.Collectors
+import java.util.stream.Stream
 
 fun <FailureT, ValidatableT> validateAndFailFastForHeader(
     validatable: ValidatableT,
@@ -20,7 +21,7 @@ fun <FailureT, ValidatableT> validateAndFailFast(
     validatable: ValidatableT,
     throwableMapper: Function1<Throwable, FailureT>,
     validationConfig: ValidationConfig<ValidatableT, FailureT>
-): Optional<FailureT> = failFast(throwableMapper, validationConfig).apply(validatable)
+): Optional<FailureT?> = failFast(throwableMapper, validationConfig).apply(validatable)
     .swap().toJavaOptional()
 
 // --- ERROR ACCUMULATION ---
@@ -36,8 +37,11 @@ fun <FailureT, ValidatableT> validateAndFailFast(
  * @return List of Validation failures.
 </ValidatableT></FailureT> */
 fun <FailureT, ValidatableT> validateAndAccumulateErrorsForSimpleValidators(
-    validatable: ValidatableT, simpleValidators: List<SimpleValidator<ValidatableT, FailureT>>,
-    invalidValidatable: FailureT, none: FailureT, throwableMapper: Function1<Throwable, FailureT>
+    validatable: ValidatableT,
+    simpleValidators: Collection<SimpleValidator<ValidatableT?, FailureT?>>,
+    invalidValidatable: FailureT,
+    none: FailureT,
+    throwableMapper: Function1<Throwable, FailureT?>
 ): List<FailureT> = validateAndAccumulateErrors(
     validatable,
     liftAllSimple(simpleValidators, none),
@@ -60,17 +64,18 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrorsForSimpleValidators(
  * @return List of Validation failures. EmptyList if all the validations pass.
 </ValidatableT></FailureT> */
 fun <FailureT, ValidatableT> validateAndAccumulateErrors(
-    validatable: ValidatableT, validators: List<Validator<ValidatableT, FailureT>>,
-    invalidValidatable: FailureT, none: FailureT, throwableMapper: Function1<Throwable, FailureT>
+    validatable: ValidatableT,
+    validators: List<Validator<ValidatableT?, FailureT?>>,
+    invalidValidatable: FailureT,
+    none: FailureT,
+    throwableMapper: Function1<Throwable, FailureT?>
 ): List<FailureT> {
-    val results = accumulationStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
+    val results: Stream<FailureT> = accumulationStrategy(validators, invalidValidatable, throwableMapper).apply(validatable)
         .stream()
-        .map { validationResult: Either<FailureT, ValidatableT> ->
-            validationResult.fold(
+        .map {
+            it.fold(
                 Function1.identity()
             ) { _ -> none }
         }
-    return if (results.allMatch { result: FailureT -> result == none }) emptyList() else results.collect(
-        Collectors.toList()
-    )
+    return if (results.allMatch { it == none }) emptyList() else results.collect(Collectors.toList())
 }

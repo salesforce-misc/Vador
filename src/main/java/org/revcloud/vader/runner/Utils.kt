@@ -15,10 +15,10 @@ import java.util.function.Function
 import java.util.stream.Stream
 
 fun <FailureT, ValidatableT> fireValidators(
-    validatable: Either<FailureT, ValidatableT>,
+    validatable: Either<FailureT?, ValidatableT?>,
     validators: Stream<Validator<ValidatableT, FailureT>>,
     throwableMapper: Function1<Throwable, FailureT>
-): Stream<Either<FailureT, ValidatableT>> =
+): Stream<Either<FailureT?, ValidatableT?>> =
     validators.map { currentValidator ->
         fireValidator(
             currentValidator,
@@ -29,16 +29,12 @@ fun <FailureT, ValidatableT> fireValidators(
 
 fun <FailureT, ValidatableT> fireValidator(
     validator: Validator<ValidatableT, FailureT>,
-    validatable: Either<FailureT, ValidatableT>,
+    validatable: Either<FailureT?, ValidatableT?>,
     throwableMapper: Function1<Throwable, FailureT>
-): Either<FailureT, ValidatableT> =
+): Either<FailureT?, ValidatableT?> =
     CheckedFunction1.liftTry(validator).apply(validatable)
-        .fold({ throwable: Throwable ->
-            left<FailureT, ValidatableT>(
-                throwableMapper.apply(throwable)
-            )
-        }, Function1.identity())
-        .flatMap { validatable } // Put the original Validatable in the right state
+        .fold({ throwable -> left(throwableMapper.apply(throwable)) }) { validatable } // Put the original Validatable in the right state
+
 
 fun <FailureT> validateSize(
     validatables: Collection<*>,
@@ -58,7 +54,7 @@ fun <ValidatableT, FailureT> filterInvalidatablesAndDuplicates(
     validatables: List<ValidatableT>,
     invalidValidatable: FailureT,
     batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT>
-): Seq<Either<FailureT, ValidatableT>> {
+): Seq<Either<FailureT?, ValidatableT?>> {
     if (validatables.isEmpty()) {
         return io.vavr.collection.List.empty()
     } else if (validatables.size == 1) {
@@ -78,7 +74,7 @@ fun <ValidatableT, FailureT> filterInvalidatablesAndDuplicates(
                     keyMapperForDuplicates.apply(tuple2._1)
                 )
             }
-    val invalids = groups[null]
+    val invalids: Seq<Tuple2<Either<FailureT?, ValidatableT?>, Int>> = groups[null]
         .map { nullValidatables: io.vavr.collection.List<Tuple2<ValidatableT, Int>> ->
             invalidate(
                 nullValidatables,
@@ -89,18 +85,18 @@ fun <ValidatableT, FailureT> filterInvalidatablesAndDuplicates(
 
     // TODO 11/04/21 gopala.akshintala: add test 
     if (duplicateFinder == null) { // Skip the rest if duplicateFinder is not defined
-        val valids: Seq<Tuple2<Either<FailureT, ValidatableT>, Int>> = groups.remove(null).values().flatMap(
+        val valids: Seq<Tuple2<Either<FailureT?, ValidatableT?>, Int>> = groups.remove(null).values().flatMap(
             Function1.identity()
         ).map(
-            Function { tuple2: Tuple2<ValidatableT, Int> ->
+            Function { tuple2 ->
                 tuple2.map1 { right: ValidatableT ->
                     Either.right(
                         right
                     )
                 }
             })
-        return valids.appendAll(invalids).sortBy { obj: Tuple2<Either<FailureT, ValidatableT>, Int> -> obj._2() }
-            .map { obj: Tuple2<Either<FailureT, ValidatableT>, Int> -> obj._1() }
+        return valids.appendAll(invalids).sortBy { obj -> obj._2() }
+            .map { obj -> obj._1() }
     }
     val failureForNullKeys = batchValidationConfig.andFailNullKeysWith
     val withNullKeys = groups[Optional.empty()].getOrElse(io.vavr.collection.List.empty())
@@ -120,7 +116,7 @@ fun <ValidatableT, FailureT> filterInvalidatablesAndDuplicates(
     val partition = groups.removeAll(io.vavr.collection.List.of(null, Optional.empty())).values()
         .partition { group: io.vavr.collection.List<Tuple2<ValidatableT, Int>> -> group.size() == 1 }
     val failureForDuplicate = batchValidationConfig.andFailDuplicatesWith
-    val duplicates: Seq<Tuple2<Either<FailureT, ValidatableT>, Int>> =
+    val duplicates: Seq<Tuple2<Either<FailureT?, ValidatableT?>, Int>> =
         if (failureForDuplicate == null) io.vavr.collection.List.empty() else partition._2!!.flatMap(
             Function1.identity()
         ).map { duplicate: Tuple2<ValidatableT, Int> ->
@@ -129,7 +125,7 @@ fun <ValidatableT, FailureT> filterInvalidatablesAndDuplicates(
                 duplicate._2
             )
         }
-    val nonDuplicates: Seq<Tuple2<Either<FailureT, ValidatableT>, Int>> =
+    val nonDuplicates: Seq<Tuple2<Either<FailureT?, ValidatableT?>, Int>> =
         partition._1!!.flatMap(Function1.identity()).map(
             Function { tuple2: Tuple2<ValidatableT, Int> ->
                 tuple2.map1 { right: ValidatableT ->
@@ -139,8 +135,8 @@ fun <ValidatableT, FailureT> filterInvalidatablesAndDuplicates(
                 }
             })
     return nonDuplicates.appendAll(duplicates).appendAll(invalids).appendAll(invalidsWithNullKeys)
-        .sortBy { obj: Tuple2<Either<FailureT, ValidatableT>, Int> -> obj._2() }
-        .map { obj: Tuple2<Either<FailureT, ValidatableT>, Int> -> obj._1() }
+        .sortBy { obj -> obj._2() }
+        .map { obj -> obj._1() }
 }
 
 fun <ValidatableT, FailureT> filterInvalidatablesAndDuplicatesForAllOrNone(
@@ -183,7 +179,7 @@ fun <ValidatableT, FailureT> filterInvalidatablesAndDuplicatesForAllOrNone(
 
 private fun <FailureT, ValidatableT> invalidate(
     nullValidatables: Seq<Tuple2<ValidatableT, Int>>, invalidValidatable: FailureT
-): Seq<Tuple2<Either<FailureT, ValidatableT>, Int>> =
+): Seq<Tuple2<Either<FailureT?, ValidatableT?>, Int>> =
     nullValidatables.map { nullValidatable: Tuple2<ValidatableT, Int> ->
         nullValidatable.map1 {
             Either.left(
@@ -193,10 +189,10 @@ private fun <FailureT, ValidatableT> invalidate(
     }
 
 internal fun <FailureT, ValidatableT> findFirstFailure(
-    validatable: Either<FailureT, ValidatableT>,
+    validatable: Either<FailureT?, ValidatableT?>,
     validationConfig: BaseValidationConfig<ValidatableT, FailureT>,
     throwableMapper: Function1<Throwable, FailureT>
-): Either<FailureT, ValidatableT> =
+): Either<FailureT?, ValidatableT?> =
     fireValidators(
         validatable,
         toValidators(validationConfig),

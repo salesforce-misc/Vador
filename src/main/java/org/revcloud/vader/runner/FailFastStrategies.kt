@@ -8,10 +8,10 @@ import java.util.*
 import java.util.function.Function
 
 internal fun interface FailFast<ValidatableT, FailureT> :
-    Function1<ValidatableT, Either<FailureT, ValidatableT>>
+    Function1<ValidatableT, Either<FailureT?, ValidatableT?>>
 
 internal fun interface FailFastForBatch<ValidatableT, FailureT> :
-    Function1<List<ValidatableT>, List<Either<FailureT, ValidatableT>>>
+    Function1<List<ValidatableT>, List<Either<FailureT?, ValidatableT?>>>
 
 internal fun interface FailFastAllOrNoneForBatch<ValidatableT, FailureT> :
     Function1<List<ValidatableT>, Optional<FailureT>>
@@ -82,11 +82,11 @@ internal fun <FailureT, ValidatableT> failFastAllOrNoneForBatch(
         batchValidationConfig
     ).or {
         validatables.stream()
-            .map(Function<ValidatableT, Either<FailureT, ValidatableT>> { right: ValidatableT ->
+            .map(Function<ValidatableT, Either<FailureT?, ValidatableT?>> { right: ValidatableT ->
                 Either.right(
                     right
                 )
-            }).map { validatable: Either<FailureT, ValidatableT> ->
+            }).map { validatable ->
                 findFirstFailure(
                     validatable,
                     batchValidationConfig,
