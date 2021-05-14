@@ -2,9 +2,7 @@ package org.revcloud.vader.runner.spec;
 
 import consumer.failure.ValidationFailure;
 import lombok.Value;
-import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.runner.Runner;
 import org.revcloud.vader.runner.ValidationConfig;
 
 import static consumer.failure.ValidationFailure.INVALID_VALUE;
@@ -12,6 +10,7 @@ import static consumer.failure.ValidationFailure.NONE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.either;
 import static org.hamcrest.Matchers.is;
+import static org.revcloud.vader.runner.Runner.validateAndFailFast;
 
 class Spec1Test {
     @Test
@@ -22,11 +21,11 @@ class Spec1Test {
                         .shouldMatch(either(is(1)).or(is(2))))
                 .prepare();
         final var invalidBean = new Bean(3);
-        final var failureResult = Runner.validateAndFailFast(invalidBean, ignore -> NONE, validationConfig);
+        final var failureResult = validateAndFailFast(invalidBean, ValidationFailure::getValidationFailureForException, validationConfig);
         assertThat(failureResult).contains(INVALID_VALUE);
 
         final var validBean = new Bean(1);
-        final var noneResult = Runner.validateAndFailFast(validBean, ignore -> NONE, validationConfig);
+        final var noneResult = validateAndFailFast(validBean, ignore -> NONE, validationConfig);
         assertThat(noneResult).isEmpty();
     }
     

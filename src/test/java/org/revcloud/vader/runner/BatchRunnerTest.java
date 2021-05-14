@@ -4,7 +4,6 @@ import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
 import io.vavr.control.Either;
 import lombok.Value;
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
@@ -19,6 +18,7 @@ import static consumer.failure.ValidationFailure.VALIDATION_FAILURE_3;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.revcloud.vader.runner.BatchRunner.validateAndFailFast;
 
 /**
  * gakshintala created on 7/22/20.
@@ -34,7 +34,7 @@ class BatchRunnerTest {
                 bean -> bean.map(Bean::getId).filterOrElse(id -> id <= 2, ignore -> VALIDATION_FAILURE_2)
         );
         final var batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate().withValidators(validators).prepare();
-        final var results = BatchRunner.validateAndFailFast(validatables, NONE, ValidationFailure::getValidationFailureForException, batchValidationConfig);
+        final var results = validateAndFailFast(validatables, NONE, ValidationFailure::getValidationFailureForException, batchValidationConfig);
         assertEquals(validatables.size(), results.size());
         assertTrue(results.get(2).isRight());
         assertEquals(results.get(2), Either.right(new Bean(2)));
@@ -68,7 +68,7 @@ class BatchRunnerTest {
         );
         final var batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
                 .withSimpleValidatorsOrFailWith(Tuple.of(simpleValidators, NONE)).prepare();
-        final var results = BatchRunner.validateAndFailFast(validatables, NONE, ValidationFailure::getValidationFailureForException, batchValidationConfig);
+        final var results = validateAndFailFast(validatables, NONE, ValidationFailure::getValidationFailureForException, batchValidationConfig);
         assertEquals(results.size(), validatables.size());
         assertTrue(results.get(2).isRight());
         assertEquals(results.get(2), Either.right(new Bean(2)));

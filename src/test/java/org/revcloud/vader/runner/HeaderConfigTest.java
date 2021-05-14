@@ -15,6 +15,7 @@ import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET;
 import static consumer.failure.ValidationFailure.NONE;
 import static consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.revcloud.vader.runner.Runner.validateAndFailFastForHeader;
 
 class HeaderConfigTest {
 
@@ -25,7 +26,7 @@ class HeaderConfigTest {
                 .withSimpleHeaderValidator(Tuple.of(ignore -> UNKNOWN_EXCEPTION, NONE)).prepare();
         final var batch = List.of(new Bean1());
         final var headerBean = new HeaderBean(batch);
-        final var result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
+        final var result = validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).contains(UNKNOWN_EXCEPTION);
     }
 
@@ -37,7 +38,7 @@ class HeaderConfigTest {
                 .withSimpleHeaderValidator(Tuple.of(ignore -> NONE, NONE)).prepare();
         final var batch = List.of(new Bean1());
         final var headerBean = new HeaderBean(batch);
-        final var result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
+        final var result = validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).isEmpty();
     }
 
@@ -48,7 +49,7 @@ class HeaderConfigTest {
                 .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET))
                 .withSimpleHeaderValidator(Tuple.of(ignore -> NONE, NONE)).prepare();
         final var headerBean = new HeaderBean(Collections.emptyList());
-        final var result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
+        final var result = validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
     }
 
@@ -59,7 +60,7 @@ class HeaderConfigTest {
                 .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET))
                 .withSimpleHeaderValidator(Tuple.of(ignore -> NONE, NONE)).prepare();
         final var headerBean = new HeaderBeanMultiBatch(Collections.emptyList(), Collections.emptyList());
-        final var result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
+        final var result = validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
     }
 
@@ -70,7 +71,7 @@ class HeaderConfigTest {
                 .shouldHaveMaxBatchSize(Tuple.of(0, MAX_BATCH_SIZE_EXCEEDED))
                 .withSimpleHeaderValidator(Tuple.of(ignore -> NONE, NONE)).prepare();
         final var headerBean = new HeaderBean(List.of(new Bean1()));
-        final var result = Runner.validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
+        final var result = validateAndFailFastForHeader(headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
         assertThat(result).contains(MAX_BATCH_SIZE_EXCEEDED);
     }
 
@@ -83,7 +84,7 @@ class HeaderConfigTest {
                         headerBean -> Either.right(NONE)))
                 .withBatchMapper(HeaderBean::getBatch)
                 .prepare();
-        final var result = Runner.validateAndFailFastForHeader(
+        final var result = validateAndFailFastForHeader(
                 new HeaderBean(Collections.emptyList()),
                 ValidationFailure::getValidationFailureForException,
                 validationConfig

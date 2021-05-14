@@ -21,18 +21,4 @@ class AggregationLiftUtilTest {
         final var toBeValidated = new Container(0, new Member(0));
         Assertions.assertSame(failure, liftedContainerValidator.unchecked().apply(Either.right(toBeValidated)));
     }
-
-    @Test
-    void liftToContainerValidationTypeInvalidContainer() {
-        Validator<Member, ValidationFailure> memberValidator = member -> Either.left(ValidationFailure.VALIDATION_FAILURE_1);
-        final var liftedContainerValidator = liftToContainerValidatorType(memberValidator, Container::getMember);
-        Assertions.assertEquals(Either.left(ValidationFailure.INVALID_CONTAINER), liftedContainerValidator.unchecked().apply(Either.right(null)));
-    }
-
-    @Test
-    void liftToContainerValidationTypeInvalidMember() {
-        Validator<Member, ValidationFailure> memberValidator = member -> Either.left(ValidationFailure.VALIDATION_FAILURE_1);
-        final var liftedContainerValidator = liftToContainerValidatorType(memberValidator, Container::getMember);
-        Assertions.assertEquals(Either.left(ValidationFailure.INVALID_MEMBER), liftedContainerValidator.unchecked().apply(Either.right(new Container(0, null))));
-    }
 }

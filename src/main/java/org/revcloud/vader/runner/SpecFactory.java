@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import org.hamcrest.Matcher;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
@@ -34,9 +35,10 @@ public final class SpecFactory<ValidatableT, FailureT> {
 
     @Getter
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
-    // This public is required for consumer to access
     public abstract static class BaseSpec<ValidatableT, FailureT> {
+        @Nullable
         protected String nameForTest;
+        @Nullable
         protected FailureT orFailWith;
 
         protected abstract Predicate<ValidatableT> toPredicate();
@@ -55,9 +57,10 @@ public final class SpecFactory<ValidatableT, FailureT> {
         @NonNull
         Function1<ValidatableT, ? extends GivenT> given;
         @Singular("shouldMatchField")
-        protected Collection<Function1<ValidatableT, ?>> shouldMatchAnyOfFields;
+        protected Collection<@NonNull Function1<ValidatableT, ?>> shouldMatchAnyOfFields;
         @Singular("shouldMatch")
         Collection<? extends Matcher<? extends GivenT>> shouldMatchAnyOf;
+        @Nullable
         Function1<GivenT, ? extends FailureT> orFailWithFn;
 
         @Override
@@ -93,7 +96,9 @@ public final class SpecFactory<ValidatableT, FailureT> {
         Collection<? extends Matcher<? extends ThenT>> shouldMatchAnyOf;
         @Singular("shouldRelateWithEntry")
         Map<? extends WhenT, ? extends Set<? extends ThenT>> shouldRelateWith;
+        @Nullable
         Function2<WhenT, ThenT, Boolean> shouldRelateWithFn;
+        @Nullable
         Function2<WhenT, ThenT, ? extends FailureT> orFailWithFn;
 
         @Override
@@ -133,6 +138,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
         Collection<? extends Matcher<? extends Then1T>> orField1ShouldMatchAnyOf;
         @Singular("orField2ShouldMatch")
         Collection<? extends Matcher<? extends Then2T>> orField2ShouldMatchAnyOf;
+        @Nullable
         Function3<WhenT, Then1T, Then2T, ? extends FailureT> orFailWithFn;
 
         @Override

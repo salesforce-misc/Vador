@@ -2,7 +2,6 @@
 
 package org.revcloud.vader.lift
 
-import io.vavr.Function1
 import org.revcloud.vader.types.validators.Validator
 
 /**
@@ -19,7 +18,7 @@ import org.revcloud.vader.types.validators.Validator
 </FailureT></MemberT></ContainerT> */
 fun <ContainerT, MemberT, FailureT> liftToContainerValidatorType(
     memberValidator: Validator<MemberT?, FailureT?>,
-    toMemberMapper: Function1<in ContainerT?, out MemberT?>,
+    toMemberMapper: (ContainerT?) -> MemberT?,
 ): Validator<ContainerT?, FailureT?> =
     Validator { container ->
         val member = container?.map(toMemberMapper)
@@ -40,6 +39,6 @@ fun <ContainerT, MemberT, FailureT> liftToContainerValidatorType(
  */
 fun <ContainerT, MemberT, FailureT> liftAllToContainerValidatorType(
     memberValidators: Collection<Validator<MemberT?, FailureT?>>,
-    toChildMapper: Function1<in ContainerT?, out MemberT?>
+    toMemberMapper: (ContainerT?) -> MemberT?,
 ): List<Validator<ContainerT?, FailureT?>> =
-    memberValidators.map { liftToContainerValidatorType(it, toChildMapper) }
+    memberValidators.map { liftToContainerValidatorType(it, toMemberMapper) }

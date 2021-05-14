@@ -2,7 +2,6 @@ package org.revcloud.vader.runner.spec;
 
 import consumer.failure.ValidationFailure;
 import lombok.Value;
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.runner.ValidationConfig;
 

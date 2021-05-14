@@ -1,10 +1,12 @@
 @file:JvmName("BatchRunner")
+
 package org.revcloud.vader.runner
 
 import io.vavr.Function1
 import io.vavr.Tuple
 import io.vavr.Tuple2
 import io.vavr.control.Either
+import lombok.NonNull
 import org.revcloud.vader.lift.liftAllSimple
 import org.revcloud.vader.types.validators.SimpleValidator
 import org.revcloud.vader.types.validators.Validator
@@ -12,44 +14,33 @@ import java.util.*
 import java.util.stream.Collectors
 
 fun <FailureT, ValidatableT> validateAndFailFast(
-    validatables: List<ValidatableT>,
-    invalidValidatable: FailureT,
-    throwableMapper: Function1<Throwable, FailureT>,
-    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT>
+    validatables: List<@NonNull ValidatableT>,
+    nullValidatable: FailureT?,
+    throwableMapper: (Throwable) -> FailureT?,
+    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>
 ): List<Either<FailureT?, ValidatableT?>> =
-    failFastForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
-        .apply(validatables)
+    failFastForBatch(nullValidatable, throwableMapper, batchValidationConfig)(validatables)
 
 fun <FailureT, ValidatableT, PairT> validateAndFailFast(
-    validatables: List<ValidatableT>,
+    validatables: List<@NonNull ValidatableT>,
     invalidValidatable: FailureT,
-    throwableMapper: Function1<Throwable, FailureT?>,
+    throwableMapper: (Throwable) -> FailureT?,
     batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
-    pairForInvalidMapper: Function1<ValidatableT, PairT>
+    pairForInvalidMapper: (ValidatableT) -> PairT?
 ): List<Either<Tuple2<PairT?, FailureT?>, ValidatableT?>> {
     val validationResults =
-        failFastForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
-            .apply(validatables)
-    return io.vavr.collection.List.ofAll(validationResults).zipWith(
-        validatables
-    ) { result, validatable ->
-        result.mapLeft { failure ->
-            Tuple.of(
-                pairForInvalidMapper.apply(validatable),
-                failure
-            )
-        }
-    }.toJavaList()
+        validateAndFailFast(validatables, invalidValidatable, throwableMapper, batchValidationConfig)
+    return validationResults.zip(validatables)
+        .map { (result, validatable) -> result.mapLeft { Tuple.of(pairForInvalidMapper(validatable), it) } }
 }
 
 fun <FailureT, ValidatableT> validateAndFailFastAllOrNone(
     validatables: List<ValidatableT>,
     invalidValidatable: FailureT,
-    throwableMapper: Function1<Throwable, FailureT>,
-    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT>
+    throwableMapper: (Throwable) -> FailureT?,
+    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>
 ): Optional<FailureT> =
-    failFastAllOrNoneForBatch(invalidValidatable, throwableMapper, batchValidationConfig)
-        .apply(validatables)
+    failFastAllOrNoneForBatch(invalidValidatable, throwableMapper, batchValidationConfig)(validatables)
 
 // --- ERROR ACCUMULATION ---
 /**
@@ -67,7 +58,7 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
     simpleValidators: List<SimpleValidator<ValidatableT?, FailureT?>>,
     invalidValidatable: FailureT,
     none: FailureT,
-    throwableMapper: Function1<Throwable, FailureT?>
+    throwableMapper: (Throwable) -> FailureT?,
 ): List<List<Either<FailureT?, ValidatableT?>>> = validateAndAccumulateErrors(
     validatables,
     liftAllSimple(simpleValidators, none),
@@ -89,7 +80,7 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
     validatables: List<ValidatableT>,
     validators: List<Validator<ValidatableT?, FailureT?>>,
     invalidValidatable: FailureT,
-    throwableMapper: Function1<Throwable, FailureT?>
+    throwableMapper: (Throwable) -> FailureT?,
 ): List<List<Either<FailureT?, ValidatableT?>>> = validatables.stream()
     .map(accumulationStrategy(validators, invalidValidatable, throwableMapper))
     .collect(Collectors.toList())

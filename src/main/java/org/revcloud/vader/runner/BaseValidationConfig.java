@@ -7,27 +7,21 @@ import io.vavr.Function1;
 import io.vavr.Function2;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.jetbrains.annotations.Nullable;
+import org.revcloud.vader.runner.SpecFactory.BaseSpec;
 import org.revcloud.vader.runner.SpecFactory.BaseSpec.BaseSpecBuilder;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.revcloud.vader.lift.ValidatorLiftUtil.liftAllSimple;
 
 @Getter
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
@@ -44,30 +38,31 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
     protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT> absentOrHaveValidSFIdFieldsOrFailWith;
     @Nullable
     protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ID>>, Function2<String, ID, FailureT>> absentOrHaveValidSFIdFormatOrFailWithFn;
-    protected Function1<SpecFactory<ValidatableT, FailureT>, Collection<? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>> withSpecs;
+    @Nullable
+    protected Function1<SpecFactory<ValidatableT, FailureT>, Collection<? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>> specify;
     @Singular("withSpec")
-    protected Collection<Function1<SpecFactory<ValidatableT, FailureT>, ? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>> withSpec;
+    protected Collection<Function1<SpecFactory<ValidatableT, FailureT>, ? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>> withSpecs;
     @Singular
     Collection<Validator<ValidatableT, FailureT>> withValidators;
-    @Builder.Default
-    Tuple2<Collection<SimpleValidator<ValidatableT, FailureT>>, FailureT> withSimpleValidatorsOrFailWith = Tuple.of(Collections.emptyList(), null);
+    @Nullable
+    Tuple2<Collection<SimpleValidator<ValidatableT, FailureT>>, FailureT> withSimpleValidatorsOrFailWith;
     @Singular("withSimpleValidatorOrFailWith")
     Collection<Tuple2<SimpleValidator<ValidatableT, FailureT>, FailureT>> withSimpleValidators;
 
-    Stream<SpecFactory.BaseSpec<ValidatableT, FailureT>> getSpecsStream() {
+    Stream<BaseSpec<ValidatableT, FailureT>> getSpecsStream() {
         val specFactory = new SpecFactory<ValidatableT, FailureT>();
-        return Stream.concat(Stream.ofNullable(withSpecs).flatMap(specs -> specs.apply(specFactory).stream().map(BaseSpecBuilder::done)),
-                Stream.ofNullable(withSpec).flatMap(specs -> specs.stream().map(spec -> spec.apply(specFactory).done())));
+        return Stream.concat(Stream.ofNullable(specify).flatMap(specs -> specs.apply(specFactory).stream().map(BaseSpecBuilder::done)),
+                Stream.ofNullable(withSpecs).flatMap(specs -> specs.stream().map(spec -> spec.apply(specFactory).done())));
     }
 
     public Optional<Predicate<ValidatableT>> getSpecWithName(@NonNull String nameForTest) {
         // TODO 29/04/21 gopala.akshintala: Move this duplicate check to prepare 
-        val specNameToSpecs = getSpecsStream().collect(Collectors.groupingBy(SpecFactory.BaseSpec::getNameForTest));
+        val specNameToSpecs = getSpecsStream().collect(Collectors.groupingBy(BaseSpec::getNameForTest));
         val duplicateSpecNames = specNameToSpecs.entrySet().stream().filter(entry -> entry.getValue().size() > 1).map(Map.Entry::getKey).collect(Collectors.toSet());
         if (!duplicateSpecNames.isEmpty()) {
             throw new IllegalArgumentException("Duplicate Spec Names found" + String.join(",", duplicateSpecNames));
         }
-        return getSpecsStream().filter(spec -> nameForTest.equals(spec.nameForTest)).findFirst().map(SpecFactory.BaseSpec::toPredicate);
+        return getSpecsStream().filter(spec -> nameForTest.equals(spec.nameForTest)).findFirst().map(BaseSpec::toPredicate);
     }
 
     public Set<String> getRequiredFieldNames(Class<ValidatableT> beanClass) {

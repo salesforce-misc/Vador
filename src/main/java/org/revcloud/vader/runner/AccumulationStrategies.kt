@@ -1,12 +1,11 @@
 @file:JvmName("AccumulationStrategies")
+
 package org.revcloud.vader.runner
 
-import io.vavr.Function1
 import io.vavr.control.Either
 import io.vavr.kotlin.left
 import io.vavr.kotlin.right
 import org.revcloud.vader.types.validators.Validator
-import java.util.stream.Collectors
 
 /**
  * Higher-order function to compose list of validators into Accumulation Strategy.
@@ -20,16 +19,10 @@ import java.util.stream.Collectors
 internal fun <FailureT, ValidatableT> accumulationStrategy(
     validators: List<Validator<ValidatableT?, FailureT?>>,
     invalidValidatable: FailureT,
-    throwableMapper: Function1<Throwable, FailureT?>
-): Accumulation<ValidatableT, FailureT> = Accumulation { toBeValidated ->
-    if (toBeValidated == null) listOf(
-        left(invalidValidatable)
-    ) else fireValidators(
-        right(toBeValidated),
-        validators.stream(),
-        throwableMapper
-    ).collect(Collectors.toList())
+    throwableMapper: (Throwable) -> FailureT?,
+): Accumulation<ValidatableT, FailureT> = {
+    if (it == null) listOf(left(invalidValidatable))
+    else fireValidators(right(it), validators, throwableMapper)
 }
 
-internal fun interface Accumulation<ValidatableT, FailureT> :
-    Function1<ValidatableT, List<Either<FailureT?, ValidatableT?>>>
+typealias Accumulation<ValidatableT, FailureT> = (ValidatableT) -> List<Either<FailureT?, ValidatableT?>>

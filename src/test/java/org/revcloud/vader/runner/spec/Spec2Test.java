@@ -3,7 +3,6 @@ package org.revcloud.vader.runner.spec;
 import consumer.failure.ValidationFailure;
 import io.vavr.collection.HashSet;
 import lombok.Value;
-import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.runner.Runner;
@@ -76,7 +75,7 @@ class Spec2Test {
 
     @Test
     void multiSpec2Test() {
-        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(spec -> List.of(
+        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().specify(spec -> List.of(
                 spec.<Integer, String>_2().when(Bean::getValue)
                         .matches(is(1))
                         .then(Bean::getValueStr)
@@ -110,7 +109,7 @@ class Spec2Test {
     void spec2WithName() {
         final var invalidCombo1 = "invalidCombo1";
         final var invalidCombo2 = "invalidCombo2";
-        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSpecs(spec -> List.of(
+        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().specify(spec -> List.of(
                 spec.<Integer, String>_2().nameForTest(invalidCombo1)
                         .orFailWith(INVALID_COMBO_1)
                         .when(Bean::getValue).matches(is(1))

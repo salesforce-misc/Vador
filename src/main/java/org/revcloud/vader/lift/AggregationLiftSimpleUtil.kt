@@ -2,7 +2,6 @@
 
 package org.revcloud.vader.lift
 
-import io.vavr.Function1
 import org.revcloud.vader.types.validators.SimpleValidator
 
 /**
@@ -15,13 +14,10 @@ import org.revcloud.vader.types.validators.SimpleValidator
  * @return  Container type validation
  */
 fun <ContainerT, MemberT, FailureT> liftToContainerValidatorType(
-    memberValidation: SimpleValidator<in MemberT?, out FailureT?>,
-    toMemberMapper: Function1<in ContainerT?, out MemberT?>,
-): SimpleValidator<in ContainerT?, out FailureT?> =
-    SimpleValidator { container ->
-        val member = toMemberMapper.apply(container)
-        memberValidation.apply(member)
-    }
+    memberValidation: SimpleValidator<MemberT?, FailureT?>,
+    toMemberMapper: (ContainerT?) -> MemberT?,
+): SimpleValidator<ContainerT?, FailureT?> =
+    SimpleValidator { memberValidation.apply(toMemberMapper(it)) }
 
 /**
  * Lifts a list of simple member validations to container type.
@@ -33,9 +29,9 @@ fun <ContainerT, MemberT, FailureT> liftToContainerValidatorType(
  * @return                  List of container type validations
  */
 fun <ContainerT, MemberT, FailureT> liftAllToContainerValidatorType(
-    memberValidations: List<SimpleValidator<in MemberT?, out FailureT?>>,
-    toMemberMapper: Function1<in ContainerT?, out MemberT?>
-): List<SimpleValidator<in ContainerT?, out FailureT?>> =
+    memberValidations: List<SimpleValidator<MemberT?, FailureT?>>,
+    toMemberMapper: (ContainerT?) -> MemberT?,
+): List<SimpleValidator<ContainerT?, FailureT?>> =
     memberValidations.map { liftToContainerValidatorType(it, toMemberMapper) }
 
 

@@ -17,6 +17,5 @@ class AggregationLiftUtilKtTest : FunSpec({
     }
 })
 
-
 data class Member(var id: Int = 0)
 data class Container(val member: Member = Member(0))

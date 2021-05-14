@@ -6,12 +6,10 @@ import de.cronn.reflection.util.PropertyUtils
 import de.cronn.reflection.util.TypedPropertyGetter
 import io.vavr.Function2
 import io.vavr.Tuple2
-import io.vavr.control.Either
 import lombok.NonNull
 import org.revcloud.vader.runner.SpecFactory.BaseSpec
 import org.revcloud.vader.types.validators.Validator
 import java.util.stream.Collectors
-import java.util.stream.Stream
 
 internal fun <ValidatableT, FailureT, FieldT> toValidators1(
     fieldMapperToFailure: Map<out TypedPropertyGetter<in ValidatableT, out FieldT>, FailureT>,
@@ -35,7 +33,7 @@ internal fun <ValidatableT, FailureT, FieldT> toValidators2(
     }
 } ?: emptyList()
 
-internal fun <ValidatableT, FailureT> toValidators(validationConfig: BaseValidationConfig<ValidatableT, FailureT>): Stream<Validator<ValidatableT, FailureT>> =
+internal fun <ValidatableT, FailureT> toValidators(validationConfig: BaseValidationConfig<ValidatableT, FailureT>): List<Validator<ValidatableT?, FailureT?>> =
     (toValidators1(validationConfig.shouldHaveFieldsOrFailWith, isFieldPresent) +
             toValidators2(validationConfig.shouldHaveFieldsOrFailWithFn, isFieldPresent) +
             toValidators1(validationConfig.shouldHaveValidSFIdFormatOrFailWith, isSFIdPresentAndValidFormat) +
@@ -43,7 +41,7 @@ internal fun <ValidatableT, FailureT> toValidators(validationConfig: BaseValidat
             toValidators1(validationConfig.absentOrHaveValidSFIdFieldsOrFailWith, isSFIdAbsentOrValidFormat) +
             toValidators2(validationConfig.absentOrHaveValidSFIdFormatOrFailWithFn, isSFIdAbsentOrValidFormat) +
             validationConfig.specsStream.collect(Collectors.toList()).map { toValidator(it) } +
-            validationConfig.getValidatorsStream().collect(Collectors.toList())).stream()
+            validationConfig.getValidators())
 
 
 val isFieldPresent: (Any?) -> Boolean = {

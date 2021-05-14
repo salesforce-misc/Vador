@@ -2,38 +2,29 @@
 
 package org.revcloud.vader.runner
 
-import io.vavr.CheckedFunction1
-import io.vavr.Function1
-import io.vavr.Tuple
-import io.vavr.Tuple2
-import io.vavr.collection.Seq
+import io.vavr.CheckedFunction1.liftTry
+import io.vavr.Function1.identity
 import io.vavr.control.Either
 import io.vavr.kotlin.left
+import io.vavr.kotlin.right
 import org.revcloud.vader.types.validators.Validator
 import java.util.*
-import java.util.function.Function
-import java.util.stream.Stream
 
 fun <FailureT, ValidatableT> fireValidators(
     validatable: Either<FailureT?, ValidatableT?>,
-    validators: Stream<Validator<ValidatableT, FailureT>>,
-    throwableMapper: Function1<Throwable, FailureT>
-): Stream<Either<FailureT?, ValidatableT?>> =
-    validators.map { currentValidator ->
-        fireValidator(
-            currentValidator,
-            validatable,
-            throwableMapper
-        )
-    }
+    validators: List<Validator<ValidatableT, FailureT>>,
+    throwableMapper: (Throwable) -> FailureT?,
+): List<Either<FailureT?, ValidatableT?>> =
+    validators.map { fireValidator(it, validatable, throwableMapper) }
 
 fun <FailureT, ValidatableT> fireValidator(
     validator: Validator<ValidatableT, FailureT>,
     validatable: Either<FailureT?, ValidatableT?>,
-    throwableMapper: Function1<Throwable, FailureT>
+    throwableMapper: (Throwable) -> FailureT?,
 ): Either<FailureT?, ValidatableT?> =
-    CheckedFunction1.liftTry(validator).apply(validatable)
-        .fold({ throwable -> left(throwableMapper.apply(throwable)) }) { validatable } // Put the original Validatable in the right state
+    liftTry(validator).apply(validatable)
+        .fold({ left<FailureT?, ValidatableT?>(throwableMapper(it)) }) { it }
+        .flatMap { validatable } // Put the original Validatable in the right state
 
 
 fun <FailureT> validateSize(
@@ -50,153 +41,85 @@ fun <FailureT> validateSize(
     } else Optional.empty()
 }
 
-fun <ValidatableT, FailureT> filterInvalidatablesAndDuplicates(
-    validatables: List<ValidatableT>,
-    invalidValidatable: FailureT,
-    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT>
-): Seq<Either<FailureT?, ValidatableT?>> {
+fun <ValidatableT, FailureT> filterNullValidatablesAndDuplicates(
+    validatables: List<ValidatableT?>,
+    nullValidatable: FailureT?,
+    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>
+): List<Either<FailureT?, ValidatableT?>> {
     if (validatables.isEmpty()) {
-        return io.vavr.collection.List.empty()
+        return emptyList()
     } else if (validatables.size == 1) {
-        val validatable: ValidatableT = validatables[0]
-        return if (validatable == null) io.vavr.collection.List.of(Either.left(invalidValidatable)) else io.vavr.collection.List.of(
-            Either.right(
-                validatables[0]
-            )
-        )
+        val validatable = validatables[0]
+        return if (validatable == null) listOf(left(nullValidatable)) else listOf(right(validatables[0]))
     }
     val duplicateFinder = batchValidationConfig.findAndFilterDuplicatesWith
-    val keyMapperForDuplicates = duplicateFinder ?: Function1.identity()
-    val groups =
-        io.vavr.collection.List.ofAll(validatables).zipWithIndex() // groups: invalids, duplicates, non-duplicates
-            .groupBy { tuple2: Tuple2<ValidatableT, Int> ->
-                if (tuple2._1 == null) null else Optional.ofNullable(
-                    keyMapperForDuplicates.apply(tuple2._1)
-                )
-            }
-    val invalids: Seq<Tuple2<Either<FailureT?, ValidatableT?>, Int>> = groups[null]
-        .map { nullValidatables: io.vavr.collection.List<Tuple2<ValidatableT, Int>> ->
-            invalidate(
-                nullValidatables,
-                invalidValidatable
-            )
-        }
-        .getOrElse(io.vavr.collection.List.empty())
+    val keyMapperForDuplicates = duplicateFinder ?: identity()
+    val groups = validatables.withIndex().groupBy { (_, validatable) ->
+        if (validatable == null) null else Optional.ofNullable(keyMapperForDuplicates.apply(validatable))
+    }
+    val invalids: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
+        groups[null]?.map { (index, _) -> index to left(nullValidatable) } ?: emptyList()
 
     // TODO 11/04/21 gopala.akshintala: add test 
     if (duplicateFinder == null) { // Skip the rest if duplicateFinder is not defined
-        val valids: Seq<Tuple2<Either<FailureT?, ValidatableT?>, Int>> = groups.remove(null).values().flatMap(
-            Function1.identity()
-        ).map(
-            Function { tuple2 ->
-                tuple2.map1 { right: ValidatableT ->
-                    Either.right(
-                        right
-                    )
-                }
-            })
-        return valids.appendAll(invalids).sortBy { obj -> obj._2() }
-            .map { obj -> obj._1() }
+        val valids: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
+            groups.filterKeys { it != null }.values.flatten()
+                .map { (index, validatable) -> index to right(validatable) }
+        return (valids + invalids).sortedBy { it.first }.map { it.second }
     }
     val failureForNullKeys = batchValidationConfig.andFailNullKeysWith
-    val withNullKeys = groups[Optional.empty()].getOrElse(io.vavr.collection.List.empty())
-    val invalidsWithNullKeys = if (failureForNullKeys == null) withNullKeys.map { tuple2: Tuple2<ValidatableT, Int> ->
-        tuple2.map1 { right: ValidatableT ->
-            Either.right(
-                right
-            )
-        }
-    } else withNullKeys.map { tuple2: Tuple2<ValidatableT, Int> ->
-        tuple2.map1 {
-            Either.left<FailureT, ValidatableT>(
-                failureForNullKeys
-            )
-        }
-    }
-    val partition = groups.removeAll(io.vavr.collection.List.of(null, Optional.empty())).values()
-        .partition { group: io.vavr.collection.List<Tuple2<ValidatableT, Int>> -> group.size() == 1 }
+    val withNullKeys: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
+        groups[Optional.empty()]?.map { (index, validatable) ->
+            index to if (failureForNullKeys == null) right(validatable) else left(failureForNullKeys)
+        } ?: emptyList()
+    val partition = groups.filterKeys { it != null && it.isPresent }.values.partition { it.size == 1 }
     val failureForDuplicate = batchValidationConfig.andFailDuplicatesWith
-    val duplicates: Seq<Tuple2<Either<FailureT?, ValidatableT?>, Int>> =
-        if (failureForDuplicate == null) io.vavr.collection.List.empty() else partition._2!!.flatMap(
-            Function1.identity()
-        ).map { duplicate: Tuple2<ValidatableT, Int> ->
-            Tuple.of(
-                Either.left(failureForDuplicate),
-                duplicate._2
-            )
-        }
-    val nonDuplicates: Seq<Tuple2<Either<FailureT?, ValidatableT?>, Int>> =
-        partition._1!!.flatMap(Function1.identity()).map(
-            Function { tuple2: Tuple2<ValidatableT, Int> ->
-                tuple2.map1 { right: ValidatableT ->
-                    Either.right(
-                        right
-                    )
-                }
-            })
-    return nonDuplicates.appendAll(duplicates).appendAll(invalids).appendAll(invalidsWithNullKeys)
-        .sortBy { obj -> obj._2() }
-        .map { obj -> obj._1() }
+    val duplicates: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
+        failureForDuplicate?.let {
+            partition.second.flatten().map { (index, _) -> index to left(it) }
+        } ?: emptyList()
+
+    val nonDuplicates: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
+        partition.first.flatten().map { (index, validatable) -> index to right(validatable) }
+    return (nonDuplicates + duplicates + invalids + withNullKeys).sortedBy { it.first }.map { it.second }
 }
 
-fun <ValidatableT, FailureT> filterInvalidatablesAndDuplicatesForAllOrNone(
-    validatables: List<ValidatableT>,
-    invalidValidatable: FailureT,
-    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT>
+fun <ValidatableT, FailureT> filterNullValidatablesAndDuplicatesForAllOrNone(
+    validatables: List<ValidatableT?>,
+    nullValidatable: FailureT?,
+    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>
 ): Optional<FailureT> {
     if (validatables.isEmpty()) {
         return Optional.empty()
     } else if (validatables.size == 1) {
-        val validatable: ValidatableT = validatables[0]
-        return if (validatable == null) Optional.ofNullable(invalidValidatable) else Optional.empty()
+        val validatable = validatables[0]
+        return if (validatable == null) Optional.ofNullable(nullValidatable) else Optional.empty()
     }
     val duplicateFinder = batchValidationConfig.findAndFilterDuplicatesWith
-    val keyMapperForDuplicates = duplicateFinder ?: Function1.identity()
-    val groups = io.vavr.collection.List.ofAll(validatables) // groups: invalids, duplicates, non-duplicates
-        .groupBy { validatable: ValidatableT ->
-            if (validatable == null) null else Optional.ofNullable(
-                keyMapperForDuplicates.apply(validatable)
-            )
-        }
+    val keyMapperForDuplicates = duplicateFinder ?: identity()
+    val groups = validatables
+        .groupBy { if (it == null) null else Optional.ofNullable(keyMapperForDuplicates.apply(it)) }
     val invalids = groups[null]
-    if (invalids.isDefined && !invalids.get().isEmpty) {
-        return Optional.ofNullable(invalidValidatable)
+    if (invalids != null && invalids.isNotEmpty()) {
+        return Optional.ofNullable(nullValidatable)
     }
     val invalidsWithNullKeys = groups[Optional.empty()]
-    if (invalidsWithNullKeys.isDefined && !invalidsWithNullKeys.get().isEmpty) {
+    if (invalidsWithNullKeys != null && invalidsWithNullKeys.isNotEmpty()) {
         return Optional.ofNullable(batchValidationConfig.andFailNullKeysWith)
     }
-    val valids = groups.removeAll(io.vavr.collection.List.of(null, Optional.empty())).values()
+    val valids = groups.filterKeys { it != null && it.isPresent }.values
     val failureForDuplicate = batchValidationConfig.andFailDuplicatesWith
-    if (duplicateFinder != null && failureForDuplicate != null) {
-        val partition = valids.partition { group: io.vavr.collection.List<ValidatableT> -> group.size() == 1 }
-        if (!partition._2.isEmpty) {
-            return Optional.of(failureForDuplicate)
-        }
+    if (duplicateFinder != null && failureForDuplicate != null && valids.any { it.size > 1 }) {
+        return Optional.of(failureForDuplicate)
     }
     return Optional.empty()
 }
 
-private fun <FailureT, ValidatableT> invalidate(
-    nullValidatables: Seq<Tuple2<ValidatableT, Int>>, invalidValidatable: FailureT
-): Seq<Tuple2<Either<FailureT?, ValidatableT?>, Int>> =
-    nullValidatables.map { nullValidatable: Tuple2<ValidatableT, Int> ->
-        nullValidatable.map1 {
-            Either.left(
-                invalidValidatable
-            )
-        }
-    }
-
 internal fun <FailureT, ValidatableT> findFirstFailure(
     validatable: Either<FailureT?, ValidatableT?>,
     validationConfig: BaseValidationConfig<ValidatableT, FailureT>,
-    throwableMapper: Function1<Throwable, FailureT>
+    throwableMapper: (Throwable) -> FailureT?,
 ): Either<FailureT?, ValidatableT?> =
-    fireValidators(
-        validatable,
-        toValidators(validationConfig),
-        throwableMapper
-    ).filter { it.isLeft }
-        .findFirst().orElse(validatable)
+    fireValidators(validatable, toValidators(validationConfig), throwableMapper).firstOrNull { it.isLeft }
+        ?: validatable
 

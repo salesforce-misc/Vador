@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.4.0"
+version = "2.4.1-SNAPSHOT"
 description = "Vader - An FP framework for Bean validation"
 
 java {
@@ -34,6 +34,7 @@ dependencies {
     api("org.hamcrest:hamcrest:2.2")
     api("org.exparity:hamcrest-date:2.0.7")
     api("de.cronn:reflection-util:2.10.0")
+    compileOnly("org.jetbrains:annotations:20.1.0")
     implementation("org.slf4j:slf4j-api:2.0.0-alpha1")
     implementation("com.force.api:swag:0.3.9")
 

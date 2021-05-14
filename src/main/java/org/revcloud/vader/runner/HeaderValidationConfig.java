@@ -12,8 +12,8 @@ import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 @Value
 @FieldDefaults(level = AccessLevel.PACKAGE)
@@ -31,11 +31,11 @@ public class HeaderValidationConfig<HeaderValidatableT, FailureT> {
     @Singular("withSimpleHeaderValidator")
     Collection<Tuple2<SimpleValidator<HeaderValidatableT, FailureT>, FailureT>> withSimpleHeaderValidators;
 
-    Stream<Validator<HeaderValidatableT, FailureT>> getHeaderValidatorsStream() {
-        return Extensions.getHeaderValidatorsStream(this);
+    List<Validator<HeaderValidatableT, FailureT>> getHeaderValidators() {
+        return Extensions.getHeaderValidatorsEx(this);
     }
 
     public Set<String> getFieldNamesForBatch(Class<HeaderValidatableT> validatableClazz) {
-        return Extensions.getFieldNamesForBatch(this, validatableClazz);
+        return Extensions.getFieldNamesForBatchEx(this, validatableClazz);
     }
 }

@@ -3,8 +3,6 @@ package org.revcloud.vader.lift;
 import consumer.bean.Container;
 import consumer.bean.Member;
 import consumer.failure.ValidationFailure;
-import kotlin.Function;
-import kotlin.jvm.functions.Function1;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.types.validators.SimpleValidator;
@@ -54,16 +52,6 @@ class AggregationLiftSimpleUtilTest {
     void liftNullToContainerValidationType() {
         SimpleValidator<Member, ValidationFailure> memberValidator = null;
         assertThrows(NullPointerException.class, () -> liftToContainerValidatorType(memberValidator, Container::getMember));
-    }
-
-    @DisplayName("LiftAll when a Member validation is Null")
-    @Test
-    void liftAllANullToContainerValidationType() {
-        List<SimpleValidator<Member, ValidationFailure>> memberValidators = new ArrayList<>();
-        memberValidators.add(member -> NONE);
-        memberValidators.add(null);
-        memberValidators.add(member -> null);
-        assertThrows(NullPointerException.class, () -> liftAllToContainerValidatorType(memberValidators, Container::getMember));
     }
 
     @DisplayName("Lift All proper Member validations")
