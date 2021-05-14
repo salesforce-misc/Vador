@@ -70,8 +70,8 @@ fun <HeaderValidatableT, FailureT> HeaderValidationConfig<HeaderValidatableT?, F
 internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.getValidators(): List<Validator<ValidatableT?, FailureT?>> =
     fromSimpleValidators1(withSimpleValidators) + fromSimpleValidators2(withSimpleValidator) + withValidators
 
-private fun <ValidatableT, FailureT> fromSimpleValidators1(simpleValidators: Tuple2<out Collection<SimpleValidator<ValidatableT?, FailureT?>>?, out FailureT?>?): List<Validator<ValidatableT?, FailureT?>> =
+private fun <ValidatableT, FailureT> fromSimpleValidators1(simpleValidators: Tuple2<out Collection<SimpleValidator<in ValidatableT?, FailureT?>>?, out FailureT?>?): List<Validator<ValidatableT?, FailureT?>> =
     simpleValidators?.let { (svs, none) -> svs?.let { liftAllSimple(it, none) } } ?: emptyList()
 
-private fun <ValidatableT, FailureT> fromSimpleValidators2(simpleValidators: Collection<Tuple2<out SimpleValidator<ValidatableT?, FailureT?>, out FailureT?>>): List<Validator<ValidatableT?, FailureT?>> =
+private fun <ValidatableT, FailureT> fromSimpleValidators2(simpleValidators: Collection<Tuple2<out SimpleValidator<in ValidatableT?, FailureT?>, out FailureT?>>): List<Validator<ValidatableT?, FailureT?>> =
     simpleValidators.mapNotNull { (sv, none) -> sv?.let { liftSimple(it, none) } }

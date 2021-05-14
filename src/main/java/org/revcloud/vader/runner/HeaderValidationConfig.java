@@ -25,9 +25,9 @@ public class HeaderValidationConfig<HeaderValidatableT, FailureT> {
     @Singular
     Collection<Validator<HeaderValidatableT, FailureT>> withHeaderValidators;
     @Nullable
-    Tuple2<@NonNull Collection<SimpleValidator<HeaderValidatableT, FailureT>>, FailureT> withSimpleHeaderValidators;
+    Tuple2<@NonNull Collection<SimpleValidator<? super HeaderValidatableT, FailureT>>, FailureT> withSimpleHeaderValidators;
     @Singular("withSimpleHeaderValidator")
-    Collection<Tuple2<@NonNull SimpleValidator<HeaderValidatableT, FailureT>, FailureT>> withSimpleHeaderValidator;
+    Collection<Tuple2<@NonNull SimpleValidator<? super HeaderValidatableT, FailureT>, FailureT>> withSimpleHeaderValidator;
 
     List<Validator<HeaderValidatableT, FailureT>> getHeaderValidators() {
         return Extensions.getHeaderValidatorsEx(this);

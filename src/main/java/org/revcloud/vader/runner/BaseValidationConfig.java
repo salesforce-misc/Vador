@@ -45,9 +45,9 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
     @Singular
     Collection<Validator<ValidatableT, FailureT>> withValidators;
     @Nullable
-    Tuple2<@NonNull Collection<? extends SimpleValidator<ValidatableT, FailureT>>, @NonNull FailureT> withSimpleValidators;
+    Tuple2<@NonNull Collection<? extends SimpleValidator<? super ValidatableT, FailureT>>, @NonNull FailureT> withSimpleValidators;
     @Singular("withSimpleValidator")
-    Collection<Tuple2<@NonNull ? extends SimpleValidator<ValidatableT, FailureT>, @NonNull FailureT>> withSimpleValidator;
+    Collection<Tuple2<@NonNull ? extends SimpleValidator<? super ValidatableT, FailureT>, @NonNull FailureT>> withSimpleValidator;
 
     Stream<BaseSpec<ValidatableT, FailureT>> getSpecsStream() {
         val specFactory = new SpecFactory<ValidatableT, FailureT>();

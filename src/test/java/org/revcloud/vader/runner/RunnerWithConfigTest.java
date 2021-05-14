@@ -34,14 +34,14 @@ class RunnerWithConfigTest {
         final var validatableWithBlankReqField = new Bean(0, "", null, null);
         final var result1 = Runner.validateAndFailFast(
                 validatableWithBlankReqField,
-                throwable -> UNKNOWN_EXCEPTION,
+                ValidationFailure::getValidationFailureForException,
                 validationConfig);
         assertThat(result1).contains(REQUIRED_FIELD_MISSING);
 
         final var validatableWithNullReqField = new Bean(0, null, null, null);
         final var result2 = Runner.validateAndFailFast(
                 validatableWithNullReqField,
-                throwable -> UNKNOWN_EXCEPTION,
+                ValidationFailure::getValidationFailureForException,
                 validationConfig);
         assertThat(result2).contains(REQUIRED_FIELD_MISSING);
     }
@@ -59,7 +59,7 @@ class RunnerWithConfigTest {
         final var withRequiredFieldNull = new Bean(1, "", null, null);
         final var result = Runner.validateAndFailFast(
                 withRequiredFieldNull,
-                throwable -> UNKNOWN_EXCEPTION,
+                ValidationFailure::getValidationFailureForException,
                 validationConfig);
         assertThat(result).isPresent();
         assertThat(result.get().getValidationFailureMessage().getParams()).containsExactly(Bean.Fields.requiredField2, "");
