@@ -65,6 +65,13 @@ tasks {
             html.isEnabled = false
             xml.isEnabled = true
         }
+        classDirectories.setFrom(
+            files(classDirectories.files.map {
+                fileTree(it) {
+                    exclude("org/revcloud/vader/runner/BaseValidationConfig\$BaseValidationConfigBuilder.class")
+                }
+            })
+        )
     }
 }
 
