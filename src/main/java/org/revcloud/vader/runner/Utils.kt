@@ -27,7 +27,7 @@ fun <FailureT, ValidatableT> fireValidator(
         .flatMap { validatable } // Put the original Validatable in the right state
 
 
-fun <FailureT> validateSize(
+fun <FailureT> validateBatchSize(
     validatables: Collection<*>,
     headerConfig: HeaderValidationConfig<*, FailureT>
 ): Optional<FailureT> {

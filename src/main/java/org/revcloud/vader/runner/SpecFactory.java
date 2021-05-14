@@ -57,7 +57,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
         @NonNull
         Function1<ValidatableT, ? extends GivenT> given;
         @Singular("shouldMatchField")
-        protected Collection<@NonNull Function1<ValidatableT, ?>> shouldMatchAnyOfFields;
+        protected Collection<Function1<ValidatableT, ?>> shouldMatchAnyOfFields;
         @Singular("shouldMatch")
         Collection<? extends Matcher<? extends GivenT>> shouldMatchAnyOf;
         @Nullable

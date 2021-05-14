@@ -7,29 +7,32 @@
 package consumer.validators.simple;
 
 
-import consumer.bean.Container;
+import consumer.bean.Member;
 import consumer.failure.ValidationFailure;
 import org.revcloud.vader.types.validators.SimpleValidator;
 
 import static consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
 
-public class ParentRequestValidator {
+public class MemberRequestValidator {
+
+    static final String ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID
+            = "PaymentStandardFields.PaymentAuthorizationId.getName()";
     /**
      * Validates if Auth id in request has a status PROCESSED.
      * This is a lambda function implementation.
      */
-    public static final SimpleValidator<Container, ValidationFailure> validation1 =
-            container -> {
-                if (container.getMember() == null) {
+    public static final SimpleValidator<Member, ValidationFailure> validation1 =
+            member -> {
+                if (member == null) {
                     return null;
                 } else {
                     return new ValidationFailure(FIELD_NULL_OR_EMPTY);
                 }
             };
 
-    public static final SimpleValidator<Container, ValidationFailure> validation2 =
-            container -> {
-                if (container.getMember() == null) {
+    static final SimpleValidator<Member, ValidationFailure> validation2 =
+            member -> {
+                if (member == null) {
                     return null;
                 } else {
                     return new ValidationFailure(FIELD_NULL_OR_EMPTY);

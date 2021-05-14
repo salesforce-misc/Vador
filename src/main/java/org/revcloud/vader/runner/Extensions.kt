@@ -32,9 +32,9 @@ internal fun <ValidatableT, FailureT, WhenT, ThenT> SpecFactory.Spec2<Validatabl
             return@Predicate true
         }
         val validThenValues = shouldRelateWith[whenValue]
-        if (validThenValues != null) {
+        if (validThenValues != null && validThenValues.any { thenValue == it }) {
             // TODO 06/05/21 gopala.akshintala: This is a hack, as ImmutableCollections.$Set12.contains(null) throws NPE 
-            return@Predicate validThenValues.any { thenValue == it }
+            return@Predicate true
         }
         shouldRelateWithFn?.apply(whenValue, thenValue) ?: false
     }
@@ -48,13 +48,13 @@ internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> SpecFactory.Spec3<V
         }
         val thenValue1 = thenField1.apply(validatable)
         val thenValue2 = thenField2.apply(validatable)
-        if (shouldRelateWithFn != null) {
-            return@Predicate shouldRelateWithFn.apply(thenValue1, thenValue2)
+        if (shouldRelateWithFn != null && shouldRelateWithFn.apply(thenValue1, thenValue2)) {
+            return@Predicate true
         }
         val validThen2Values = shouldRelateWith[thenValue1]
-        if (validThen2Values != null) {
+        if (validThen2Values != null && validThen2Values.any { thenValue2 == it }) {
             // TODO 06/05/21 gopala.akshintala: This is a hack, as ImmutableCollections.$Set12.contains(null) throws NPE
-            return@Predicate validThen2Values.any { thenValue2 == it }
+            return@Predicate true
         }
         orField1ShouldMatchAnyOf.any { it.matches(thenValue1) } ||
                 orField2ShouldMatchAnyOf.any { it.matches(thenValue2) }

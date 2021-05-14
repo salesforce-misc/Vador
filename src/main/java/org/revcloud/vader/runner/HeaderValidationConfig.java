@@ -1,13 +1,10 @@
 package org.revcloud.vader.runner;
 
 import de.cronn.reflection.util.TypedPropertyGetter;
-import io.vavr.Tuple;
 import io.vavr.Tuple2;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Singular;
-import lombok.Value;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.Nullable;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
@@ -21,15 +18,16 @@ import java.util.Set;
 public class HeaderValidationConfig<HeaderValidatableT, FailureT> {
     @Singular
     Collection<TypedPropertyGetter<HeaderValidatableT, Collection<?>>> withBatchMappers;
-    @Builder.Default
-    Tuple2<Integer, FailureT> shouldHaveMinBatchSize = Tuple.of(Integer.MIN_VALUE, null);
-    @Builder.Default
-    Tuple2<Integer, FailureT> shouldHaveMaxBatchSize = Tuple.of(Integer.MAX_VALUE, null);
+    @Nullable
+    Tuple2<@NonNull Integer, FailureT> shouldHaveMinBatchSize;
+    @Nullable
+    Tuple2<@NonNull Integer, FailureT> shouldHaveMaxBatchSize;
     @Singular
     Collection<Validator<HeaderValidatableT, FailureT>> withHeaderValidators;
-    Tuple2<Collection<SimpleValidator<HeaderValidatableT, FailureT>>, FailureT> withSimpleHeaderValidators;
+    @Nullable
+    Tuple2<@NonNull Collection<SimpleValidator<HeaderValidatableT, FailureT>>, FailureT> withSimpleHeaderValidators;
     @Singular("withSimpleHeaderValidator")
-    Collection<Tuple2<SimpleValidator<HeaderValidatableT, FailureT>, FailureT>> withSimpleHeaderValidator;
+    Collection<Tuple2<@NonNull SimpleValidator<HeaderValidatableT, FailureT>, FailureT>> withSimpleHeaderValidator;
 
     List<Validator<HeaderValidatableT, FailureT>> getHeaderValidators() {
         return Extensions.getHeaderValidatorsEx(this);

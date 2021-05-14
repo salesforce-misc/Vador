@@ -27,17 +27,17 @@ import java.util.stream.Stream;
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 abstract class BaseValidationConfig<ValidatableT, FailureT> {
     @Singular("shouldHaveFieldOrFailWith")
-    protected Map<TypedPropertyGetter<ValidatableT, ?>, FailureT> shouldHaveFieldsOrFailWith;
+    protected Map<@NonNull TypedPropertyGetter<ValidatableT, ?>, FailureT> shouldHaveFieldsOrFailWith;
     @Nullable
-    protected Tuple2<@NonNull Collection<TypedPropertyGetter<ValidatableT, ?>>, @NonNull Function2<String, Object, FailureT>> shouldHaveFieldsOrFailWithFn;
+    protected Tuple2<@NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, ?>>, @NonNull Function2<String, Object, FailureT>> shouldHaveFieldsOrFailWithFn;
     @Singular("shouldHaveValidSFIdFieldOrFailWith")
-    protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT> shouldHaveValidSFIdFormatOrFailWith;
+    protected Map<@NonNull TypedPropertyGetter<ValidatableT, ID>, FailureT> shouldHaveValidSFIdFormatOrFailWith;
     @Nullable
-    protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ID>>, @NonNull Function2<String, ID, FailureT>> shouldHaveValidSFIdFormatOrFailWithFn;
+    protected Tuple2<@NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, ID>>, @NonNull Function2<String, ID, FailureT>> shouldHaveValidSFIdFormatOrFailWithFn;
     @Singular("mayHaveValidSFIdFieldOrFailWith")
-    protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT> absentOrHaveValidSFIdFieldsOrFailWith;
+    protected Map<@NonNull TypedPropertyGetter<ValidatableT, ID>, FailureT> absentOrHaveValidSFIdFieldsOrFailWith;
     @Nullable
-    protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ID>>, Function2<String, ID, FailureT>> absentOrHaveValidSFIdFormatOrFailWithFn;
+    protected Tuple2<@NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, ID>>, @NonNull Function2<String, ID, FailureT>> absentOrHaveValidSFIdFormatOrFailWithFn;
     @Nullable
     protected Function1<SpecFactory<ValidatableT, FailureT>, Collection<? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>> specify;
     @Singular("withSpec")

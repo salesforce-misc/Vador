@@ -12,7 +12,7 @@ import consumer.bean.Container;
 import consumer.failure.ValidationFailure;
 import consumer.validators.batch.BaseParentBatchRequestValidator;
 import consumer.validators.simple.BaseParentRequestValidator;
-import consumer.validators.simple.ParentRequestValidator;
+import consumer.validators.simple.ContainerRequestValidator;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
 import org.revcloud.vader.types.validators.SimpleValidator;
@@ -37,11 +37,11 @@ public class ConfigForValidators {
 
     public static List<SimpleValidator<Container, ValidationFailure>> getParentSimpleValidations() {
         return List.of(
-                ParentRequestValidator.validation1,
-                ParentRequestValidator.validation2);
+                ContainerRequestValidator.validation1,
+                ContainerRequestValidator.validation2);
     }
 
     public static List<SimpleValidator<? extends Parent, ValidationFailure>> getSimpleServiceValidations() {
-        return List.of(BaseParentRequestValidator.validation1, ParentRequestValidator.validation1);
+        return List.of(BaseParentRequestValidator.validation1, ContainerRequestValidator.validation1);
     }
 }

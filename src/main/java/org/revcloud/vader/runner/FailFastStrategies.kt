@@ -66,7 +66,7 @@ internal fun <FailureT, ValidatableT> failFastForHeader(
     validationConfig: HeaderValidationConfig<ValidatableT, FailureT>
 ): FailFastForHeader<ValidatableT, FailureT> = { validatable: ValidatableT ->
     val batch: List<*> = validationConfig.withBatchMappers.mapNotNull { it[validatable] }.flatten()
-    validateSize(batch, validationConfig).or {
+    validateBatchSize(batch, validationConfig).or {
         fireValidators(right(validatable), validationConfig.headerValidators, throwableMapper)
             .firstOrNull { it.isLeft }?.swap()?.toJavaOptional() ?: Optional.empty()
     }

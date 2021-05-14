@@ -16,18 +16,18 @@ import java.util.Objects;
 
 import static consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
 
-public class ChildBatchRequestValidator {
+public class MemberBatchRequestValidator {
     /**
      * Validates if Auth id in request has a status PROCESSED.
      * This is a lambda function implementation.
      */
     public static final Validator<Member, ValidationFailure> batchValidation1 =
-            child -> child
+            member -> member
                     .filter(Objects::isNull)
                     .getOrElse(Either.left(new ValidationFailure(FIELD_NULL_OR_EMPTY)));
 
     public static final Validator<Member, ValidationFailure> batchValidation2 =
-            child -> child
+            member -> member
                     .filterOrElse(Objects::isNull, ignore -> new ValidationFailure(FIELD_NULL_OR_EMPTY));
 
 }
