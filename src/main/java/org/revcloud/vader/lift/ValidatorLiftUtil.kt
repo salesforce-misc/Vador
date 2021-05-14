@@ -16,7 +16,7 @@ import org.revcloud.vader.types.validators.Validator
  * @return Validator
 </ValidatableT></FailureT> */
 fun <FailureT, ValidatableT> liftSimple(
-    toBeLifted: SimpleValidator<ValidatableT?, FailureT?>,
+    toBeLifted: SimpleValidator<in ValidatableT?, FailureT?>,
     none: FailureT?
 ): Validator<ValidatableT?, FailureT?> = Validator {
      it.flatMap { validatable ->
@@ -35,7 +35,7 @@ fun <FailureT, ValidatableT> liftSimple(
  * @return List of Validators
 </ValidatableT></FailureT> */
 fun <FailureT, ValidatableT> liftAllSimple(
-    toBeLiftedFns: Collection<SimpleValidator<ValidatableT?, FailureT?>>,
+    toBeLiftedFns: Collection<SimpleValidator<in ValidatableT?, FailureT?>>,
     none: FailureT
 ): List<Validator<ValidatableT?, FailureT?>> =
     toBeLiftedFns.map { liftSimple(it, none) }

@@ -2,7 +2,6 @@
 
 package org.revcloud.vader.runner
 
-import io.vavr.Function1
 import io.vavr.Tuple
 import io.vavr.Tuple2
 import io.vavr.control.Either
@@ -11,7 +10,6 @@ import org.revcloud.vader.lift.liftAllSimple
 import org.revcloud.vader.types.validators.SimpleValidator
 import org.revcloud.vader.types.validators.Validator
 import java.util.*
-import java.util.stream.Collectors
 
 fun <FailureT, ValidatableT> validateAndFailFast(
     validatables: List<@NonNull ValidatableT>,
@@ -81,6 +79,5 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
     validators: List<Validator<ValidatableT?, FailureT?>>,
     invalidValidatable: FailureT,
     throwableMapper: (Throwable) -> FailureT?,
-): List<List<Either<FailureT?, ValidatableT?>>> = validatables.stream()
-    .map(accumulationStrategy(validators, invalidValidatable, throwableMapper))
-    .collect(Collectors.toList())
+): List<List<Either<FailureT?, ValidatableT?>>> =
+    validatables.map(accumulationStrategy(validators, invalidValidatable, throwableMapper))

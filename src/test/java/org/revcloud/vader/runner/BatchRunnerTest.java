@@ -67,7 +67,7 @@ class BatchRunnerTest {
                 bean -> predicateForValidId2.test(bean.getId()) ? NONE : VALIDATION_FAILURE_2
         );
         final var batchValidationConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate()
-                .withSimpleValidatorsOrFailWith(Tuple.of(simpleValidators, NONE)).prepare();
+                .withSimpleValidators(Tuple.of(simpleValidators, NONE)).prepare();
         final var results = validateAndFailFast(validatables, NONE, ValidationFailure::getValidationFailureForException, batchValidationConfig);
         assertEquals(results.size(), validatables.size());
         assertTrue(results.get(2).isRight());

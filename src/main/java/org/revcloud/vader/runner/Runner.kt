@@ -2,14 +2,10 @@
 
 package org.revcloud.vader.runner
 
-import io.vavr.Function1
-import io.vavr.control.Either
 import org.revcloud.vader.lift.liftAllSimple
 import org.revcloud.vader.types.validators.SimpleValidator
 import org.revcloud.vader.types.validators.Validator
 import java.util.*
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
 fun <FailureT, ValidatableT> validateAndFailFastForHeader(
     validatable: ValidatableT,

@@ -7,12 +7,8 @@
 package consumer;
 
 
-import consumer.bean.Parent;
-import consumer.config.ValidationConfig;
 import consumer.failure.ValidationFailure;
 import io.vavr.collection.List;
-import lombok.val;
-import org.revcloud.vader.runner.Runner;
 import org.revcloud.vader.types.validators.Validator;
 
 /**

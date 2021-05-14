@@ -29,7 +29,7 @@ fun <ContainerT, MemberT, FailureT> liftToContainerValidatorType(
  * @return                  List of container type validations
  */
 fun <ContainerT, MemberT, FailureT> liftAllToContainerValidatorType(
-    memberValidations: List<SimpleValidator<MemberT?, FailureT?>>,
+    memberValidations: Collection<SimpleValidator<MemberT?, FailureT?>>,
     toMemberMapper: (ContainerT?) -> MemberT?,
 ): List<SimpleValidator<ContainerT?, FailureT?>> =
     memberValidations.map { liftToContainerValidatorType(it, toMemberMapper) }

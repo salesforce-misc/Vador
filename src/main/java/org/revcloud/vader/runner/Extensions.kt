@@ -4,13 +4,12 @@ package org.revcloud.vader.runner
 
 import de.cronn.reflection.util.PropertyUtils
 import io.vavr.Tuple2
-import org.hamcrest.Matcher
 import org.revcloud.vader.lift.liftAllSimple
 import org.revcloud.vader.lift.liftSimple
 import org.revcloud.vader.runner.SpecFactory.Spec1
+import org.revcloud.vader.types.validators.SimpleValidator
 import org.revcloud.vader.types.validators.Validator
 import java.util.function.Predicate
-import java.util.stream.Collectors
 
 internal operator fun <T1> Tuple2<T1, *>?.component1(): T1? = this?._1
 internal operator fun <T2> Tuple2<*, T2>?.component2(): T2? = this?._2
@@ -29,23 +28,22 @@ internal fun <ValidatableT, FailureT, WhenT, ThenT> SpecFactory.Spec2<Validatabl
             return@Predicate true
         }
         val thenValue = then.apply(validatable)
-        if(shouldMatchAnyOf.any { it.matches(thenValue) }) {
+        if (shouldMatchAnyOf.any { it.matches(thenValue) }) {
             return@Predicate true
         }
-        
         val validThenValues = shouldRelateWith[whenValue]
         if (validThenValues != null) {
             // TODO 06/05/21 gopala.akshintala: This is a hack, as ImmutableCollections.$Set12.contains(null) throws NPE 
             return@Predicate validThenValues.any { thenValue == it }
         }
-        return@Predicate shouldRelateWithFn?.apply(whenValue, thenValue) ?: false
+        shouldRelateWithFn?.apply(whenValue, thenValue) ?: false
     }
 }
 
 internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> SpecFactory.Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T>.toPredicateEx(): Predicate<ValidatableT> =
     Predicate { validatable ->
         val whenValue = `when`.apply(validatable)
-        if (matchesAnyOf.stream().noneMatch { m: Matcher<out WhenT>? -> m!!.matches(whenValue) }) {
+        if (matchesAnyOf.none { it.matches(whenValue) }) {
             return@Predicate true
         }
         val thenValue1 = thenField1.apply(validatable)
@@ -58,27 +56,22 @@ internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> SpecFactory.Spec3<V
             // TODO 06/05/21 gopala.akshintala: This is a hack, as ImmutableCollections.$Set12.contains(null) throws NPE
             return@Predicate validThen2Values.any { thenValue2 == it }
         }
-        return@Predicate orField1ShouldMatchAnyOf.any{ it.matches(thenValue1) } ||
+        orField1ShouldMatchAnyOf.any { it.matches(thenValue1) } ||
                 orField2ShouldMatchAnyOf.any { it.matches(thenValue2) }
     }
 
-fun <HeaderValidatableT, FailureT> HeaderValidationConfig<HeaderValidatableT?, FailureT?>.getHeaderValidatorsEx(): List<Validator<HeaderValidatableT?, FailureT?>> {
-    val withSimpleHeaderValidatorsOrFailWith =
-        withSimpleHeaderValidatorsOrFailWith?.apply(::liftAllSimple) ?: emptyList()
-    val withSimpleHeaderValidators = withSimpleHeaderValidators?.map { it.apply(::liftSimple) } ?: emptyList()
-    return withSimpleHeaderValidatorsOrFailWith + withSimpleHeaderValidators + withHeaderValidators
-}
+fun <HeaderValidatableT, FailureT> HeaderValidationConfig<HeaderValidatableT?, FailureT?>.getHeaderValidatorsEx(): List<Validator<HeaderValidatableT?, FailureT?>> =
+    fromSimpleValidators1(withSimpleHeaderValidators) + fromSimpleValidators2(withSimpleHeaderValidator) + withHeaderValidators
 
 fun <HeaderValidatableT, FailureT> HeaderValidationConfig<HeaderValidatableT?, FailureT?>.getFieldNamesForBatchEx(
     validatableClazz: Class<HeaderValidatableT>
-): Set<String> {
-    return withBatchMappers.stream().map { PropertyUtils.getPropertyName(validatableClazz, it) }
-        .collect(Collectors.toSet())
-}
+): Set<String> = withBatchMappers.map { PropertyUtils.getPropertyName(validatableClazz, it) }.toSet()
 
-internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.getValidators(): List<Validator<ValidatableT?, FailureT?>> {
-    val simpleValidators = withSimpleValidators.map { it._1 } + (withSimpleValidatorsOrFailWith?._1 ?: emptyList())
-    return (withSimpleValidatorsOrFailWith?.let { liftAllSimple(simpleValidators, it._2) } ?: emptyList()) +
-            withValidators
-}
+internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.getValidators(): List<Validator<ValidatableT?, FailureT?>> =
+    fromSimpleValidators1(withSimpleValidators) + fromSimpleValidators2(withSimpleValidator) + withValidators
 
+private fun <ValidatableT, FailureT> fromSimpleValidators1(simpleValidators: Tuple2<out Collection<SimpleValidator<ValidatableT?, FailureT?>>?, out FailureT?>?): List<Validator<ValidatableT?, FailureT?>> =
+    simpleValidators?.let { (svs, none) -> svs?.let { liftAllSimple(it, none) } } ?: emptyList()
+
+private fun <ValidatableT, FailureT> fromSimpleValidators2(simpleValidators: Collection<Tuple2<out SimpleValidator<ValidatableT?, FailureT?>, out FailureT?>>): List<Validator<ValidatableT?, FailureT?>> =
+    simpleValidators.mapNotNull { (sv, none) -> sv?.let { liftSimple(it, none) } }

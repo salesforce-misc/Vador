@@ -29,7 +29,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
     @Singular("shouldHaveFieldOrFailWith")
     protected Map<TypedPropertyGetter<ValidatableT, ?>, FailureT> shouldHaveFieldsOrFailWith;
     @Nullable
-    protected Tuple2<Collection<TypedPropertyGetter<ValidatableT, ?>>, Function2<String, Object, FailureT>> shouldHaveFieldsOrFailWithFn;
+    protected Tuple2<@NonNull Collection<TypedPropertyGetter<ValidatableT, ?>>, @NonNull Function2<String, Object, FailureT>> shouldHaveFieldsOrFailWithFn;
     @Singular("shouldHaveValidSFIdFieldOrFailWith")
     protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT> shouldHaveValidSFIdFormatOrFailWith;
     @Nullable
@@ -45,9 +45,9 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
     @Singular
     Collection<Validator<ValidatableT, FailureT>> withValidators;
     @Nullable
-    Tuple2<Collection<SimpleValidator<ValidatableT, FailureT>>, FailureT> withSimpleValidatorsOrFailWith;
-    @Singular("withSimpleValidatorOrFailWith")
-    Collection<Tuple2<SimpleValidator<ValidatableT, FailureT>, FailureT>> withSimpleValidators;
+    Tuple2<@NonNull Collection<? extends SimpleValidator<ValidatableT, FailureT>>, @NonNull FailureT> withSimpleValidators;
+    @Singular("withSimpleValidator")
+    Collection<Tuple2<@NonNull ? extends SimpleValidator<ValidatableT, FailureT>, @NonNull FailureT>> withSimpleValidator;
 
     Stream<BaseSpec<ValidatableT, FailureT>> getSpecsStream() {
         val specFactory = new SpecFactory<ValidatableT, FailureT>();

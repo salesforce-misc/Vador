@@ -23,7 +23,7 @@ import org.revcloud.vader.types.validators.Validator;
  * gakshintala created on 4/13/20.
  */
 @UtilityClass
-public class ValidationConfig {
+public class ConfigForValidators {
     
     public static List<Validator<Parent, ValidationFailure>> getServiceValidations() {
         return List.of(

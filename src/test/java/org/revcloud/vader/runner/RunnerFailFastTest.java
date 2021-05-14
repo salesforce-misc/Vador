@@ -4,7 +4,6 @@ import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
 import io.vavr.control.Either;
 import lombok.Value;
-import lombok.val;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -32,7 +31,7 @@ class RunnerFailFastTest {
 
     @Test
     void failFastWithFirstFailureForSimpleValidators() {
-        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSimpleValidatorsOrFailWith(Tuple.of(List.of(
+        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().withSimpleValidators(Tuple.of(List.of(
                 bean -> NONE,
                 bean -> NONE,
                 bean -> UNKNOWN_EXCEPTION

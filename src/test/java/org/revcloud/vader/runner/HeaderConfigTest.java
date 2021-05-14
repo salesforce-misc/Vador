@@ -4,7 +4,6 @@ import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
 import io.vavr.control.Either;
 import lombok.Value;
-import lombok.val;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

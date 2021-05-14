@@ -27,9 +27,9 @@ public class HeaderValidationConfig<HeaderValidatableT, FailureT> {
     Tuple2<Integer, FailureT> shouldHaveMaxBatchSize = Tuple.of(Integer.MAX_VALUE, null);
     @Singular
     Collection<Validator<HeaderValidatableT, FailureT>> withHeaderValidators;
-    Tuple2<Collection<SimpleValidator<HeaderValidatableT, FailureT>>, FailureT> withSimpleHeaderValidatorsOrFailWith;
+    Tuple2<Collection<SimpleValidator<HeaderValidatableT, FailureT>>, FailureT> withSimpleHeaderValidators;
     @Singular("withSimpleHeaderValidator")
-    Collection<Tuple2<SimpleValidator<HeaderValidatableT, FailureT>, FailureT>> withSimpleHeaderValidators;
+    Collection<Tuple2<SimpleValidator<HeaderValidatableT, FailureT>, FailureT>> withSimpleHeaderValidator;
 
     List<Validator<HeaderValidatableT, FailureT>> getHeaderValidators() {
         return Extensions.getHeaderValidatorsEx(this);

@@ -57,9 +57,5 @@ val isSFIdPresentAndValidFormat: (ID?) -> Boolean = { it != null && IdTraits.isV
 val isSFIdAbsentOrValidFormat: (ID?) -> Boolean = { it == null || IdTraits.isValidId(it.toString()) }
 
 private fun <ValidatableT, FailureT> toValidator(baseSpec: BaseSpec<ValidatableT, FailureT>): Validator<ValidatableT?, FailureT?> =
-    Validator { validatableRight ->
-        validatableRight.filterOrElse(
-            baseSpec.toPredicate()
-        ) { baseSpec.getFailure(it) }
-    }
+    Validator { it.filterOrElse(baseSpec.toPredicate()) { validatable -> baseSpec.getFailure(validatable) } }
 
