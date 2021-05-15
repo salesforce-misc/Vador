@@ -34,6 +34,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
     }
 
     @Getter
+    @FieldDefaults(level = AccessLevel.PACKAGE)
     @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
     public abstract static class BaseSpec<ValidatableT, FailureT> {
         @Nullable
@@ -41,7 +42,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
         @Nullable
         protected FailureT orFailWith;
 
-        protected abstract Predicate<ValidatableT> toPredicate();
+        protected abstract Predicate<@Nullable ValidatableT> toPredicate();
 
         @SuppressWarnings("unused")
         protected FailureT getFailure(ValidatableT ignore) {
@@ -64,8 +65,8 @@ public final class SpecFactory<ValidatableT, FailureT> {
         Function1<GivenT, ? extends FailureT> orFailWithFn;
 
         @Override
-        public Predicate<ValidatableT> toPredicate() {
-            return Extensions.toPredicateEx(this);
+        public Predicate<@NonNull ValidatableT> toPredicate() {
+            return SpecEx.toPredicateEx(this);
         }
 
         @Override
@@ -102,8 +103,8 @@ public final class SpecFactory<ValidatableT, FailureT> {
         Function2<WhenT, ThenT, ? extends FailureT> orFailWithFn;
 
         @Override
-        public Predicate<ValidatableT> toPredicate() {
-            return Extensions.toPredicateEx(this);
+        public Predicate<@Nullable ValidatableT> toPredicate() {
+            return SpecEx.toPredicateEx(this);
         }
 
         @Override
@@ -133,6 +134,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
         Function1<ValidatableT, ? extends Then2T> thenField2;
         @Singular("shouldRelateWithEntry")
         Map<? extends Then1T, ? extends Set<? extends Then2T>> shouldRelateWith;
+        @Nullable
         Function2<Then1T, Then2T, Boolean> shouldRelateWithFn;
         @Singular("orField1ShouldMatch")
         Collection<? extends Matcher<? extends Then1T>> orField1ShouldMatchAnyOf;
@@ -142,8 +144,8 @@ public final class SpecFactory<ValidatableT, FailureT> {
         Function3<WhenT, Then1T, Then2T, ? extends FailureT> orFailWithFn;
 
         @Override
-        public Predicate<ValidatableT> toPredicate() {
-            return Extensions.toPredicateEx(this);
+        public Predicate<@Nullable ValidatableT> toPredicate() {
+            return SpecEx.toPredicateEx(this);
         }
 
         @Override

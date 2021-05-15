@@ -40,9 +40,11 @@ internal fun <ValidatableT, FailureT> toValidators(validationConfig: BaseValidat
             toValidators2(validationConfig.shouldHaveValidSFIdFormatOrFailWithFn, isSFIdPresentAndValidFormat) +
             toValidators1(validationConfig.absentOrHaveValidSFIdFieldsOrFailWith, isSFIdAbsentOrValidFormat) +
             toValidators2(validationConfig.absentOrHaveValidSFIdFormatOrFailWithFn, isSFIdAbsentOrValidFormat) +
-            validationConfig.specsStream.collect(Collectors.toList()).map { toValidator(it) } +
+            validationConfig.specs.map { it.toValidator() } +
             validationConfig.getValidators())
 
+private fun <ValidatableT, FailureT> BaseSpec<ValidatableT, FailureT>.toValidator(): Validator<ValidatableT?, FailureT?> =
+    Validator { it.filterOrElse(toPredicate()) { validatable -> getFailure(validatable) } }
 
 val isFieldPresent: (Any?) -> Boolean = {
     when (it) {
@@ -55,7 +57,4 @@ val isFieldPresent: (Any?) -> Boolean = {
 val isSFIdPresentAndValidFormat: (ID?) -> Boolean = { it != null && IdTraits.isValidId(it.toString()) }
 
 val isSFIdAbsentOrValidFormat: (ID?) -> Boolean = { it == null || IdTraits.isValidId(it.toString()) }
-
-private fun <ValidatableT, FailureT> toValidator(baseSpec: BaseSpec<ValidatableT, FailureT>): Validator<ValidatableT?, FailureT?> =
-    Validator { it.filterOrElse(baseSpec.toPredicate()) { validatable -> baseSpec.getFailure(validatable) } }
 

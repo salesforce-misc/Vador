@@ -11,6 +11,12 @@
         <module name="vader.test" />
         <module name="vader.main" />
       </profile>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="vader" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="11" />
   </component>

@@ -4,13 +4,16 @@ import consumer.failure.ValidationFailure;
 import io.vavr.collection.HashSet;
 import lombok.Value;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.runner.Runner;
 import org.revcloud.vader.runner.ValidationConfig;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static consumer.failure.ValidationFailure.INVALID_COMBO_1;
 import static consumer.failure.ValidationFailure.INVALID_COMBO_2;
@@ -21,6 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.either;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.revcloud.vader.matchers.AnyMatchers.anyOf;
 
 class Spec2Test {
     @Test
@@ -79,7 +84,7 @@ class Spec2Test {
                 spec.<Integer, String>_2().when(Bean::getValue)
                         .matches(is(1))
                         .then(Bean::getValueStr)
-                        .shouldMatch(either(is("one")).or(is("1")))
+                        .shouldMatch(anyOf("1", "one"))
                         .orFailWith(INVALID_COMBO_1),
                 spec.<Integer, String>_2().when(Bean::getValue)
                         .matches(is(2))
@@ -93,16 +98,64 @@ class Spec2Test {
         assertThat(failureResult1).contains(INVALID_COMBO_1);
 
         final var invalidBean2 = new Bean(2, "b", null, null);
-        final var failureResult2 = Runner.validateAndFailFast(invalidBean2, ignore -> NONE, validationConfig);
+        final var failureResult2 = Runner.validateAndFailFast(invalidBean2, ValidationFailure::getValidationFailureForException, validationConfig);
         assertThat(failureResult2).contains(INVALID_COMBO_2);
 
         final var validBean1 = new Bean(1, "one", null, null);
-        final var noneResult1 = Runner.validateAndFailFast(validBean1, ignore -> NONE, validationConfig);
+        final var noneResult1 = Runner.validateAndFailFast(validBean1, ValidationFailure::getValidationFailureForException, validationConfig);
         assertThat(noneResult1).isEmpty();
 
         final var validBean2 = new Bean(2, "two", null, null);
         final var noneResult2 = Runner.validateAndFailFast(validBean2, ValidationFailure::getValidationFailureForException, validationConfig);
         assertThat(noneResult2).isEmpty();
+    }
+
+    @DisplayName("Provide both ShouldMatchAnyOf and ShouldRelateWith")
+    @Test
+    void multiSpec2Test2() {
+        final var relateWith = Map.of(
+                1, Set.of("1", "one"),
+                2, Set.of("2", "two")
+        );
+        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().specify(spec -> List.of(
+                spec.<Integer, String>_2().when(Bean::getValue)
+                        .then(Bean::getValueStr)
+                        .shouldRelateWith(relateWith)
+                        .shouldRelateWithFn((when, then) -> String.valueOf(when).equalsIgnoreCase(then))
+                        .orFailWith(INVALID_COMBO_1)))
+                .prepare();
+        final var invalidBean1 = new Bean(1, "a", null, null);
+        final var failureResult1 = Runner.validateAndFailFast(invalidBean1, ValidationFailure::getValidationFailureForException, validationConfig);
+        assertThat(failureResult1).contains(INVALID_COMBO_1);
+
+        final var invalidBean2 = new Bean(1, "one", null, null);
+        final var failureResult2 = Runner.validateAndFailFast(invalidBean2, ValidationFailure::getValidationFailureForException, validationConfig);
+        assertThat(failureResult2).isEmpty();
+
+        final var invalidBean3 = new Bean(1, "1", null, null);
+        final var failureResult3 = Runner.validateAndFailFast(invalidBean3, ValidationFailure::getValidationFailureForException, validationConfig);
+        assertThat(failureResult3).isEmpty();
+    }
+
+    @DisplayName("Invalid Config: Provide both `when-matches/matchesAnyOf + then-shouldMatch/shouldMatchAnyOf` and `shouldRelateWith` or `shouldRelateWith")
+    @Test
+    void invalidSpec2Config() {
+        final var relateWith = Map.of(
+                1, Set.of("1", "one"),
+                2, Set.of("2", "two")
+        );
+        final var invalidSpec2Config = "invalidSpec2Config";
+        final var validationConfig = ValidationConfig.<Bean, ValidationFailure>toValidate().specify(spec -> List.of(
+                spec.<Integer, String>_2().nameForTest(invalidSpec2Config)
+                        .when(Bean::getValue)
+                        .matches(is(1))
+                        .then(Bean::getValueStr)
+                        .shouldRelateWith(relateWith)
+                        .shouldRelateWithFn((when, then) -> String.valueOf(when).equalsIgnoreCase(then))
+                        .orFailWith(INVALID_COMBO_1)))
+                .prepare();
+        final var specWithName = validationConfig.getSpecWithName(invalidSpec2Config);
+        assertThrows(IllegalArgumentException.class, () -> specWithName.map(p -> p.test(null)));
     }
 
     @Test

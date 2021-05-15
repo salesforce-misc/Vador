@@ -30,10 +30,10 @@ public class HeaderValidationConfig<HeaderValidatableT, FailureT> {
     Collection<Tuple2<@NonNull SimpleValidator<? super HeaderValidatableT, FailureT>, FailureT>> withSimpleHeaderValidator;
 
     List<Validator<HeaderValidatableT, FailureT>> getHeaderValidators() {
-        return Extensions.getHeaderValidatorsEx(this);
+        return HeaderValidationConfigEx.getHeaderValidatorsEx(this);
     }
 
     public Set<String> getFieldNamesForBatch(Class<HeaderValidatableT> validatableClazz) {
-        return Extensions.getFieldNamesForBatchEx(this, validatableClazz);
+        return HeaderValidationConfigEx.getFieldNamesForBatchEx(this, validatableClazz);
     }
 }
