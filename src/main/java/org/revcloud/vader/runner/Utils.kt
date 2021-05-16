@@ -8,7 +8,7 @@ import io.vavr.control.Either
 import io.vavr.kotlin.left
 import io.vavr.kotlin.right
 import org.revcloud.vader.types.validators.Validator
-import java.util.*
+import java.util.Optional
 
 fun <FailureT, ValidatableT> fireValidators(
     validatable: Either<FailureT?, ValidatableT?>,
@@ -25,7 +25,6 @@ fun <FailureT, ValidatableT> fireValidator(
     liftTry(validator).apply(validatable)
         .fold({ left<FailureT?, ValidatableT?>(throwableMapper(it)) }) { it }
         .flatMap { validatable } // Put the original Validatable in the right state
-
 
 fun <FailureT> validateBatchSize(
     validatables: Collection<*>,
@@ -55,7 +54,11 @@ fun <ValidatableT, FailureT> filterNullValidatablesAndDuplicates(
     val duplicateFinder = batchValidationConfig.findAndFilterDuplicatesWith
     val keyMapperForDuplicates = duplicateFinder ?: identity()
     val groups = validatables.withIndex().groupBy { (_, validatable) ->
-        if (validatable == null) null else Optional.ofNullable(keyMapperForDuplicates.apply(validatable))
+        if (validatable == null) null else Optional.ofNullable(
+            keyMapperForDuplicates.apply(
+                validatable
+            )
+        )
     }
     val invalids: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
         groups[null]?.map { (index, _) -> index to left(nullValidatable) } ?: emptyList()
@@ -72,7 +75,8 @@ fun <ValidatableT, FailureT> filterNullValidatablesAndDuplicates(
         groups[Optional.empty()]?.map { (index, validatable) ->
             index to if (failureForNullKeys == null) right(validatable) else left(failureForNullKeys)
         } ?: emptyList()
-    val partition = groups.filterKeys { it != null && it.isPresent }.values.partition { it.size == 1 }
+    val partition =
+        groups.filterKeys { it != null && it.isPresent }.values.partition { it.size == 1 }
     val failureForDuplicate = batchValidationConfig.andFailDuplicatesWith
     val duplicates: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
         failureForDuplicate?.let {
@@ -81,7 +85,8 @@ fun <ValidatableT, FailureT> filterNullValidatablesAndDuplicates(
 
     val nonDuplicates: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
         partition.first.flatten().map { (index, validatable) -> index to right(validatable) }
-    return (nonDuplicates + duplicates + invalids + withNullKeys).sortedBy { it.first }.map { it.second }
+    return (nonDuplicates + duplicates + invalids + withNullKeys).sortedBy { it.first }
+        .map { it.second }
 }
 
 fun <ValidatableT, FailureT> filterNullValidatablesAndDuplicatesForAllOrNone(
@@ -120,6 +125,9 @@ internal fun <FailureT, ValidatableT> findFirstFailure(
     validationConfig: BaseValidationConfig<ValidatableT, FailureT>,
     throwableMapper: (Throwable) -> FailureT?,
 ): Either<FailureT?, ValidatableT?> =
-    fireValidators(validatable, toValidators(validationConfig), throwableMapper).firstOrNull { it.isLeft }
+    fireValidators(
+        validatable,
+        toValidators(validationConfig),
+        throwableMapper
+    ).firstOrNull { it.isLeft }
         ?: validatable
-

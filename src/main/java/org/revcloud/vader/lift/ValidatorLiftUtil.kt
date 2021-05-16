@@ -19,10 +19,10 @@ fun <FailureT, ValidatableT> liftSimple(
     toBeLifted: SimpleValidator<in ValidatableT?, FailureT?>,
     none: FailureT?
 ): Validator<ValidatableT?, FailureT?> = Validator {
-     it.flatMap { validatable ->
-         val result = toBeLifted.unchecked().apply(validatable)
-         if (result == none) it else left(result)
-     }
+    it.flatMap { validatable ->
+        val result = toBeLifted.unchecked().apply(validatable)
+        if (result == none) it else left(result)
+    }
 }
 
 /**

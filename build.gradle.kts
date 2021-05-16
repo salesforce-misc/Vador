@@ -68,11 +68,13 @@ tasks {
             xml.isEnabled = true
         }
         classDirectories.setFrom(
-            files(classDirectories.files.map {
-                fileTree(it) {
-                    exclude("org/revcloud/vader/runner/BaseValidationConfig\$BaseValidationConfigBuilder.class")
+            files(
+                classDirectories.files.map {
+                    fileTree(it) {
+                        exclude("org/revcloud/vader/runner/BaseValidationConfig\$*.*")
+                    }
                 }
-            })
+            )
         )
     }
 }
@@ -133,8 +135,10 @@ publishing {
     repositories {
         maven {
             name = "Nexus"
-            val releasesRepoUrl = uri("https://nexus.soma.salesforce.com/nexus/content/repositories/releases")
-            val snapshotsRepoUrl = uri("https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots")
+            val releasesRepoUrl =
+                uri("https://nexus.soma.salesforce.com/nexus/content/repositories/releases")
+            val snapshotsRepoUrl =
+                uri("https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots")
             url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
             // nexusUsername, nexusPassword are set in ~/.gradle/gradle.properties by the "GradleInit" method in SFCI
             // refer this for setup: https://git.soma.salesforce.com/MoBE/gradle-init-scripts
@@ -195,11 +199,14 @@ publishing {
             // by default the target is every '.kt' and '.kts` file in the java sourcesets
             ktlint("0.41.0")
         }
+        kotlinGradle {
+            target("*.gradle.kts")
+            ktlint("0.41.0")
+        }
         java {
-            importOrder() // standard import order
+            importOrder()
             removeUnusedImports()
-            googleJavaFormat() // has its own section below
+            googleJavaFormat()
         }
     }
 }
-

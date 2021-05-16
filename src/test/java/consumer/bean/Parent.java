@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-
 /**
  * Connect API input bean.
  *
@@ -26,13 +25,13 @@ import lombok.ToString;
 @ToString
 @Getter
 public class Parent {
-    final int id;
-    final ID sfId;
-    final Member member;
-    
-    Integer requiredField1;
-    String requiredField2;
-    String requiredField3;
-    ID sfId1;
-    ID sfId2;
+  final int id;
+  final ID sfId;
+  final Member member;
+
+  Integer requiredField1;
+  String requiredField2;
+  String requiredField3;
+  ID sfId1;
+  ID sfId2;
 }

@@ -9,7 +9,7 @@ import lombok.NonNull
 import org.revcloud.vader.lift.liftAllSimple
 import org.revcloud.vader.types.validators.SimpleValidator
 import org.revcloud.vader.types.validators.Validator
-import java.util.*
+import java.util.Optional
 
 fun <FailureT, ValidatableT> validateAndFailFast(
     validatables: List<@NonNull ValidatableT>,
@@ -27,9 +27,21 @@ fun <FailureT, ValidatableT, PairT> validateAndFailFast(
     pairForInvalidMapper: (ValidatableT) -> PairT?
 ): List<Either<Tuple2<PairT?, FailureT?>, ValidatableT?>> {
     val validationResults =
-        validateAndFailFast(validatables, invalidValidatable, throwableMapper, batchValidationConfig)
+        validateAndFailFast(
+            validatables,
+            invalidValidatable,
+            throwableMapper,
+            batchValidationConfig
+        )
     return validationResults.zip(validatables)
-        .map { (result, validatable) -> result.mapLeft { Tuple.of(pairForInvalidMapper(validatable), it) } }
+        .map { (result, validatable) ->
+            result.mapLeft {
+                Tuple.of(
+                    pairForInvalidMapper(validatable),
+                    it
+                )
+            }
+        }
 }
 
 fun <FailureT, ValidatableT> validateAndFailFastAllOrNone(
@@ -38,7 +50,9 @@ fun <FailureT, ValidatableT> validateAndFailFastAllOrNone(
     throwableMapper: (Throwable) -> FailureT?,
     batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>
 ): Optional<FailureT> =
-    failFastAllOrNoneForBatch(invalidValidatable, throwableMapper, batchValidationConfig)(validatables)
+    failFastAllOrNoneForBatch(invalidValidatable, throwableMapper, batchValidationConfig)(
+        validatables
+    )
 
 // --- ERROR ACCUMULATION ---
 /**

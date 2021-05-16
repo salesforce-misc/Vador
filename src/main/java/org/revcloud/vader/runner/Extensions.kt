@@ -16,4 +16,3 @@ internal fun <ValidatableT, FailureT> fromSimpleValidators1(simpleValidators: Tu
 
 internal fun <ValidatableT, FailureT> fromSimpleValidators2(simpleValidators: Collection<Tuple2<out SimpleValidator<in ValidatableT?, FailureT?>, out FailureT?>>): List<Validator<ValidatableT?, FailureT?>> =
     simpleValidators.mapNotNull { (sv, none) -> sv?.let { liftSimple(it, none) } }
-

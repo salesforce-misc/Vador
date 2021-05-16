@@ -6,9 +6,7 @@
 
 package consumer.bean;
 
-
 import lombok.Value;
-
 
 /**
  * Connect API input bean.
@@ -18,5 +16,5 @@ import lombok.Value;
  */
 @Value
 public class Member {
-    int id;
+  int id;
 }

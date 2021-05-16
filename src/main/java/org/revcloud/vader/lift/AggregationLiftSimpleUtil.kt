@@ -11,7 +11,7 @@ import org.revcloud.vader.types.validators.SimpleValidator
  * @param <ContainerT>
  * @param <MemberT>
  * @param <FailureT>
- * @return  Container type validation
+ * @return Container type validation
  */
 fun <ContainerT, MemberT, FailureT> liftToContainerValidatorType(
     memberValidation: SimpleValidator<MemberT?, FailureT?>,
@@ -26,13 +26,10 @@ fun <ContainerT, MemberT, FailureT> liftToContainerValidatorType(
  * @param <ContainerT>
  * @param <MemberT>
  * @param <FailureT>
- * @return                  List of container type validations
+ * @return List of container type validations
  */
 fun <ContainerT, MemberT, FailureT> liftAllToContainerValidatorType(
     memberValidations: Collection<SimpleValidator<MemberT?, FailureT?>>,
     toMemberMapper: (ContainerT?) -> MemberT?,
 ): List<SimpleValidator<ContainerT?, FailureT?>> =
     memberValidations.map { liftToContainerValidatorType(it, toMemberMapper) }
-
-
-

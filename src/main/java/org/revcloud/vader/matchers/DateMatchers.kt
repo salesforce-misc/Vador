@@ -3,7 +3,7 @@
 package org.revcloud.vader.matchers
 
 import io.vavr.Function2
-import java.util.*
+import java.util.Date
 
 val isOnOrBeforeIfBothArePresent = Function2 { date1: Any?, date2: Any? ->
     when {

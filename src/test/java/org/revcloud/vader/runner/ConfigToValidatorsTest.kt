@@ -3,7 +3,6 @@ package org.revcloud.vader.runner
 import consumer.bean.Parent
 import consumer.failure.ValidationFailure
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 
 class ConfigToValidatorsTest : FunSpec({
 

@@ -4,7 +4,7 @@ package org.revcloud.vader.runner
 
 import io.vavr.control.Either
 import io.vavr.kotlin.right
-import java.util.*
+import java.util.Optional
 
 typealias FailFast<ValidatableT, FailureT> = (ValidatableT) -> Either<FailureT?, ValidatableT?>
 
@@ -45,7 +45,8 @@ internal fun <FailureT, ValidatableT> failFastForBatch(
     throwableMapper: (Throwable) -> FailureT?,
     validationConfig: BatchValidationConfig<ValidatableT, FailureT?>
 ): FailFastForBatch<ValidatableT, FailureT> = { validatables ->
-    val filteredValidatables = filterNullValidatablesAndDuplicates(validatables, nullValidatable, validationConfig)
+    val filteredValidatables =
+        filterNullValidatablesAndDuplicates(validatables, nullValidatable, validationConfig)
     filteredValidatables.map { findFirstFailure(it, validationConfig, throwableMapper) }
 }
 
@@ -55,7 +56,11 @@ internal fun <FailureT, ValidatableT> failFastAllOrNoneForBatch(
     throwableMapper: (Throwable) -> FailureT?,
     batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>
 ): FailFastAllOrNoneForBatch<ValidatableT, FailureT> = { validatables ->
-    filterNullValidatablesAndDuplicatesForAllOrNone(validatables, invalidValidatable, batchValidationConfig).or {
+    filterNullValidatablesAndDuplicatesForAllOrNone(
+        validatables,
+        invalidValidatable,
+        batchValidationConfig
+    ).or {
         validatables.map { findFirstFailure(right(it), batchValidationConfig, throwableMapper) }
             .firstOrNull { it.isLeft }?.swap()?.toJavaOptional() ?: Optional.empty()
     }

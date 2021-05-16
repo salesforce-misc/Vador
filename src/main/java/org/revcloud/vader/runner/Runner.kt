@@ -5,7 +5,7 @@ package org.revcloud.vader.runner
 import org.revcloud.vader.lift.liftAllSimple
 import org.revcloud.vader.types.validators.SimpleValidator
 import org.revcloud.vader.types.validators.Validator
-import java.util.*
+import java.util.Optional
 
 fun <FailureT, ValidatableT> validateAndFailFastForHeader(
     validatable: ValidatableT,
@@ -66,6 +66,6 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
     throwableMapper: (Throwable) -> FailureT?,
 ): List<FailureT?> {
     val results = accumulationStrategy(validators, invalidValidatable, throwableMapper)(validatable)
-        .map { result -> result.fold({it}, {none}) }
+        .map { result -> result.fold({ it }, { none }) }
     return if (results.all { it == none }) emptyList() else results
 }
