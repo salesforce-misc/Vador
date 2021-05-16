@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.4.1"
+version = "2.4.2-SNAPSHOT"
 description = "Vader - An FP framework for Bean validation"
 
 java {
@@ -47,6 +47,8 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.19.0")
     testImplementation("io.kotest:kotest-runner-junit5:4.5.0.RC1")
     testImplementation("io.kotest:kotest-assertions-core:4.5.0.RC1")
+
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.0")
 }
 
 jacoco.toolVersion = "0.8.7"
@@ -175,11 +177,20 @@ publishing {
         baseline = file("${rootProject.projectDir}/config/baseline.xml")
         config = files("config/detekt/detekt.yml")
         buildUponDefaultConfig = true
+        reports {
+            xml {
+                enabled = true
+            }
+            html {
+                enabled = false
+            }
+            txt {
+                enabled = false
+            }
+        }
     }
 
-
     spotless {
-        isEnforceCheck = false
         kotlin {
             // by default the target is every '.kt' and '.kts` file in the java sourcesets
             ktlint("0.41.0")
