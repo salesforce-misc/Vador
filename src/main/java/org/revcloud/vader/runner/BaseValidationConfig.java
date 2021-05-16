@@ -103,10 +103,10 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
   }
 
   public Set<String> getRequiredFieldNamesForSFIdFormat(Class<ValidatableT> beanClass) {
-    return BaseValidationConfigEx.getRequiredFieldNamesForSFIdFormat(this, beanClass);
+    return BaseValidationConfigEx.getRequiredFieldNamesForSFIdFormatEx(this, beanClass);
   }
 
   public Set<String> getNonRequiredFieldNamesForSFIdFormat(Class<ValidatableT> beanClass) {
-    return BaseValidationConfigEx.getNonRequiredFieldNamesForSFIdFormat(this, beanClass);
+    return BaseValidationConfigEx.getNonRequiredFieldNamesForSFIdFormatEx(this, beanClass);
   }
 }

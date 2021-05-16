@@ -208,15 +208,15 @@ by `ValidatableT`, and returns a failure `FailureT`. This is prefixed *Simple* a
 Simple types as Input/Output.
 
 ```java
-public static final SimpleValidator<Container, ValidationFailure> validation1 =
-containerInputRepresentation -> {
-  if (containerInputRepresentation._isSetPaymentAuthorizationId()) {
+public static final SimpleValidator<Container, ValidationFailure> validation1=
+    containerInputRepresentation->{
+    if(containerInputRepresentation._isSetPaymentAuthorizationId()){
     return null;
-  } else {
-    return new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING, FIELD_NULL_OR_EMPTY,
-      ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID);
-  }
-};
+    }else{
+    return new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING,FIELD_NULL_OR_EMPTY,
+    ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID);
+    }
+    };
 ```
 
 ### But if you need more ⚡️Power⚡️
@@ -251,11 +251,11 @@ it is considered that the bean **Passed** the validation. The wildcard `?` signi
 matter what is the value in the right state.
 
 ```java
-public static final Validator<Container, ValidationFailure> batchValidation1 =
-  containerInputRepresentation -> containerInputRepresentation
-    .filterOrElse(Container::_isSetAccountId, ignore -> new ValidationFailure(
-      ApiErrorCodes.REQUIRED_FIELD_MISSING, FIELD_NULL_OR_EMPTY,
-      ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID));
+public static final Validator<Container, ValidationFailure> batchValidation1=
+    containerInputRepresentation->containerInputRepresentation
+    .filterOrElse(Container::_isSetAccountId,ignore->new ValidationFailure(
+    ApiErrorCodes.REQUIRED_FIELD_MISSING,FIELD_NULL_OR_EMPTY,
+    ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID));
 ```
 
 ⚠️ Ofcourse, pre-wrapping into `Either` is just to avoid boiler-plate. You can very well
@@ -280,7 +280,7 @@ to maintain the sequence of validations. We can chain all the validators, in the
 preference.
 
 ```java
-List<Validator<Container, ValidationFailure> validatorChain = List.of(validator1, validator2, ...);
+List<Validator<Container, ValidationFailure> validatorChain=List.of(validator1,validator2,...);
 ```
 
 ## How to combine Container & Member validations?
@@ -290,10 +290,10 @@ validators and all its nested member validators. But they can't be put under one
 functions on different Data Types.
 
 ```java
-Validator<Container, ValidationFailure> containerValidator = ... // Apply same anology for SimpleValidator
-Validator<Member, ValidationFailure> memberValidator = ...
+Validator<Container, ValidationFailure> containerValidator=... // Apply same anology for SimpleValidator
+    Validator<Member, ValidationFailure> memberValidator=...
 
-List.of(containerValidator, memberValidator); // ^^^ Compile Error
+    List.of(containerValidator,memberValidator); // ^^^ Compile Error
 ```
 
 So all nested member validations need to be lifted to the container type, essentially changing their
@@ -304,9 +304,9 @@ container type. This takes a `containerToMemberMapper` which is function to extr
 container.
 
 ```java
-Validator<Member, ValidationFailure> memberValidator = ...
-Validator<Container, ValidationFailure> liftedMemberValidator =
-	liftToContainerValidatorType(memberValidator, containerToMemberMapper)
+Validator<Member, ValidationFailure> memberValidator=...
+    Validator<Container, ValidationFailure> liftedMemberValidator=
+    liftToContainerValidatorType(memberValidator,containerToMemberMapper)
 ```
 
 **This is a powerful technique, which lets you validate any Bean with any level or nesting. It's
@@ -400,12 +400,17 @@ If you have specific requirement, please log a git.soma issue.
 - For source code navigation you need to have **[Lombok](https://projectlombok.org/)** plugin, which
   is used to generate boilerplate code. There are plugins available for Lombok for all popular IDEs,
   which you need to install. The latest version of the plugin should work.
+- It uses **[google-java-format](https://github.com/google/google-java-format)**. Your check-in
+  fails if you don't adhere to this style. Please set up your IDE to follow this formatting,
+  following
+  instructions [here](https://github.com/HPI-Information-Systems/Metanome/wiki/Installing-the-google-styleguide-settings-in-intellij-and-eclipse)
 
 ---
 
 # Artifact Coordinates
 
 ```xml
+
 <dependency>
   <groupId>com.salesforce.ccspayments</groupId>
   <artifactId>vader</artifactId>

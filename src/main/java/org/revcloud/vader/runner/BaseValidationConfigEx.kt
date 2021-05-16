@@ -26,7 +26,7 @@ internal fun <ValidatableT> BaseValidationConfig<ValidatableT, *>.getRequiredFie
     (shouldHaveFieldsOrFailWith.keys + (shouldHaveFieldsOrFailWithFn?._1 ?: emptyList()))
         .map { PropertyUtils.getPropertyName(beanClass, it) }.toSet()
 
-internal fun <ValidatableT> BaseValidationConfig<ValidatableT, *>.getRequiredFieldNamesForSFIdFormat(
+internal fun <ValidatableT> BaseValidationConfig<ValidatableT, *>.getRequiredFieldNamesForSFIdFormatEx(
     beanClass: Class<ValidatableT>
 ): Set<String> =
     (
@@ -37,7 +37,7 @@ internal fun <ValidatableT> BaseValidationConfig<ValidatableT, *>.getRequiredFie
         )
         .map { PropertyUtils.getPropertyName(beanClass, it) }.toSet()
 
-internal fun <ValidatableT> BaseValidationConfig<ValidatableT, *>.getNonRequiredFieldNamesForSFIdFormat(
+internal fun <ValidatableT> BaseValidationConfig<ValidatableT, *>.getNonRequiredFieldNamesForSFIdFormatEx(
     beanClass: Class<ValidatableT>
 ): Set<String> =
     (
