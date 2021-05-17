@@ -28,7 +28,7 @@ import org.revcloud.vader.types.validators.Validator;
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 abstract class BaseValidationConfig<ValidatableT, FailureT> {
   @Singular("shouldHaveFieldOrFailWith")
-  protected Map<@NonNull TypedPropertyGetter<ValidatableT, ?>, FailureT> shouldHaveFieldsOrFailWith;
+  protected Map<TypedPropertyGetter<ValidatableT, ?>, FailureT> shouldHaveFieldsOrFailWith;
 
   @Nullable
   protected Tuple2<
@@ -37,7 +37,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
       shouldHaveFieldsOrFailWithFn;
 
   @Singular("shouldHaveValidSFIdFieldOrFailWith")
-  protected Map<@NonNull TypedPropertyGetter<ValidatableT, ID>, FailureT>
+  protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT>
       shouldHaveValidSFIdFormatOrFailWith;
 
   @Nullable
@@ -47,7 +47,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
       shouldHaveValidSFIdFormatOrFailWithFn;
 
   @Singular("mayHaveValidSFIdFieldOrFailWith")
-  protected Map<@NonNull TypedPropertyGetter<ValidatableT, ID>, FailureT>
+  protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT>
       absentOrHaveValidSFIdFieldsOrFailWith;
 
   @Nullable

@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.4.2-SNAPSHOT"
+version = "2.4.2"
 description = "Vader - An FP framework for Bean validation"
 
 java {
@@ -67,15 +67,6 @@ tasks {
             html.isEnabled = false
             xml.isEnabled = true
         }
-        classDirectories.setFrom(
-            files(
-                classDirectories.files.map {
-                    fileTree(it) {
-                        exclude("org/revcloud/vader/runner/BaseValidationConfig\$*.*")
-                    }
-                }
-            )
-        )
     }
 }
 
