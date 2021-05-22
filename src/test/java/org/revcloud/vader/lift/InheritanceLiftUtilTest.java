@@ -3,6 +3,7 @@ package org.revcloud.vader.lift;
 import static consumer.failure.ValidationFailure.NONE;
 import static consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.revcloud.vader.lift.InheritanceLiftUtil.liftAllToChildValidatorType;
 import static org.revcloud.vader.lift.InheritanceLiftUtil.liftToChildValidatorType;
 
 import consumer.failure.ValidationFailure;
@@ -35,10 +36,12 @@ class InheritanceLiftUtilTest {
   @Test
   void liftParentToChildValidatorTypeTest() {
     final Validator<Parent, ValidationFailure> v1 = ignore -> Either.right(NONE);
-    final Validator<Child, ValidationFailure> v2 = ignore -> Either.left(UNKNOWN_EXCEPTION);
+    final Validator<Parent, ValidationFailure> v2 = ignore -> Either.right(NONE);
+    final Validator<Child, ValidationFailure> v3 = ignore -> Either.left(UNKNOWN_EXCEPTION);
     final var validationConfig =
         ValidationConfig.<Child, ValidationFailure>toValidate()
-            .withValidators(List.of(liftToChildValidatorType(v1), v2))
+            .withValidators(liftAllToChildValidatorType(List.of(v1, v2)))
+            .withValidator(v3)
             .prepare();
     final var result =
         Runner.validateAndFailFast(

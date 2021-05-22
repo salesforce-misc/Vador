@@ -18,11 +18,9 @@ import org.revcloud.vader.types.validators.Validator
  */
 internal fun <FailureT, ValidatableT> accumulationStrategy(
     validators: List<Validator<ValidatableT?, FailureT?>>,
-    invalidValidatable: FailureT,
     throwableMapper: (Throwable) -> FailureT?,
 ): Accumulation<ValidatableT, FailureT> = {
-    if (it == null) listOf(left(invalidValidatable))
-    else fireValidators(right(it), validators, throwableMapper)
+    fireValidators(right(it), validators, throwableMapper)
 }
 
 typealias Accumulation<ValidatableT, FailureT> = (ValidatableT) -> List<Either<FailureT?, ValidatableT?>>

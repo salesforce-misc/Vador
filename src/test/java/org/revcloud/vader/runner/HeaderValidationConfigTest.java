@@ -12,10 +12,14 @@ import io.vavr.Tuple;
 import io.vavr.control.Either;
 import java.util.Collections;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Value;
+import lombok.experimental.FieldNameConstants;
 import org.junit.jupiter.api.Test;
+import org.revcloud.vader.runner.HeaderValidationConfigTest.HeaderBeanMultiBatch.Fields;
 
-class HeaderConfigTest {
+class HeaderValidationConfigTest {
 
   @Test
   void failFastForHeaderConfigWithValidators() {
@@ -97,7 +101,7 @@ class HeaderConfigTest {
 
   @Test
   void headerWithFailure() {
-    final var validationConfig =
+    final var headerValidationConfig =
         HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
             .withHeaderValidators(
                 List.of(
@@ -110,8 +114,18 @@ class HeaderConfigTest {
         validateAndFailFastForHeader(
             new HeaderBean(Collections.emptyList()),
             ValidationFailure::getValidationFailureForException,
-            validationConfig);
+            headerValidationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
+  }
+
+  @Test
+  void getFieldNamesForBatch() {
+    final var validationConfig = HeaderValidationConfig.<HeaderBeanMultiBatch, ValidationFailure>toValidate()
+        .withBatchMappers(
+            List.of(HeaderBeanMultiBatch::getBatch1, HeaderBeanMultiBatch::getBatch2))
+        .prepare();
+    assertThat(validationConfig.getFieldNamesForBatch(HeaderBeanMultiBatch.class))
+        .containsExactly(Fields.batch1, Fields.batch2);
   }
 
   @Value
@@ -119,8 +133,10 @@ class HeaderConfigTest {
     List<Bean1> batch;
   }
 
-  @Value
-  private static class HeaderBeanMultiBatch {
+  @Data
+  @FieldNameConstants
+  @AllArgsConstructor
+  public static class HeaderBeanMultiBatch {
     List<Bean1> batch1;
     List<Bean2> batch2;
   }

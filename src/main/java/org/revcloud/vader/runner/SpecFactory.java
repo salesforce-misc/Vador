@@ -161,7 +161,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
 
     @Override
     protected FailureT getFailure(ValidatableT validatable) {
-      if ((orFailWith == null) && (orFailWithFn == null)) {
+      if ((orFailWith == null) == (orFailWithFn == null)) {
         throw new IllegalArgumentException(String.format(INVALID_FAILURE_CONFIG, nameForTest));
       }
       if (orFailWith != null) {

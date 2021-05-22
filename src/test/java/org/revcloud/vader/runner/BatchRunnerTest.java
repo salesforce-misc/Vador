@@ -5,15 +5,19 @@ import static consumer.failure.ValidationFailure.VALIDATION_FAILURE_1;
 import static consumer.failure.ValidationFailure.VALIDATION_FAILURE_2;
 import static consumer.failure.ValidationFailure.VALIDATION_FAILURE_3;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.vavr.api.VavrAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.revcloud.vader.runner.BatchRunner.validateAndFailFast;
 
 import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
+import io.vavr.Tuple2;
 import io.vavr.control.Either;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.types.validators.SimpleValidator;
@@ -37,23 +41,23 @@ class BatchRunnerTest {
         BatchValidationConfig.<Bean, ValidationFailure>toValidate()
             .withValidators(validators)
             .prepare();
-    final var results =
+    final var resultsWithIds =
         validateAndFailFast(
             validatables,
             NONE,
             ValidationFailure::getValidationFailureForException,
-            batchValidationConfig);
+            batchValidationConfig, Bean::getId);
+    
+    final var ids = resultsWithIds.stream().map(etr -> etr.fold(Tuple2::_1, Bean::getId))
+        .collect(Collectors.toList());
+    assertThat(ids).containsAll(IntStream.rangeClosed(0,4).boxed().collect(Collectors.toList()));
+    
+    final var results = resultsWithIds.stream().map(etr -> etr.mapLeft(Tuple2::_2))
+        .collect(Collectors.toList());
     assertEquals(validatables.size(), results.size());
-    assertTrue(results.get(2).isRight());
-    assertEquals(results.get(2), Either.right(new Bean(2)));
-    assertTrue(
-        results.stream()
-            .limit(2)
-            .allMatch(vf -> vf.isLeft() && vf.getLeft() == VALIDATION_FAILURE_1));
-    assertTrue(
-        results.stream()
-            .skip(results.size() - 2)
-            .allMatch(vf -> vf.isLeft() && vf.getLeft() == VALIDATION_FAILURE_2));
+    assertThat(results.get(2)).containsOnRight(new Bean(2));
+    assertThat(results.stream().limit(2)).containsOnly(Either.left(VALIDATION_FAILURE_1));
+    assertThat(results.stream().skip(results.size() - 2)).containsOnly(Either.left(VALIDATION_FAILURE_2));
   }
 
   @Test
@@ -129,7 +133,7 @@ class BatchRunnerTest {
             bean -> predicateForValidId3.test(bean.getId()) ? NONE : VALIDATION_FAILURE_3);
     final var result =
         BatchRunner.validateAndAccumulateErrors(
-            validatables, simpleValidators, null, NONE, throwable -> null);
+            validatables, simpleValidators, NONE, throwable -> null);
 
     assertEquals(result.size(), validatables.size());
     assertTrue(result.stream().allMatch(r -> r.size() == simpleValidators.size()));

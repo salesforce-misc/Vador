@@ -35,13 +35,11 @@ fun <FailureT, ValidatableT> validateAndFailFast(
 fun <FailureT, ValidatableT> validateAndAccumulateErrorsForSimpleValidators(
     validatable: ValidatableT,
     simpleValidators: Collection<SimpleValidator<ValidatableT?, FailureT?>>,
-    invalidValidatable: FailureT,
     none: FailureT,
     throwableMapper: (Throwable) -> FailureT?,
 ): List<FailureT?> = validateAndAccumulateErrors(
     validatable,
     liftAllSimple(simpleValidators, none),
-    invalidValidatable,
     none,
     throwableMapper
 )
@@ -61,11 +59,10 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrorsForSimpleValidators(
 fun <FailureT, ValidatableT> validateAndAccumulateErrors(
     validatable: ValidatableT,
     validators: List<Validator<ValidatableT?, FailureT?>>,
-    invalidValidatable: FailureT,
     none: FailureT,
     throwableMapper: (Throwable) -> FailureT?,
 ): List<FailureT?> {
-    val results = accumulationStrategy(validators, invalidValidatable, throwableMapper)(validatable)
+    val results = accumulationStrategy(validators, throwableMapper)(validatable)
         .map { result -> result.fold({ it }, { none }) }
     return if (results.all { it == none }) emptyList() else results
 }

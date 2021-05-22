@@ -5,14 +5,13 @@ package org.revcloud.vader.runner
 import io.vavr.Tuple
 import io.vavr.Tuple2
 import io.vavr.control.Either
-import lombok.NonNull
 import org.revcloud.vader.lift.liftAllSimple
 import org.revcloud.vader.types.validators.SimpleValidator
 import org.revcloud.vader.types.validators.Validator
 import java.util.Optional
 
 fun <FailureT, ValidatableT> validateAndFailFast(
-    validatables: List<@NonNull ValidatableT>,
+    validatables: List<ValidatableT>,
     nullValidatable: FailureT?,
     throwableMapper: (Throwable) -> FailureT?,
     batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>
@@ -20,20 +19,20 @@ fun <FailureT, ValidatableT> validateAndFailFast(
     failFastForBatch(nullValidatable, throwableMapper, batchValidationConfig)(validatables)
 
 fun <FailureT, ValidatableT, PairT> validateAndFailFast(
-    validatables: List<@NonNull ValidatableT>,
+    validatables: List<ValidatableT>,
     invalidValidatable: FailureT,
     throwableMapper: (Throwable) -> FailureT?,
     batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
     pairForInvalidMapper: (ValidatableT) -> PairT?
 ): List<Either<Tuple2<PairT?, FailureT?>, ValidatableT?>> {
-    val validationResults =
+    val orderedValidationResults =
         validateAndFailFast(
             validatables,
             invalidValidatable,
             throwableMapper,
             batchValidationConfig
         )
-    return validationResults.zip(validatables)
+    return orderedValidationResults.zip(validatables)
         .map { (result, validatable) ->
             result.mapLeft {
                 Tuple.of(
@@ -55,6 +54,7 @@ fun <FailureT, ValidatableT> validateAndFailFastAllOrNone(
     )
 
 // --- ERROR ACCUMULATION ---
+// TODO 20/05/21 gopala.akshintala: ValidationConfig integration
 /**
  * Validates a list of validatables against a list of Simple validations, in error-accumulation mode, per validatable.
  *
@@ -68,13 +68,11 @@ fun <FailureT, ValidatableT> validateAndFailFastAllOrNone(
 fun <FailureT, ValidatableT> validateAndAccumulateErrors(
     validatables: List<ValidatableT>,
     simpleValidators: List<SimpleValidator<ValidatableT?, FailureT?>>,
-    invalidValidatable: FailureT,
-    none: FailureT,
+    none: FailureT, // TODO 20/05/21 gopala.akshintala: Check on adding InvalidatableT
     throwableMapper: (Throwable) -> FailureT?,
 ): List<List<Either<FailureT?, ValidatableT?>>> = validateAndAccumulateErrors(
     validatables,
     liftAllSimple(simpleValidators, none),
-    invalidValidatable,
     throwableMapper
 )
 
@@ -91,7 +89,6 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
 fun <FailureT, ValidatableT> validateAndAccumulateErrors(
     validatables: List<ValidatableT>,
     validators: List<Validator<ValidatableT?, FailureT?>>,
-    invalidValidatable: FailureT,
     throwableMapper: (Throwable) -> FailureT?,
 ): List<List<Either<FailureT?, ValidatableT?>>> =
-    validatables.map(accumulationStrategy(validators, invalidValidatable, throwableMapper))
+    validatables.map(accumulationStrategy(validators, throwableMapper))

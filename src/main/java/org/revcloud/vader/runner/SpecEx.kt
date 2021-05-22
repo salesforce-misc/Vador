@@ -8,7 +8,7 @@ internal fun <ValidatableT, FailureT, GivenT> SpecFactory.Spec1<ValidatableT, Fa
     Predicate { validatable ->
         val givenValue: GivenT = given.apply(validatable)
         shouldMatchAnyOf.any { it.matches(givenValue) } ||
-            shouldMatchAnyOfFields.any { it.apply(validatable) == givenValue }
+                shouldMatchAnyOfFields.any { it.apply(validatable) == givenValue }
     }
 
 internal fun <ValidatableT, FailureT, WhenT, ThenT> SpecFactory.Spec2<ValidatableT, FailureT, WhenT, ThenT>.toPredicateEx(): Predicate<ValidatableT?> {
@@ -17,20 +17,14 @@ internal fun <ValidatableT, FailureT, WhenT, ThenT> SpecFactory.Spec2<Validatabl
             throw IllegalArgumentException("`when-matches/matchesAnyOf + then-shouldMatch/shouldMatchAnyOf` cannot be given along with `shouldRelateWith` or `shouldRelateWithFn`")
         }
         val whenValue = `when`.apply(validatable)
-        if (shouldRelateWith.isEmpty() && shouldRelateWithFn == null && matchesAnyOf.none {
-            it.matches(
-                    whenValue
-                )
-        }
+        if (shouldRelateWith.isEmpty() && shouldRelateWithFn == null &&
+            matchesAnyOf.none { it.matches(whenValue) }
         ) {
             return@Predicate true
         }
         val thenValue = then.apply(validatable)
-        if (shouldRelateWith.isEmpty() && shouldRelateWithFn == null && shouldMatchAnyOf.any {
-            it.matches(
-                    thenValue
-                )
-        }
+        if (shouldRelateWith.isEmpty() && shouldRelateWithFn == null &&
+            shouldMatchAnyOf.any { it.matches(thenValue) }
         ) {
             return@Predicate true
         }
@@ -60,5 +54,5 @@ internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> SpecFactory.Spec3<V
             return@Predicate true
         }
         orField1ShouldMatchAnyOf.any { it.matches(thenValue1) } ||
-            orField2ShouldMatchAnyOf.any { it.matches(thenValue2) }
+                orField2ShouldMatchAnyOf.any { it.matches(thenValue2) }
     }

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 @Value
 @FieldDefaults(level = AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
-@SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate")
+@SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 public class BatchValidationConfig<ValidatableT, FailureT>
     extends BaseValidationConfig<ValidatableT, FailureT> {
   // These two params are separated out, as `andFailDuplicatesWith` is not mandatory for filter

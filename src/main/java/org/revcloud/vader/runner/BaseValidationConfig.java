@@ -36,7 +36,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
           @NonNull Function2<String, Object, FailureT>>
       shouldHaveFieldsOrFailWithFn;
 
-  @Singular("shouldHaveValidSFIdFieldOrFailWith")
+  @Singular("shouldHaveValidSFIdFormatOrFailWith")
   protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT>
       shouldHaveValidSFIdFormatOrFailWith;
 
@@ -46,7 +46,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
           @NonNull Function2<String, ID, FailureT>>
       shouldHaveValidSFIdFormatOrFailWithFn;
 
-  @Singular("mayHaveValidSFIdFieldOrFailWith")
+  @Singular("absentOrHaveValidSFIdFieldsOrFailWith")
   protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT>
       absentOrHaveValidSFIdFieldsOrFailWith;
 
@@ -58,15 +58,15 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
 
   @Nullable
   protected Function1<
-          SpecFactory<ValidatableT, FailureT>,
+          @NonNull SpecFactory<ValidatableT, FailureT>,
           @NonNull Collection<@NonNull ? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>>
       specify;
 
   @Singular("withSpec")
   protected Collection<
           Function1<
-              SpecFactory<ValidatableT, FailureT>,
-              ? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>>
+              @NonNull SpecFactory<ValidatableT, FailureT>,
+              @NonNull ? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>>
       withSpecs;
 
   @Singular Collection<Validator<ValidatableT, FailureT>> withValidators;

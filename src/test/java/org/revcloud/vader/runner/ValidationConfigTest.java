@@ -16,7 +16,7 @@ import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 import org.junit.jupiter.api.Test;
 
-class RunnerWithConfigTest {
+class ValidationConfigTest {
 
   @Test
   void failFastWithRequiredFieldsMissingForSimpleValidators() {
