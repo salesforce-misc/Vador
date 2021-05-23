@@ -3,7 +3,6 @@
 package org.revcloud.vader.runner
 
 import io.vavr.control.Either
-import io.vavr.kotlin.left
 import io.vavr.kotlin.right
 import org.revcloud.vader.types.validators.Validator
 

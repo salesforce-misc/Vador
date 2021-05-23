@@ -4,8 +4,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.revcloud.vader.matchers.DateMatchers.isBeforeIfBothArePresent;
-import static org.revcloud.vader.matchers.DateMatchers.isEqualToDayOfDate;
 
 import consumer.failure.ValidationFailure;
 import java.util.Calendar;
@@ -13,6 +11,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
+import org.revcloud.vader.matchers.DateMatchers;
 import org.revcloud.vader.runner.ValidationConfig;
 
 class Spec3Test {
@@ -29,7 +28,7 @@ class Spec3Test {
                         .matches(is(true))
                         .thenField1(DatesBean::getDate1)
                         .thenField2(DatesBean::getDate2)
-                        .shouldRelateWithFn(isBeforeIfBothArePresent()))
+                        .shouldRelateWithFn(DateMatchers.isBeforeIfBothArePresent()))
             .prepare();
 
     final var validBean =
@@ -65,7 +64,7 @@ class Spec3Test {
                         .matches(is(true))
                         .thenField1(DatesBean::getDate1)
                         .thenField2(DatesBean::getDate2)
-                        .shouldRelateWithFn(isBeforeIfBothArePresent()))
+                        .shouldRelateWithFn(DateMatchers.isBeforeIfBothArePresent()))
             .prepare();
     final var invalidBean1 =
         new DatesBean(true, null, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime());
@@ -97,7 +96,7 @@ class Spec3Test {
                         .matches(is(true))
                         .thenField1(Bean::getBdom)
                         .thenField2(Bean::getStartDate)
-                        .shouldRelateWithFn(isEqualToDayOfDate())
+                        .shouldRelateWithFn(DateMatchers.isEqualToDayOfDate())
                         .orField1ShouldMatch(nullValue()))
             .prepare();
     final var invalidBean =

@@ -26,7 +26,7 @@ class HeaderValidationConfigTest {
     final var headerConfig =
         HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
             .withBatchMapper(HeaderBean::getBatch)
-            .withSimpleHeaderValidator(Tuple.of(ignore -> UNKNOWN_EXCEPTION, NONE))
+            .withSimpleHeaderValidator(ignore -> UNKNOWN_EXCEPTION, NONE)
             .prepare();
     final var batch = List.of(new Bean1());
     final var headerBean = new HeaderBean(batch);
@@ -42,7 +42,7 @@ class HeaderValidationConfigTest {
     final var headerConfig =
         HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
             .withBatchMapper(HeaderBean::getBatch)
-            .withSimpleHeaderValidator(Tuple.of(ignore -> NONE, NONE))
+            .withSimpleHeaderValidator(ignore -> NONE, NONE)
             .prepare();
     final var batch = List.of(new Bean1());
     final var headerBean = new HeaderBean(batch);
@@ -58,7 +58,7 @@ class HeaderValidationConfigTest {
         HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
             .withBatchMapper(HeaderBean::getBatch)
             .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET))
-            .withSimpleHeaderValidator(Tuple.of(ignore -> NONE, NONE))
+            .withSimpleHeaderValidator(ignore -> NONE, NONE)
             .prepare();
     final var headerBean = new HeaderBean(Collections.emptyList());
     final var result =
@@ -74,7 +74,7 @@ class HeaderValidationConfigTest {
             .withBatchMappers(
                 List.of(HeaderBeanMultiBatch::getBatch1, HeaderBeanMultiBatch::getBatch2))
             .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET))
-            .withSimpleHeaderValidator(Tuple.of(ignore -> NONE, NONE))
+            .withSimpleHeaderValidator(ignore -> NONE, NONE)
             .prepare();
     final var headerBean =
         new HeaderBeanMultiBatch(Collections.emptyList(), Collections.emptyList());
@@ -90,7 +90,7 @@ class HeaderValidationConfigTest {
         HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
             .withBatchMapper(HeaderBean::getBatch)
             .shouldHaveMaxBatchSize(Tuple.of(0, MAX_BATCH_SIZE_EXCEEDED))
-            .withSimpleHeaderValidator(Tuple.of(ignore -> NONE, NONE))
+            .withSimpleHeaderValidator(ignore -> NONE, NONE)
             .prepare();
     final var headerBean = new HeaderBean(List.of(new Bean1()));
     final var result =
@@ -120,10 +120,11 @@ class HeaderValidationConfigTest {
 
   @Test
   void getFieldNamesForBatch() {
-    final var validationConfig = HeaderValidationConfig.<HeaderBeanMultiBatch, ValidationFailure>toValidate()
-        .withBatchMappers(
-            List.of(HeaderBeanMultiBatch::getBatch1, HeaderBeanMultiBatch::getBatch2))
-        .prepare();
+    final var validationConfig =
+        HeaderValidationConfig.<HeaderBeanMultiBatch, ValidationFailure>toValidate()
+            .withBatchMappers(
+                List.of(HeaderBeanMultiBatch::getBatch1, HeaderBeanMultiBatch::getBatch2))
+            .prepare();
     assertThat(validationConfig.getFieldNamesForBatch(HeaderBeanMultiBatch.class))
         .containsExactly(Fields.batch1, Fields.batch2);
   }

@@ -4,6 +4,7 @@ import de.cronn.reflection.util.TypedPropertyGetter;
 import io.vavr.Tuple2;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,7 +30,7 @@ public class HeaderValidationConfig<HeaderValidatableT, FailureT> {
       withSimpleHeaderValidators;
 
   @Singular("withSimpleHeaderValidator")
-  Collection<Tuple2<@NonNull SimpleValidator<? super HeaderValidatableT, FailureT>, FailureT>>
+  Map<@NonNull SimpleValidator<? super HeaderValidatableT, FailureT>, FailureT>
       withSimpleHeaderValidator;
 
   List<Validator<HeaderValidatableT, FailureT>> getHeaderValidators() {

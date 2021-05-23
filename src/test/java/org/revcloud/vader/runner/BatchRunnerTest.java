@@ -46,18 +46,22 @@ class BatchRunnerTest {
             validatables,
             NONE,
             ValidationFailure::getValidationFailureForException,
-            batchValidationConfig, Bean::getId);
-    
-    final var ids = resultsWithIds.stream().map(etr -> etr.fold(Tuple2::_1, Bean::getId))
-        .collect(Collectors.toList());
-    assertThat(ids).containsAll(IntStream.rangeClosed(0,4).boxed().collect(Collectors.toList()));
-    
-    final var results = resultsWithIds.stream().map(etr -> etr.mapLeft(Tuple2::_2))
-        .collect(Collectors.toList());
+            batchValidationConfig,
+            Bean::getId);
+
+    final var ids =
+        resultsWithIds.stream()
+            .map(etr -> etr.fold(Tuple2::_1, Bean::getId))
+            .collect(Collectors.toList());
+    assertThat(ids).containsAll(IntStream.rangeClosed(0, 4).boxed().collect(Collectors.toList()));
+
+    final var results =
+        resultsWithIds.stream().map(etr -> etr.mapLeft(Tuple2::_2)).collect(Collectors.toList());
     assertEquals(validatables.size(), results.size());
     assertThat(results.get(2)).containsOnRight(new Bean(2));
     assertThat(results.stream().limit(2)).containsOnly(Either.left(VALIDATION_FAILURE_1));
-    assertThat(results.stream().skip(results.size() - 2)).containsOnly(Either.left(VALIDATION_FAILURE_2));
+    assertThat(results.stream().skip(results.size() - 2))
+        .containsOnly(Either.left(VALIDATION_FAILURE_2));
   }
 
   @Test

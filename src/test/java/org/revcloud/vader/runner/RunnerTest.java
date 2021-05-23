@@ -27,30 +27,32 @@ class RunnerTest {
                     bean -> Either.right(NONE),
                     bean -> Either.left(UNKNOWN_EXCEPTION)))
             .prepare();
-    final var result = Runner.validateAndFailFast(
+    final var result =
+        Runner.validateAndFailFast(
             new Bean(0), ValidationFailure::getValidationFailureForException, validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
   @Test
   void errorAccumulation() {
-    final List<Validator<Bean, ValidationFailure>> validators = List.of(
-        bean -> Either.right(NONE),
-        bean -> Either.left(VALIDATION_FAILURE_1),
-        bean -> Either.left(VALIDATION_FAILURE_2)); 
-    final var result = Runner.validateAndAccumulateErrors(
+    final List<Validator<Bean, ValidationFailure>> validators =
+        List.of(
+            bean -> Either.right(NONE),
+            bean -> Either.left(VALIDATION_FAILURE_1),
+            bean -> Either.left(VALIDATION_FAILURE_2));
+    final var result =
+        Runner.validateAndAccumulateErrors(
             new Bean(0), validators, NONE, ValidationFailure::getValidationFailureForException);
     assertThat(result).containsAll(List.of(NONE, VALIDATION_FAILURE_1, VALIDATION_FAILURE_2));
   }
 
   @Test
   void errorAccumulationWithSimpleValidators() {
-    final List<SimpleValidator<Bean, ValidationFailure>> validators = List.of(
-        bean -> NONE,
-        bean -> VALIDATION_FAILURE_1,
-        bean -> VALIDATION_FAILURE_2);
-    final var result = Runner.validateAndAccumulateErrorsForSimpleValidators(
-        new Bean(0), validators, NONE, ValidationFailure::getValidationFailureForException);
+    final List<SimpleValidator<Bean, ValidationFailure>> validators =
+        List.of(bean -> NONE, bean -> VALIDATION_FAILURE_1, bean -> VALIDATION_FAILURE_2);
+    final var result =
+        Runner.validateAndAccumulateErrorsForSimpleValidators(
+            new Bean(0), validators, NONE, ValidationFailure::getValidationFailureForException);
     assertThat(result).containsAll(List.of(NONE, VALIDATION_FAILURE_1, VALIDATION_FAILURE_2));
   }
 

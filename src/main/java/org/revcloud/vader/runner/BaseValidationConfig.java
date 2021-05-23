@@ -2,7 +2,6 @@ package org.revcloud.vader.runner;
 
 import com.force.swag.id.ID;
 import de.cronn.reflection.util.TypedPropertyGetter;
-import io.vavr.Function1;
 import io.vavr.Function2;
 import io.vavr.Tuple2;
 import java.util.Collection;
@@ -11,16 +10,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
-import lombok.val;
 import org.jetbrains.annotations.Nullable;
 import org.revcloud.vader.runner.SpecFactory.BaseSpec;
-import org.revcloud.vader.runner.SpecFactory.BaseSpec.BaseSpecBuilder;
 import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
 
@@ -56,18 +51,10 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
           @NonNull Function2<String, ID, FailureT>>
       absentOrHaveValidSFIdFormatOrFailWithFn;
 
-  @Nullable
-  protected Function1<
-          @NonNull SpecFactory<ValidatableT, FailureT>,
-          @NonNull Collection<@NonNull ? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>>
-      specify;
+  @Nullable protected Specs<ValidatableT, FailureT> specify;
 
   @Singular("withSpec")
-  protected Collection<
-          Function1<
-              @NonNull SpecFactory<ValidatableT, FailureT>,
-              @NonNull ? extends BaseSpecBuilder<ValidatableT, FailureT, ?, ?>>>
-      withSpecs;
+  protected Collection<? extends Spec<ValidatableT, FailureT>> withSpecs;
 
   @Singular Collection<Validator<ValidatableT, FailureT>> withValidators;
 
@@ -78,20 +65,10 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
       withSimpleValidators;
 
   @Singular("withSimpleValidator")
-  Collection<
-          Tuple2<
-              @NonNull ? extends SimpleValidator<? super ValidatableT, FailureT>,
-              @NonNull FailureT>>
-      withSimpleValidator;
+  Map<? extends SimpleValidator<? super ValidatableT, FailureT>, FailureT> withSimpleValidator;
 
   List<BaseSpec<ValidatableT, FailureT>> getSpecs() {
-    val specFactory = new SpecFactory<ValidatableT, FailureT>();
-    return Stream.concat(
-            Stream.ofNullable(specify)
-                .flatMap(specs -> specs.apply(specFactory).stream().map(BaseSpecBuilder::done)),
-            Stream.ofNullable(withSpecs)
-                .flatMap(specs -> specs.stream().map(spec -> spec.apply(specFactory).done())))
-        .collect(Collectors.toList());
+    return BaseValidationConfigEx.getSpecsEx(this);
   }
 
   public Optional<Predicate<ValidatableT>> getSpecWithName(@NonNull String nameForTest) {

@@ -4,7 +4,6 @@ import static consumer.failure.ValidationFailure.NONE;
 import static consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.revcloud.vader.lift.InheritanceLiftUtil.liftAllToChildValidatorType;
-import static org.revcloud.vader.lift.InheritanceLiftUtil.liftToChildValidatorType;
 
 import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;

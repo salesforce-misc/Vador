@@ -1,30 +1,29 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep.XML
 
 plugins {
     kotlin("jvm")
     `java-library`
     `maven-publish`
     jacoco
+    idea
     id("io.freefair.lombok") version "6.0.0-m2"
     id("io.gitlab.arturbosch.detekt") version "1.16.0"
     id("com.adarshr.test-logger") version "3.0.0"
     id("com.diffplug.spotless") version "5.12.5"
     id("org.sonarqube") version "3.1.1"
+    id("org.barfuin.gradle.taskinfo") version "1.1.1"
 }
 
 group = "com.salesforce.ccspayments"
 version = "2.4.3-SNAPSHOT"
 description = "Vader - An FP framework for Bean validation"
 
-java {
-    withJavadocJar()
-    withSourcesJar()
-    sourceCompatibility = JavaVersion.VERSION_11
-}
+java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
 }
 
 dependencies {
@@ -53,13 +52,21 @@ dependencies {
 
 jacoco.toolVersion = "0.8.7"
 
+idea {
+    module.generatedSourceDirs.add(buildDir.resolve("generated/sources/**"))
+}
+
 tasks {
-    withType<KotlinCompile> {
+    compileKotlin {
+        dependsOn(delombok)
+        kotlin.sourceSets.main {
+            kotlin.setSrcDirs(listOf(buildDir.resolve("generated/sources/delombok/java/main")))
+        }
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_11.toString()
         }
     }
-    withType<Test> {
+    test {
         useJUnitPlatform()
     }
     jacocoTestReport {
@@ -69,14 +76,24 @@ tasks {
             xml.isEnabled = true
         }
     }
+    build {
+        doLast {
+            delete(buildDir.resolve("generated/sources/delombok/"))
+        }
+    }
 }
 
 afterEvaluate {
-    tasks.named("check").configure {
-        dependsOn(tasks.named("jacocoTestReport"))
-    }
-    tasks.named("jacocoTestReport").configure {
-        dependsOn(tasks.named("test"))
+    tasks {
+        check.configure {
+            dependsOn(jacocoTestReport)
+        }
+        jacocoTestReport.configure {
+            dependsOn(test)
+        }
+        named("spotlessKotlin").configure {
+            dependsOn(delombok)
+        }
     }
 }
 
@@ -96,6 +113,7 @@ tasks {
         }
     }
 }
+
 publishing {
     publications.create<MavenPublication>("mavenJava") {
         artifactId = "vader"
@@ -146,59 +164,66 @@ publishing {
         if (JavaVersion.current().isJava9Compatible) {
             (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
         }
+        // TODO 22/05/21 gopala.akshintala: Turn this on after writing all javadocs
         isFailOnError = false
         options.encoding("UTF-8")
     }
+}
 
-    testlogger {
-        theme = ThemeType.MOCHA
-        showExceptions = true
-        showStackTraces = true
-        showFullStackTraces = true
-        showCauses = true
-        slowThreshold = 2000
-        showSummary = true
-        showSimpleNames = true
-        showPassed = true
-        showSkipped = true
-        showFailed = true
-        showStandardStreams = true
-        showPassedStandardStreams = true
-        showSkippedStandardStreams = true
-        showFailedStandardStreams = true
-        logLevel = LogLevel.LIFECYCLE
+testlogger {
+    theme = ThemeType.MOCHA
+    showExceptions = true
+    showStackTraces = true
+    showFullStackTraces = true
+    showCauses = true
+    slowThreshold = 2000
+    showSummary = true
+    showSimpleNames = true
+    showPassed = true
+    showSkipped = true
+    showFailed = true
+    showStandardStreams = true
+    showPassedStandardStreams = true
+    showSkippedStandardStreams = true
+    showFailedStandardStreams = true
+    logLevel = LogLevel.LIFECYCLE
+}
+
+detekt {
+    baseline = file("${rootProject.projectDir}/config/baseline.xml")
+    config = files("config/detekt/detekt.yml")
+    buildUponDefaultConfig = true
+    reports {
+        xml {
+            enabled = true
+        }
+        html {
+            enabled = false
+        }
+        txt {
+            enabled = false
+        }
     }
+}
 
-    detekt {
-        baseline = file("${rootProject.projectDir}/config/baseline.xml")
-        config = files("config/detekt/detekt.yml")
-        buildUponDefaultConfig = true
-        reports {
-            xml {
-                enabled = true
-            }
-            html {
-                enabled = false
-            }
-            txt {
-                enabled = false
-            }
-        }
+spotless {
+    kotlin {
+        // by default the target is every '.kt' and '.kts` file in the java sourcesets
+        ktlint("0.41.0")
     }
-
-    spotless {
-        kotlin {
-            // by default the target is every '.kt' and '.kts` file in the java sourcesets
-            ktlint("0.41.0")
-        }
-        kotlinGradle {
-            target("*.gradle.kts")
-            ktlint("0.41.0")
-        }
-        java {
-            importOrder()
-            removeUnusedImports()
-            googleJavaFormat()
-        }
+    kotlinGradle {
+        target("*.gradle.kts")
+        ktlint("0.41.0")
+    }
+    java {
+        target("src/main/java/**/*.java")
+        importOrder()
+        removeUnusedImports()
+        googleJavaFormat()
+    }
+    format("xml") {
+        targetExclude("pom.xml")
+        target("*.xml")
+        eclipseWtp(XML)
     }
 }

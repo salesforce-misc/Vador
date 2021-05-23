@@ -14,5 +14,5 @@ internal operator fun <T2> Tuple2<*, T2>?.component2(): T2? = this?._2
 internal fun <ValidatableT, FailureT> fromSimpleValidators1(simpleValidators: Tuple2<out Collection<SimpleValidator<in ValidatableT?, FailureT?>>?, out FailureT?>?): List<Validator<ValidatableT?, FailureT?>> =
     simpleValidators?.let { (svs, none) -> svs?.let { liftAllSimple(it, none) } } ?: emptyList()
 
-internal fun <ValidatableT, FailureT> fromSimpleValidators2(simpleValidators: Collection<Tuple2<out SimpleValidator<in ValidatableT?, FailureT?>, out FailureT?>>): List<Validator<ValidatableT?, FailureT?>> =
-    simpleValidators.mapNotNull { (sv, none) -> sv?.let { liftSimple(it, none) } }
+internal fun <ValidatableT, FailureT> fromSimpleValidators2(simpleValidators: Map<out SimpleValidator<in ValidatableT?, FailureT?>, FailureT?>): List<Validator<ValidatableT?, FailureT?>> =
+    simpleValidators.mapNotNull { (sv, none) -> sv.let { liftSimple(it, none) } }
