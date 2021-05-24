@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.runner.Runner;
+import org.revcloud.vader.runner.Spec;
+import org.revcloud.vader.runner.Specs;
 import org.revcloud.vader.runner.ValidationConfig;
 
 class Spec2Test {
@@ -82,19 +84,17 @@ class Spec2Test {
         Map.of(
             BillingTerm.OneTime, HashSet.of(null, 1).toJavaSet(),
             BillingTerm.Month, Set.of(2));
+    final Spec<Bean2, ValidationFailure> bean2Spec =
+        spec ->
+            spec._2()
+                .nameForTest(invalidComboSpec)
+                .when(Bean2::getBt)
+                .then(Bean2::getValueStr)
+                .shouldRelateWith(validComboMap)
+                .orFailWithFn(
+                    (value, valueStr) -> getFailureWithParams(MSG_WITH_PARAMS, value, valueStr));
     final var validationConfig =
-        ValidationConfig.<Bean2, ValidationFailure>toValidate()
-            .withSpec(
-                spec ->
-                    spec._2()
-                        .nameForTest(invalidComboSpec)
-                        .when(Bean2::getBt)
-                        .then(Bean2::getValueStr)
-                        .shouldRelateWith(validComboMap)
-                        .orFailWithFn(
-                            (value, valueStr) ->
-                                getFailureWithParams(MSG_WITH_PARAMS, value, valueStr)))
-            .prepare();
+        ValidationConfig.<Bean2, ValidationFailure>toValidate().withSpec(bean2Spec).prepare();
     final var validBean = new Bean2(BillingTerm.OneTime, null);
     Assertions.assertTrue(
         validationConfig
@@ -112,24 +112,23 @@ class Spec2Test {
 
   @Test
   void multiSpec2Test() {
+    final Specs<Bean, ValidationFailure> specs =
+        spec ->
+            List.of(
+                spec.<Integer, String>_2()
+                    .when(Bean::getValue)
+                    .matches(is(1))
+                    .then(Bean::getValueStr)
+                    .shouldMatch(anyOf("1", "one"))
+                    .orFailWith(INVALID_COMBO_1),
+                spec.<Integer, String>_2()
+                    .when(Bean::getValue)
+                    .matches(is(2))
+                    .then(Bean::getValueStr)
+                    .shouldMatch(either(is("two")).or(is("2")))
+                    .orFailWith(INVALID_COMBO_2));
     final var validationConfig =
-        ValidationConfig.<Bean, ValidationFailure>toValidate()
-            .specify(
-                spec ->
-                    List.of(
-                        spec.<Integer, String>_2()
-                            .when(Bean::getValue)
-                            .matches(is(1))
-                            .then(Bean::getValueStr)
-                            .shouldMatch(anyOf("1", "one"))
-                            .orFailWith(INVALID_COMBO_1),
-                        spec.<Integer, String>_2()
-                            .when(Bean::getValue)
-                            .matches(is(2))
-                            .then(Bean::getValueStr)
-                            .shouldMatch(either(is("two")).or(is("2")))
-                            .orFailWith(INVALID_COMBO_2)))
-            .prepare();
+        ValidationConfig.<Bean, ValidationFailure>toValidate().specify(specs).prepare();
 
     final var invalidBean1 = new Bean(1, "a", null, null);
     final var failureResult1 =

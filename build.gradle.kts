@@ -53,15 +53,28 @@ dependencies {
 jacoco.toolVersion = "0.8.7"
 
 idea {
-    module.generatedSourceDirs.add(buildDir.resolve("generated/sources/**"))
+    project {
+        jdkName = JavaVersion.VERSION_11.toString()
+        languageLevel.level = JavaVersion.VERSION_11.toString()
+        vcs = "Git"
+    }
+    module {
+        generatedSourceDirs.add(buildDir.resolve("generated/sources/delombok/java/main"))
+        iml {
+            whenMerged {
+                excludeDirs.add(buildDir.resolve("generated/sources/delombok/java/main"))
+            }
+        }
+    }
+}
+
+kotlin.sourceSets.main {
+    kotlin.setSrcDirs(listOf(buildDir.resolve("generated/sources/delombok/java/main")))
 }
 
 tasks {
     compileKotlin {
         dependsOn(delombok)
-        kotlin.sourceSets.main {
-            kotlin.setSrcDirs(listOf(buildDir.resolve("generated/sources/delombok/java/main")))
-        }
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_11.toString()
         }
@@ -74,11 +87,6 @@ tasks {
             csv.isEnabled = false
             html.isEnabled = false
             xml.isEnabled = true
-        }
-    }
-    build {
-        doLast {
-            delete(buildDir.resolve("generated/sources/delombok/"))
         }
     }
 }
