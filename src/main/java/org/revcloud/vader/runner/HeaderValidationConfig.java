@@ -13,8 +13,8 @@ import lombok.Singular;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.Nullable;
-import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
+import org.revcloud.vader.types.validators.ValidatorEtr;
 
 @Value
 @FieldDefaults(level = AccessLevel.PACKAGE)
@@ -23,17 +23,16 @@ public class HeaderValidationConfig<HeaderValidatableT, FailureT> {
   @Singular Collection<TypedPropertyGetter<HeaderValidatableT, Collection<?>>> withBatchMappers;
   @Nullable Tuple2<@NonNull Integer, FailureT> shouldHaveMinBatchSize;
   @Nullable Tuple2<@NonNull Integer, FailureT> shouldHaveMaxBatchSize;
-  @Singular Collection<Validator<HeaderValidatableT, FailureT>> withHeaderValidators;
+  @Singular Collection<ValidatorEtr<HeaderValidatableT, FailureT>> withHeaderValidatorEtrs;
 
   @Nullable
-  Tuple2<@NonNull Collection<SimpleValidator<? super HeaderValidatableT, FailureT>>, FailureT>
-      withSimpleHeaderValidators;
+  Tuple2<@NonNull Collection<Validator<? super HeaderValidatableT, FailureT>>, FailureT>
+      withHeaderValidators;
 
-  @Singular("withSimpleHeaderValidator")
-  Map<@NonNull SimpleValidator<? super HeaderValidatableT, FailureT>, FailureT>
-      withSimpleHeaderValidator;
+  @Singular("withHeaderValidator")
+  Map<Validator<? super HeaderValidatableT, FailureT>, FailureT> withHeaderValidator;
 
-  List<Validator<HeaderValidatableT, FailureT>> getHeaderValidators() {
+  List<ValidatorEtr<HeaderValidatableT, FailureT>> getHeaderValidators() {
     return HeaderValidationConfigEx.getHeaderValidatorsEx(this);
   }
 

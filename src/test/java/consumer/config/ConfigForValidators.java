@@ -14,28 +14,28 @@ import consumer.validators.simple.BaseParentRequestValidator;
 import consumer.validators.simple.ContainerRequestValidator;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
-import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
+import org.revcloud.vader.types.validators.ValidatorEtr;
 
 /** gakshintala created on 4/13/20. */
 @UtilityClass
 public class ConfigForValidators {
 
-  public static List<Validator<Parent, ValidationFailure>> getServiceValidations() {
+  public static List<ValidatorEtr<Parent, ValidationFailure>> getServiceValidations() {
     return List.of(
         BaseParentBatchRequestValidator.batchValidation1,
         BaseParentBatchRequestValidator.batchValidation2);
   }
 
-  public static List<Validator<Container, ValidationFailure>> getParentValidations() {
+  public static List<ValidatorEtr<Container, ValidationFailure>> getParentValidations() {
     return null;
   }
 
-  public static List<SimpleValidator<Container, ValidationFailure>> getParentSimpleValidations() {
+  public static List<Validator<Container, ValidationFailure>> getParentSimpleValidations() {
     return List.of(ContainerRequestValidator.validation1, ContainerRequestValidator.validation2);
   }
 
-  public static List<SimpleValidator<? extends Parent, ValidationFailure>>
+  public static List<Validator<? extends Parent, ValidationFailure>>
       getSimpleServiceValidations() {
     return List.of(BaseParentRequestValidator.validation1, ContainerRequestValidator.validation1);
   }

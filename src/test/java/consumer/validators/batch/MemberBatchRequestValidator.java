@@ -12,20 +12,20 @@ import consumer.bean.Member;
 import consumer.failure.ValidationFailure;
 import io.vavr.control.Either;
 import java.util.Objects;
-import org.revcloud.vader.types.validators.Validator;
+import org.revcloud.vader.types.validators.ValidatorEtr;
 
 public class MemberBatchRequestValidator {
   /**
    * Validates if Auth id in request has a status PROCESSED. This is a lambda function
    * implementation.
    */
-  public static final Validator<Member, ValidationFailure> batchValidation1 =
+  public static final ValidatorEtr<Member, ValidationFailure> batchValidation1 =
       member ->
           member
               .filter(Objects::isNull)
               .getOrElse(Either.left(new ValidationFailure(FIELD_NULL_OR_EMPTY)));
 
-  public static final Validator<Member, ValidationFailure> batchValidation2 =
+  public static final ValidatorEtr<Member, ValidationFailure> batchValidation2 =
       member ->
           member.filterOrElse(
               Objects::isNull, ignore -> new ValidationFailure(FIELD_NULL_OR_EMPTY));

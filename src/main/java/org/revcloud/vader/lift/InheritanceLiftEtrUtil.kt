@@ -1,9 +1,9 @@
-@file:JvmName("InheritanceLiftUtil")
+@file:JvmName("InheritanceLiftEtrUtil")
 
 package org.revcloud.vader.lift
 
 import io.vavr.control.Either.narrow
-import org.revcloud.vader.types.validators.Validator
+import org.revcloud.vader.types.validators.ValidatorEtr
 
 /**
  * Assume `ParentT` is parent by inheritance to `ValidatableT`.
@@ -11,10 +11,10 @@ import org.revcloud.vader.types.validators.Validator
  * These utils help to lift it's parent's validations in the context of ValidatableT, so that they can be chained together.
  */
 fun <ParentT, ValidatableT : ParentT, FailureT> liftToChildValidatorType(
-    parentValidator: Validator<ParentT, FailureT>
-): Validator<ValidatableT, FailureT> =
-    Validator { childValidatable -> parentValidator.apply(narrow(childValidatable)) }
+    parentValidatorEtr: ValidatorEtr<ParentT, FailureT>
+): ValidatorEtr<ValidatableT, FailureT> =
+    ValidatorEtr { childValidatable -> parentValidatorEtr.apply(narrow(childValidatable)) }
 
 fun <ParentT, ValidatableT : ParentT, FailureT> liftAllToChildValidatorType(
-    parentValidators: Collection<Validator<ParentT, FailureT>>
-): List<Validator<ValidatableT, FailureT>> = parentValidators.map { liftToChildValidatorType(it) }
+    parentValidatorEtrs: Collection<ValidatorEtr<ParentT, FailureT>>
+): List<ValidatorEtr<ValidatableT, FailureT>> = parentValidatorEtrs.map { liftToChildValidatorType(it) }

@@ -3,11 +3,10 @@
 package org.revcloud.vader.runner
 
 import de.cronn.reflection.util.PropertyUtils
-import org.revcloud.vader.types.validators.Validator
+import org.revcloud.vader.types.validators.ValidatorEtr
 
-internal fun <HeaderValidatableT, FailureT> HeaderValidationConfig<HeaderValidatableT?, FailureT?>.getHeaderValidatorsEx(): List<Validator<HeaderValidatableT?, FailureT?>> =
-    fromSimpleValidators1(withSimpleHeaderValidators) +
-        fromSimpleValidators2(withSimpleHeaderValidator) + withHeaderValidators
+internal fun <HeaderValidatableT, FailureT> HeaderValidationConfig<HeaderValidatableT?, FailureT?>.getHeaderValidatorsEx(): List<ValidatorEtr<HeaderValidatableT?, FailureT?>> =
+    fromValidators1(withHeaderValidators) + fromValidators2(withHeaderValidator) + withHeaderValidatorEtrs
 
 internal fun <HeaderValidatableT, FailureT> HeaderValidationConfig<HeaderValidatableT?, FailureT?>.getFieldNamesForBatchEx(
     validatableClazz: Class<HeaderValidatableT>

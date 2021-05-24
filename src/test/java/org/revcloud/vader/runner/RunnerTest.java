@@ -12,8 +12,8 @@ import io.vavr.control.Either;
 import java.util.List;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
+import org.revcloud.vader.types.validators.ValidatorEtr;
 
 class RunnerTest {
 
@@ -21,7 +21,7 @@ class RunnerTest {
   void failFastWithFirstFailure() {
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate()
-            .withValidators(
+            .withValidatorEtrs(
                 List.of(
                     bean -> Either.right(NONE),
                     bean -> Either.right(NONE),
@@ -35,7 +35,7 @@ class RunnerTest {
 
   @Test
   void errorAccumulation() {
-    final List<Validator<Bean, ValidationFailure>> validators =
+    final List<ValidatorEtr<Bean, ValidationFailure>> validators =
         List.of(
             bean -> Either.right(NONE),
             bean -> Either.left(VALIDATION_FAILURE_1),
@@ -48,10 +48,10 @@ class RunnerTest {
 
   @Test
   void errorAccumulationWithSimpleValidators() {
-    final List<SimpleValidator<Bean, ValidationFailure>> validators =
+    final List<Validator<Bean, ValidationFailure>> validators =
         List.of(bean -> NONE, bean -> VALIDATION_FAILURE_1, bean -> VALIDATION_FAILURE_2);
     final var result =
-        Runner.validateAndAccumulateErrorsForSimpleValidators(
+        Runner.validateAndAccumulateErrorsForValidators(
             new Bean(0), validators, NONE, ValidationFailure::getValidationFailureForException);
     assertThat(result).containsAll(List.of(NONE, VALIDATION_FAILURE_1, VALIDATION_FAILURE_2));
   }
@@ -60,7 +60,7 @@ class RunnerTest {
   void failFastWithFirstFailureForSimpleValidators() {
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate()
-            .withSimpleValidators(
+            .withValidators(
                 Tuple.of(List.of(bean -> NONE, bean -> NONE, bean -> UNKNOWN_EXCEPTION), NONE))
             .prepare();
     final var result =

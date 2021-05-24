@@ -5,16 +5,16 @@ import consumer.failure.ValidationFailure;
 import io.vavr.control.Either;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.types.validators.SimpleValidator;
+import org.revcloud.vader.types.validators.Validator;
 
 class ValidatorLiftUtilTest {
 
   @Test
   void liftSimpleForFailure() {
-    SimpleValidator<Parent, ValidationFailure> simpleValidator =
+    Validator<Parent, ValidationFailure> validator =
         parent -> ValidationFailure.VALIDATION_FAILURE_1;
     final var liftedValidator =
-        ValidatorLiftUtil.liftSimple(simpleValidator, ValidationFailure.NONE);
+        ValidatorLiftUtil.liftToEtr(validator, ValidationFailure.NONE);
     Assertions.assertEquals(
         liftedValidator.unchecked().apply(Either.right(new Parent(0, null, null))),
         Either.left(ValidationFailure.VALIDATION_FAILURE_1));
@@ -22,9 +22,9 @@ class ValidatorLiftUtilTest {
 
   @Test
   void liftSimpleForNoFailure() {
-    SimpleValidator<Parent, ValidationFailure> simpleValidator = parent -> ValidationFailure.NONE;
+    Validator<Parent, ValidationFailure> validator = parent -> ValidationFailure.NONE;
     final var liftedValidator =
-        ValidatorLiftUtil.liftSimple(simpleValidator, ValidationFailure.NONE);
+        ValidatorLiftUtil.liftToEtr(validator, ValidationFailure.NONE);
     final Parent toBeValidated = new Parent(0, null, null);
     Assertions.assertEquals(
         liftedValidator.unchecked().apply(Either.right(toBeValidated)),

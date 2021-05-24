@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
+import org.revcloud.vader.types.validators.ValidatorEtr;
 
 /** gakshintala created on 7/22/20. */
 class BatchRunnerTest {
@@ -30,7 +30,7 @@ class BatchRunnerTest {
   void failFastPartialFailures() {
     final var validatables =
         List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
-    List<Validator<Bean, ValidationFailure>> validators =
+    List<ValidatorEtr<Bean, ValidationFailure>> validators =
         List.of(
             bean -> Either.right(true),
             bean ->
@@ -39,7 +39,7 @@ class BatchRunnerTest {
                 bean.map(Bean::getId).filterOrElse(id -> id <= 2, ignore -> VALIDATION_FAILURE_2));
     final var batchValidationConfig =
         BatchValidationConfig.<Bean, ValidationFailure>toValidate()
-            .withValidators(validators)
+            .withValidatorEtrs(validators)
             .prepare();
     final var resultsWithIds =
         validateAndFailFast(
@@ -68,7 +68,7 @@ class BatchRunnerTest {
   void failFastAllOrNone() {
     final var validatables =
         List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
-    List<Validator<Bean, ValidationFailure>> validators =
+    List<ValidatorEtr<Bean, ValidationFailure>> validators =
         List.of(
             bean -> Either.right(true),
             bean ->
@@ -77,7 +77,7 @@ class BatchRunnerTest {
                 bean.map(Bean::getId).filterOrElse(id -> id <= 2, ignore -> VALIDATION_FAILURE_2));
     final var batchValidationConfig =
         BatchValidationConfig.<Bean, ValidationFailure>toValidate()
-            .withValidators(validators)
+            .withValidatorEtrs(validators)
             .prepare();
     final var result =
         BatchRunner.validateAndFailFastAllOrNone(
@@ -94,14 +94,14 @@ class BatchRunnerTest {
         List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
     Predicate<Integer> predicateForValidId1 = id -> id >= 2;
     Predicate<Integer> predicateForValidId2 = id -> id <= 2;
-    List<SimpleValidator<Bean, ValidationFailure>> simpleValidators =
+    List<Validator<Bean, ValidationFailure>> validators =
         List.of(
             bean -> NONE,
             bean -> predicateForValidId1.test(bean.getId()) ? NONE : VALIDATION_FAILURE_1,
             bean -> predicateForValidId2.test(bean.getId()) ? NONE : VALIDATION_FAILURE_2);
     final var batchValidationConfig =
         BatchValidationConfig.<Bean, ValidationFailure>toValidate()
-            .withSimpleValidators(Tuple.of(simpleValidators, NONE))
+            .withValidators(Tuple.of(validators, NONE))
             .prepare();
     final var results =
         validateAndFailFast(
@@ -129,7 +129,7 @@ class BatchRunnerTest {
     Predicate<Integer> predicateForValidId1 = id -> id >= 2;
     Predicate<Integer> predicateForValidId2 = id -> id <= 2;
     Predicate<Integer> predicateForValidId3 = id -> id >= 1;
-    List<SimpleValidator<Bean, ValidationFailure>> simpleValidators =
+    List<Validator<Bean, ValidationFailure>> validators =
         List.of(
             bean -> NONE,
             bean -> predicateForValidId1.test(bean.getId()) ? NONE : VALIDATION_FAILURE_1,
@@ -137,10 +137,10 @@ class BatchRunnerTest {
             bean -> predicateForValidId3.test(bean.getId()) ? NONE : VALIDATION_FAILURE_3);
     final var result =
         BatchRunner.validateAndAccumulateErrors(
-            validatables, simpleValidators, NONE, throwable -> null);
+            validatables, validators, NONE, throwable -> null);
 
     assertEquals(result.size(), validatables.size());
-    assertTrue(result.stream().allMatch(r -> r.size() == simpleValidators.size()));
+    assertTrue(result.stream().allMatch(r -> r.size() == validators.size()));
 
     assertTrue(result.get(2).stream().allMatch(Either::isRight));
     assertTrue(

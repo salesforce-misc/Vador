@@ -7,22 +7,22 @@ import io.vavr.Function1.identity
 import io.vavr.control.Either
 import io.vavr.kotlin.left
 import io.vavr.kotlin.right
-import org.revcloud.vader.types.validators.Validator
+import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
 fun <FailureT, ValidatableT> fireValidators(
     validatable: Either<FailureT?, ValidatableT?>,
-    validators: List<Validator<ValidatableT, FailureT>>,
+    validatorEtrs: List<ValidatorEtr<ValidatableT, FailureT>>,
     throwableMapper: (Throwable) -> FailureT?,
 ): List<Either<FailureT?, ValidatableT?>> =
-    validators.map { fireValidator(it, validatable, throwableMapper) }
+    validatorEtrs.map { fireValidator(it, validatable, throwableMapper) }
 
 fun <FailureT, ValidatableT> fireValidator(
-    validator: Validator<ValidatableT, FailureT>,
+    validatorEtr: ValidatorEtr<ValidatableT, FailureT>,
     validatable: Either<FailureT?, ValidatableT?>,
     throwableMapper: (Throwable) -> FailureT?,
 ): Either<FailureT?, ValidatableT?> =
-    liftTry(validator).apply(validatable)
+    liftTry(validatorEtr).apply(validatable)
         .fold({ left<FailureT?, ValidatableT?>(throwableMapper(it)) }) { it }
         .flatMap { validatable } // Put the original Validatable in the right state
 

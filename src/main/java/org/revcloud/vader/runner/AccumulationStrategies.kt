@@ -4,7 +4,7 @@ package org.revcloud.vader.runner
 
 import io.vavr.control.Either
 import io.vavr.kotlin.right
-import org.revcloud.vader.types.validators.Validator
+import org.revcloud.vader.types.validators.ValidatorEtr
 
 /**
  * Higher-order function to compose list of validators into Accumulation Strategy.
@@ -16,7 +16,7 @@ import org.revcloud.vader.types.validators.Validator
  * @return Composed Accumulation Strategy
  */
 internal fun <FailureT, ValidatableT> accumulationStrategy(
-    validators: List<Validator<ValidatableT?, FailureT?>>,
+    validators: List<ValidatorEtr<ValidatableT?, FailureT?>>,
     throwableMapper: (Throwable) -> FailureT?,
 ): Accumulation<ValidatableT, FailureT> = {
     fireValidators(right(it), validators, throwableMapper)

@@ -10,14 +10,14 @@ import static consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
 
 import consumer.bean.Parent;
 import consumer.failure.ValidationFailure;
-import org.revcloud.vader.types.validators.SimpleValidator;
+import org.revcloud.vader.types.validators.Validator;
 
 public class BaseParentRequestValidator {
   /**
    * Validates if Auth id in request has a status PROCESSED. This is a lambda function
    * implementation.
    */
-  public static final SimpleValidator<Parent, ValidationFailure> validation1 =
+  public static final Validator<Parent, ValidationFailure> validation1 =
       parent -> {
         if (parent.getMember() == null) {
           return null;
@@ -26,7 +26,7 @@ public class BaseParentRequestValidator {
         }
       };
 
-  static final SimpleValidator<Parent, ValidationFailure> validation2 =
+  static final Validator<Parent, ValidationFailure> validation2 =
       parent -> {
         if (parent.getMember() == null) {
           return null;

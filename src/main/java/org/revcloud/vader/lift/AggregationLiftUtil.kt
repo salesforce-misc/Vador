@@ -5,40 +5,31 @@ package org.revcloud.vader.lift
 import org.revcloud.vader.types.validators.Validator
 
 /**
- * Lifts a member validation to container type.
- *
- * @param memberValidator
- * @param toMemberMapper   Mapper function to extract member from container
- * @param nullContainer    Failure to return if container is null
- * @param nullMember     Failure to return if member is null
+ * Lifts a simple member validation to container type.
+ * @param memberValidation Validation on the Member
+ * @param toMemberMapper Mapper function to extract member from container
  * @param <ContainerT>
  * @param <MemberT>
  * @param <FailureT>
- * @return container type validation
-</FailureT></MemberT></ContainerT> */
+ * @return Container type validation
+ */
 fun <ContainerT, MemberT, FailureT> liftToContainerValidatorType(
-    memberValidator: Validator<MemberT?, FailureT?>,
+    memberValidation: Validator<MemberT?, FailureT?>,
     toMemberMapper: (ContainerT?) -> MemberT?,
 ): Validator<ContainerT?, FailureT?> =
-    Validator { container ->
-        val member = container?.map(toMemberMapper)
-        memberValidator.unchecked().apply(member)
-    } // This whole function is inside a CheckedFunction, so no problem with `uncChecked()` above
+    Validator { memberValidation.apply(toMemberMapper(it)) }
 
 /**
- * Lifts a list of member validations to container type.
- *
- * @param memberValidators List of member validations
- * @param toChildMapper    Mapper function to extract member from container
- * @param invalidParent    Failure to return if container is null
- * @param invalidChild     Failure to return if member is null
+ * Lifts a list of simple member validations to container type.
+ * @param memberValidations  List of member validations
+ * @param toMemberMapper     Mapper function to extract member from container
  * @param <ContainerT>
  * @param <MemberT>
  * @param <FailureT>
  * @return List of container type validations
  */
 fun <ContainerT, MemberT, FailureT> liftAllToContainerValidatorType(
-    memberValidators: Collection<Validator<MemberT?, FailureT?>>,
+    memberValidations: Collection<Validator<MemberT?, FailureT?>>,
     toMemberMapper: (ContainerT?) -> MemberT?,
 ): List<Validator<ContainerT?, FailureT?>> =
-    memberValidators.map { liftToContainerValidatorType(it, toMemberMapper) }
+    memberValidations.map { liftToContainerValidatorType(it, toMemberMapper) }

@@ -1,25 +1,86 @@
 package org.revcloud.vader.lift;
 
+import static consumer.failure.ValidationFailure.NONE;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.revcloud.vader.lift.AggregationLiftUtil.liftAllToContainerValidatorType;
 import static org.revcloud.vader.lift.AggregationLiftUtil.liftToContainerValidatorType;
 
 import consumer.bean.Container;
 import consumer.bean.Member;
 import consumer.failure.ValidationFailure;
-import io.vavr.control.Either;
-import org.junit.jupiter.api.Assertions;
+import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.types.validators.Validator;
 
 class AggregationLiftUtilTest {
 
+  @DisplayName("Lifts proper Member validation")
   @Test
   void liftToContainerValidationType() {
-    final var failure = Either.left(ValidationFailure.VALIDATION_FAILURE_1);
-    Validator<? super Member, ? extends ValidationFailure> memberValidator = member -> failure;
-    final var liftedContainerValidator =
+    Validator<Member, ValidationFailure> memberValidator = member -> NONE;
+    final var liftedContainerValidation =
         liftToContainerValidatorType(memberValidator, Container::getMember);
-    final var toBeValidated = new Container(0, new Member(0));
-    Assertions.assertSame(
-        failure, liftedContainerValidator.unchecked().apply(Either.right(toBeValidated)));
+    assertSame(NONE, liftedContainerValidation.unchecked().apply(new Container(0, new Member(0))));
+  }
+
+  @DisplayName("Lifted Member validation does NOT deal with Null Member")
+  @Test
+  void liftToContainerValidationType2ThrowForNullMember() {
+    Validator<Member, ValidationFailure> memberValidator =
+        member -> {
+          if (member.getId() >= 0) return NONE; // accessing some member prop to cause NPE
+          return ValidationFailure.VALIDATION_FAILURE_1;
+        };
+    final var liftedContainerValidation =
+        liftToContainerValidatorType(memberValidator, Container::getMember);
+    final var containerWithNullMember = new Container(0, null);
+    assertThrows(
+        NullPointerException.class, () -> liftedContainerValidation.apply(containerWithNullMember));
+  }
+
+  @DisplayName("Lifted Member validation does NOT deal with Null Container")
+  @Test
+  void liftToContainerValidationType2NullContainer() {
+    Validator<Member, ValidationFailure> memberValidator = member -> null;
+    final var liftedContainerValidation =
+        liftToContainerValidatorType(memberValidator, Container::getMember);
+    assertThrows(NullPointerException.class, () -> liftedContainerValidation.apply(null));
+  }
+
+  @DisplayName("Lift when Member validation is Null")
+  @Test
+  void liftNullToContainerValidationType() {
+    Validator<Member, ValidationFailure> memberValidator = null;
+    assertThrows(
+        NullPointerException.class,
+        () -> liftToContainerValidatorType(memberValidator, Container::getMember));
+  }
+
+  @DisplayName("Lift All proper Member validations")
+  @Test
+  void liftAllToContainerValidationType() {
+    List<Validator<Member, ValidationFailure>> memberValidators =
+        List.of(
+            member -> {
+              if (member.getId() >= 0) return NONE; // accessing some member prop to cause NPE
+              return ValidationFailure.VALIDATION_FAILURE_1;
+            },
+            member -> {
+              if (member.getId() >= 0) return NONE; // accessing some member prop to cause NPE
+              return ValidationFailure.VALIDATION_FAILURE_1;
+            },
+            member -> {
+              if (member.getId() >= 0) return NONE; // accessing some member prop to cause NPE
+              return ValidationFailure.VALIDATION_FAILURE_1;
+            });
+    final var liftedContainerValidations =
+        liftAllToContainerValidatorType(memberValidators, Container::getMember);
+    final var validContainer = new Container(0, new Member(1));
+    assertTrue(
+        liftedContainerValidations.stream()
+            .allMatch(v -> v.unchecked().apply(validContainer) == NONE));
   }
 }

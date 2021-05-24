@@ -8,25 +8,25 @@ import io.vavr.Function2
 import io.vavr.Tuple2
 import lombok.NonNull
 import org.revcloud.vader.runner.SpecFactory.BaseSpec
-import org.revcloud.vader.types.validators.Validator
+import org.revcloud.vader.types.validators.ValidatorEtr
 
-internal fun <ValidatableT, FailureT, FieldT> toValidators1(
+internal fun <ValidatableT, FailureT, FieldT> toValidatorEtrs1(
     fieldMapperToFailure: Map<out TypedPropertyGetter<in ValidatableT, out FieldT>, FailureT>,
     fieldEval: (FieldT) -> Boolean
-): List<Validator<ValidatableT, FailureT>> =
+): List<ValidatorEtr<ValidatableT, FailureT>> =
     fieldMapperToFailure.entries.map { (idFieldMapper, failure) ->
-        Validator {
+        ValidatorEtr {
             it.map(idFieldMapper::get).filterOrElse(fieldEval) { failure }
         }
     }
 
-internal fun <ValidatableT, FailureT, FieldT> toValidators2(
+internal fun <ValidatableT, FailureT, FieldT> toValidatorEtrs2(
     fieldMappersToFailure: Tuple2<out Collection<TypedPropertyGetter<in ValidatableT, out FieldT>>, @NonNull Function2<String, FieldT, FailureT>>?,
     fieldEval: (FieldT) -> Boolean
-): List<Validator<ValidatableT, FailureT>> =
+): List<ValidatorEtr<ValidatableT, FailureT>> =
     fieldMappersToFailure?.let { (fieldMappers, failureFn) ->
         fieldMappers?.map { fieldMapper ->
-            Validator { validatable ->
+            ValidatorEtr { validatable ->
                 validatable.map(fieldMapper::get).filterOrElse(fieldEval) { fieldValue ->
                     failureFn?.apply(
                         PropertyUtils.getPropertyName(validatable.get(), fieldMapper),
@@ -37,23 +37,23 @@ internal fun <ValidatableT, FailureT, FieldT> toValidators2(
         }
     } ?: emptyList()
 
-internal fun <ValidatableT, FailureT> toValidators(validationConfig: BaseValidationConfig<ValidatableT, FailureT>): List<Validator<ValidatableT?, FailureT?>> =
+internal fun <ValidatableT, FailureT> toValidators(validationConfig: BaseValidationConfig<ValidatableT, FailureT>): List<ValidatorEtr<ValidatableT?, FailureT?>> =
     (
-        toValidators1(validationConfig.shouldHaveFieldsOrFailWith, isFieldPresent) +
-            toValidators2(validationConfig.shouldHaveFieldsOrFailWithFn, isFieldPresent) +
-            toValidators1(
+        toValidatorEtrs1(validationConfig.shouldHaveFieldsOrFailWith, isFieldPresent) +
+            toValidatorEtrs2(validationConfig.shouldHaveFieldsOrFailWithFn, isFieldPresent) +
+            toValidatorEtrs1(
                 validationConfig.shouldHaveValidSFIdFormatOrFailWith,
                 isSFIdPresentAndValidFormat
             ) +
-            toValidators2(
+            toValidatorEtrs2(
                 validationConfig.shouldHaveValidSFIdFormatOrFailWithFn,
                 isSFIdPresentAndValidFormat
             ) +
-            toValidators1(
+            toValidatorEtrs1(
                 validationConfig.absentOrHaveValidSFIdFieldsOrFailWith,
                 isSFIdAbsentOrValidFormat
             ) +
-            toValidators2(
+            toValidatorEtrs2(
                 validationConfig.absentOrHaveValidSFIdFormatOrFailWithFn,
                 isSFIdAbsentOrValidFormat
             ) +
@@ -61,8 +61,8 @@ internal fun <ValidatableT, FailureT> toValidators(validationConfig: BaseValidat
             validationConfig.getValidators()
         )
 
-private fun <ValidatableT, FailureT> BaseSpec<ValidatableT, FailureT>.toValidator(): Validator<ValidatableT?, FailureT?> =
-    Validator { it.filterOrElse(toPredicate()) { validatable -> getFailure(validatable) } }
+private fun <ValidatableT, FailureT> BaseSpec<ValidatableT, FailureT>.toValidator(): ValidatorEtr<ValidatableT?, FailureT?> =
+    ValidatorEtr { it.filterOrElse(toPredicate()) { validatable -> getFailure(validatable) } }
 
 val isFieldPresent: (Any?) -> Boolean = {
     when (it) {

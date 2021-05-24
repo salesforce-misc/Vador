@@ -2,9 +2,9 @@
 
 package org.revcloud.vader.runner
 
-import org.revcloud.vader.lift.liftAllSimple
-import org.revcloud.vader.types.validators.SimpleValidator
+import org.revcloud.vader.lift.liftAllToEtr
 import org.revcloud.vader.types.validators.Validator
+import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
 fun <FailureT, ValidatableT> validateAndFailFastForHeader(
@@ -25,21 +25,21 @@ fun <FailureT, ValidatableT> validateAndFailFast(
  * Applies the Simple validators on a Single validatable in error-accumulation mode.
  *
  * @param validatable
- * @param simpleValidators
+ * @param validators
  * @param invalidValidatable FailureT if the validatable is null.
  * @param none               Value to be returned in case of no failure.
  * @param <FailureT>
  * @param <ValidatableT>
  * @return List of Validation failures.
 </ValidatableT></FailureT> */
-fun <FailureT, ValidatableT> validateAndAccumulateErrorsForSimpleValidators(
+fun <FailureT, ValidatableT> validateAndAccumulateErrorsForValidators(
     validatable: ValidatableT,
-    simpleValidators: Collection<SimpleValidator<ValidatableT?, FailureT?>>,
+    validators: Collection<Validator<ValidatableT?, FailureT?>>,
     none: FailureT,
     throwableMapper: (Throwable) -> FailureT?,
 ): List<FailureT?> = validateAndAccumulateErrors(
     validatable,
-    liftAllSimple(simpleValidators, none),
+    liftAllToEtr(validators, none),
     none,
     throwableMapper
 )
@@ -58,7 +58,7 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrorsForSimpleValidators(
 </ValidatableT></FailureT> */
 fun <FailureT, ValidatableT> validateAndAccumulateErrors(
     validatable: ValidatableT,
-    validators: List<Validator<ValidatableT?, FailureT?>>,
+    validators: List<ValidatorEtr<ValidatableT?, FailureT?>>,
     none: FailureT,
     throwableMapper: (Throwable) -> FailureT?,
 ): List<FailureT?> {

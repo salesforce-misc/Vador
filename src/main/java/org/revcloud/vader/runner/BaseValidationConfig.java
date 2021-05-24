@@ -16,8 +16,8 @@ import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.Nullable;
 import org.revcloud.vader.runner.SpecFactory.BaseSpec;
-import org.revcloud.vader.types.validators.SimpleValidator;
 import org.revcloud.vader.types.validators.Validator;
+import org.revcloud.vader.types.validators.ValidatorEtr;
 
 @Getter
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
@@ -56,16 +56,16 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
   @Singular("withSpec")
   protected Collection<? extends Spec<ValidatableT, FailureT>> withSpecs;
 
-  @Singular Collection<Validator<ValidatableT, FailureT>> withValidators;
+  @Singular Collection<ValidatorEtr<ValidatableT, FailureT>> withValidatorEtrs;
 
   @Nullable
   Tuple2<
-          @NonNull Collection<? extends SimpleValidator<? super ValidatableT, FailureT>>,
+          @NonNull Collection<? extends Validator<? super ValidatableT, FailureT>>,
           @NonNull FailureT>
-      withSimpleValidators;
+      withValidators;
 
-  @Singular("withSimpleValidator")
-  Map<? extends SimpleValidator<? super ValidatableT, FailureT>, FailureT> withSimpleValidator;
+  @Singular("withValidator")
+  Map<? extends Validator<? super ValidatableT, FailureT>, FailureT> withValidator;
 
   List<BaseSpec<ValidatableT, FailureT>> getSpecs() {
     return BaseValidationConfigEx.getSpecsEx(this);
