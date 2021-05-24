@@ -396,7 +396,14 @@ If you have specific requirement, please log a git.soma issue.
 # Source-code Setup
 
 - This is a simple Gradle project and has its own Gradle wrapper. So nothing to install. As of
-  writing this, Gradle v7.0 is used.
+  writing this, Gradle v7.0 is used. You need to add your nexus credentials in 
+  `~/.gradle/gradle.properties` file, which are used by your local gradle to connect to nexus.
+
+  ```properties
+    nexusUsername=...
+    nexusPassword=....
+    ```
+
 - For source code navigation you need to have **[Lombok](https://projectlombok.org/)** plugin, which
   is used to generate boilerplate code. There are plugins available for Lombok for all popular IDEs,
   which you need to install. The latest version of the plugin should work.

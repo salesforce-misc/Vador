@@ -1,5 +1,6 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep.XML
+import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
 
 plugins {
     kotlin("jvm")
@@ -16,7 +17,7 @@ plugins {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.4.3"
+version = "2.4.4-SNAPSHOT"
 description = "Vader - An FP framework for Bean validation"
 
 java.sourceCompatibility = JavaVersion.VERSION_11
@@ -52,29 +53,25 @@ dependencies {
 
 jacoco.toolVersion = "0.8.7"
 
-idea {
-    project {
-        jdkName = JavaVersion.VERSION_11.toString()
-        languageLevel.level = JavaVersion.VERSION_11.toString()
-        vcs = "Git"
-    }
-    module {
-        generatedSourceDirs.add(buildDir.resolve("generated/sources/delombok/java/main"))
-        iml {
-            whenMerged {
-                excludeDirs.add(buildDir.resolve("generated/sources/delombok/java/main"))
-            }
-        }
+if (!providers.systemProperty("idea.sync.active").forUseAtConfigurationTime().orNull.toBoolean()) {
+    kotlin.sourceSets.main {
+        kotlin.setSrcDirs(listOf(tasks.delombok))
     }
 }
 
-kotlin.sourceSets.main {
-    kotlin.setSrcDirs(listOf(buildDir.resolve("generated/sources/delombok/java/main")))
+val lombokForSonarQube: Configuration by configurations.creating
+dependencies {
+    lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
+}
+
+sonarqube {
+    properties {
+        property("sonar.sources", lombokForSonarQube.files.last().toString())
+    }
 }
 
 tasks {
     compileKotlin {
-        dependsOn(delombok)
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_11.toString()
         }
@@ -158,8 +155,6 @@ publishing {
             val snapshotsRepoUrl =
                 uri("https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots")
             url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
-            // nexusUsername, nexusPassword are set in ~/.gradle/gradle.properties by the "GradleInit" method in SFCI
-            // refer this for setup: https://git.soma.salesforce.com/MoBE/gradle-init-scripts
             val nexusUsername: String by project
             val nexusPassword: String by project
             credentials {
