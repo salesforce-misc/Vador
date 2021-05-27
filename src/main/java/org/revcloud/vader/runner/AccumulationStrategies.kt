@@ -1,5 +1,3 @@
-@file:JvmName("AccumulationStrategies")
-
 package org.revcloud.vader.runner
 
 import io.vavr.control.Either
@@ -15,6 +13,7 @@ import org.revcloud.vader.types.validators.ValidatorEtr
  * @param <ValidatableT>
  * @return Composed Accumulation Strategy
  */
+@JvmSynthetic
 internal fun <FailureT, ValidatableT> accumulationStrategy(
     validators: List<ValidatorEtr<ValidatableT?, FailureT?>>,
     throwableMapper: (Throwable) -> FailureT?,
@@ -22,4 +21,4 @@ internal fun <FailureT, ValidatableT> accumulationStrategy(
     fireValidators(right(it), validators, throwableMapper)
 }
 
-typealias Accumulation<ValidatableT, FailureT> = (ValidatableT) -> List<Either<FailureT?, ValidatableT?>>
+internal typealias Accumulation<ValidatableT, FailureT> = (ValidatableT) -> List<Either<FailureT?, ValidatableT?>>

@@ -51,28 +51,28 @@ class Spec2Test {
     final var invalidBean1 = new Bean(1, "a", null, null);
     assertFalse(
         validationConfig
-            .getSpecWithName(invalidComboSpec)
+            .getPredicateOfSpecForTest(invalidComboSpec)
             .map(spec -> spec.test(invalidBean1))
             .orElse(true));
 
     final var invalidBean2 = new Bean(2, "b", null, null);
     assertFalse(
         validationConfig
-            .getSpecWithName(invalidComboSpec)
+            .getPredicateOfSpecForTest(invalidComboSpec)
             .map(spec -> spec.test(invalidBean2))
             .orElse(true));
 
     final var validBean1 = new Bean(1, "one", null, null);
     Assertions.assertTrue(
         validationConfig
-            .getSpecWithName(invalidComboSpec)
+            .getPredicateOfSpecForTest(invalidComboSpec)
             .map(spec -> spec.test(validBean1))
             .orElse(false));
 
     final var validBean2 = new Bean(2, "two", null, null);
     Assertions.assertTrue(
         validationConfig
-            .getSpecWithName(invalidComboSpec)
+            .getPredicateOfSpecForTest(invalidComboSpec)
             .map(spec -> spec.test(validBean2))
             .orElse(false));
   }
@@ -98,14 +98,14 @@ class Spec2Test {
     final var validBean = new Bean2(BillingTerm.OneTime, null);
     Assertions.assertTrue(
         validationConfig
-            .getSpecWithName(invalidComboSpec)
+            .getPredicateOfSpecForTest(invalidComboSpec)
             .map(spec -> spec.test(validBean))
             .orElse(false));
 
     final var inValidBean = new Bean2(BillingTerm.Month, null);
     assertFalse(
         validationConfig
-            .getSpecWithName(invalidComboSpec)
+            .getPredicateOfSpecForTest(invalidComboSpec)
             .map(spec -> spec.test(inValidBean))
             .orElse(true));
   }
@@ -218,7 +218,7 @@ class Spec2Test {
                                 (when, then) -> String.valueOf(when).equalsIgnoreCase(then))
                             .orFailWith(INVALID_COMBO_1)))
             .prepare();
-    final var specWithName = validationConfig.getSpecWithName(invalidSpec2Config);
+    final var specWithName = validationConfig.getPredicateOfSpecForTest(invalidSpec2Config);
     assertThrows(IllegalArgumentException.class, () -> specWithName.map(p -> p.test(null)));
   }
 
@@ -249,28 +249,28 @@ class Spec2Test {
     final var invalidBean1 = new Bean(1, "a", null, null);
     assertFalse(
         validationConfig
-            .getSpecWithName(invalidCombo1)
+            .getPredicateOfSpecForTest(invalidCombo1)
             .map(spec -> spec.test(invalidBean1))
             .orElse(true));
 
     final var invalidBean2 = new Bean(2, "b", null, null);
     assertFalse(
         validationConfig
-            .getSpecWithName(invalidCombo2)
+            .getPredicateOfSpecForTest(invalidCombo2)
             .map(spec -> spec.test(invalidBean2))
             .orElse(true));
 
     final var validBean1 = new Bean(1, "one", null, null);
     Assertions.assertTrue(
         validationConfig
-            .getSpecWithName(invalidCombo1)
+            .getPredicateOfSpecForTest(invalidCombo1)
             .map(spec -> spec.test(validBean1))
             .orElse(false));
 
     final var validBean2 = new Bean(2, "two", null, null);
     Assertions.assertTrue(
         validationConfig
-            .getSpecWithName(invalidCombo2)
+            .getPredicateOfSpecForTest(invalidCombo2)
             .map(spec -> spec.test(validBean2))
             .orElse(false));
   }

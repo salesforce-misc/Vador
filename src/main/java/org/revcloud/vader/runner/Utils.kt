@@ -1,5 +1,4 @@
 @file:JvmName("Utils")
-
 package org.revcloud.vader.runner
 
 import io.vavr.CheckedFunction1.liftTry
@@ -10,6 +9,7 @@ import io.vavr.kotlin.right
 import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
+@JvmSynthetic
 fun <FailureT, ValidatableT> fireValidators(
     validatable: Either<FailureT?, ValidatableT?>,
     validatorEtrs: List<ValidatorEtr<ValidatableT, FailureT>>,
@@ -17,6 +17,7 @@ fun <FailureT, ValidatableT> fireValidators(
 ): List<Either<FailureT?, ValidatableT?>> =
     validatorEtrs.map { fireValidator(it, validatable, throwableMapper) }
 
+@JvmSynthetic
 fun <FailureT, ValidatableT> fireValidator(
     validatorEtr: ValidatorEtr<ValidatableT, FailureT>,
     validatable: Either<FailureT?, ValidatableT?>,
@@ -26,6 +27,7 @@ fun <FailureT, ValidatableT> fireValidator(
         .fold({ left<FailureT?, ValidatableT?>(throwableMapper(it)) }) { it }
         .flatMap { validatable } // Put the original Validatable in the right state
 
+@JvmSynthetic
 fun <FailureT> validateBatchSize(
     validatables: Collection<*>,
     headerConfig: HeaderValidationConfig<*, FailureT>
@@ -120,6 +122,7 @@ fun <ValidatableT, FailureT> filterNullValidatablesAndDuplicatesForAllOrNone(
     return Optional.empty()
 }
 
+@JvmSynthetic
 internal fun <FailureT, ValidatableT> findFirstFailure(
     validatable: Either<FailureT?, ValidatableT?>,
     validationConfig: BaseValidationConfig<ValidatableT, FailureT>,

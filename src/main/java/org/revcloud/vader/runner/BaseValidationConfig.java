@@ -71,8 +71,8 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
     return BaseValidationConfigEx.getSpecsEx(this);
   }
 
-  public Optional<Predicate<ValidatableT>> getSpecWithName(@NonNull String nameForTest) {
-    return BaseValidationConfigEx.getSpecWithNameEx(this, nameForTest);
+  public Optional<Predicate<ValidatableT>> getPredicateOfSpecForTest(@NonNull String nameForTest) {
+    return BaseValidationConfigEx.getPredicateOfSpecForTestEx(this, nameForTest);
   }
 
   public Set<String> getRequiredFieldNames(Class<ValidatableT> beanClass) {

@@ -1,18 +1,16 @@
-@file:JvmName("FailFastStrategies")
-
 package org.revcloud.vader.runner
 
 import io.vavr.control.Either
 import io.vavr.kotlin.right
 import java.util.Optional
 
-typealias FailFast<ValidatableT, FailureT> = (ValidatableT) -> Either<FailureT?, ValidatableT?>
+internal typealias FailFast<ValidatableT, FailureT> = (ValidatableT) -> Either<FailureT?, ValidatableT?>
 
-typealias FailFastForBatch<ValidatableT, FailureT> = (List<ValidatableT>) -> List<Either<FailureT?, ValidatableT?>>
+internal typealias FailFastForBatch<ValidatableT, FailureT> = (List<ValidatableT>) -> List<Either<FailureT?, ValidatableT?>>
 
-typealias FailFastAllOrNoneForBatch<ValidatableT, FailureT> = (List<ValidatableT>) -> Optional<FailureT>
+internal typealias FailFastAllOrNoneForBatch<ValidatableT, FailureT> = (List<ValidatableT>) -> Optional<FailureT>
 
-typealias FailFastForHeader<ValidatableT, FailureT> = (ValidatableT) -> Optional<FailureT>
+internal typealias FailFastForHeader<ValidatableT, FailureT> = (ValidatableT) -> Optional<FailureT>
 
 /**
  * Config
@@ -24,6 +22,7 @@ typealias FailFastForHeader<ValidatableT, FailureT> = (ValidatableT) -> Optional
  * @param <ValidatableT>
  * @return
  */
+@JvmSynthetic
 internal fun <FailureT, ValidatableT> failFast(
     throwableMapper: (Throwable) -> FailureT?,
     validationConfig: ValidationConfig<ValidatableT, FailureT>
@@ -40,6 +39,7 @@ internal fun <FailureT, ValidatableT> failFast(
  * @param <ValidatableT>
  * @return
 </ValidatableT></FailureT> */
+@JvmSynthetic
 internal fun <FailureT, ValidatableT> failFastForBatch(
     nullValidatable: FailureT?,
     throwableMapper: (Throwable) -> FailureT?,
@@ -51,6 +51,7 @@ internal fun <FailureT, ValidatableT> failFastForBatch(
 }
 
 // TODO 13/05/21 gopala.akshintala: Reconsider any advantage of having this as a HOF 
+@JvmSynthetic
 internal fun <FailureT, ValidatableT> failFastAllOrNoneForBatch(
     invalidValidatable: FailureT,
     throwableMapper: (Throwable) -> FailureT?,
@@ -66,6 +67,7 @@ internal fun <FailureT, ValidatableT> failFastAllOrNoneForBatch(
     }
 }
 
+@JvmSynthetic
 internal fun <FailureT, ValidatableT> failFastForHeader(
     throwableMapper: (Throwable) -> FailureT?,
     validationConfig: HeaderValidationConfig<ValidatableT, FailureT>

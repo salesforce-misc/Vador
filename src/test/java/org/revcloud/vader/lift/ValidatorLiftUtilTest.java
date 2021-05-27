@@ -13,8 +13,7 @@ class ValidatorLiftUtilTest {
   void liftSimpleForFailure() {
     Validator<Parent, ValidationFailure> validator =
         parent -> ValidationFailure.VALIDATION_FAILURE_1;
-    final var liftedValidator =
-        ValidatorLiftUtil.liftToEtr(validator, ValidationFailure.NONE);
+    final var liftedValidator = ValidatorLiftUtil.liftToEtr(validator, ValidationFailure.NONE);
     Assertions.assertEquals(
         liftedValidator.unchecked().apply(Either.right(new Parent(0, null, null))),
         Either.left(ValidationFailure.VALIDATION_FAILURE_1));
@@ -23,8 +22,7 @@ class ValidatorLiftUtilTest {
   @Test
   void liftSimpleForNoFailure() {
     Validator<Parent, ValidationFailure> validator = parent -> ValidationFailure.NONE;
-    final var liftedValidator =
-        ValidatorLiftUtil.liftToEtr(validator, ValidationFailure.NONE);
+    final var liftedValidator = ValidatorLiftUtil.liftToEtr(validator, ValidationFailure.NONE);
     final Parent toBeValidated = new Parent(0, null, null);
     Assertions.assertEquals(
         liftedValidator.unchecked().apply(Either.right(toBeValidated)),

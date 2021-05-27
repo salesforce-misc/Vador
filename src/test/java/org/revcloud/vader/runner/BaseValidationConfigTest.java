@@ -26,7 +26,8 @@ class BaseValidationConfigTest {
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate().specify(specsForConfig).prepare();
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> validationConfig.getSpecWithName(duplicateSpecName));
+        IllegalArgumentException.class,
+        () -> validationConfig.getPredicateOfSpecForTest(duplicateSpecName));
   }
 
   @Test

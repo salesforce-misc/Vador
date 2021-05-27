@@ -17,7 +17,7 @@ internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, Failure
         withSpecs.map { it.invoke(specFactory).done() as BaseSpec<ValidatableT, FailureT> }
 }
 
-internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.getSpecWithNameEx(
+internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.getPredicateOfSpecForTestEx(
     nameForTest: String
 ): Optional<Predicate<ValidatableT?>> {
     // TODO 29/04/21 gopala.akshintala: Move this duplicate-check to ValidationConfig `prepare` 

@@ -1,6 +1,7 @@
 # 🦾 Vader 🦾
 
 [![Build Status](https://ccspaymentsci.dop.sfdc.net/buildStatus/icon?job=validation%2FVader%2Fmaster)](https://ccspaymentsci.dop.sfdc.net/job/validation/job/Vader/job/master/)
+[![Version](https://img.shields.io/maven-metadata/v?label=nexus.soma&metadataUrl=https%3A%2F%2Fnexus.soma.salesforce.com%2Fnexus%2Fcontent%2Frepositories%2Freleases%2Fcom%2Fsalesforce%2Fccspayments%2Fvader%2Fmaven-metadata.xml)](https://nexus.soma.salesforce.com/nexus/content/repositories/releases/com/salesforce/ccspayments/vader/)
 [![Quality Gate Status](https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=alert_status)](https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader)
 [![Maintainability Rating](https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=sqale_rating)](https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader)
 [![Security Rating](https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=security_rating)](https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader)
@@ -33,7 +34,7 @@ When shopping for Bean validation frameworks, we stumbled-upon these well-known 
 
 ## Problem with `@Annotation` based validators
 
-Annotations are reflection based and they create a lot of *runtime magic*. They are not bad
+Annotations are reflection based, and they create a lot of *runtime magic*. They are not bad
 in-general, but using them for validations has these cons:
 
 - It's difficult to debug as you wouldn't know which `AnnotationProcessor` handles
@@ -173,6 +174,10 @@ is partially recorded)
 
 ---
 
+# 🤩 [Specs](docs/specs.md) (New in 2.0)
+
+---
+
 # What is Vader?
 
 **Vader is an independent Bean validation framework, not tied to any REST framework**. It's agnostic
@@ -201,29 +206,29 @@ Vader provides various **Validator Data-Types**, to get this done. These
 are [Functional Interfaces](https://www.baeldung.com/java-8-functional-interfaces) to which a lambda
 can be assigned.
 
-## SimpleValidator `(ValidatableT) -> FailureT`
+## Validator `(ValidatableT) -> FailureT`
 
 The Data type for simple first-class functions. It takes in a bean to be validated, represented
 by `ValidatableT`, and returns a failure `FailureT`. This is prefixed *Simple* as it works with
 Simple types as Input/Output.
 
 ```java
-public static final SimpleValidator<Container, ValidationFailure> validation1=
-    containerInputRepresentation->{
-    if(containerInputRepresentation._isSetPaymentAuthorizationId()){
-    return null;
-    }else{
-    return new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING,FIELD_NULL_OR_EMPTY,
-    ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID);
-    }
-    };
+public static final Validator<Container, ValidationFailure> validation1=
+        containerInputRepresentation->{
+        if(containerInputRepresentation._isSetPaymentAuthorizationId()){
+        return null;
+        }else{
+        return new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING,FIELD_NULL_OR_EMPTY,
+        ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID);
+        }
+        };
 ```
 
-### But if you need more ⚡️Power⚡️
+### If you need more ⚡️Power⚡️
 
 ![inline](images/more-power.gif)
 
-## Validator (`Either<FailureT, ValidatableT>) -> Either<FailureT, ?>`
+## ValidatorEtr (`Either<FailureT, ValidatableT>) -> Either<FailureT, ?>`
 
 ### Either Monad
 
@@ -231,7 +236,7 @@ Unlike Simple validator types (which work with Simple input/output types), these
 with `Either` types as input/output. The `Either` type is borrowed
 from [Vavr](https://docs.vavr.io/#_either).
 
-### But what's so powerful about `Either`?
+### What's so powerful about `Either`?
 
 With `Either`, You get all the functional programming powers. You can write linear programs with a
 lot less **Cyclomatic Complexity** & **Cognitive Complexity**.
@@ -239,8 +244,8 @@ lot less **Cyclomatic Complexity** & **Cognitive Complexity**.
 Please refer to this tech talk discussing these
 concepts: [Fight Complexity with Functional Programming - Gopal S. Akshintala - All Things Open, USA, 2020](https://www.youtube.com/watch?v=Dvr6gx4XaD8&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or)
 
-Lambdas assigned to `Validator` take `Either<FailureT, ValidatableT>` as input. Since the input is
-pre-wrapped in an `Either`, you can perform all the `Either` operations on the input like `map`
+Lambdas assigned to `ValidatorEtr` take `Either<FailureT, ValidatableT>` as input. Since the input
+is pre-wrapped in an `Either`, you can perform all the `Either` operations on the input like `map`
 , `flatMap`, `fold`, `filterOrElse` (
 Refer [API](https://www.javadoc.io/doc/io.vavr/vavr/0.10.2/io/vavr/control/Either.html) for more
 info).
@@ -251,17 +256,17 @@ it is considered that the bean **Passed** the validation. The wildcard `?` signi
 matter what is the value in the right state.
 
 ```java
-public static final Validator<Container, ValidationFailure> batchValidation1=
-    containerInputRepresentation->containerInputRepresentation
-    .filterOrElse(Container::_isSetAccountId,ignore->new ValidationFailure(
-    ApiErrorCodes.REQUIRED_FIELD_MISSING,FIELD_NULL_OR_EMPTY,
-    ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID));
+public static final ValidatorEtr<Container, ValidationFailure> batchValidation1=
+        containerInputRepresentation->containerInputRepresentation
+        .filterOrElse(Container::_isSetAccountId,ignore->new ValidationFailure(
+        ApiErrorCodes.REQUIRED_FIELD_MISSING,FIELD_NULL_OR_EMPTY,
+        ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID));
 ```
 
-⚠️ Ofcourse, pre-wrapping into `Either` is just to avoid boiler-plate. You can very well
-use `SimpleValidator` and wrap/unwrap it yourself.
+⚠️ Of-course, pre-wrapping into `Either` is just to avoid boiler-plate. You can very well
+use `Validator` and wrap/unwrap it yourself.
 
-## `SimpleValidator` vs `Validator`?
+## `Validator` vs `ValidatorEtr`?
 
 These types only differ stylistically. They are there to help developers focus only on their
 validation logic, not worry about boiler-plate and use a programming style (imperative or
@@ -280,7 +285,7 @@ to maintain the sequence of validations. We can chain all the validators, in the
 preference.
 
 ```java
-List<Validator<Container, ValidationFailure> validatorChain=List.of(validator1,validator2,...);
+List<ValidatorEtr<Container, ValidationFailure> validatorChain=List.of(validator1,validator2,...);
 ```
 
 ## How to combine Container & Member validations?
@@ -290,28 +295,28 @@ validators and all its nested member validators. But they can't be put under one
 functions on different Data Types.
 
 ```java
-Validator<Container, ValidationFailure> containerValidator=... // Apply same anology for SimpleValidator
-    Validator<Member, ValidationFailure> memberValidator=...
+ValidatorEtr<Container, ValidationFailure> containerValidator=... // Apply same anology for Validator
+        ValidatorEtr<Member, ValidationFailure> memberValidator=...
 
-    List.of(containerValidator,memberValidator); // ^^^ Compile Error
+        List.of(containerValidator,memberValidator); // ^^^ Compile Error
 ```
 
 So all nested member validations need to be lifted to the container type, essentially changing their
-type matching with the Containers's, like: `Validator<Container, ValidationFailure>`.
+type matching with the Container's, like: `ValidatorEtr<Container, ValidationFailure>`.
 
 We can achieve this with **Higher-Order Functions**, which **lift** member validator to the
 container type. This takes a `containerToMemberMapper` which is function to extract member from
 container.
 
 ```java
-Validator<Member, ValidationFailure> memberValidator=...
-    Validator<Container, ValidationFailure> liftedMemberValidator=
-    liftToContainerValidatorType(memberValidator,containerToMemberMapper)
+ValidatorEtr<Member, ValidationFailure> memberValidator=...
+        ValidatorEtr<Container, ValidationFailure> liftedMemberValidator=
+        liftToContainerValidatorType(memberValidator,containerToMemberMapper)
 ```
 
 **This is a powerful technique, which lets you validate any Bean with any level or nesting. It's
-easy to fit this model in our heads, as Validator configuration aligns with Bean
-hierachial-structure**
+easy to fit this model in our heads, as validator configuration aligns with Bean
+hierarchical-structure**
 
 ![inline](images/hierarchical-validation.png)
 
@@ -324,19 +329,19 @@ Graph* relationship, but we can easily *flatten* it into a Chain with a simple *
 
 ## How to combine SimpleValidators & Validators?
 
-Similarly, Vader has utils to lift `SimpleValidator` to `Validator`. This is handy, when you have a
-mix of validations, and they all need to be of the same type to stitch them together.
+Similarly, Vader has utils to lift `Validator` to `ValidatorEtr`. This is handy, when you have a mix
+of validations, and they all need to be of the same type to stitch them together.
 
 ## Lift Util
 
 Below are the utils currently available, with self-explanatory names. There are multiple overloads
 suitable for simple/non-simple. The Java Docs should guide you to use proper overload:
 
-| Aggregation Util: To lift Member validator to Container Validator type ||
+| Aggregation Util: To lift Member validator to Container validator type ||
 | ---  | --- |
 | liftToContainerValidatorType | liftAllToContainerValidatorType |
 
-| Validator Util: To lift Simple validator to Validator type || | --- | :-- | | liftSimple |
+| Validator Util: To lift Simple validator to ValidatorEtr type || | --- | :-- | | liftSimple |
 liftAllSimple |
 
 ## Deferred result
@@ -353,7 +358,7 @@ Now that we know how to write & wire validations, the last step to execute these
 to **call an execution method, passing this config as a parameter**.
 
 This can be seen as the **Edge** for validation bounded context, where the actual execution of
-validations happen and you get back the final results. *The complexity of how these valiadtors are
+validations happen, and you get back the final results. *The complexity of how these validators are
 orchestrated per strategy is abstracted away from the consumer.*
 
 **There are various flavors (Overloads) in the Runner for Batch/Non-Batch and Simple/Non-Simple (
@@ -396,13 +401,13 @@ If you have specific requirement, please log a git.soma issue.
 # Source-code Setup
 
 - This is a simple Gradle project and has its own Gradle wrapper. So nothing to install. As of
-  writing this, Gradle v7.0 is used. You need to add your nexus credentials in 
+  writing this, Gradle v7.0 is used. You need to add your nexus credentials in
   `~/.gradle/gradle.properties` file, which are used by your local gradle to connect to nexus.
 
   ```properties
     nexusUsername=...
     nexusPassword=....
-    ```
+  ```
 
 - For source code navigation you need to have **[Lombok](https://projectlombok.org/)** plugin, which
   is used to generate boilerplate code. There are plugins available for Lombok for all popular IDEs,
@@ -419,23 +424,24 @@ If you have specific requirement, please log a git.soma issue.
 ```xml
 
 <dependency>
-  <groupId>com.salesforce.ccspayments</groupId>
-  <artifactId>vader</artifactId>
-  <version>${revcloud.vader.version}</version>
+    <groupId>com.salesforce.ccspayments</groupId>
+    <artifactId>vader</artifactId>
+    <version>${revcloud.vader.version}</version>
 </dependency>
 ```
 
 ---
 
-# Jar release process
+# For Contributors
 
 ## CI/CD
 
-- The CI/CD pipeline is all set up for this library. So, as soon as you push a commit (on any
-  branch), a CI job starts and pushes the new jar into the Nexus.
-- The job status can be
-  monitored [here](https://ccspaymentsci.dop.sfdc.net/job/validation/job/Vader/job/master/) or wait
-  for the build-sheild at the top to turn red/green.
+- The CI/CD pipeline is all set up for this library. A CI/CD jenkins job runs for every commit push
+  on any branch. However, to publish a jar to nexus, only commits on `master` branch are considered.
+  You can get more information from `JenkinsFile` at the root of this repo.
+- The job status can be monitored
+  [here](https://ccspaymentsci.dop.sfdc.net/job/validation/job/Vader/job/master/)
+  or wait for the build-sheild at the top to turn red/green.
 
 ## Manual
 

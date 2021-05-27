@@ -51,7 +51,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
     protected abstract Predicate<@Nullable ValidatableT> toPredicate();
 
     @SuppressWarnings("unused")
-    protected FailureT getFailure(ValidatableT ignore) {
+    protected FailureT getFailure(@Nullable ValidatableT ignore) {
       return orFailWith;
     }
   }
@@ -61,10 +61,10 @@ public final class SpecFactory<ValidatableT, FailureT> {
   @FieldDefaults(level = AccessLevel.PACKAGE)
   @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
   static class Spec1<ValidatableT, FailureT, GivenT> extends BaseSpec<ValidatableT, FailureT> {
+    @NonNull Function1<ValidatableT, ? extends GivenT> given;
+
     @Singular("shouldMatchField")
     protected Collection<Function1<ValidatableT, ?>> shouldMatchAnyOfFields;
-
-    @NonNull Function1<ValidatableT, ? extends GivenT> given;
 
     @Singular("shouldMatch")
     Collection<? extends Matcher<? extends GivenT>> shouldMatchAnyOf;
@@ -77,7 +77,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
     }
 
     @Override
-    protected FailureT getFailure(ValidatableT validatable) {
+    protected FailureT getFailure(@Nullable ValidatableT validatable) {
       if ((orFailWith == null) == (orFailWithFn == null)) {
         throw new IllegalArgumentException(String.format(INVALID_FAILURE_CONFIG, nameForTest));
       }
@@ -116,7 +116,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
     }
 
     @Override
-    protected FailureT getFailure(ValidatableT validatable) {
+    protected FailureT getFailure(@Nullable ValidatableT validatable) {
       if ((orFailWith == null) == (orFailWithFn == null)) {
         throw new IllegalArgumentException(String.format(INVALID_FAILURE_CONFIG, nameForTest));
       }
@@ -160,7 +160,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
     }
 
     @Override
-    protected FailureT getFailure(ValidatableT validatable) {
+    protected FailureT getFailure(@Nullable ValidatableT validatable) {
       if ((orFailWith == null) == (orFailWithFn == null)) {
         throw new IllegalArgumentException(String.format(INVALID_FAILURE_CONFIG, nameForTest));
       }

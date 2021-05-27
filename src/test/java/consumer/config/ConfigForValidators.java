@@ -35,8 +35,7 @@ public class ConfigForValidators {
     return List.of(ContainerRequestValidator.validation1, ContainerRequestValidator.validation2);
   }
 
-  public static List<Validator<? extends Parent, ValidationFailure>>
-      getSimpleServiceValidations() {
+  public static List<Validator<? extends Parent, ValidationFailure>> getSimpleServiceValidations() {
     return List.of(BaseParentRequestValidator.validation1, ContainerRequestValidator.validation1);
   }
 }

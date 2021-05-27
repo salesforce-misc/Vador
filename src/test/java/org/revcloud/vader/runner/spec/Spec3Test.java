@@ -37,7 +37,10 @@ class Spec3Test {
             new GregorianCalendar(2021, Calendar.APRIL, 27).getTime(),
             new GregorianCalendar(2021, Calendar.APRIL, 28).getTime());
     assertTrue(
-        validationConfig.getSpecWithName(specName).map(spec -> spec.test(validBean)).orElse(false));
+        validationConfig
+            .getPredicateOfSpecForTest(specName)
+            .map(spec -> spec.test(validBean))
+            .orElse(false));
 
     final var invalidBean =
         new DatesBean(
@@ -46,7 +49,7 @@ class Spec3Test {
             new GregorianCalendar(2021, Calendar.APRIL, 28).getTime());
     assertFalse(
         validationConfig
-            .getSpecWithName(specName)
+            .getPredicateOfSpecForTest(specName)
             .map(spec -> spec.test(invalidBean))
             .orElse(true));
   }
@@ -70,7 +73,7 @@ class Spec3Test {
         new DatesBean(true, null, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime());
     assertFalse(
         validationConfig
-            .getSpecWithName(specName)
+            .getPredicateOfSpecForTest(specName)
             .map(spec -> spec.test(invalidBean1))
             .orElse(true));
 
@@ -78,7 +81,7 @@ class Spec3Test {
         new DatesBean(true, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime(), null);
     assertFalse(
         validationConfig
-            .getSpecWithName(specName)
+            .getPredicateOfSpecForTest(specName)
             .map(spec -> spec.test(invalidBean2))
             .orElse(true));
   }
@@ -103,7 +106,7 @@ class Spec3Test {
         new Bean(true, 2, new GregorianCalendar(2021, Calendar.APRIL, 1).getTime());
     assertFalse(
         validationConfig
-            .getSpecWithName(specName)
+            .getPredicateOfSpecForTest(specName)
             .map(spec -> spec.test(invalidBean))
             .orElse(true));
 
@@ -111,7 +114,7 @@ class Spec3Test {
         new Bean(true, null, new GregorianCalendar(2021, Calendar.APRIL, 1).getTime());
     assertTrue(
         validationConfig
-            .getSpecWithName(specName)
+            .getPredicateOfSpecForTest(specName)
             .map(spec -> spec.test(validBean1))
             .orElse(false));
 
@@ -119,7 +122,7 @@ class Spec3Test {
         new Bean(true, 1, new GregorianCalendar(2021, Calendar.APRIL, 1).getTime());
     assertTrue(
         validationConfig
-            .getSpecWithName(specName)
+            .getPredicateOfSpecForTest(specName)
             .map(spec -> spec.test(validBean2))
             .orElse(false));
   }

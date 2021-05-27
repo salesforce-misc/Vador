@@ -136,8 +136,7 @@ class BatchRunnerTest {
             bean -> predicateForValidId2.test(bean.getId()) ? NONE : VALIDATION_FAILURE_2,
             bean -> predicateForValidId3.test(bean.getId()) ? NONE : VALIDATION_FAILURE_3);
     final var result =
-        BatchRunner.validateAndAccumulateErrors(
-            validatables, validators, NONE, throwable -> null);
+        BatchRunner.validateAndAccumulateErrors(validatables, validators, NONE, throwable -> null);
 
     assertEquals(result.size(), validatables.size());
     assertTrue(result.stream().allMatch(r -> r.size() == validators.size()));

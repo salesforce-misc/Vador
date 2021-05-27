@@ -9,7 +9,7 @@ plugins {
     jacoco
     idea
     id("io.freefair.lombok") version "6.0.0-m2"
-    id("io.gitlab.arturbosch.detekt") version "1.16.0"
+    id("io.gitlab.arturbosch.detekt") version "1.17.1"
     id("com.adarshr.test-logger") version "3.0.0"
     id("com.diffplug.spotless") version "5.12.5"
     id("org.sonarqube") version "3.1.1"
@@ -17,10 +17,8 @@ plugins {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.4.4-SNAPSHOT"
+version = "2.4.4"
 description = "Vader - An FP framework for Bean validation"
-
-java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
@@ -51,29 +49,31 @@ dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.0")
 }
 
-jacoco.toolVersion = "0.8.7"
+java {
+    withJavadocJar()
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_11
+}
 
 if (!providers.systemProperty("idea.sync.active").forUseAtConfigurationTime().orNull.toBoolean()) {
     kotlin.sourceSets.main {
         kotlin.setSrcDirs(listOf(tasks.delombok))
     }
-}
-
-val lombokForSonarQube: Configuration by configurations.creating
-dependencies {
-    lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
-}
-
-sonarqube {
-    properties {
-        property("sonar.sources", lombokForSonarQube.files.last().toString())
+    sourceSets.main {
+        java.setSrcDirs(listOf(tasks.delombok))
     }
 }
 
+jacoco.toolVersion = "0.8.7"
 tasks {
+    delombok {
+        input.setFrom("src/main/java")
+        quiet.set(true)
+    }
     compileKotlin {
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_11.toString()
+            freeCompilerArgs = listOf("-Xlambdas=indy")
         }
     }
     test {
@@ -86,6 +86,14 @@ tasks {
             xml.isEnabled = true
         }
     }
+    javadoc {
+        if (JavaVersion.current().isJava9Compatible) {
+            (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
+        }
+        // TODO 22/05/21 gopala.akshintala: Turn this on after writing all javadocs
+        isFailOnError = false
+        options.encoding("UTF-8")
+    }
 }
 
 afterEvaluate {
@@ -96,9 +104,17 @@ afterEvaluate {
         jacocoTestReport.configure {
             dependsOn(test)
         }
-        named("spotlessKotlin").configure {
-            dependsOn(delombok)
-        }
+    }
+}
+
+val lombokForSonarQube: Configuration by configurations.creating
+dependencies {
+    lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
+}
+
+sonarqube {
+    properties {
+        property("sonar.sources", lombokForSonarQube.files.last().toString())
     }
 }
 
@@ -163,14 +179,6 @@ publishing {
             }
         }
     }
-    tasks.javadoc {
-        if (JavaVersion.current().isJava9Compatible) {
-            (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
-        }
-        // TODO 22/05/21 gopala.akshintala: Turn this on after writing all javadocs
-        isFailOnError = false
-        options.encoding("UTF-8")
-    }
 }
 
 testlogger {
@@ -220,13 +228,23 @@ spotless {
     }
     java {
         target("src/main/java/**/*.java")
+        targetExclude("$buildDir/generated/**/*.*")
         importOrder()
         removeUnusedImports()
         googleJavaFormat()
+        trimTrailingWhitespace()
+        indentWithSpaces(2)
+        endWithNewline()
     }
     format("xml") {
         targetExclude("pom.xml")
         target("*.xml")
         eclipseWtp(XML)
+    }
+    format("markdown") {
+        target("*.md")
+        trimTrailingWhitespace()
+        indentWithSpaces(2)
+        endWithNewline()
     }
 }

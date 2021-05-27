@@ -10,7 +10,8 @@ import lombok.NonNull
 import org.revcloud.vader.runner.SpecFactory.BaseSpec
 import org.revcloud.vader.types.validators.ValidatorEtr
 
-internal fun <ValidatableT, FailureT, FieldT> toValidatorEtrs1(
+@JvmSynthetic
+private fun <ValidatableT, FailureT, FieldT> toValidatorEtrs1(
     fieldMapperToFailure: Map<out TypedPropertyGetter<in ValidatableT, out FieldT>, FailureT>,
     fieldEval: (FieldT) -> Boolean
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
@@ -20,7 +21,8 @@ internal fun <ValidatableT, FailureT, FieldT> toValidatorEtrs1(
         }
     }
 
-internal fun <ValidatableT, FailureT, FieldT> toValidatorEtrs2(
+@JvmSynthetic
+private fun <ValidatableT, FailureT, FieldT> toValidatorEtrs2(
     fieldMappersToFailure: Tuple2<out Collection<TypedPropertyGetter<in ValidatableT, out FieldT>>, @NonNull Function2<String, FieldT, FailureT>>?,
     fieldEval: (FieldT) -> Boolean
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
@@ -37,6 +39,7 @@ internal fun <ValidatableT, FailureT, FieldT> toValidatorEtrs2(
         }
     } ?: emptyList()
 
+@JvmSynthetic
 internal fun <ValidatableT, FailureT> toValidators(validationConfig: BaseValidationConfig<ValidatableT, FailureT>): List<ValidatorEtr<ValidatableT?, FailureT?>> =
     (
         toValidatorEtrs1(validationConfig.shouldHaveFieldsOrFailWith, isFieldPresent) +
@@ -61,10 +64,12 @@ internal fun <ValidatableT, FailureT> toValidators(validationConfig: BaseValidat
             validationConfig.getValidators()
         )
 
+@JvmSynthetic
 private fun <ValidatableT, FailureT> BaseSpec<ValidatableT, FailureT>.toValidator(): ValidatorEtr<ValidatableT?, FailureT?> =
     ValidatorEtr { it.filterOrElse(toPredicate()) { validatable -> getFailure(validatable) } }
 
-val isFieldPresent: (Any?) -> Boolean = {
+@JvmSynthetic
+private val isFieldPresent: (Any?) -> Boolean = {
     when (it) {
         null -> false
         is String -> it.isNotBlank()
@@ -72,8 +77,10 @@ val isFieldPresent: (Any?) -> Boolean = {
     }
 }
 
-val isSFIdPresentAndValidFormat: (ID?) -> Boolean =
+@JvmSynthetic
+private val isSFIdPresentAndValidFormat: (ID?) -> Boolean =
     { it != null && IdTraits.isValidId(it.toString()) }
 
-val isSFIdAbsentOrValidFormat: (ID?) -> Boolean =
+@JvmSynthetic
+private val isSFIdAbsentOrValidFormat: (ID?) -> Boolean =
     { it == null || IdTraits.isValidId(it.toString()) }
