@@ -173,7 +173,9 @@ is partially recorded)
 ### [billing-services](https://codesearch.data.sfdc.net/source/xref/app_main_core/app/main/core/billing-services/java/src/core/billing/service/billingschedule/config/BillingScheduleConfig.java#166)
 
 ---
+# New in 2.0
 
+# 🍭 [Config DSL](docs/configDSLs.md)
 # 🤩 [Specs](docs/specs.md) (New in 2.0)
 
 ---
@@ -213,14 +215,14 @@ by `ValidatableT`, and returns a failure `FailureT`. This is prefixed *Simple* a
 Simple types as Input/Output.
 
 ```java
-public static final Validator<Container, ValidationFailure> validation1=
-        containerInputRepresentation->{
-        if(containerInputRepresentation._isSetPaymentAuthorizationId()){
-        return null;
-        }else{
-        return new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING,FIELD_NULL_OR_EMPTY,
-        ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID);
-        }
+public static final Validator<Container, ValidationFailure> validation1 =
+        containerInputRepresentation-> {
+            if(containerInputRepresentation._isSetPaymentAuthorizationId()){
+                return null;
+            }else{
+                return new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING,FIELD_NULL_OR_EMPTY,
+                ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID);
+            }
         };
 ```
 
@@ -251,7 +253,7 @@ Refer [API](https://www.javadoc.io/doc/io.vavr/vavr/0.10.2/io/vavr/control/Eithe
 info).
 
 The result of the function is supposed to be `Either<FailureT, ?>`. This signifies, if there is a
-Validation Failure, keep it in the *left* state. If the `Either` in the result is in *right* state,
+Validation Failure, keep it in the *left* state. If the `Either` in the result is in the *right* state,
 it is considered that the bean **Passed** the validation. The wildcard `?` signifies it doesn't
 matter what is the value in the right state.
 

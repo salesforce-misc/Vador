@@ -14,14 +14,14 @@ import java.util.Calendar
 import java.util.GregorianCalendar
 
 class DateMatchersTest : StringSpec({
-    "is Date's day matching" {
-        forAll(
-            row(1, GregorianCalendar(2014, Calendar.FEBRUARY, 1).time, true),
-            row(2, GregorianCalendar(2014, Calendar.FEBRUARY, 1).time, false),
-            row(null, GregorianCalendar(2014, Calendar.FEBRUARY, 1).time, false),
-            row(null, null, false),
-        ) { day, date, result ->
-            isEqualToDayOfDate.apply(day, date) shouldBe result
-        }
+  "is Date's day matching" {
+    forAll(
+      row(1, GregorianCalendar(2014, Calendar.FEBRUARY, 1).time, true),
+      row(2, GregorianCalendar(2014, Calendar.FEBRUARY, 1).time, false),
+      row(null, GregorianCalendar(2014, Calendar.FEBRUARY, 1).time, false),
+      row(null, null, false),
+    ) { day, date, result ->
+      isEqualToDayOfDate.apply(day, date) shouldBe result
     }
+  }
 })

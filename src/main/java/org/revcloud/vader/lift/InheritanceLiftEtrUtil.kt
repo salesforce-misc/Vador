@@ -11,10 +11,10 @@ import org.revcloud.vader.types.validators.ValidatorEtr
  * These utils help to lift it's parent's validations in the context of ValidatableT, so that they can be chained together.
  */
 fun <ParentT, ValidatableT : ParentT, FailureT> liftToChildValidatorType(
-    parentValidatorEtr: ValidatorEtr<ParentT, FailureT>
+  parentValidatorEtr: ValidatorEtr<ParentT, FailureT>
 ): ValidatorEtr<ValidatableT, FailureT> =
-    ValidatorEtr { childValidatable -> parentValidatorEtr.apply(narrow(childValidatable)) }
+  ValidatorEtr { childValidatable -> parentValidatorEtr.apply(narrow(childValidatable)) }
 
 fun <ParentT, ValidatableT : ParentT, FailureT> liftAllToChildValidatorType(
-    parentValidatorEtrs: Collection<ValidatorEtr<ParentT, FailureT>>
+  parentValidatorEtrs: Collection<ValidatorEtr<ParentT, FailureT>>
 ): List<ValidatorEtr<ValidatableT, FailureT>> = parentValidatorEtrs.map { liftToChildValidatorType(it) }

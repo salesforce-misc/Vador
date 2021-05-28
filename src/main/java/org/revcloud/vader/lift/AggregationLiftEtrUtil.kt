@@ -17,13 +17,13 @@ import org.revcloud.vader.types.validators.ValidatorEtr
  * @return container type validation
 </FailureT></MemberT></ContainerT> */
 fun <ContainerT, MemberT, FailureT> liftToContainerValidatorType(
-    memberValidator: ValidatorEtr<MemberT?, FailureT?>,
-    toMemberMapper: (ContainerT?) -> MemberT?,
+  memberValidator: ValidatorEtr<MemberT?, FailureT?>,
+  toMemberMapper: (ContainerT?) -> MemberT?,
 ): ValidatorEtr<ContainerT?, FailureT?> =
-    ValidatorEtr { container ->
-        val member = container?.map(toMemberMapper)
-        memberValidator.unchecked().apply(member)
-    } // This whole function is inside a CheckedFunction, so no problem with `uncChecked()` above
+  ValidatorEtr { container ->
+    val member = container?.map(toMemberMapper)
+    memberValidator.unchecked().apply(member)
+  } // This whole function is inside a CheckedFunction, so no problem with `uncChecked()` above
 
 /**
  * Lifts a list of member validations to container type.
@@ -38,7 +38,7 @@ fun <ContainerT, MemberT, FailureT> liftToContainerValidatorType(
  * @return List of container type validations
  */
 fun <ContainerT, MemberT, FailureT> liftAllToContainerValidatorType(
-    memberValidatorEtrs: Collection<ValidatorEtr<MemberT?, FailureT?>>,
-    toMemberMapper: (ContainerT?) -> MemberT?,
+  memberValidatorEtrs: Collection<ValidatorEtr<MemberT?, FailureT?>>,
+  toMemberMapper: (ContainerT?) -> MemberT?,
 ): List<ValidatorEtr<ContainerT?, FailureT?>> =
-    memberValidatorEtrs.map { liftToContainerValidatorType(it, toMemberMapper) }
+  memberValidatorEtrs.map { liftToContainerValidatorType(it, toMemberMapper) }

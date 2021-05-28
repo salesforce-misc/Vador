@@ -8,17 +8,17 @@ import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
 fun <FailureT, ValidatableT> validateAndFailFastForHeader(
-    validatable: ValidatableT,
-    throwableMapper: (Throwable) -> FailureT?,
-    validationConfig: HeaderValidationConfig<ValidatableT, FailureT?>
+  validatable: ValidatableT,
+  throwableMapper: (Throwable) -> FailureT?,
+  validationConfig: HeaderValidationConfig<ValidatableT, FailureT?>
 ): Optional<FailureT?> = failFastForHeader(throwableMapper, validationConfig)(validatable)
 
 fun <FailureT, ValidatableT> validateAndFailFast(
-    validatable: ValidatableT,
-    throwableMapper: (Throwable) -> FailureT?,
-    validationConfig: ValidationConfig<ValidatableT, FailureT>
+  validatable: ValidatableT,
+  throwableMapper: (Throwable) -> FailureT?,
+  validationConfig: ValidationConfig<ValidatableT, FailureT>
 ): Optional<FailureT?> = failFast(throwableMapper, validationConfig)(validatable)
-    .swap().toJavaOptional()
+  .swap().toJavaOptional()
 
 // --- ERROR ACCUMULATION ---
 /**
@@ -33,15 +33,15 @@ fun <FailureT, ValidatableT> validateAndFailFast(
  * @return List of Validation failures.
 </ValidatableT></FailureT> */
 fun <FailureT, ValidatableT> validateAndAccumulateErrorsForValidators(
-    validatable: ValidatableT,
-    validators: Collection<Validator<ValidatableT?, FailureT?>>,
-    none: FailureT,
-    throwableMapper: (Throwable) -> FailureT?,
+  validatable: ValidatableT,
+  validators: Collection<Validator<ValidatableT?, FailureT?>>,
+  none: FailureT,
+  throwableMapper: (Throwable) -> FailureT?,
 ): List<FailureT?> = validateAndAccumulateErrors(
-    validatable,
-    liftAllToEtr(validators, none),
-    none,
-    throwableMapper
+  validatable,
+  liftAllToEtr(validators, none),
+  none,
+  throwableMapper
 )
 
 /**
@@ -57,12 +57,12 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrorsForValidators(
  * @return List of Validation failures. EmptyList if all the validations pass.
 </ValidatableT></FailureT> */
 fun <FailureT, ValidatableT> validateAndAccumulateErrors(
-    validatable: ValidatableT,
-    validators: List<ValidatorEtr<ValidatableT?, FailureT?>>,
-    none: FailureT,
-    throwableMapper: (Throwable) -> FailureT?,
+  validatable: ValidatableT,
+  validators: List<ValidatorEtr<ValidatableT?, FailureT?>>,
+  none: FailureT,
+  throwableMapper: (Throwable) -> FailureT?,
 ): List<FailureT?> {
-    val results = accumulationStrategy(validators, throwableMapper)(validatable)
-        .map { result -> result.fold({ it }, { none }) }
-    return if (results.all { it == none }) emptyList() else results
+  val results = accumulationStrategy(validators, throwableMapper)(validatable)
+    .map { result -> result.fold({ it }, { none }) }
+  return if (results.all { it == none }) emptyList() else results
 }

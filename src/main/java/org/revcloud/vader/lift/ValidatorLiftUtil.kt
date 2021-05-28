@@ -16,13 +16,13 @@ import org.revcloud.vader.types.validators.ValidatorEtr
  * @return Validator
 </ValidatableT></FailureT> */
 fun <FailureT, ValidatableT> liftToEtr(
-    toBeLifted: Validator<in ValidatableT?, FailureT?>,
-    none: FailureT?
+  toBeLifted: Validator<in ValidatableT?, FailureT?>,
+  none: FailureT?
 ): ValidatorEtr<ValidatableT?, FailureT?> = ValidatorEtr {
-    it.flatMap { validatable ->
-        val result = toBeLifted.unchecked().apply(validatable)
-        if (result == none) it else left(result)
-    }
+  it.flatMap { validatable ->
+    val result = toBeLifted.unchecked().apply(validatable)
+    if (result == none) it else left(result)
+  }
 }
 
 /**
@@ -35,7 +35,7 @@ fun <FailureT, ValidatableT> liftToEtr(
  * @return List of Validators
 </ValidatableT></FailureT> */
 fun <FailureT, ValidatableT> liftAllToEtr(
-    toBeLiftedFns: Collection<Validator<in ValidatableT?, FailureT?>>,
-    none: FailureT
+  toBeLiftedFns: Collection<Validator<in ValidatableT?, FailureT?>>,
+  none: FailureT
 ): List<ValidatorEtr<ValidatableT?, FailureT?>> =
-    toBeLiftedFns.map { liftToEtr(it, none) }
+  toBeLiftedFns.map { liftToEtr(it, none) }
