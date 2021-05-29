@@ -176,6 +176,7 @@ class BatchRunnerTest {
 
   @Value
   private static class Bean {
+
     int id;
   }
 }

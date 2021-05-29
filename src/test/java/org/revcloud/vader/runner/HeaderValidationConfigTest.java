@@ -24,12 +24,12 @@ class HeaderValidationConfigTest {
   @Test
   void failFastForHeaderConfigWithValidators() {
     final var headerConfig =
-        HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
-            .withBatchMapper(HeaderBean::getBatch)
+        HeaderValidationConfig.<HeaderBean1, ValidationFailure>toValidate()
+            .withBatchMapper(HeaderBean1::getBatch)
             .withHeaderValidator(ignore -> UNKNOWN_EXCEPTION, NONE)
             .prepare();
     final var batch = List.of(new Bean1());
-    final var headerBean = new HeaderBean(batch);
+    final var headerBean = new HeaderBean1(batch);
     final var result =
         validateAndFailFastForHeader(
             headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
@@ -40,12 +40,12 @@ class HeaderValidationConfigTest {
   @Test
   void failFastForHeaderConfigWithValidators2() {
     final var headerConfig =
-        HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
-            .withBatchMapper(HeaderBean::getBatch)
+        HeaderValidationConfig.<HeaderBean1, ValidationFailure>toValidate()
+            .withBatchMapper(HeaderBean1::getBatch)
             .withHeaderValidator(ignore -> NONE, NONE)
             .prepare();
     final var batch = List.of(new Bean1());
-    final var headerBean = new HeaderBean(batch);
+    final var headerBean = new HeaderBean1(batch);
     final var result =
         validateAndFailFastForHeader(
             headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
@@ -55,12 +55,12 @@ class HeaderValidationConfigTest {
   @Test
   void failFastForHeaderConfigMinBatchSize() {
     final var headerConfig =
-        HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
-            .withBatchMapper(HeaderBean::getBatch)
+        HeaderValidationConfig.<HeaderBean1, ValidationFailure>toValidate()
+            .withBatchMapper(HeaderBean1::getBatch)
             .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET))
             .withHeaderValidator(ignore -> NONE, NONE)
             .prepare();
-    final var headerBean = new HeaderBean(Collections.emptyList());
+    final var headerBean = new HeaderBean1(Collections.emptyList());
     final var result =
         validateAndFailFastForHeader(
             headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
@@ -87,12 +87,12 @@ class HeaderValidationConfigTest {
   @Test
   void failFastForHeaderConfigMaxBatchSize() {
     final var headerConfig =
-        HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
-            .withBatchMapper(HeaderBean::getBatch)
+        HeaderValidationConfig.<HeaderBean1, ValidationFailure>toValidate()
+            .withBatchMapper(HeaderBean1::getBatch)
             .shouldHaveMaxBatchSize(Tuple.of(0, MAX_BATCH_SIZE_EXCEEDED))
             .withHeaderValidator(ignore -> NONE, NONE)
             .prepare();
-    final var headerBean = new HeaderBean(List.of(new Bean1()));
+    final var headerBean = new HeaderBean1(List.of(new Bean1()));
     final var result =
         validateAndFailFastForHeader(
             headerBean, ValidationFailure::getValidationFailureForException, headerConfig);
@@ -102,17 +102,17 @@ class HeaderValidationConfigTest {
   @Test
   void headerWithFailure() {
     final var headerValidationConfig =
-        HeaderValidationConfig.<HeaderBean, ValidationFailure>toValidate()
+        HeaderValidationConfig.<HeaderBean1, ValidationFailure>toValidate()
             .withHeaderValidatorEtrs(
                 List.of(
                     headerBean -> Either.right(NONE),
                     headerBean -> Either.left(UNKNOWN_EXCEPTION),
                     headerBean -> Either.right(NONE)))
-            .withBatchMapper(HeaderBean::getBatch)
+            .withBatchMapper(HeaderBean1::getBatch)
             .prepare();
     final var result =
         validateAndFailFastForHeader(
-            new HeaderBean(Collections.emptyList()),
+            new HeaderBean1(Collections.emptyList()),
             ValidationFailure::getValidationFailureForException,
             headerValidationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
@@ -130,7 +130,18 @@ class HeaderValidationConfigTest {
   }
 
   @Value
-  private static class HeaderBean {
+  private static class Bean1 {}
+
+  @Value
+  private static class Bean2 {}
+
+  @Value
+  private static class HeaderBean1 {
+    List<Bean1> batch;
+  }
+
+  @Value
+  private static class HeaderBean2 {
     List<Bean1> batch;
   }
 
@@ -141,10 +152,5 @@ class HeaderValidationConfigTest {
     List<Bean1> batch1;
     List<Bean2> batch2;
   }
-
-  @Value
-  private static class Bean1 {}
-
-  @Value
-  private static class Bean2 {}
+  
 }

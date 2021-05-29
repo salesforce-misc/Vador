@@ -16,6 +16,7 @@ import lombok.Data;
  */
 @Data
 public class ValidationFailure {
+
   public static final ValidationFailure NONE = new ValidationFailure(ValidationFailureMessage.NONE);
   public static final ValidationFailure NOTHING_TO_VALIDATE =
       new ValidationFailure(ValidationFailureMessage.NOTHING_TO_VALIDATE);

@@ -45,6 +45,7 @@ ij_continuation_indent_size = 8
 ij_haml_keep_indents_on_empty_lines = false
 
 [*.java]
+ij_java_continuation_indent_size=4
 ij_java_align_consecutive_assignments = false
 ij_java_align_consecutive_variable_declarations = false
 ij_java_align_group_field_declarations = false
@@ -377,7 +378,7 @@ ij_stylus_value_alignment = 0
 [.editorconfig]
 ij_editorconfig_align_group_field_declarations = false
 ij_editorconfig_space_after_colon = false
-ij_editorconfig_space_after_comma = true
+ij_editorconfig_space_after_comma = false
 ij_editorconfig_space_before_colon = false
 ij_editorconfig_space_before_comma = false
 ij_editorconfig_spaces_around_assignment_operators = true
@@ -930,7 +931,7 @@ ij_groovy_while_on_new_line = false
 ij_groovy_wrap_long_lines = false
 
 [{*.gradle.kts,*.kt,*.kts,*.main.kts,*.space.kts}]
-ij_continuation_indent_size = 2
+ij_kotlin_continuation_indent_size = 2
 ij_kotlin_align_in_columns_case_branch = false
 ij_kotlin_align_multiline_binary_operation = false
 ij_kotlin_align_multiline_extends_list = false
@@ -1065,9 +1066,6 @@ ij_continuation_indent_size = 8
 ij_jspx_keep_indents_on_empty_lines = false
 
 [{*.markdown,*.md}]
-indent_size = 4
-tab_width = 4
-ij_continuation_indent_size = 8
 ij_markdown_force_one_space_after_blockquote_symbol = true
 ij_markdown_force_one_space_after_header_symbol = true
 ij_markdown_force_one_space_after_list_bullet = true

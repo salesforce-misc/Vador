@@ -26,6 +26,7 @@ import org.revcloud.vader.runner.Specs;
 import org.revcloud.vader.runner.ValidationConfig;
 
 class Spec2Test {
+
   @Test
   void spec2Test() {
     final var invalidComboSpec = "invalidComboSpec";
@@ -282,6 +283,7 @@ class Spec2Test {
 
   @Value
   private static class Bean {
+
     Integer value;
     String valueStr;
     Integer dependentValue1;
@@ -290,6 +292,7 @@ class Spec2Test {
 
   @Value
   private static class Bean2 {
+
     BillingTerm bt;
     String valueStr;
   }

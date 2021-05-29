@@ -25,6 +25,7 @@ import lombok.ToString;
 @ToString
 @Getter
 public class Parent {
+
   final int id;
   final ID sfId;
   final Member member;

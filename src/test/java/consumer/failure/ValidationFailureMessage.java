@@ -47,6 +47,7 @@ public enum ValidationFailureMessage {
   @Setter private Object[] params;
 
   private static final class Section {
+
     static final String COMMON_VALIDATION_FAILURE = "CommonValidationFailure";
   }
 }

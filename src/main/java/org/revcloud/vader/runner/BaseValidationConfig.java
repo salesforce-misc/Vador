@@ -22,6 +22,7 @@ import org.revcloud.vader.types.validators.ValidatorEtr;
 @Getter
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 abstract class BaseValidationConfig<ValidatableT, FailureT> {
+
   @Singular("shouldHaveFieldOrFailWith")
   protected Map<TypedPropertyGetter<ValidatableT, ?>, FailureT> shouldHaveFieldsOrFailWith;
 

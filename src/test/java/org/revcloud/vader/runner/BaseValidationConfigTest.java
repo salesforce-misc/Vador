@@ -48,6 +48,7 @@ class BaseValidationConfigTest {
   @Data
   @FieldNameConstants
   public static class Bean {
+
     String requiredField;
     ID sfIdFormatField;
     ID optionalSfIdFormatField;

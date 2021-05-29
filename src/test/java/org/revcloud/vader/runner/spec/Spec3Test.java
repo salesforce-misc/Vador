@@ -15,6 +15,7 @@ import org.revcloud.vader.matchers.DateMatchers;
 import org.revcloud.vader.runner.ValidationConfig;
 
 class Spec3Test {
+
   @Test
   void testDates() {
     final var specName = "CompareDates";
@@ -129,6 +130,7 @@ class Spec3Test {
 
   @Value
   private static class DatesBean {
+
     boolean compareDates;
     Date date1;
     Date date2;
@@ -136,6 +138,7 @@ class Spec3Test {
 
   @Value
   private static class Bean {
+
     boolean compareFields;
     Integer bdom;
     Date startDate;

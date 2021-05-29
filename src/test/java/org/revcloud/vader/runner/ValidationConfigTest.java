@@ -127,6 +127,7 @@ class ValidationConfigTest {
   @Data
   @FieldNameConstants
   public static class Bean {
+
     private final Integer requiredField1;
     private final String requiredField2;
     private final ID sfId1;

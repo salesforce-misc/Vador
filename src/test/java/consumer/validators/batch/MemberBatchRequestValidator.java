@@ -15,6 +15,7 @@ import java.util.Objects;
 import org.revcloud.vader.types.validators.ValidatorEtr;
 
 public class MemberBatchRequestValidator {
+
   /**
    * Validates if Auth id in request has a status PROCESSED. This is a lambda function
    * implementation.

@@ -31,7 +31,9 @@ class AggregationLiftUtilTest {
   void liftToContainerValidationType2ThrowForNullMember() {
     Validator<Member, ValidationFailure> memberValidator =
         member -> {
-          if (member.getId() >= 0) return NONE; // accessing some member prop to cause NPE
+          if (member.getId() >= 0) {
+            return NONE; // accessing some member prop to cause NPE
+          }
           return ValidationFailure.VALIDATION_FAILURE_1;
         };
     final var liftedContainerValidation =
@@ -65,15 +67,21 @@ class AggregationLiftUtilTest {
     List<Validator<Member, ValidationFailure>> memberValidators =
         List.of(
             member -> {
-              if (member.getId() >= 0) return NONE; // accessing some member prop to cause NPE
+              if (member.getId() >= 0) {
+                return NONE; // accessing some member prop to cause NPE
+              }
               return ValidationFailure.VALIDATION_FAILURE_1;
             },
             member -> {
-              if (member.getId() >= 0) return NONE; // accessing some member prop to cause NPE
+              if (member.getId() >= 0) {
+                return NONE; // accessing some member prop to cause NPE
+              }
               return ValidationFailure.VALIDATION_FAILURE_1;
             },
             member -> {
-              if (member.getId() >= 0) return NONE; // accessing some member prop to cause NPE
+              if (member.getId() >= 0) {
+                return NONE; // accessing some member prop to cause NPE
+              }
               return ValidationFailure.VALIDATION_FAILURE_1;
             });
     final var liftedContainerValidations =

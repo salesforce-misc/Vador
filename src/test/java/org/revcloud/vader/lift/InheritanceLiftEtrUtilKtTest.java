@@ -18,6 +18,7 @@ import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.ValidatorEtr;
 
 class InheritanceLiftEtrUtilKtTest {
+
   @Test
   void liftSimpleParentToChildValidatorTypeTest() {
     final Validator<Parent, ValidationFailure> v1 = ignore -> NONE;

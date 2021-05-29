@@ -71,6 +71,7 @@ class RunnerTest {
 
   @Value
   private static class Bean {
+
     int id;
   }
 }

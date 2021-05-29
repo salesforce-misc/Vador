@@ -266,6 +266,7 @@ class UtilsTest {
 
   @Value
   private static class Bean {
+
     ID id;
   }
 }

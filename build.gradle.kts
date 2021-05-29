@@ -45,8 +45,6 @@ dependencies {
   val kotestVersion = "4.6.0"
   testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
   testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
-
-  detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.0")
 }
 
 java {
@@ -232,7 +230,7 @@ spotless {
     targetExclude("$buildDir/generated/**/*.*")
     importOrder()
     removeUnusedImports()
-    googleJavaFormat()
+    googleJavaFormat("1.10.0")
     trimTrailingWhitespace()
     indentWithSpaces(2)
     endWithNewline()

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.revcloud.vader.runner.ValidationConfig;
 
 class Spec1Test {
+
   @DisplayName("ShouldMatch")
   @Test
   void spec1ShouldMatch() {
@@ -117,17 +118,20 @@ class Spec1Test {
 
   @Value
   private static class Bean1 {
+
     Integer value;
   }
 
   @Value
   private static class Bean2 {
+
     String field1;
     String field2;
   }
 
   @Value
   private static class Bean3 {
+
     String field1;
     String field2;
     String field3;

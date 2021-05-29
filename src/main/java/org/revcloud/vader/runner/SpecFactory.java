@@ -45,6 +45,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
   @FieldDefaults(level = AccessLevel.PACKAGE)
   @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
   public abstract static class BaseSpec<ValidatableT, FailureT> {
+
     @Nullable protected String nameForTest;
     @Nullable protected FailureT orFailWith;
 
@@ -61,10 +62,11 @@ public final class SpecFactory<ValidatableT, FailureT> {
   @FieldDefaults(level = AccessLevel.PACKAGE)
   @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
   static class Spec1<ValidatableT, FailureT, GivenT> extends BaseSpec<ValidatableT, FailureT> {
-    @NonNull Function1<ValidatableT, ? extends GivenT> given;
 
     @Singular("shouldMatchField")
     protected Collection<Function1<ValidatableT, ?>> shouldMatchAnyOfFields;
+
+    @NonNull Function1<ValidatableT, ? extends GivenT> given;
 
     @Singular("shouldMatch")
     Collection<? extends Matcher<? extends GivenT>> shouldMatchAnyOf;
@@ -94,6 +96,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
   @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
   static class Spec2<ValidatableT, FailureT, WhenT, ThenT>
       extends BaseSpec<ValidatableT, FailureT> {
+
     @NonNull Function1<ValidatableT, ? extends WhenT> when;
 
     @Singular("matches")
@@ -133,6 +136,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
   @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
   static class Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T>
       extends BaseSpec<ValidatableT, FailureT> {
+
     @NonNull Function1<ValidatableT, ? extends WhenT> when;
 
     @Singular("matches")
