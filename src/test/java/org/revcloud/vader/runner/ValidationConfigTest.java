@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 class ValidationConfigTest {
 
   @Test
-  void failFastWithRequiredFieldsMissingForSimpleValidators() {
+  void failFastWithRequiredFieldsMissingForValidators() {
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate()
             .shouldHaveFieldsOrFailWith(
@@ -34,23 +34,23 @@ class ValidationConfigTest {
 
     final var validatableWithBlankReqField = new Bean(0, "", null, null);
     final var result1 =
-        Runner.validateAndFailFast(
+        Runner.validateAndFailFastForEach(
             validatableWithBlankReqField,
-            ValidationFailure::getValidationFailureForException,
-            validationConfig);
+            validationConfig,
+            ValidationFailure::getValidationFailureForException);
     assertThat(result1).contains(REQUIRED_FIELD_MISSING);
 
     final var validatableWithNullReqField = new Bean(0, null, null, null);
     final var result2 =
-        Runner.validateAndFailFast(
+        Runner.validateAndFailFastForEach(
             validatableWithNullReqField,
-            ValidationFailure::getValidationFailureForException,
-            validationConfig);
+            validationConfig,
+            ValidationFailure::getValidationFailureForException);
     assertThat(result2).contains(REQUIRED_FIELD_MISSING);
   }
 
   @Test
-  void failFastWithRequiredFieldsWithNameMissingForSimpleValidators() {
+  void failFastWithRequiredFieldsWithNameMissingForValidators() {
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate()
             .shouldHaveFieldsOrFailWithFn(
@@ -64,17 +64,17 @@ class ValidationConfigTest {
     assertThat(validationConfig.getRequiredFieldNames(Bean.class)).isEqualTo(expectedFieldNames);
     final var withRequiredFieldNull = new Bean(1, "", null, null);
     final var result =
-        Runner.validateAndFailFast(
+        Runner.validateAndFailFastForEach(
             withRequiredFieldNull,
-            ValidationFailure::getValidationFailureForException,
-            validationConfig);
+            validationConfig,
+            ValidationFailure::getValidationFailureForException);
     assertThat(result).isPresent();
     assertThat(result.get().getValidationFailureMessage().getParams())
         .containsExactly(Bean.Fields.requiredField2, "");
   }
 
   @Test
-  void failFastWithInvalidIdForSimpleValidators() {
+  void failFastWithInvalidIdForValidators() {
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate()
             .shouldHaveFieldsOrFailWith(
@@ -90,15 +90,15 @@ class ValidationConfigTest {
     final var validatableWithInvalidSfId =
         new Bean(0, "1", new ID("1ttxx00000000hZAAQ"), new ID("invalidSfId"));
     final var result1 =
-        Runner.validateAndFailFast(
+        Runner.validateAndFailFastForEach(
             validatableWithInvalidSfId,
-            ValidationFailure::getValidationFailureForException,
-            validationConfig);
+            validationConfig,
+            ValidationFailure::getValidationFailureForException);
     assertThat(result1).contains(FIELD_INTEGRITY_EXCEPTION);
   }
 
   @Test
-  void failFastWithInvalidIdWithNameForSimpleValidators() {
+  void failFastWithInvalidIdWithNameForValidators() {
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate()
             .shouldHaveValidSFIdFormatOrFailWithFn(
@@ -115,10 +115,10 @@ class ValidationConfigTest {
     final var validatableWithInvalidSfId =
         new Bean(null, null, new ID("1ttxx00000000hZAAQ"), invalidSfId);
     final var result =
-        Runner.validateAndFailFast(
+        Runner.validateAndFailFastForEach(
             validatableWithInvalidSfId,
-            ValidationFailure::getValidationFailureForException,
-            validationConfig);
+            validationConfig,
+            ValidationFailure::getValidationFailureForException);
     assertThat(result).isPresent();
     assertThat(result.get().getValidationFailureMessage().getParams())
         .containsExactly(Bean.Fields.sfId2, invalidSfId);

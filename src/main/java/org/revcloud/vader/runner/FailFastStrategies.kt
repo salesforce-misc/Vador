@@ -4,11 +4,11 @@ import io.vavr.control.Either
 import io.vavr.kotlin.right
 import java.util.Optional
 
-internal typealias FailFast<ValidatableT, FailureT> = (ValidatableT) -> Either<FailureT?, ValidatableT?>
+internal typealias FailFast<ValidatableT, FailureT> = (ValidatableT) -> Optional<FailureT>
 
-internal typealias FailFastForBatch<ValidatableT, FailureT> = (List<ValidatableT>) -> List<Either<FailureT?, ValidatableT?>>
+internal typealias FailFastForEach<ValidatableT, FailureT> = (List<ValidatableT>) -> List<Either<FailureT?, ValidatableT?>>
 
-internal typealias FailFastAllOrNoneForBatch<ValidatableT, FailureT> = (List<ValidatableT>) -> Optional<FailureT>
+internal typealias FailFastForAll<ValidatableT, FailureT> = (List<ValidatableT>) -> Optional<FailureT>
 
 internal typealias FailFastForHeader<ValidatableT, FailureT> = (ValidatableT) -> Optional<FailureT>
 
@@ -24,10 +24,12 @@ internal typealias FailFastForHeader<ValidatableT, FailureT> = (ValidatableT) ->
  */
 @JvmSynthetic
 internal fun <FailureT, ValidatableT> failFast(
-  throwableMapper: (Throwable) -> FailureT?,
-  validationConfig: ValidationConfig<ValidatableT, FailureT>
-): FailFast<ValidatableT, FailureT> =
-  { findFirstFailure(right(it), validationConfig, throwableMapper) }
+  validationConfig: ValidationConfig<ValidatableT, FailureT>,
+  throwableMapper: (Throwable) -> FailureT?
+): FailFast<ValidatableT, FailureT> = { validatable: ValidatableT ->
+  findFirstFailure(right(validatable), toValidators(validationConfig), throwableMapper)
+    .toFailureOptional()
+}
 
 /**
  * Batch + Simple + Config
@@ -40,41 +42,42 @@ internal fun <FailureT, ValidatableT> failFast(
  * @return
 </ValidatableT></FailureT> */
 @JvmSynthetic
-internal fun <FailureT, ValidatableT> failFastForBatch(
+internal fun <FailureT, ValidatableT> failFastForEach(
+  validationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
   nullValidatable: FailureT?,
-  throwableMapper: (Throwable) -> FailureT?,
-  validationConfig: BatchValidationConfig<ValidatableT, FailureT?>
-): FailFastForBatch<ValidatableT, FailureT> = { validatables ->
-  val filteredValidatables =
-    filterNullValidatablesAndDuplicates(validatables, nullValidatable, validationConfig)
-  filteredValidatables.map { findFirstFailure(it, validationConfig, throwableMapper) }
+  throwableMapper: (Throwable) -> FailureT?
+): FailFastForEach<ValidatableT, FailureT> = { validatables: List<ValidatableT> ->
+  val filteredValidatables = handleNullValidatablesAndDuplicates(validatables, nullValidatable, validationConfig)
+  filteredValidatables.map { findFirstFailure(it, toValidators(validationConfig), throwableMapper) ?: it }
 }
 
 // TODO 13/05/21 gopala.akshintala: Reconsider any advantage of having this as a HOF 
 @JvmSynthetic
-internal fun <FailureT, ValidatableT> failFastAllOrNoneForBatch(
+internal fun <FailureT, ValidatableT> failFastForAll(
   invalidValidatable: FailureT,
-  throwableMapper: (Throwable) -> FailureT?,
-  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>
-): FailFastAllOrNoneForBatch<ValidatableT, FailureT> = { validatables ->
-  filterNullValidatablesAndDuplicatesForAllOrNone(
+  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
+  throwableMapper: (Throwable) -> FailureT?
+): FailFastForAll<ValidatableT, FailureT> = { validatables ->
+  findFistNullValidatableOrDuplicate(
     validatables,
     invalidValidatable,
     batchValidationConfig
   ).or {
-    validatables.map { findFirstFailure(right(it), batchValidationConfig, throwableMapper) }
-      .firstOrNull { it.isLeft }?.swap()?.toJavaOptional() ?: Optional.empty()
+    validatables.map {
+      val validatable = right<FailureT?, ValidatableT?>(it)
+      findFirstFailure(validatable, toValidators(batchValidationConfig), throwableMapper) ?: validatable
+    }.firstOrNull { it.isLeft }.toFailureOptional()
   }
 }
 
 @JvmSynthetic
 internal fun <FailureT, ValidatableT> failFastForHeader(
-  throwableMapper: (Throwable) -> FailureT?,
-  validationConfig: HeaderValidationConfig<ValidatableT, FailureT>
+  validationConfig: HeaderValidationConfig<ValidatableT, FailureT?>,
+  throwableMapper: (Throwable) -> FailureT?
 ): FailFastForHeader<ValidatableT, FailureT> = { validatable: ValidatableT ->
   val batch: List<*> = validationConfig.withBatchMappers.mapNotNull { it[validatable] }.flatten()
   validateBatchSize(batch, validationConfig).or {
-    fireValidators(right(validatable), validationConfig.headerValidators, throwableMapper)
-      .firstOrNull { it.isLeft }?.swap()?.toJavaOptional() ?: Optional.empty()
+    findFirstFailure(right(validatable), validationConfig.headerValidators, throwableMapper)
+      .toFailureOptional()
   }
 }

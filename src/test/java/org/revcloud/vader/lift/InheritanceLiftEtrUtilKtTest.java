@@ -28,8 +28,8 @@ class InheritanceLiftEtrUtilKtTest {
             .withValidators(Tuple.of(List.of(v1, v2), NONE))
             .prepare();
     final var result =
-        Runner.validateAndFailFast(
-            new Child(), ValidationFailure::getValidationFailureForException, validationConfig);
+        Runner.validateAndFailFastForEach(
+            new Child(), validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -44,8 +44,8 @@ class InheritanceLiftEtrUtilKtTest {
             .withValidatorEtr(v3)
             .prepare();
     final var result =
-        Runner.validateAndFailFast(
-            new Child(), ValidationFailure::getValidationFailureForException, validationConfig);
+        Runner.validateAndFailFastForEach(
+            new Child(), validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 

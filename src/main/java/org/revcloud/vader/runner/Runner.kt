@@ -9,16 +9,28 @@ import java.util.Optional
 
 fun <FailureT, ValidatableT> validateAndFailFastForHeader(
   validatable: ValidatableT,
-  throwableMapper: (Throwable) -> FailureT?,
-  validationConfig: HeaderValidationConfig<ValidatableT, FailureT?>
-): Optional<FailureT?> = failFastForHeader(throwableMapper, validationConfig)(validatable)
+  headerValidationConfig: HeaderValidationConfig<ValidatableT, FailureT?>,
+  throwableMapper: (Throwable) -> FailureT?
+): Optional<FailureT> = failFastForHeader(headerValidationConfig, throwableMapper)(validatable)
 
-fun <FailureT, ValidatableT> validateAndFailFast(
+/**
+ * This deals with Batch of Headers. This is placed here instead of Batch, so that consumers can
+ * fluently use both these overloads.
+ */
+fun <FailureT, ValidatableT> validateAndFailFastForHeader(
+  batchValidatable: Collection<ValidatableT>,
+  headerValidationConfig: HeaderValidationConfig<ValidatableT, FailureT?>,
+  throwableMapper: (Throwable) -> FailureT?
+): Optional<FailureT> = batchValidatable
+  .map { validatable: ValidatableT ->
+    validateAndFailFastForHeader(validatable, headerValidationConfig, throwableMapper)
+  }.firstOrNull { it.isPresent } ?: Optional.empty()
+
+fun <FailureT, ValidatableT> validateAndFailFastForEach(
   validatable: ValidatableT,
-  throwableMapper: (Throwable) -> FailureT?,
-  validationConfig: ValidationConfig<ValidatableT, FailureT>
-): Optional<FailureT?> = failFast(throwableMapper, validationConfig)(validatable)
-  .swap().toJavaOptional()
+  validationConfig: ValidationConfig<ValidatableT, FailureT>,
+  throwableMapper: (Throwable) -> FailureT?
+): Optional<FailureT> = failFast(validationConfig, throwableMapper)(validatable)
 
 // --- ERROR ACCUMULATION ---
 /**
@@ -37,12 +49,8 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrorsForValidators(
   validators: Collection<Validator<ValidatableT?, FailureT?>>,
   none: FailureT,
   throwableMapper: (Throwable) -> FailureT?,
-): List<FailureT?> = validateAndAccumulateErrors(
-  validatable,
-  liftAllToEtr(validators, none),
-  none,
-  throwableMapper
-)
+): List<FailureT?> =
+  validateAndAccumulateErrors(validatable, liftAllToEtr(validators, none), none, throwableMapper)
 
 /**
  * Applies the validators on a Single validatable in error-accumulation mode. The Accumulated

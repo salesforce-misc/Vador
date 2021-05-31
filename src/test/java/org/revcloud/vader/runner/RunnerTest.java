@@ -28,8 +28,8 @@ class RunnerTest {
                     bean -> Either.left(UNKNOWN_EXCEPTION)))
             .prepare();
     final var result =
-        Runner.validateAndFailFast(
-            new Bean(0), ValidationFailure::getValidationFailureForException, validationConfig);
+        Runner.validateAndFailFastForEach(
+            new Bean(0), validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -64,8 +64,8 @@ class RunnerTest {
                 Tuple.of(List.of(bean -> NONE, bean -> NONE, bean -> UNKNOWN_EXCEPTION), NONE))
             .prepare();
     final var result =
-        Runner.validateAndFailFast(
-            new Bean(0), ValidationFailure::getValidationFailureForException, validationConfig);
+        Runner.validateAndFailFastForEach(
+            new Bean(0), validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 

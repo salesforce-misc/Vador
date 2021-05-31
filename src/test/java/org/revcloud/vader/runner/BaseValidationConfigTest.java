@@ -18,11 +18,14 @@ class BaseValidationConfigTest {
   @Test
   void getSpecWithNameWithDuplicateNames() {
     val duplicateSpecName = "DuplicateSpecName";
-    final Specs<Bean, ValidationFailure> specsForConfig =
-        spec ->
-            List.of(
-                spec._1().nameForTest(duplicateSpecName).given(Bean::getRequiredField),
-                spec._1().nameForTest(duplicateSpecName).given(Bean::getOptionalSfIdFormatField));
+    final var specsForConfig =
+        (Specs<Bean, ValidationFailure>)
+            spec ->
+                List.of(
+                    spec._1().nameForTest(duplicateSpecName).given(Bean::getRequiredField),
+                    spec._1()
+                        .nameForTest(duplicateSpecName)
+                        .given(Bean::getOptionalSfIdFormatField));
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate().specify(specsForConfig).prepare();
     Assertions.assertThrows(
@@ -36,7 +39,7 @@ class BaseValidationConfigTest {
         ValidationConfig.<Bean, ValidationFailure>toValidate()
             .shouldHaveFieldOrFailWith(Bean::getRequiredField, NONE)
             .shouldHaveValidSFIdFormatOrFailWith(Bean::getSfIdFormatField, NONE)
-            .absentOrHaveValidSFIdFieldsOrFailWith(Bean::getOptionalSfIdFormatField, NONE)
+            .absentOrHaveValidSFIdFormatOrFailWith(Bean::getOptionalSfIdFormatField, NONE)
             .prepare();
     assertThat(validationConfig.getRequiredFieldNames(Bean.class)).contains(Fields.requiredField);
     assertThat(validationConfig.getRequiredFieldNamesForSFIdFormat(Bean.class))

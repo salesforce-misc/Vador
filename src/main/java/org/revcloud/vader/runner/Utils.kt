@@ -11,17 +11,25 @@ import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
 @JvmSynthetic
+internal fun <FailureT, ValidatableT> findFirstFailure(
+  validatable: Either<FailureT?, ValidatableT?>,
+  validators: List<ValidatorEtr<ValidatableT?, FailureT?>>,
+  throwableMapper: (Throwable) -> FailureT?,
+): Either<FailureT?, ValidatableT?>? =
+  fireValidators(validatable, validators, throwableMapper).firstOrNull { it.isLeft }
+
+@JvmSynthetic
 fun <FailureT, ValidatableT> fireValidators(
   validatable: Either<FailureT?, ValidatableT?>,
   validatorEtrs: List<ValidatorEtr<ValidatableT, FailureT>>,
   throwableMapper: (Throwable) -> FailureT?,
 ): List<Either<FailureT?, ValidatableT?>> =
-  validatorEtrs.map { fireValidator(it, validatable, throwableMapper) }
+  validatorEtrs.map { fireValidator(validatable, it, throwableMapper) }
 
 @JvmSynthetic
 fun <FailureT, ValidatableT> fireValidator(
-  validatorEtr: ValidatorEtr<ValidatableT, FailureT>,
   validatable: Either<FailureT?, ValidatableT?>,
+  validatorEtr: ValidatorEtr<ValidatableT, FailureT>,
   throwableMapper: (Throwable) -> FailureT?,
 ): Either<FailureT?, ValidatableT?> =
   liftTry(validatorEtr).apply(validatable)
@@ -31,7 +39,7 @@ fun <FailureT, ValidatableT> fireValidator(
 @JvmSynthetic
 fun <FailureT> validateBatchSize(
   validatables: Collection<*>,
-  headerConfig: HeaderValidationConfig<*, FailureT>
+  headerConfig: HeaderValidationConfig<*, FailureT?>
 ): Optional<FailureT> {
   val minBatchSize = headerConfig.shouldHaveMinBatchSize
   if (minBatchSize != null && validatables.size < minBatchSize._1) {
@@ -43,7 +51,7 @@ fun <FailureT> validateBatchSize(
   } else Optional.empty()
 }
 
-fun <ValidatableT, FailureT> filterNullValidatablesAndDuplicates(
+fun <ValidatableT, FailureT> handleNullValidatablesAndDuplicates(
   validatables: List<ValidatableT?>,
   nullValidatable: FailureT?,
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>
@@ -57,11 +65,7 @@ fun <ValidatableT, FailureT> filterNullValidatablesAndDuplicates(
   val duplicateFinder = batchValidationConfig.findAndFilterDuplicatesWith
   val keyMapperForDuplicates = duplicateFinder ?: identity()
   val groups = validatables.withIndex().groupBy { (_, validatable) ->
-    if (validatable == null) null else Optional.ofNullable(
-      keyMapperForDuplicates.apply(
-        validatable
-      )
-    )
+    if (validatable == null) null else Optional.ofNullable(keyMapperForDuplicates.apply(validatable))
   }
   val invalids: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
     groups[null]?.map { (index, _) -> index to left(nullValidatable) } ?: emptyList()
@@ -78,8 +82,7 @@ fun <ValidatableT, FailureT> filterNullValidatablesAndDuplicates(
     groups[Optional.empty()]?.map { (index, validatable) ->
       index to if (failureForNullKeys == null) right(validatable) else left(failureForNullKeys)
     } ?: emptyList()
-  val partition =
-    groups.filterKeys { it != null && it.isPresent }.values.partition { it.size == 1 }
+  val partition = groups.filterKeys { it != null && it.isPresent }.values.partition { it.size == 1 }
   val failureForDuplicate = batchValidationConfig.andFailDuplicatesWith
   val duplicates: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
     failureForDuplicate?.let {
@@ -92,7 +95,7 @@ fun <ValidatableT, FailureT> filterNullValidatablesAndDuplicates(
     .map { it.second }
 }
 
-fun <ValidatableT, FailureT> filterNullValidatablesAndDuplicatesForAllOrNone(
+fun <ValidatableT, FailureT> findFistNullValidatableOrDuplicate(
   validatables: List<ValidatableT?>,
   nullValidatable: FailureT?,
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>
@@ -105,8 +108,7 @@ fun <ValidatableT, FailureT> filterNullValidatablesAndDuplicatesForAllOrNone(
   }
   val duplicateFinder = batchValidationConfig.findAndFilterDuplicatesWith
   val keyMapperForDuplicates = duplicateFinder ?: identity()
-  val groups = validatables
-    .groupBy { if (it == null) null else Optional.ofNullable(keyMapperForDuplicates.apply(it)) }
+  val groups = validatables.groupBy { if (it == null) null else Optional.ofNullable(keyMapperForDuplicates.apply(it)) }
   val invalids = groups[null]
   if (invalids != null && invalids.isNotEmpty()) {
     return Optional.ofNullable(nullValidatable)
@@ -122,16 +124,3 @@ fun <ValidatableT, FailureT> filterNullValidatablesAndDuplicatesForAllOrNone(
   }
   return Optional.empty()
 }
-
-@JvmSynthetic
-internal fun <FailureT, ValidatableT> findFirstFailure(
-  validatable: Either<FailureT?, ValidatableT?>,
-  validationConfig: BaseValidationConfig<ValidatableT, FailureT>,
-  throwableMapper: (Throwable) -> FailureT?,
-): Either<FailureT?, ValidatableT?> =
-  fireValidators(
-    validatable,
-    toValidators(validationConfig),
-    throwableMapper
-  ).firstOrNull { it.isLeft }
-    ?: validatable

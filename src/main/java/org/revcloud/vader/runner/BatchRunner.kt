@@ -10,48 +10,41 @@ import org.revcloud.vader.types.validators.Validator
 import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
-fun <FailureT, ValidatableT> validateAndFailFast(
+fun <FailureT, ValidatableT> validateAndFailFastForEach(
   validatables: List<ValidatableT>,
   nullValidatable: FailureT?,
-  throwableMapper: (Throwable) -> FailureT?,
-  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>
+  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
+  throwableMapper: (Throwable) -> FailureT?
 ): List<Either<FailureT?, ValidatableT?>> =
-  failFastForBatch(nullValidatable, throwableMapper, batchValidationConfig)(validatables)
+  failFastForEach(batchValidationConfig, nullValidatable, throwableMapper)(validatables)
 
-fun <FailureT, ValidatableT, PairT> validateAndFailFast(
+fun <FailureT, ValidatableT, PairT> validateAndFailFastForEach(
   validatables: List<ValidatableT>,
   invalidValidatable: FailureT,
-  throwableMapper: (Throwable) -> FailureT?,
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
-  pairForInvalidMapper: (ValidatableT) -> PairT?
+  pairForInvalidMapper: (ValidatableT) -> PairT?,
+  throwableMapper: (Throwable) -> FailureT?
 ): List<Either<Tuple2<PairT?, FailureT?>, ValidatableT?>> {
   val orderedValidationResults =
-    validateAndFailFast(
+    validateAndFailFastForEach(
       validatables,
       invalidValidatable,
-      throwableMapper,
-      batchValidationConfig
+      batchValidationConfig,
+      throwableMapper
     )
   return orderedValidationResults.zip(validatables)
     .map { (result, validatable) ->
-      result.mapLeft {
-        Tuple.of(
-          pairForInvalidMapper(validatable),
-          it
-        )
-      }
+      result.mapLeft { Tuple.of(pairForInvalidMapper(validatable), it) }
     }
 }
 
-fun <FailureT, ValidatableT> validateAndFailFastAllOrNone(
+fun <FailureT, ValidatableT> validateAndFailFastForAll(
   validatables: List<ValidatableT>,
   invalidValidatable: FailureT,
-  throwableMapper: (Throwable) -> FailureT?,
-  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>
+  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
+  throwableMapper: (Throwable) -> FailureT?
 ): Optional<FailureT> =
-  failFastAllOrNoneForBatch(invalidValidatable, throwableMapper, batchValidationConfig)(
-    validatables
-  )
+  failFastForAll(invalidValidatable, batchValidationConfig, throwableMapper)(validatables)
 
 // --- ERROR ACCUMULATION ---
 // TODO 20/05/21 gopala.akshintala: ValidationConfig integration
@@ -70,11 +63,8 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
   validators: List<Validator<ValidatableT?, FailureT?>>,
   none: FailureT, // TODO 20/05/21 gopala.akshintala: Check on adding InvalidatableT
   throwableMapper: (Throwable) -> FailureT?,
-): List<List<Either<FailureT?, ValidatableT?>>> = validateAndAccumulateErrors(
-  validatables,
-  liftAllToEtr(validators, none),
-  throwableMapper
-)
+): List<List<Either<FailureT?, ValidatableT?>>> =
+  validateAndAccumulateErrors(validatables, liftAllToEtr(validators, none), throwableMapper)
 
 /**
  * Validates a list of validatables against a list of validations, in error-accumulation mode, per validatable.

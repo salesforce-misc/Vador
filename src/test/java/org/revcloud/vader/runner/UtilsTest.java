@@ -6,7 +6,7 @@ import static consumer.failure.ValidationFailure.NULL_KEY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.revcloud.vader.runner.Utils.filterNullValidatablesAndDuplicates;
+import static org.revcloud.vader.runner.Utils.handleNullValidatablesAndDuplicates;
 
 import com.force.swag.id.ID;
 import consumer.failure.ValidationFailure;
@@ -38,7 +38,7 @@ class UtilsTest {
             .prepare();
     final var results =
         List.ofAll(
-            filterNullValidatablesAndDuplicates(
+            handleNullValidatablesAndDuplicates(
                 validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig));
 
     final var failedInvalids = results.take(2);
@@ -72,7 +72,7 @@ class UtilsTest {
             .prepare();
     final var results =
         List.ofAll(
-            filterNullValidatablesAndDuplicates(
+            handleNullValidatablesAndDuplicates(
                 validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig));
 
     assertThat(results).hasSize(5);
@@ -110,7 +110,7 @@ class UtilsTest {
             .prepare();
     final var results =
         List.ofAll(
-            filterNullValidatablesAndDuplicates(
+            handleNullValidatablesAndDuplicates(
                 validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig));
 
     assertThat(results).hasSize(validatables.size() - duplicateValidatables.size());
@@ -150,7 +150,7 @@ class UtilsTest {
             .prepare();
     final var results =
         List.ofAll(
-            filterNullValidatablesAndDuplicates(
+            handleNullValidatablesAndDuplicates(
                 validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig));
 
     assertThat(results).hasSize(validatables.size() - duplicateValidatables.size());
@@ -186,7 +186,7 @@ class UtilsTest {
             .andFailDuplicatesWith(DUPLICATE_ITEM)
             .prepare();
     final var result =
-        Utils.filterNullValidatablesAndDuplicatesForAllOrNone(
+        Utils.findFistNullValidatableOrDuplicate(
             validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
     assertThat(result).contains(NOTHING_TO_VALIDATE);
   }
@@ -203,7 +203,7 @@ class UtilsTest {
             .findAndFilterDuplicatesWith(container -> container.getId().toString())
             .prepare();
     final var result =
-        Utils.filterNullValidatablesAndDuplicatesForAllOrNone(
+        Utils.findFistNullValidatableOrDuplicate(
             validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
     assertThat(result).isEmpty();
   }
@@ -225,7 +225,7 @@ class UtilsTest {
             .andFailNullKeysWith(NULL_KEY)
             .prepare();
     final var result =
-        Utils.filterNullValidatablesAndDuplicatesForAllOrNone(
+        Utils.findFistNullValidatableOrDuplicate(
             validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
     assertThat(result).contains(NULL_KEY);
   }
@@ -244,7 +244,7 @@ class UtilsTest {
             .andFailDuplicatesWith(DUPLICATE_ITEM)
             .prepare();
     final var result =
-        Utils.filterNullValidatablesAndDuplicatesForAllOrNone(
+        Utils.findFistNullValidatableOrDuplicate(
             validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
     assertThat(result).contains(DUPLICATE_ITEM);
   }
@@ -259,7 +259,7 @@ class UtilsTest {
             .andFailDuplicatesWith(DUPLICATE_ITEM)
             .prepare();
     final var result =
-        Utils.filterNullValidatablesAndDuplicatesForAllOrNone(
+        Utils.findFistNullValidatableOrDuplicate(
             validatables.toJavaList(), NOTHING_TO_VALIDATE, batchValidationConfig);
     assertThat(result).isEmpty();
   }

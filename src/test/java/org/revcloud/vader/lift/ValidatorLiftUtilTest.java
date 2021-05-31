@@ -10,7 +10,7 @@ import org.revcloud.vader.types.validators.Validator;
 class ValidatorLiftUtilTest {
 
   @Test
-  void liftSimpleForFailure() {
+  void liftValidatorForFailure() {
     Validator<Parent, ValidationFailure> validator =
         parent -> ValidationFailure.VALIDATION_FAILURE_1;
     final var liftedValidator = ValidatorLiftUtil.liftToEtr(validator, ValidationFailure.NONE);
@@ -20,7 +20,7 @@ class ValidatorLiftUtilTest {
   }
 
   @Test
-  void liftSimpleForNoFailure() {
+  void liftValidatorForNoFailure() {
     Validator<Parent, ValidationFailure> validator = parent -> ValidationFailure.NONE;
     final var liftedValidator = ValidatorLiftUtil.liftToEtr(validator, ValidationFailure.NONE);
     final Parent toBeValidated = new Parent(0, null, null);

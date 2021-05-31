@@ -3,10 +3,12 @@
 package org.revcloud.vader.runner
 
 import io.vavr.Tuple2
+import io.vavr.control.Either
 import org.revcloud.vader.lift.liftAllToEtr
 import org.revcloud.vader.lift.liftToEtr
 import org.revcloud.vader.types.validators.Validator
 import org.revcloud.vader.types.validators.ValidatorEtr
+import java.util.Optional
 
 internal operator fun <T1> Tuple2<T1, *>?.component1(): T1? = this?._1
 internal operator fun <T2> Tuple2<*, T2>?.component2(): T2? = this?._2
@@ -16,3 +18,8 @@ internal fun <ValidatableT, FailureT> fromValidators1(validators: Tuple2<out Col
 
 internal fun <ValidatableT, FailureT> fromValidators2(validators: Map<out Validator<in ValidatableT?, FailureT?>, FailureT?>): List<ValidatorEtr<ValidatableT?, FailureT?>> =
   validators.mapNotNull { (sv, none) -> liftToEtr(sv, none) }
+
+internal fun <FailureT> Either<FailureT?, *>?.toFailureOptional(): Optional<FailureT> {
+  val swapped = this?.swap() ?: return Optional.empty()
+  return if (swapped.isEmpty) Optional.empty() else Optional.ofNullable(swapped.get())
+}

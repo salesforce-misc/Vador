@@ -173,7 +173,7 @@ recorded)
 # 🍭 [Config DSL](docs/configDSLs.md)
 
 # 🤩 [Specs](docs/specs.md) (New in 2.0!)
-## You Specify your validations, Vader generates code for you. 
+## You Specify your validations, Vader generates code for you.
 
 ---
 

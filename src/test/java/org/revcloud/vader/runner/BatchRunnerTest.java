@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.vavr.api.VavrAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.revcloud.vader.runner.BatchRunner.validateAndFailFast;
+import static org.revcloud.vader.runner.BatchRunner.validateAndFailFastForEach;
 
 import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
@@ -42,12 +42,12 @@ class BatchRunnerTest {
             .withValidatorEtrs(validators)
             .prepare();
     final var resultsWithIds =
-        validateAndFailFast(
+        validateAndFailFastForEach(
             validatables,
             NONE,
-            ValidationFailure::getValidationFailureForException,
             batchValidationConfig,
-            Bean::getId);
+            Bean::getId,
+            ValidationFailure::getValidationFailureForException);
 
     final var ids =
         resultsWithIds.stream()
@@ -80,16 +80,16 @@ class BatchRunnerTest {
             .withValidatorEtrs(validators)
             .prepare();
     final var result =
-        BatchRunner.validateAndFailFastAllOrNone(
+        BatchRunner.validateAndFailFastForAll(
             validatables,
             NONE,
-            ValidationFailure::getValidationFailureForException,
-            batchValidationConfig);
+            batchValidationConfig,
+            ValidationFailure::getValidationFailureForException);
     assertThat(result).contains(VALIDATION_FAILURE_1);
   }
 
   @Test
-  void failFastPartialFailuresForSimpleValidators() {
+  void failFastPartialFailuresForValidators() {
     final var validatables =
         List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
     Predicate<Integer> predicateForValidId1 = id -> id >= 2;
@@ -104,11 +104,11 @@ class BatchRunnerTest {
             .withValidators(Tuple.of(validators, NONE))
             .prepare();
     final var results =
-        validateAndFailFast(
+        BatchRunner.validateAndFailFastForEach(
             validatables,
             NONE,
-            ValidationFailure::getValidationFailureForException,
-            batchValidationConfig);
+            batchValidationConfig,
+            ValidationFailure::getValidationFailureForException);
     assertEquals(results.size(), validatables.size());
     assertTrue(results.get(2).isRight());
     assertEquals(results.get(2), Either.right(new Bean(2)));
@@ -123,7 +123,7 @@ class BatchRunnerTest {
   }
 
   @Test
-  void errorAccumulateForSimpleValidators() {
+  void errorAccumulateForValidators() {
     final var validatables =
         List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
     Predicate<Integer> predicateForValidId1 = id -> id >= 2;
@@ -176,7 +176,6 @@ class BatchRunnerTest {
 
   @Value
   private static class Bean {
-
     int id;
   }
 }

@@ -111,6 +111,7 @@ class Spec2Test {
             .orElse(true));
   }
 
+  @DisplayName("More than one Spec 2")
   @Test
   void multiSpec2Test() {
     final Specs<Bean, ValidationFailure> specs =
@@ -133,32 +134,32 @@ class Spec2Test {
 
     final var invalidBean1 = new Bean(1, "a", null, null);
     final var failureResult1 =
-        Runner.validateAndFailFast(
-            invalidBean1, ValidationFailure::getValidationFailureForException, validationConfig);
+        Runner.validateAndFailFastForEach(
+            invalidBean1, validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(failureResult1).contains(INVALID_COMBO_1);
 
     final var invalidBean2 = new Bean(2, "b", null, null);
     final var failureResult2 =
-        Runner.validateAndFailFast(
-            invalidBean2, ValidationFailure::getValidationFailureForException, validationConfig);
+        Runner.validateAndFailFastForEach(
+            invalidBean2, validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(failureResult2).contains(INVALID_COMBO_2);
 
     final var validBean1 = new Bean(1, "one", null, null);
     final var noneResult1 =
-        Runner.validateAndFailFast(
-            validBean1, ValidationFailure::getValidationFailureForException, validationConfig);
+        Runner.validateAndFailFastForEach(
+            validBean1, validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(noneResult1).isEmpty();
 
     final var validBean2 = new Bean(2, "two", null, null);
     final var noneResult2 =
-        Runner.validateAndFailFast(
-            validBean2, ValidationFailure::getValidationFailureForException, validationConfig);
+        Runner.validateAndFailFastForEach(
+            validBean2, validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(noneResult2).isEmpty();
   }
 
   @DisplayName("Provide both ShouldMatchAnyOf and ShouldRelateWith")
   @Test
-  void multiSpec2Test2() {
+  void spec2Test2() {
     final var relateWith =
         Map.of(
             1, Set.of("1", "one"),
@@ -178,20 +179,20 @@ class Spec2Test {
             .prepare();
     final var invalidBean1 = new Bean(1, "a", null, null);
     final var failureResult1 =
-        Runner.validateAndFailFast(
-            invalidBean1, ValidationFailure::getValidationFailureForException, validationConfig);
+        Runner.validateAndFailFastForEach(
+            invalidBean1, validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(failureResult1).contains(INVALID_COMBO_1);
 
     final var invalidBean2 = new Bean(1, "one", null, null);
     final var failureResult2 =
-        Runner.validateAndFailFast(
-            invalidBean2, ValidationFailure::getValidationFailureForException, validationConfig);
+        Runner.validateAndFailFastForEach(
+            invalidBean2, validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(failureResult2).isEmpty();
 
     final var invalidBean3 = new Bean(1, "1", null, null);
     final var failureResult3 =
-        Runner.validateAndFailFast(
-            invalidBean3, ValidationFailure::getValidationFailureForException, validationConfig);
+        Runner.validateAndFailFastForEach(
+            invalidBean3, validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(failureResult3).isEmpty();
   }
 

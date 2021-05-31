@@ -48,7 +48,7 @@ internal fun <ValidatableT> BaseValidationConfig<ValidatableT, *>.getNonRequired
   beanClass: Class<ValidatableT>
 ): Set<String> =
   (
-    absentOrHaveValidSFIdFieldsOrFailWith.keys + (
+    absentOrHaveValidSFIdFormatOrFailWith.keys + (
       absentOrHaveValidSFIdFormatOrFailWithFn?._1
         ?: emptyList()
       )

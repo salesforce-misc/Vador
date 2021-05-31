@@ -53,7 +53,7 @@ internal fun <ValidatableT, FailureT> toValidators(validationConfig: BaseValidat
         isSFIdPresentAndValidFormat
       ) +
       toValidatorEtrs1(
-        validationConfig.absentOrHaveValidSFIdFieldsOrFailWith,
+        validationConfig.absentOrHaveValidSFIdFormatOrFailWith,
         isSFIdAbsentOrValidFormat
       ) +
       toValidatorEtrs2(

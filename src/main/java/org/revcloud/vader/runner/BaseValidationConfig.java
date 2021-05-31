@@ -42,9 +42,9 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
           @NonNull Function2<String, ID, FailureT>>
       shouldHaveValidSFIdFormatOrFailWithFn;
 
-  @Singular("absentOrHaveValidSFIdFieldsOrFailWith")
+  @Singular("absentOrHaveValidSFIdFormatOrFailWith")
   protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT>
-      absentOrHaveValidSFIdFieldsOrFailWith;
+      absentOrHaveValidSFIdFormatOrFailWith;
 
   @Nullable
   protected Tuple2<
