@@ -131,7 +131,8 @@ class HeaderValidationConfigTest {
         .containsExactly(Fields.batch1, Fields.batch2);
   }
 
-  @DisplayName("Nested batch with Failure in deepest level `Header1Nested -> List<Header2> -> List<Bean1> (^^^UNKNOWN_EXCEPTION)`")
+  @DisplayName(
+      "Nested batch with Failure in deepest level `Header1Nested -> List<Header2> -> List<Bean1> (^^^UNKNOWN_EXCEPTION)`")
   @Test
   void nestedBatchHeader1() {
     final var header1NestedValidationConfig =
@@ -161,24 +162,26 @@ class HeaderValidationConfigTest {
     final List<String> strBatch1 = Collections.emptyList();
     final var header1Nested = new Header1Nested(headerBatch2, strBatch1);
 
-    final var result = validateAndFailFastForHeader(header1Nested, header1NestedValidationConfig, throwableMapper)
-        .or(
-            () ->
-                validateAndFailFastForHeader(
-                    headerBatch2, header2ValidationConfig1, throwableMapper)
-                    .or(
-                        () ->
-                            validateAndFailFastForHeader(
-                                beanBatch2, beanBatch2ValidationConfig, throwableMapper)))
-        .or(
-            () ->
-                validateAndFailFastForHeader(
-                    strBatch1, strBatch1ValidationConfig, throwableMapper));
+    final var result =
+        validateAndFailFastForHeader(header1Nested, header1NestedValidationConfig, throwableMapper)
+            .or(
+                () ->
+                    validateAndFailFastForHeader(
+                            headerBatch2, header2ValidationConfig1, throwableMapper)
+                        .or(
+                            () ->
+                                validateAndFailFastForHeader(
+                                    beanBatch2, beanBatch2ValidationConfig, throwableMapper)))
+            .or(
+                () ->
+                    validateAndFailFastForHeader(
+                        strBatch1, strBatch1ValidationConfig, throwableMapper));
 
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
-  @DisplayName("Nested batch with Failure in level 2 Header `Header1Nested -> List<Header2> (^^^MIN_BATCH_SIZE_NOT_MET)`")
+  @DisplayName(
+      "Nested batch with Failure in level 2 Header `Header1Nested -> List<Header2> (^^^MIN_BATCH_SIZE_NOT_MET)`")
   @Test
   void nestedBatchHeader2() {
     final var header1NestedValidationConfig =
@@ -209,19 +212,20 @@ class HeaderValidationConfigTest {
     final List<String> strBatch1 = Collections.emptyList();
     final var header1Nested = new Header1Nested(headerBatch2, strBatch1);
 
-    final var result = validateAndFailFastForHeader(header1Nested, header1NestedValidationConfig, throwableMapper)
-        .or(
-            () ->
-                validateAndFailFastForHeader(
-                    headerBatch2, header2ValidationConfig1, throwableMapper)
-                    .or(
-                        () ->
-                            validateAndFailFastForHeader(
-                                beanBatch2, beanBatch2ValidationConfig, throwableMapper)))
-        .or(
-            () ->
-                validateAndFailFastForHeader(
-                    strBatch1, strBatch1ValidationConfig, throwableMapper));
+    final var result =
+        validateAndFailFastForHeader(header1Nested, header1NestedValidationConfig, throwableMapper)
+            .or(
+                () ->
+                    validateAndFailFastForHeader(
+                            headerBatch2, header2ValidationConfig1, throwableMapper)
+                        .or(
+                            () ->
+                                validateAndFailFastForHeader(
+                                    beanBatch2, beanBatch2ValidationConfig, throwableMapper)))
+            .or(
+                () ->
+                    validateAndFailFastForHeader(
+                        strBatch1, strBatch1ValidationConfig, throwableMapper));
 
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
   }
