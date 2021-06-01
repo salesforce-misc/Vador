@@ -6,30 +6,39 @@ import io.vavr.Tuple
 import io.vavr.Tuple2
 import io.vavr.control.Either
 import org.revcloud.vader.lift.liftAllToEtr
+import org.revcloud.vader.types.failure.FFBatchOfBatchFailure
 import org.revcloud.vader.types.validators.Validator
 import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
 fun <FailureT, ValidatableT> validateAndFailFastForEach(
   validatables: List<ValidatableT>,
-  nullValidatable: FailureT?,
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
+  nullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
 ): List<Either<FailureT?, ValidatableT?>> =
   failFastForEach(batchValidationConfig, nullValidatable, throwableMapper)(validatables)
 
+fun <FailureT, ContainerValidatableT, MemberValidatableT> validateAndFailFastForEach(
+  validatables: List<ContainerValidatableT>,
+  batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
+  nullValidatable: FailureT?,
+  throwableMapper: (Throwable) -> FailureT?
+): List<Either<FFBatchOfBatchFailure<FailureT?>, ContainerValidatableT?>> =
+  failFastForEach(batchOfBatch1ValidationConfig, nullValidatable, throwableMapper)(validatables)
+
 fun <FailureT, ValidatableT, PairT> validateAndFailFastForEach(
   validatables: List<ValidatableT>,
-  invalidValidatable: FailureT,
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
   pairForInvalidMapper: (ValidatableT) -> PairT?,
+  nullValidatable: FailureT,
   throwableMapper: (Throwable) -> FailureT?
 ): List<Either<Tuple2<PairT?, FailureT?>, ValidatableT?>> {
   val orderedValidationResults =
     validateAndFailFastForEach(
       validatables,
-      invalidValidatable,
       batchValidationConfig,
+      nullValidatable,
       throwableMapper
     )
   return orderedValidationResults.zip(validatables)
@@ -38,13 +47,13 @@ fun <FailureT, ValidatableT, PairT> validateAndFailFastForEach(
     }
 }
 
-fun <FailureT, ValidatableT> validateAndFailFastForAll(
+fun <FailureT, ValidatableT> validateAndFailFastForAny(
   validatables: List<ValidatableT>,
-  invalidValidatable: FailureT,
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
+  nullValidatable: FailureT,
   throwableMapper: (Throwable) -> FailureT?
 ): Optional<FailureT> =
-  failFastForAll(invalidValidatable, batchValidationConfig, throwableMapper)(validatables)
+  failFastForAny(nullValidatable, batchValidationConfig, throwableMapper)(validatables)
 
 // --- ERROR ACCUMULATION ---
 // TODO 20/05/21 gopala.akshintala: ValidationConfig integration

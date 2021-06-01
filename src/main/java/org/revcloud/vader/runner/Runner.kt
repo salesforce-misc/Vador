@@ -28,7 +28,7 @@ fun <FailureT, ValidatableT> validateAndFailFastForHeader(
 
 fun <FailureT, ValidatableT> validateAndFailFastForEach(
   validatable: ValidatableT,
-  validationConfig: ValidationConfig<ValidatableT, FailureT>,
+  validationConfig: ValidationConfig<ValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): Optional<FailureT> = failFast(validationConfig, throwableMapper)(validatable)
 

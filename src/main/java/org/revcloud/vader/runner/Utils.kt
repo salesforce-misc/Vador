@@ -51,16 +51,16 @@ fun <FailureT> validateBatchSize(
   } else Optional.empty()
 }
 
-fun <ValidatableT, FailureT> handleNullValidatablesAndDuplicates(
-  validatables: List<ValidatableT?>,
+internal fun <ValidatableT, FailureT> handleNullValidatablesAndDuplicates(
+  validatables: Collection<ValidatableT?>,
   nullValidatable: FailureT?,
-  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>
+  batchValidationConfig: BaseBatchValidationConfig<ValidatableT, FailureT?>
 ): List<Either<FailureT?, ValidatableT?>> {
   if (validatables.isEmpty()) {
     return emptyList()
   } else if (validatables.size == 1) {
-    val validatable = validatables[0]
-    return if (validatable == null) listOf(left(nullValidatable)) else listOf(right(validatables[0]))
+    val onlyValidatable = validatables.first()
+    return if (onlyValidatable == null) listOf(left(nullValidatable)) else listOf(right(onlyValidatable))
   }
   val duplicateFinder = batchValidationConfig.findAndFilterDuplicatesWith
   val keyMapperForDuplicates = duplicateFinder ?: identity()
@@ -95,16 +95,16 @@ fun <ValidatableT, FailureT> handleNullValidatablesAndDuplicates(
     .map { it.second }
 }
 
-fun <ValidatableT, FailureT> findFistNullValidatableOrDuplicate(
-  validatables: List<ValidatableT?>,
+internal fun <ValidatableT, FailureT> findFistNullValidatableOrDuplicate(
+  validatables: Collection<ValidatableT?>,
   nullValidatable: FailureT?,
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>
 ): Optional<FailureT> {
   if (validatables.isEmpty()) {
     return Optional.empty()
   } else if (validatables.size == 1) {
-    val validatable = validatables[0]
-    return if (validatable == null) Optional.ofNullable(nullValidatable) else Optional.empty()
+    val onlyValidatable = validatables.first()
+    return if (onlyValidatable == null) Optional.ofNullable(nullValidatable) else Optional.empty()
   }
   val duplicateFinder = batchValidationConfig.findAndFilterDuplicatesWith
   val keyMapperForDuplicates = duplicateFinder ?: identity()

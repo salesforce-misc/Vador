@@ -22,106 +22,13 @@
 
 ---
 
-## Why a new Framework for Bean validation?
-
-When shopping for Bean validation frameworks, we stumbled-upon these well-known ones:
-
-- [Java Bean validation](https://www.baeldung.com/javax-validation): This is only suitable for simple data validations
-  like `@NotNull, @Min, @Max`.
-- [Spring Bean validation](https://reflectoring.io/bean-validation-with-spring-boot/): It comes with a lot of *
-  Spring-baggage* and works with Spring REST. But we predominantly use Connect framework on core.
-
-## Problem with `@Annotation` based validators
-
-Annotations are reflection based, and they create a lot of *runtime magic*. They are not bad in-general, but using them
-for validations has these cons:
-
-- It's difficult to debug as you wouldn't know which `AnnotationProcessor` handles which `@Annotation` unless the
-  Javadoc writer of that Annotation is gracious to provide those details.
-- You can't use a simple *⌘+Click* to know what's going on underneath anymore.
-- Annotations offer limited type-safety. It’s not possible to specify contextual requirements. Any annotation can go any
-  type.
-- Use of Reflections for Annotations also incur a runtime cost.
-- Annotations are not testable.
-
-Let's understand what kind of validations can services that belong to the same domain have.
-
-## Service validations that belong to a Domain
-
-We have a group of services under Payments-Platform domain, such as - Authorization, Capture, Refund, Void. Similar
-service groups exist in Tax, Billing, Invoice domains too. All of these are REST-APIs that accept JSON payload. Services
-that support *batch* accept list of JSON sub-requests. A simplified version of a batch payload looks like this:
-
-```jsonc
-[
-    {
-        "amount": 99,
-        "accountId": "{{validAccountId}}",
-        ...,
-        "paymentMethod": {
-            ...
-        },
-        ...
-    },
-    {
-        "amount": 77,
-        "accountId": "{{validAccountId}}",
-        ...,
-        "paymentMethod": {
-            ...
-        },
-        ...
-    }
-]
-```
-
-This JSON structure gets marshaled into a *Bean/POJO*, which needs to be validated at the entry point of our application
-layer. Since all services in this domain deal with similar fields, they have a lot of common fields
-like `amount, accountId` etc., as well as common member nodes like `paymentMethod` in their structure. Based on the type
-of field, there exist 4 kinds of validations. E.g.:
-
-- _Data validations_ - to validate data integrity for fields like `amount`.
-- _Effectful validations_ - for fields like `accountId`, which involves a DB read to verify.
-- _Common Validations_ - for common fields that exist across services, such as `amount`, `accountId`
-  .
-- _Nested Validations_ - for the member nodes like `paymentMethod` . These nested members share an
-  Aggregation/Composition relationship with their container and have validations of their own. A service in the same
-  domain may reuse this data-struture in its payload. Such service, along with it's own validations, needs to execute
-  all the validations of this nested member.
-
-### Requirements for Validation Orchestration
-
-Now that we talked about types of validations, let's understand the requirements for validation orchestration (how to
-execute these validations).
-
-- **Share Validations:** Instead of rewriting, Share Common and Nested Validations among services that share payload
-  structure.
-- **2 Routes - 2 execution Strategies:** Our database entities can be CRUD through two routes i.e., **Connect** and **
-  SObject**. They both need to be guarded with Validations. But the tricky part is - the Connect route needs to *
-  fail-fast*, while the SObject needs *error-accumulation*.
-- **Configure Validation Order for Fail-fast:** Way to configure Cheaper validations first and Costlier later. Costlier
-  validations can include Effectful validations, so we need to fail-fast and avoid unnecessary DB calls.
-- **Partial failures for Batch APIs:**  An aggregated error response for failed sub-requests can only be sent after
-  valid requests are processed through multiple layers of the application. We have to hold on to the invalid
-  sub-requests till the end and skip them from processing.
-- **Meta-requirements:**
-  - Accommodate a century of validations across a domain
-  - Unit testability for Validations
-  - No compromise on Performance
-
-> And so, **Vader** is born!!
->
-> 🔊 [The birth of Lord Vader](https://www.youtube.com/watch?v=49WFdDIFlAs) playing in the background
-
-![inline](images/birth-of-vader.gif)
-
----
-
 # Why Vader?
 
-On core, validation orchestration is predominantly done with `if-else-try-catch` pyramids, similar
-to [this]([railway-oriented-validation/ImperativeValidation.java at master · overfullstack/railway-oriented-validation (github.com)](https://github.com/overfullstack/railway-oriented-validation/blob/master/src/main/java/app/imperative/ImperativeValidation.java))
-. A domain may have more than 60 validations across its batch & non-batch services. Having validations as loose
+## [Requirements that lead to the birth of Vader](docs/requirements.md)
+
+On core, there is no defacto standard to write bean validations. Generally, validation orchestration is predominantly done with `if-else-try-catch` pyramids, similar
+to [this]([railway-oriented-validation/ImperativeValidation.java at master · overfullstack/railway-oriented-validation (github.com)](https://github.com/overfullstack/railway-oriented-validation/blob/master/src/main/java/app/imperative/ImperativeValidation.java)).
+A domain may have more than 60 validations across its batch & non-batch services. Having validations as loose
 functions for the above requirements, can create a mess of function calls:
 
 ![inline](images/function-call-mess.png)
@@ -134,11 +41,12 @@ code-base which is difficult to test, extend and maintain.
 
 This problem is a 3-dimensional design problem stretching among - Sub-requests, Service routes (
 sharing common fields & nodes), and Validation count. In the above imperative approach, we entangled all 3, which lead
-to chaos. We need a design, which treats all of these separately, let them extend independently, and abstracts out
-validation sequencing and orchestration. **We need to separate *
-What-to-do* from *How-to-do.***
+to chaos. We need a design, which treats all of these separately, let them be extended independently, and abstracts out
+validation sequencing and orchestration.
 
-### Prove it!
+**We need to separate *What-to-do* from *How-to-do.***
+
+### Demo pls!
 
 Watch this Tech-talk as a prerequisite to understanding, why `if-else-try-catch` is easy to start but difficult to
 manage and how Vader disciplines your code-base:
@@ -164,13 +72,13 @@ recorded)
 
 # TL;DR Show me the code
 
-### [billing-services](https://codesearch.data.sfdc.net/source/xref/app_main_core/app/main/core/billing-services/java/src/core/billing/service/billingschedule/config/BillingScheduleConfig.java#166)
+### [billing-services](https://codesearch.data.sfdc.net/source/xref/app_main_core/app/main/core/billing-services/java/src/core/billing/service/billingschedule/config/BillingScheduleConfig.java#261)
 
 ---
 
 # New in 2.0
 
-# 🍭 [Config DSL](docs/configDSLs.md)
+# 🍭 [Config DSLs](docs/configDSLs.md)
 
 # 🤩 [Specs](docs/specs.md) (New in 2.0!)
 ## You Specify your validations, Vader generates code for you.
@@ -209,14 +117,14 @@ returns a failure `FailureT`. This is prefixed *Simple* as it works with Simple 
 
 ```java
 public static final Validator<Container, ValidationFailure> validation1 =
-        containerInputRepresentation-> {
-            if(containerInputRepresentation._isSetPaymentAuthorizationId()){
-                return null;
-            }else{
-                return new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING,FIELD_NULL_OR_EMPTY,
-                ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID);
-            }
-        };
+  containerInputRepresentation -> {
+    if(containerInputRepresentation._isSetPaymentAuthorizationId()) {
+      return null;
+    } else{
+      return new ValidationFailure(ApiErrorCodes.REQUIRED_FIELD_MISSING,FIELD_NULL_OR_EMPTY,
+      ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID);
+    }
+  };
 ```
 
 ### If you need more ⚡️Power⚡️
@@ -227,7 +135,7 @@ public static final Validator<Container, ValidationFailure> validation1 =
 
 ### Either Monad
 
-Unlike Simple validator types (which work with Simple input/output types), these Data types work with `Either` types as
+Unlike `Validator` type (which works with Simple input/output types), `ValidatorEtr` lambda type works with `Either` type as
 input/output. The `Either` type is borrowed from [Vavr](https://docs.vavr.io/#_either).
 
 ### What's so powerful about `Either`?
@@ -248,11 +156,11 @@ keep it in the *left* state. If the `Either` in the result is in the *right* sta
 Passed** the validation. The wildcard `?` signifies it doesn't matter what is the value in the right state.
 
 ```java
-public static final ValidatorEtr<Container, ValidationFailure> batchValidation1=
-        containerInputRepresentation->containerInputRepresentation
-        .filterOrElse(Container::_isSetAccountId,ignore->new ValidationFailure(
-        ApiErrorCodes.REQUIRED_FIELD_MISSING,FIELD_NULL_OR_EMPTY,
-        ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID));
+public static final ValidatorEtr<Container, ValidationFailure> batchValidation1 =
+  containerInputRepresentation -> containerInputRepresentation
+    .filterOrElse(Container::_isSetAccountId, ignore-> new ValidationFailure(
+    ApiErrorCodes.REQUIRED_FIELD_MISSING,FIELD_NULL_OR_EMPTY,
+    ERROR_LABEL_PARAM_PAYMENT_AUTHORIZATION_ID));
 ```
 
 ⚠️ Of-course, pre-wrapping into `Either` is just to avoid boiler-plate. You can very well use `Validator` and
@@ -284,22 +192,21 @@ But there's a catch! A List of Validators for a container node consists of a mix
 nested member validators. But they can't be put under one `List`, as they are functions on different Data Types.
 
 ```java
-ValidatorEtr<Container, ValidationFailure> containerValidator=... // Apply same anology for Validator
-        ValidatorEtr<Member, ValidationFailure> memberValidator=...
-
-        List.of(containerValidator,memberValidator); // ^^^ Compile Error
+ValidatorEtr<Container, ValidationFailure> containerValidator =...; // Apply same anology for Validator
+ValidatorEtr<Member, ValidationFailure> memberValidator =...;
+List.of(containerValidator, memberValidator); // ^^^ Compile Error
 ```
 
 So all nested member validations need to be lifted to the container type, essentially changing their type matching with
 the Container's, like: `ValidatorEtr<Container, ValidationFailure>`.
 
-We can achieve this with **Higher-Order Functions**, which **lift** member validator to the container type. This takes
+We can achieve this with `org.revcloud.vader.lift.*Util` functions. These are **Higher-Order Functions**, which **lift** member validator to the container type. This takes
 a `containerToMemberMapper` which is function to extract member from container.
 
 ```java
-ValidatorEtr<Member, ValidationFailure> memberValidator=...
-        ValidatorEtr<Container, ValidationFailure> liftedMemberValidator=
-        liftToContainerValidatorType(memberValidator,containerToMemberMapper)
+ValidatorEtr<Member, ValidationFailure> memberValidator =...;
+ValidatorEtr<Container, ValidationFailure> liftedMemberValidator =...;
+List.of(containerValidator, liftToContainerValidatorType(memberValidator,containerToMemberMapper)); // Happy Compiler :)
 ```
 
 **This is a powerful technique, which lets you validate any Bean with any level or nesting. It's easy to fit this model
@@ -308,7 +215,7 @@ in our heads, as validator configuration aligns with Bean hierarchical-structure
 ![inline](images/hierarchical-validation.png)
 
 This way, we can configure a **Chain** of validators in-order, sorting out all the container-member dependencies. This
-is nothing but the most popular **Chain of Responsibility** Design pattern, with a functional touch.
+is nothing but, the most popular **Chain of Responsibility** Design pattern, with a functional touch-up.
 
 If the inter-dependencies between Container-Member happens to be more complex, we may end-up with *
 Graph* relationship, but we can easily *flatten* it into a Chain with a simple *Topological Sort*.

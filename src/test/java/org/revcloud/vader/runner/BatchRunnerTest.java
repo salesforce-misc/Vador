@@ -44,9 +44,9 @@ class BatchRunnerTest {
     final var resultsWithIds =
         validateAndFailFastForEach(
             validatables,
-            NONE,
             batchValidationConfig,
             Bean::getId,
+            NONE,
             ValidationFailure::getValidationFailureForException);
 
     final var ids =
@@ -80,10 +80,10 @@ class BatchRunnerTest {
             .withValidatorEtrs(validators)
             .prepare();
     final var result =
-        BatchRunner.validateAndFailFastForAll(
+        BatchRunner.validateAndFailFastForAny(
             validatables,
-            NONE,
             batchValidationConfig,
+            NONE,
             ValidationFailure::getValidationFailureForException);
     assertThat(result).contains(VALIDATION_FAILURE_1);
   }
@@ -106,8 +106,8 @@ class BatchRunnerTest {
     final var results =
         BatchRunner.validateAndFailFastForEach(
             validatables,
-            NONE,
             batchValidationConfig,
+            NONE,
             ValidationFailure::getValidationFailureForException);
     assertEquals(results.size(), validatables.size());
     assertTrue(results.get(2).isRight());
