@@ -27,8 +27,6 @@ public static final SimpleValidator<ReferenceItemBaseInputRepresentation, Valida
 };
 
 public static boolean isValidBillingTermBillingMethodCombo(String billingTerm, String billingMethod) {
-  // If billingTerm is 'OneTime' then billingMethod should be 'OrderAmount'
-  // If billingMethod is 'Evergreen', billingTerm should only be `month`
   return BillingCommonUtil.isBillingTermOneTime(billingTerm) && BillingCommonUtil.isBillingMethodOrderAmount(billingMethod) ||
     BillingCommonUtil.isBillingMethodEvergreen(billingMethod) && BillingCommonUtil.isBillingTermMonth(billingTerm);
 }
@@ -57,21 +55,9 @@ void invalidBillingMethodBillingTermComboFails() {
   inputRep.setBillingTerm(BillingTermEnum.OneTime);
   inputRep.setBillingMethod(BillingMethodEnum.Evergreen);     
   var expectedResult = ofFieldIntegrity(
-          getErrorMessageWithParams(BillingValidationErrorMessage.INVALID_BILLING_TERM_BILLING_METHOD_COMBO, new String[]{
-                  String.valueOf(inputRep.getBillingTerm()),
-                  String.valueOf(inputRep.getBillingMethod())}));
-  Assertions.assertEquals(expectedResult,    ReferenceBaseItemValidator.billingMethodBillingTermCombo.unchecked().apply(inputRep));
-}
-
-@Test
-void invalidBillingMethodBillingTermComboFails() {
-  var inputRep = new ReferenceEntityItemInputRepresentation();
-  inputRep.setBillingTerm(BillingTermEnum.OneTime);
-  inputRep.setBillingMethod(BillingMethodEnum.Evergreen);     
-  var expectedResult = ofFieldIntegrity(
-          getErrorMessageWithParams(BillingValidationErrorMessage.INVALID_BILLING_TERM_BILLING_METHOD_COMBO, new String[]{
-                  String.valueOf(inputRep.getBillingTerm()),
-                  String.valueOf(inputRep.getBillingMethod())}));
+      getErrorMessageWithParams(BillingValidationErrorMessage.INVALID_BILLING_TERM_BILLING_METHOD_COMBO, new String[]{
+              String.valueOf(inputRep.getBillingTerm()),
+              String.valueOf(inputRep.getBillingMethod())}));
   Assertions.assertEquals(expectedResult, ReferenceBaseItemValidator.billingMethodBillingTermCombo.unchecked().apply(inputRep));
 }
 
@@ -81,9 +67,9 @@ void invalidBillingMethodBillingTermComboFails() {
   inputRep.setBillingTerm(BillingTermEnum.OneTime);
   inputRep.setBillingMethod(BillingMethodEnum.Evergreen);     
   var expectedResult = ofFieldIntegrity(
-          getErrorMessageWithParams(BillingValidationErrorMessage.INVALID_BILLING_TERM_BILLING_METHOD_COMBO, new String[]{
-                  String.valueOf(inputRep.getBillingTerm()),
-                  String.valueOf(inputRep.getBillingMethod())}));
+        getErrorMessageWithParams(BillingValidationErrorMessage.INVALID_BILLING_TERM_BILLING_METHOD_COMBO, new String[]{
+                String.valueOf(inputRep.getBillingTerm()),
+                String.valueOf(inputRep.getBillingMethod())}));
   Assertions.assertEquals(expectedResult, ReferenceBaseItemValidator.billingMethodBillingTermCombo.unchecked().apply(inputRep));
 }
 
@@ -93,38 +79,61 @@ void invalidBillingMethodBillingTermComboFails() {
   inputRep.setBillingTerm(BillingTermEnum.OneTime);
   inputRep.setBillingMethod(BillingMethodEnum.Evergreen);     
   var expectedResult = ofFieldIntegrity(
-          getErrorMessageWithParams(BillingValidationErrorMessage.INVALID_BILLING_TERM_BILLING_METHOD_COMBO, new String[]{
-                  String.valueOf(inputRep.getBillingTerm()),
-                  String.valueOf(inputRep.getBillingMethod())}));
+      getErrorMessageWithParams(BillingValidationErrorMessage.INVALID_BILLING_TERM_BILLING_METHOD_COMBO, new String[]{
+              String.valueOf(inputRep.getBillingTerm()),
+              String.valueOf(inputRep.getBillingMethod())}));
+  Assertions.assertEquals(expectedResult, ReferenceBaseItemValidator.billingMethodBillingTermCombo.unchecked().apply(inputRep));
+}
+
+@Test
+void invalidBillingMethodBillingTermComboFails() {
+  var inputRep = new ReferenceEntityItemInputRepresentation();
+  inputRep.setBillingTerm(BillingTermEnum.OneTime);
+  inputRep.setBillingMethod(BillingMethodEnum.Evergreen);     
+  var expectedResult = ofFieldIntegrity(
+        getErrorMessageWithParams(BillingValidationErrorMessage.INVALID_BILLING_TERM_BILLING_METHOD_COMBO, new String[]{
+                String.valueOf(inputRep.getBillingTerm()),
+                String.valueOf(inputRep.getBillingMethod())}));
   Assertions.assertEquals(expectedResult, ReferenceBaseItemValidator.billingMethodBillingTermCombo.unchecked().apply(inputRep));
 }
 ```
 
-**The same Validation through Spec:**
+#### Problems
+- Writing tests for these validations take double the effort of writing code.
+- For similar validations, we need to repeat/duplicate the same algorithmic structure and of-course 2X repetition for tests.
+- In a shared code-based, multiple developers resort to different styles of writing the same type of validations, leading to a spike in *Cognitive Complexity*
+
+> Instead of this ☝🏼, is there a way to just specify my validation, without writing any code?
+
+### Checkout Specs:
+
+**The above validation using a spec**
 
 ```java
 spec._2().nameForTest(BILLING_TERM_BILLING_METHOD_COMBO_SPEC)        
   .when(ReferenceItemBaseInputRepresentation::getBillingMethod)        
   .then(ReferenceItemBaseInputRepresentation::getBillingTerm)        
   .shouldRelateWith(BILLING_METHOD_BILLING_TERM_COMBO)        
-  .orFailWithFn((bt, bm) -> 	    ofFieldIntegrity(getErrorMessageWithParams(INVALID_BILLING_TERM_BILLING_METHOD_COMBO, bt, bm)))
+  .orFailWithFn((bt, bm) -> ofFieldIntegrity(getErrorMessageWithParams(INVALID_BILLING_TERM_BILLING_METHOD_COMBO, bt, bm)))
 
 // ***!! NO FTESTS/UNIT TESTS REQUIRED FOR THESE SPECS !!*** 🤫
 ```
-
-**🤩 The Spec speaks for itself 🤩**
-
 These Specs go into your DI config (Typically Spring Config on a Core module) and are handed over to Vader for execution
 like below:
 
 ```java
 ValidationConfig<Bean, ValidationFailure> validationConfig =
-    ValidationConfig.<Bean, ValidationFailure>toValidate()
-        .specify(spec -> List.of(spec._1()..., spec_1()..., spec_2()...)
-        .prepare();
-
+  ValidationConfig.<Bean, ValidationFailure>toValidate()
+      .specify(spec -> List.of(spec._1()..., spec_1()..., spec_2()...)
+      .prepare();
 var results = validateAndFailFast(..., validationConfig);
 ```
+
+#### 🤩 Wow!! The Spec speaks for itself 🤩
+
+- No Code/Low code
+- Uniform style in a shared code-base with **0 Cognitive complexity.**
+- You get to reuse a well-tested algorithm behind the scene, [so you needn't write extra tests](#-specs-do-not-need-tests-).
 
 ---
 
@@ -141,15 +150,15 @@ feature:
 Why do we cover validations code with tests?
 
 - *I need Test all branches of my code*
-  - But a Spec has no logic. It’s only a configuration you provide to vader to execute the corresponding well-tested
+  - But, a Spec has no logic. It’s only a configuration you provide to vader to execute the corresponding well-tested
     validation algorithm.
 - *Tests act as a live documentation*
   * Specs are low-code and should be seen as plain sentences. So, they themselves serve as documentation.
 - *Tests give us the confidence to refactor/change without breaking*
-  * Specs work as they are written (unless you have a typo or a *Ctrl+C-Ctrl+V* issue 😉). So, the action “refactor”
+  - Specs work as they are written (unless you have a typo or a *Ctrl+C-Ctrl+V* issue 😉). So, the action “refactor”
     doesn’t apply to Specs.
 - *Hey, but what if I really had a typo or I changed something unintentionally. I need tests to fail and alert me.*
-  * Agreed! tests in these scenarios give us one extra layer of protection. But test your Spec not the implementation
+  - Agreed! tests in these scenarios give us one extra layer of protection. But, test your Spec not the implementation
     behind it. For example:
 
     ```java
@@ -163,19 +172,18 @@ Why do we cover validations code with tests?
     worse can happen at `given` or `orFailWith`. Write a test which _cross-checks_ this configuration, not the algorithm
     behind this Spec, cause it’s already well tested.
 
-    👋🏼 🔜 An out-of-the-box assertion API to delcaratively test your spec configuration is coming-soon
+    >👋🏼 🔜 An out-of-the-box assertion API to declaratively test your spec configuration is coming-soon
 
-  * Above that! are you convinced to double down your Dev efforts (by re-testing well-tested algorithms), just to cover
+  - Above that! are you convinced to double down your Dev efforts (by re-testing well-tested algorithms), just to cover
     Typos? Also, you have other layers of protection too, such as your dev testing, e2e tests, code-review, Blitz, etc.
     What’s the probability that this unfortunate typo slipped through all those layers?
-
-  * As they are written in Java, you can even leverage Compiler for Correctness. It does all the job to make sure your
+  - As they are written in Java, you can even leverage Compiler for Correctness. It does all the job to make sure your
     data types align together. **So, if a Spec compiles it works as written.**
 
-* *I am still not convinced, I need tests!*
-  * First! please help us understand your concerns/use-cases by raising a git.soma issue. If possible, we shall cover
+- *I am still not convinced, I need tests!*
+  - First! please help us understand your concerns/use-cases by raising a git.soma issue. If possible, we shall cover
     your case and help you from the pain of writing tests.
-  * And, why not! we just said you don’t need tests, but who said Specs are not testable? This is how simple it is to
+  - And, why not! we just said you don’t need tests, but who said Specs are not testable? This is how simple it is to
     unit test them:
 
 ```java
@@ -194,7 +202,7 @@ public void invalidBillingTermFails() {
 
 ---
 
-## What’s the Spec I need?
+## What Spec do I need?
 
 Currenly Vader provides 3 types of Specs and their names reflect the arity of fields they deal with. The declarative DSL
 with intuitive method names should guide the develper to construct a Spec.

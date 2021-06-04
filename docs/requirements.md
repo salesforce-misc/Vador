@@ -1,0 +1,93 @@
+# Requirements
+
+## Why a new Framework for Bean validation?
+
+When shopping for Bean validation frameworks, we stumbled-upon these well-known ones:
+
+- [Java Bean validation](https://www.baeldung.com/javax-validation): This is only suitable for simple data validations
+  like `@NotNull, @Min, @Max`.
+- [Spring Bean validation](https://reflectoring.io/bean-validation-with-spring-boot/): It comes with a lot of *
+  Spring-baggage* and works with Spring REST. But we predominantly use Connect framework on core.
+
+## Problem with `@Annotation` based validators
+
+Annotations are reflection based, and they create a lot of *runtime magic*. They are not bad in-general, but using them
+for validations has these cons:
+
+- It's difficult to debug as you wouldn't know which `AnnotationProcessor` handles which `@Annotation` unless the
+  Javadoc writer of that Annotation is gracious to provide those details.
+- You can't use a simple *⌘+Click* to know what's going on underneath anymore.
+- Annotations offer limited type-safety. It’s not possible to specify contextual requirements. Any annotation can go any
+  type.
+- Use of Reflections for Annotations also incur a runtime cost.
+- Annotations are not testable.
+
+Let's understand what kind of validations can services that belong to the same domain have.
+
+## Service validations that belong to a Domain
+
+We have a group of services under Payments-Platform domain, such as - Authorization, Capture, Refund, Void. Similar
+service groups exist in Tax, Billing, Invoice domains too. All of these are REST-APIs that accept JSON payload. Services
+that support *batch* accept list of JSON sub-requests. A simplified version of a batch payload looks like this:
+
+```jsonc
+[
+    {
+        "amount": 99,
+        "accountId": "{{validAccountId}}",
+        ...,
+        "paymentMethod": {
+            ...
+        },
+        ...
+    },
+    {
+        "amount": 77,
+        "accountId": "{{validAccountId}}",
+        ...,
+        "paymentMethod": {
+            ...
+        },
+        ...
+    }
+]
+```
+
+This JSON structure gets marshaled into a *Bean/POJO*, which needs to be validated at the entry point of our application
+layer. Since all services in this domain deal with similar fields, they have a lot of common fields
+like `amount, accountId` etc., as well as common member nodes like `paymentMethod` in their structure. Based on the type
+of field, there exist 4 kinds of validations. E.g.:
+
+- _Data validations_ - to validate data integrity for fields like `amount`.
+- _Effectful validations_ - for fields like `accountId`, which involves a DB read to verify.
+- _Common Validations_ - for common fields that exist across services, such as `amount`, `accountId`
+  .
+- _Nested Validations_ - for the member nodes like `paymentMethod` . These nested members share an
+  Aggregation/Composition relationship with their container and have validations of their own. A service in the same
+  domain may reuse this data-structure in its payload. Such service, along with it's own validations, needs to execute
+  all the validations of this nested member.
+
+### Requirements for Validation Orchestration
+
+Now that we talked about types of validations, let's understand the requirements for validation orchestration (how to
+execute these validations).
+
+- **Share Validations:** Instead of rewriting, Share Common and Nested Validations among services that share payload
+  structure.
+- **2 Routes - 2 execution Strategies:** Our database entities can be CRUD through two routes i.e., **Connect** and **
+  SObject**. They both need to be guarded with Validations. But the tricky part is - the Connect route needs to *fail-fast*, while the SObject needs *error-accumulation*.
+- **Configure Validation Order for Fail-fast:** Way to configure Cheaper validations first and Costlier later. Costlier
+  validations can include Effectful validations, so we need to fail-fast and avoid unnecessary DB calls.
+- **Partial failures for Batch APIs:**  An aggregated error response for failed sub-requests can only be sent after
+  valid requests are processed through multiple layers of the application. We have to hold on to the invalid
+  sub-requests till the end and skip them from processing.
+- **Meta-requirements:**
+  - Accommodate a century of validations across a domain
+  - Unit testability for Validations
+  - No compromise on Performance
+
+> And so, **Vader** is born!!
+>
+> 🔊 [The birth of Lord Vader](https://www.youtube.com/watch?v=49WFdDIFlAs) playing in the background
+
+![inline](images/birth-of-vader.gif)
