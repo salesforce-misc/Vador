@@ -23,3 +23,8 @@ internal fun <FailureT> Either<FailureT?, *>?.toFailureOptional(): Optional<Fail
   val swapped = this?.swap() ?: return Optional.empty()
   return if (swapped.isEmpty) Optional.empty() else Optional.ofNullable(swapped.get())
 }
+
+internal fun <FailureT, PairT> Either<Tuple2<PairT?, FailureT?>, *>?.toFailureWithPairOptional(): Optional<Tuple2<PairT?, FailureT?>> {
+  val swapped = this?.swap() ?: return Optional.empty()
+  return if (swapped.isEmpty) Optional.empty() else Optional.ofNullable(swapped.get())
+}

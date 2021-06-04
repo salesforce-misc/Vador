@@ -1,5 +1,7 @@
 package org.revcloud.vader.runner
 
+import io.vavr.Tuple
+import io.vavr.Tuple2
 import io.vavr.control.Either
 import io.vavr.kotlin.left
 import io.vavr.kotlin.right
@@ -14,6 +16,8 @@ internal typealias FailFastForEachNestedBatch1<ValidatableT, FailureT> = (Collec
 
 internal typealias FailFastForAny<ValidatableT, FailureT> = (Collection<ValidatableT>) -> Optional<FailureT>
 
+internal typealias FailFastForAnyWithPair<ValidatableT, FailureT, PairT> = (Collection<ValidatableT>) -> Optional<Tuple2<PairT?, FailureT?>>
+
 internal typealias FailFastForHeader<ValidatableT, FailureT> = (ValidatableT) -> Optional<FailureT>
 
 /**
@@ -27,7 +31,7 @@ internal typealias FailFastForHeader<ValidatableT, FailureT> = (ValidatableT) ->
  * @return
  */
 @JvmSynthetic
-internal fun <FailureT, ValidatableT> failFast(
+internal fun <ValidatableT, FailureT> failFast(
   validationConfig: ValidationConfig<ValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFast<ValidatableT, FailureT> = { validatable: ValidatableT ->
@@ -56,7 +60,7 @@ internal fun <FailureT, ValidatableT> failFastForEach(
 }
 
 @JvmSynthetic
-internal fun <FailureT, ContainerValidatableT, MemberValidatableT> failFastForEach(
+internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEach(
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
   nullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
@@ -95,9 +99,9 @@ internal fun <FailureT, ContainerValidatableT, MemberValidatableT> failFastForEa
 
 // TODO 13/05/21 gopala.akshintala: Reconsider any advantage of having this as a HOF 
 @JvmSynthetic
-internal fun <FailureT, ValidatableT> failFastForAny(
-  invalidValidatable: FailureT,
+internal fun <ValidatableT, FailureT> failFastForAny(
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
+  invalidValidatable: FailureT,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForAny<ValidatableT, FailureT> = { validatables ->
   findFistNullValidatableOrDuplicate(
@@ -105,7 +109,7 @@ internal fun <FailureT, ValidatableT> failFastForAny(
     invalidValidatable,
     batchValidationConfig
   ).or {
-    validatables.map {
+    validatables.asSequence().map {
       val validatable = right<FailureT?, ValidatableT?>(it)
       findFirstFailure(validatable, toValidators(batchValidationConfig), throwableMapper) ?: validatable
     }.firstOrNull { it.isLeft }.toFailureOptional()
@@ -113,7 +117,7 @@ internal fun <FailureT, ValidatableT> failFastForAny(
 }
 
 @JvmSynthetic
-internal fun <FailureT, ValidatableT> failFastForHeader(
+internal fun <ValidatableT, FailureT> failFastForHeader(
   validationConfig: HeaderValidationConfig<ValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForHeader<ValidatableT, FailureT> = { validatable: ValidatableT ->
@@ -121,5 +125,26 @@ internal fun <FailureT, ValidatableT> failFastForHeader(
   validateBatchSize(batch, validationConfig).or {
     findFirstFailure(right(validatable), validationConfig.headerValidators, throwableMapper)
       .toFailureOptional()
+  }
+}
+
+@JvmSynthetic
+internal fun <ValidatableT, FailureT, PairT> failFastForAny(
+  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
+  pairForInvalidMapper: (ValidatableT?) -> PairT?,
+  invalidValidatable: FailureT,
+  throwableMapper: (Throwable) -> FailureT?
+): FailFastForAnyWithPair<ValidatableT, FailureT, PairT> = { validatables ->
+  findFistNullValidatableOrDuplicate(
+    validatables,
+    pairForInvalidMapper,
+    invalidValidatable,
+    batchValidationConfig
+  ).or {
+    validatables.asSequence().map { validatable ->
+      val validatableEtr = right<FailureT?, ValidatableT?>(validatable)
+      findFirstFailure(validatableEtr, toValidators(batchValidationConfig), throwableMapper)
+        ?.mapLeft { Tuple.of(pairForInvalidMapper(validatable), it) }
+    }.firstOrNull { it?.isLeft == true }.toFailureWithPairOptional()
   }
 }

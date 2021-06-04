@@ -53,7 +53,20 @@ fun <FailureT, ValidatableT> validateAndFailFastForAny(
   nullValidatable: FailureT,
   throwableMapper: (Throwable) -> FailureT?
 ): Optional<FailureT> =
-  failFastForAny(nullValidatable, batchValidationConfig, throwableMapper)(validatables)
+  failFastForAny(batchValidationConfig, nullValidatable, throwableMapper)(validatables)
+
+/**
+ * This returns the first failure of first invalid item in a batch and pairs it with an identifier using the `pairForInvalidMapper`
+ * This can be used for `AllOrNone` scenarios in batch
+ */
+fun <FailureT, ValidatableT, PairT> validateAndFailFastForAny(
+  validatables: List<ValidatableT>,
+  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
+  pairForInvalidMapper: (ValidatableT?) -> PairT?,
+  nullValidatable: FailureT,
+  throwableMapper: (Throwable) -> FailureT?
+): Optional<Tuple2<PairT?, FailureT?>> =
+  failFastForAny(batchValidationConfig, pairForInvalidMapper, nullValidatable, throwableMapper)(validatables)
 
 // --- ERROR ACCUMULATION ---
 // TODO 20/05/21 gopala.akshintala: ValidationConfig integration

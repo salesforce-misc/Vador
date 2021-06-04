@@ -18,7 +18,7 @@ internal fun <FailureT, ValidatableT> accumulationStrategy(
   validators: List<ValidatorEtr<ValidatableT?, FailureT?>>,
   throwableMapper: (Throwable) -> FailureT?,
 ): Accumulation<ValidatableT, FailureT> = {
-  fireValidators(right(it), validators, throwableMapper)
+  fireValidators(right(it), validators, throwableMapper).toList()
 }
 
 internal typealias Accumulation<ValidatableT, FailureT> = (ValidatableT) -> List<Either<FailureT?, ValidatableT?>>

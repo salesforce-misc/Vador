@@ -65,14 +65,14 @@ class BatchRunnerTest {
   }
 
   @Test
-  void failFastAllOrNone() {
+  void failFastForAny() {
     final var validatables =
         List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
     List<ValidatorEtr<Bean, ValidationFailure>> validators =
         List.of(
             bean -> Either.right(true),
-            bean ->
-                bean.map(Bean::getId).filterOrElse(id -> id >= 2, ignore -> VALIDATION_FAILURE_1),
+            bean -> // Fail if id < 2
+            bean.map(Bean::getId).filterOrElse(id -> id >= 2, ignore -> VALIDATION_FAILURE_1),
             bean ->
                 bean.map(Bean::getId).filterOrElse(id -> id <= 2, ignore -> VALIDATION_FAILURE_2));
     final var batchValidationConfig =
@@ -86,6 +86,31 @@ class BatchRunnerTest {
             NONE,
             ValidationFailure::getValidationFailureForException);
     assertThat(result).contains(VALIDATION_FAILURE_1);
+  }
+
+  @Test
+  void failFastForAnyWithIdMapper() {
+    final var validatables =
+        List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
+    List<ValidatorEtr<Bean, ValidationFailure>> validators =
+        List.of(
+            bean -> Either.right(true),
+            bean ->
+                bean.map(Bean::getId).filterOrElse(id -> id >= 0, ignore -> VALIDATION_FAILURE_1),
+            bean ->
+                bean.map(Bean::getId).filterOrElse(id -> id != 2, ignore -> VALIDATION_FAILURE_2));
+    final var batchValidationConfig =
+        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+            .withValidatorEtrs(validators)
+            .prepare();
+    final var result =
+        BatchRunner.validateAndFailFastForAny(
+            validatables,
+            batchValidationConfig,
+            Bean::getId,
+            NONE,
+            ValidationFailure::getValidationFailureForException);
+    assertThat(result).contains(Tuple.of(2, VALIDATION_FAILURE_2));
   }
 
   @Test

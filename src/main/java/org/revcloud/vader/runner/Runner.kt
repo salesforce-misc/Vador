@@ -21,7 +21,7 @@ fun <FailureT, ValidatableT> validateAndFailFastForHeader(
   batchValidatable: Collection<ValidatableT>,
   headerValidationConfig: HeaderValidationConfig<ValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
-): Optional<FailureT> = batchValidatable
+): Optional<FailureT> = batchValidatable.asSequence()
   .map { validatable: ValidatableT ->
     validateAndFailFastForHeader(validatable, headerValidationConfig, throwableMapper)
   }.firstOrNull { it.isPresent } ?: Optional.empty()

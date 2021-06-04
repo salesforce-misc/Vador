@@ -22,11 +22,23 @@
 
 ---
 
+# Artifact Coordinates
+
+```xml
+<dependency>
+    <groupId>com.salesforce.ccspayments</groupId>
+    <artifactId>vader</artifactId>
+    <version>${revcloud.vader.version}</version>
+</dependency>
+```
+
+---
+
 # Why Vader?
 
 ## [Requirements that lead to the birth of Vader](docs/requirements.md)
 
-On core, there is no defacto standard to write bean validations. Generally, validation orchestration is predominantly done with `if-else-try-catch` pyramids, similar
+** On core, there is no defacto standard to write bean validations**. Generally, validation orchestration is predominantly done with `if-else-try-catch` pyramids, similar
 to [this]([railway-oriented-validation/ImperativeValidation.java at master · overfullstack/railway-oriented-validation (github.com)](https://github.com/overfullstack/railway-oriented-validation/blob/master/src/main/java/app/imperative/ImperativeValidation.java)).
 A domain may have more than 60 validations across its batch & non-batch services. Having validations as loose
 functions for the above requirements, can create a mess of function calls:
@@ -238,8 +250,6 @@ These are available for both `Validator` and `ValidatorEtr`.
 | liftToContainerValidatorType | liftAllToContainerValidatorType |
 | liftToContainerValidatorType | liftAllToContainerValidatorType |
 
-
-
 #### Validator Util: To lift Simple validator to ValidatorEtr type
 
 |      |         |
@@ -264,6 +274,8 @@ Please refer to Java Docs)**.
 
 ### `validateAndFailFastForEach(...)`
 
+### `validateAndFailFastForAny(...)`
+
 ### `validateAndAccumulateErrors(...)`
 
 ## What about exceptions?
@@ -276,33 +288,18 @@ function.
 
 # Current State
 
-- This idea was selected to be presented as a Tech-talk on
-  many [International Conferences & Meetups](https://overfullstack.ga/posts/fight-complexity-with-fp/#My-Talk-on-this)
-- This is currently consumed in **Production** by Payments and Tax domains.
-- In 232, we used this in Billing domain to refactor `BillingScheduleService` batch API.
+- This idea was presented as a Tech-talk at many [International Conferences & Meetups](https://overfullstack.ga/posts/fight-complexity-with-fp/#My-Talk-on-this)
+- This is currently consumed in **Production** by Payments, Tax and Billing domains.
 
 ## Future
 
-- There is a [PTOn proposal for 2.0](https://salesforce.quip.com/yDPwAHqycAKX) with many features and enhancements.
 - Context-aware validations to share data among validations
 
-If you have specific requirement, please log a git.soma issue.
+**👋🏼 If you have specific requirement, please log a git.soma issue 👋🏼**
 
 ---
 
 ![inline](images/vader.gif)
-
----
-
-# Artifact Coordinates
-
-```xml
-<dependency>
-    <groupId>com.salesforce.ccspayments</groupId>
-    <artifactId>vader</artifactId>
-    <version>${revcloud.vader.version}</version>
-</dependency>
-```
 
 ---
 

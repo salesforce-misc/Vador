@@ -112,7 +112,8 @@ dependencies {
 
 sonarqube {
   properties {
-    property("sonar.sources", lombokForSonarQube.files.last().toString())
+    property("sonar.java.libraries", lombokForSonarQube.files.last().toString())
+    property("sonar.java.binaries", buildDir)
   }
 }
 
