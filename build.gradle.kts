@@ -1,6 +1,5 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep.XML
-import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
 
 plugins {
   kotlin("jvm")
@@ -12,7 +11,7 @@ plugins {
   id("io.gitlab.arturbosch.detekt") version "1.17.1"
   id("com.adarshr.test-logger") version "3.0.0"
   id("com.diffplug.spotless") version "5.12.5"
-  id("org.sonarqube") version "3.1.1"
+  id("org.sonarqube") version "3.2.0"
   id("org.barfuin.gradle.taskinfo") version "1.1.1"
 }
 
@@ -102,18 +101,6 @@ afterEvaluate {
     jacocoTestReport.configure {
       dependsOn(test)
     }
-  }
-}
-
-val lombokForSonarQube: Configuration by configurations.creating
-dependencies {
-  lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
-}
-
-sonarqube {
-  properties {
-    property("sonar.java.libraries", lombokForSonarQube.files.last().toString())
-    property("sonar.java.binaries", buildDir)
   }
 }
 

@@ -51,6 +51,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
 
     protected abstract Predicate<@Nullable ValidatableT> toPredicate();
 
+    // TODO 05/06/21 gopala.akshintala: Replace with `when` expression
     @SuppressWarnings("unused")
     protected FailureT getFailure(@Nullable ValidatableT ignore) {
       return orFailWith;

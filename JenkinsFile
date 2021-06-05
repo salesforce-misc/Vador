@@ -46,6 +46,6 @@ executePipeline(envDef) {
     }
     
     stage('Sonarqube') {
-        sonarqube()
+      sonarqube()
     }
 }

@@ -60,10 +60,8 @@ of field, there exist 4 kinds of validations. E.g.:
 
 - _Data validations_ - to validate data integrity for fields like `amount`.
 - _Effectful validations_ - for fields like `accountId`, which involves a DB read to verify.
-- _Common Validations_ - for common fields that exist across services, such as `amount`, `accountId`
-  .
-- _Nested Validations_ - for the member nodes like `paymentMethod` . These nested members share an
-  Aggregation/Composition relationship with their container and have validations of their own. A service in the same
+- _Common Validations_ - for common fields that exist across services, such as `amount`, `accountId`.
+- _Nested Validations_ - for the member nodes like `paymentMethod` . These nested members share an Aggregation/Composition relationship with their container and have validations of their own. A service in the same
   domain may reuse this data-structure in its payload. Such service, along with it's own validations, needs to execute
   all the validations of this nested member.
 
@@ -90,4 +88,4 @@ execute these validations).
 >
 > 🔊 [The birth of Lord Vader](https://www.youtube.com/watch?v=49WFdDIFlAs) playing in the background
 
-![inline](images/birth-of-vader.gif)
+![inline](../images/birth-of-vader.gif)
