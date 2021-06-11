@@ -79,8 +79,8 @@ private val isFieldPresent: (Any?) -> Boolean = {
 
 @JvmSynthetic
 private val isSFIdPresentAndValidFormat: (ID?) -> Boolean =
-  { it != null && IdTraits.isValidId(it.toString()) }
+  { it != null && IdTraits.isValidIdStrictChecking(it.toString(), true) }
 
 @JvmSynthetic
 private val isSFIdAbsentOrValidFormat: (ID?) -> Boolean =
-  { it == null || IdTraits.isValidId(it.toString()) }
+  { it == null || IdTraits.isValidIdStrictChecking(it.toString(), true) }
