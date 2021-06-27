@@ -10,7 +10,7 @@ import org.revcloud.vader.types.validators.ValidatorEtr
  * Lifts Simple Validator to Validator type.
  *
  * @param toBeLifted     Simple validator to be lifted
- * @param none           Value to be returned in case of no failure
+ * @param none           Value to be returned in case of no failures
  * @param <FailureT>
  * @param <ValidatableT>
  * @return Validator
@@ -29,7 +29,7 @@ fun <FailureT, ValidatableT> liftToEtr(
  * Lifts a list of Simple validators to list of Validator type.
  *
  * @param toBeLiftedFns  List of Simple functions to be lifted.
- * @param none           Value to be returned in case of no failure.
+ * @param none           Value to be returned in case of no failures.
  * @param <FailureT>
  * @param <ValidatableT>
  * @return List of Validators

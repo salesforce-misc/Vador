@@ -54,10 +54,10 @@ public class ValidationFailure {
   private String exceptionMsg;
 
   /**
-   * Static factory method used to generate Validation failure out of an Exception.
+   * Static factory method used to generate Validation failures out of an Exception.
    *
    * @param e The exception
-   * @return Respective Validation failure for the exception.
+   * @return Respective Validation failures for the exception.
    */
   public static ValidationFailure getValidationFailureForException(Throwable e) {
     final var unknownException = ValidationFailureMessage.UNKNOWN_EXCEPTION;

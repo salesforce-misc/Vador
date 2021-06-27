@@ -16,7 +16,7 @@ plugins {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.4.5"
+version = "2.4.6-SNAPSHOT"
 description = "Vader - An FP framework for Bean validation"
 
 repositories {
@@ -61,26 +61,19 @@ if (!providers.systemProperty("idea.sync.active").forUseAtConfigurationTime().or
   }
 }
 
-jacoco.toolVersion = "0.8.7"
 tasks {
   delombok {
-    input.setFrom("src/main/java")
     quiet.set(true)
-  }
-  compileKotlin {
-    kotlinOptions {
-      jvmTarget = JavaVersion.VERSION_11.toString()
-      freeCompilerArgs = listOf("-Xlambdas=indy")
-    }
+    input.setFrom("src/main/java")
   }
   test {
     useJUnitPlatform()
   }
   jacocoTestReport {
     reports {
-      csv.isEnabled = false
-      html.isEnabled = false
-      xml.isEnabled = true
+      xml.required.set(true)
+      csv.required.set(false)
+      html.required.set(false)
     }
   }
   javadoc {

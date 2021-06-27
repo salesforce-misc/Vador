@@ -39,7 +39,7 @@ fun <FailureT, ValidatableT> validateAndFailFastForEach(
  * @param validatable
  * @param validators
  * @param invalidValidatable FailureT if the validatable is null.
- * @param none               Value to be returned in case of no failure.
+ * @param none               Value to be returned in case of no failures.
  * @param <FailureT>
  * @param <ValidatableT>
  * @return List of Validation failures.
@@ -58,7 +58,7 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrorsForValidators(
  * @param validatable
  * @param validators
  * @param invalidValidatable FailureT if the validatable is null.
- * @param none               Value to be returned in case of no failure.
+ * @param none               Value to be returned in case of no failures.
  * @param <FailureT>
  * @param <ValidatableT>
  * @param throwableMapper   Function to map throwable to Failure in case of exception

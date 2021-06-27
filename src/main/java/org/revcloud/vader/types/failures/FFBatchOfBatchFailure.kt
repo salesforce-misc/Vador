@@ -1,4 +1,4 @@
-package org.revcloud.vader.types.failure
+package org.revcloud.vader.types.failures
 
 import io.vavr.control.Either
 

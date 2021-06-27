@@ -6,7 +6,7 @@ import io.vavr.Tuple
 import io.vavr.Tuple2
 import io.vavr.control.Either
 import org.revcloud.vader.lift.liftAllToEtr
-import org.revcloud.vader.types.failure.FFBatchOfBatchFailure
+import org.revcloud.vader.types.failures.FFBatchOfBatchFailure
 import org.revcloud.vader.types.validators.Validator
 import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
@@ -56,7 +56,7 @@ fun <FailureT, ValidatableT> validateAndFailFastForAny(
   failFastForAny(batchValidationConfig, nullValidatable, throwableMapper)(validatables)
 
 /**
- * This returns the first failure of first invalid item in a batch and pairs it with an identifier using the `pairForInvalidMapper`
+ * This returns the first failures of first invalid item in a batch and pairs it with an identifier using the `pairForInvalidMapper`
  * This can be used for `AllOrNone` scenarios in batch
  */
 fun <FailureT, ValidatableT, PairT> validateAndFailFastForAny(

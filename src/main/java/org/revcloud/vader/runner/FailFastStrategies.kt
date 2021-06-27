@@ -5,7 +5,7 @@ import io.vavr.Tuple2
 import io.vavr.control.Either
 import io.vavr.kotlin.left
 import io.vavr.kotlin.right
-import org.revcloud.vader.types.failure.FFBatchOfBatchFailure
+import org.revcloud.vader.types.failures.FFBatchOfBatchFailure
 import java.util.Optional
 
 internal typealias FailFast<ValidatableT, FailureT> = (ValidatableT) -> Optional<FailureT>
