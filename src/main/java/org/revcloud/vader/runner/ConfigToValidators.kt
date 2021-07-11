@@ -73,6 +73,7 @@ private val isFieldPresent: (Any?) -> Boolean = {
   when (it) {
     null -> false
     is String -> it.isNotBlank()
+    is List<*> -> it.isNotEmpty()
     else -> true
   }
 }
