@@ -21,7 +21,7 @@ internal fun <FailureT, ValidatableT> findFirstFailure(
   fireValidators(validatable, validators, throwableMapper).firstOrNull { it.isLeft }
 
 @JvmSynthetic
-fun <FailureT, ValidatableT> fireValidators(
+internal fun <FailureT, ValidatableT> fireValidators(
   validatable: Either<FailureT?, ValidatableT?>,
   validatorEtrs: List<ValidatorEtr<ValidatableT, FailureT>>,
   throwableMapper: (Throwable) -> FailureT?,
@@ -29,7 +29,7 @@ fun <FailureT, ValidatableT> fireValidators(
   validatorEtrs.asSequence().map { fireValidator(validatable, it, throwableMapper) }
 
 @JvmSynthetic
-fun <FailureT, ValidatableT> fireValidator(
+internal fun <FailureT, ValidatableT> fireValidator(
   validatable: Either<FailureT?, ValidatableT?>,
   validatorEtr: ValidatorEtr<ValidatableT, FailureT>,
   throwableMapper: (Throwable) -> FailureT?,
@@ -39,16 +39,31 @@ fun <FailureT, ValidatableT> fireValidator(
     .flatMap { validatable } // Put the original Validatable in the right state
 
 @JvmSynthetic
-fun <FailureT> validateBatchSize(
-  validatables: Collection<*>,
-  headerConfig: HeaderValidationConfig<*, FailureT?>
+internal fun <FailureT> validateBatchSize(
+  headerItems: Collection<*>,
+  headerConfig: BaseHeaderValidationConfig<*, FailureT?>
 ): Optional<FailureT> {
   val minBatchSize = headerConfig.shouldHaveMinBatchSize
-  if (minBatchSize != null && validatables.size < minBatchSize._1) {
+  if (minBatchSize != null && headerItems.size < minBatchSize._1) {
     return Optional.ofNullable(minBatchSize._2)
   }
   val maxBatchSize = headerConfig.shouldHaveMaxBatchSize
-  return if (maxBatchSize != null && validatables.size > maxBatchSize._1) {
+  return if (maxBatchSize != null && headerItems.size > maxBatchSize._1) {
+    Optional.ofNullable(maxBatchSize._2)
+  } else Optional.empty()
+}
+
+@JvmSynthetic
+internal fun <FailureT> validateNestedBatchSize(
+  headerItems: Collection<*>,
+  headerConfig: HeaderValidationConfigWithNested<*, *, FailureT?>
+): Optional<FailureT> {
+  val minBatchSize = headerConfig.shouldHaveMinNestedBatchSize
+  if (minBatchSize != null && headerItems.size < minBatchSize._1) {
+    return Optional.ofNullable(minBatchSize._2)
+  }
+  val maxBatchSize = headerConfig.shouldHaveMaxNestedBatchSize
+  return if (maxBatchSize != null && headerItems.size > maxBatchSize._1) {
     Optional.ofNullable(maxBatchSize._2)
   } else Optional.empty()
 }

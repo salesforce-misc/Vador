@@ -7,22 +7,37 @@ import org.revcloud.vader.types.validators.Validator
 import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
-fun <FailureT, ValidatableT> validateAndFailFastForHeader(
-  validatable: ValidatableT,
-  headerValidationConfig: HeaderValidationConfig<ValidatableT, FailureT?>,
+fun <FailureT, HeaderValidatableT> validateAndFailFastForHeader(
+  headerValidatable: HeaderValidatableT,
+  headerValidationConfig: HeaderValidationConfig<HeaderValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
-): Optional<FailureT> = failFastForHeader(headerValidationConfig, throwableMapper)(validatable)
+): Optional<FailureT> = failFastForHeader(headerValidationConfig, throwableMapper)(headerValidatable)
+
+fun <FailureT, HeaderValidatableT, NestedHeaderValidatableT> validateAndFailFastForHeader(
+  headerValidatable: HeaderValidatableT,
+  headerValidationConfig: HeaderValidationConfigWithNested<HeaderValidatableT, NestedHeaderValidatableT, FailureT?>,
+  throwableMapper: (Throwable) -> FailureT?
+): Optional<FailureT> = failFastForHeader(headerValidationConfig, throwableMapper)(headerValidatable)
 
 /**
- * This deals with Batch of Headers. This is placed here instead of Batch, so that consumers can
- * fluently use both these overloads.
+ * This deals with Batch of Headers. 
+ * This is placed in this class instead of BatchRunner, so that consumers can fluently use both these overloads.
  */
-fun <FailureT, ValidatableT> validateAndFailFastForHeader(
-  batchValidatable: Collection<ValidatableT>,
-  headerValidationConfig: HeaderValidationConfig<ValidatableT, FailureT?>,
+fun <FailureT, HeaderValidatableT> validateAndFailFastForHeader(
+  batchValidatable: Collection<HeaderValidatableT>,
+  headerValidationConfig: HeaderValidationConfig<HeaderValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): Optional<FailureT> = batchValidatable.asSequence()
-  .map { validatable: ValidatableT ->
+  .map { validatable: HeaderValidatableT ->
+    validateAndFailFastForHeader(validatable, headerValidationConfig, throwableMapper)
+  }.firstOrNull { it.isPresent } ?: Optional.empty()
+
+fun <FailureT, HeaderValidatableT, NestedHeaderValidatableT> validateAndFailFastForHeader(
+  batchValidatable: Collection<HeaderValidatableT>,
+  headerValidationConfig: HeaderValidationConfigWithNested<HeaderValidatableT, NestedHeaderValidatableT, FailureT?>,
+  throwableMapper: (Throwable) -> FailureT?
+): Optional<FailureT> = batchValidatable.asSequence()
+  .map { validatable: HeaderValidatableT ->
     validateAndFailFastForHeader(validatable, headerValidationConfig, throwableMapper)
   }.firstOrNull { it.isPresent } ?: Optional.empty()
 

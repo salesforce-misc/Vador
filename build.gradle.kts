@@ -7,12 +7,11 @@ plugins {
   `maven-publish`
   jacoco
   idea
-  id("io.freefair.lombok") version "6.0.0-m2"
-  id("io.gitlab.arturbosch.detekt") version "1.17.1"
+  id("io.freefair.lombok") version "6.1.0-m3"
+  id("io.gitlab.arturbosch.detekt") version "1.18.0-RC2"
   id("com.adarshr.test-logger") version "3.0.0"
-  id("com.diffplug.spotless") version "5.12.5"
-  id("org.sonarqube") version "3.2.0"
-  id("org.barfuin.gradle.taskinfo") version "1.1.1"
+  id("com.diffplug.spotless") version "5.14.2"
+  id("org.sonarqube") version "3.3"
 }
 
 group = "com.salesforce.ccspayments"

@@ -117,15 +117,34 @@ internal fun <ValidatableT, FailureT> failFastForAny(
 }
 
 @JvmSynthetic
-internal fun <ValidatableT, FailureT> failFastForHeader(
-  validationConfig: HeaderValidationConfig<ValidatableT, FailureT?>,
+internal fun <HeaderValidatableT, FailureT> failFastForHeader(
+  headerValidationConfig: HeaderValidationConfig<HeaderValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
-): FailFastForHeader<ValidatableT, FailureT> = { validatable: ValidatableT ->
-  val batch: List<*> = validationConfig.withBatchMappers.mapNotNull { it[validatable] }.flatten()
-  validateBatchSize(batch, validationConfig).or {
-    findFirstFailure(right(validatable), validationConfig.headerValidators, throwableMapper)
+): FailFastForHeader<HeaderValidatableT, FailureT> = { validatable: HeaderValidatableT ->
+  val batch: List<*> = headerValidationConfig.withBatchMappers.mapNotNull { it[validatable] }.flatten()
+  validateBatchSize(batch, headerValidationConfig).or {
+    findFirstFailure(right(validatable), headerValidationConfig.headerValidators, throwableMapper)
       .toFailureOptional()
   }
+}
+
+@JvmSynthetic
+internal fun <HeaderValidatableT, NestedHeaderValidatableT, FailureT> failFastForHeader(
+  headerValidationConfig: HeaderValidationConfigWithNested<HeaderValidatableT, NestedHeaderValidatableT, FailureT?>,
+  throwableMapper: (Throwable) -> FailureT?
+): FailFastForHeader<HeaderValidatableT, FailureT> = { validatable: HeaderValidatableT ->
+  val batch: List<NestedHeaderValidatableT> =
+    headerValidationConfig.withBatchMappers.mapNotNull { it[validatable] }.flatten()
+  val nestedBatch: List<*> = batch.mapNotNull { nestedHeader ->
+    headerValidationConfig.withNestedBatchMappers.mapNotNull { it[nestedHeader] }.flatten()
+  }
+  validateBatchSize(batch, headerValidationConfig)
+    .or {
+      validateNestedBatchSize(nestedBatch, headerValidationConfig)
+    }.or {
+      findFirstFailure(right(validatable), headerValidationConfig.headerValidators, throwableMapper)
+        .toFailureOptional()
+    }
 }
 
 @JvmSynthetic

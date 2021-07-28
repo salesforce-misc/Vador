@@ -11,17 +11,14 @@ import static org.revcloud.vader.runner.BatchRunner.validateAndFailFastForEach;
 import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Value;
-import lombok.experimental.FieldNameConstants;
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class BatchOfBatch1ValidationConfigTest {
 
-  @DisplayName("Validate Batch of (NestedBatch (Batch of Bean))")
+  @DisplayName("Validate a structure like batchOf(Root[batchOf(bean)]) or like `List<Root<List<Bean>>`")
   @Test
   void nestedBatchFailFast() {
     final var memberBatchValidationConfig =
@@ -36,18 +33,21 @@ class BatchOfBatch1ValidationConfigTest {
                         .orFailWith(INVALID_COMBO_1))
             .withValidator(ignore -> UNKNOWN_EXCEPTION, NONE)
             .prepare();
-    final var nestedBatchValidationConfig =
-        BatchOfBatch1ValidationConfig.<BatchOfBatch, Bean, ValidationFailure>toValidate()
+    final var itemBatchValidationConfig =
+        BatchOfBatch1ValidationConfig.<Item, Bean, ValidationFailure>toValidate()
             .withMemberBatchValidationConfig(
-                Tuple.of(BatchOfBatch::getBatch, memberBatchValidationConfig))
+                Tuple.of(Item::getBeanBatch, memberBatchValidationConfig))
             .prepare();
 
-    final var beanBatch = List.of(new Bean(1, "a"), new Bean(1, "1"));
-    final var nestedBatch = List.of(new BatchOfBatch(beanBatch));
+    final var invalidBean = new Bean(1, "a");
+    final var beanBatch = List.of(invalidBean, new Bean(1, "1"));
+    final var itemsBatch = List.of(new Item(beanBatch));
+    final var root = new Root(itemsBatch);
+    
     final var results =
         validateAndFailFastForEach(
-            nestedBatch,
-            nestedBatchValidationConfig,
+            root.getItemsBatch(),
+            itemBatchValidationConfig,
             NONE,
             ValidationFailure::getValidationFailureForException);
     assertThat(results).hasSize(1);
@@ -64,10 +64,13 @@ class BatchOfBatch1ValidationConfigTest {
     String label;
   }
 
-  @Data
-  @FieldNameConstants
-  @AllArgsConstructor
-  public static class BatchOfBatch {
-    List<Bean> batch;
+  @Value
+  private static class Item {
+    List<Bean> beanBatch;
+  }
+  
+  @Value
+  private static class Root {
+    List<Item> itemsBatch;
   }
 }
