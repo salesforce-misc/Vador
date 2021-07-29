@@ -55,7 +55,7 @@ internal fun <FailureT, ValidatableT> failFastForEach(
   nullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForEach<ValidatableT, FailureT> = { validatables: Collection<ValidatableT> ->
-  handleNullValidatablesAndDuplicates(validatables, nullValidatable, validationConfig)
+  segregateNullValidatablesAndDuplicatesInOrder(validatables, nullValidatable, validationConfig)
     .map { findFirstFailure(it, toValidators(validationConfig), throwableMapper) ?: it }
 }
 
@@ -65,7 +65,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEa
   nullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForEachNestedBatch1<ContainerValidatableT, FailureT> = { validatables: Collection<ContainerValidatableT> ->
-  handleNullValidatablesAndDuplicates(validatables, nullValidatable, batchOfBatch1ValidationConfig)
+  segregateNullValidatablesAndDuplicatesInOrder(validatables, nullValidatable, batchOfBatch1ValidationConfig)
     .map { containerValidatable: Either<FailureT?, ContainerValidatableT?> ->
       findFirstFailure(
         containerValidatable,
@@ -104,16 +104,19 @@ internal fun <ValidatableT, FailureT> failFastForAny(
   invalidValidatable: FailureT,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForAny<ValidatableT, FailureT> = { validatables ->
-  findFistNullValidatableOrDuplicate(
-    validatables,
-    invalidValidatable,
-    batchValidationConfig
-  ).or {
-    validatables.asSequence().map {
-      val validatable = right<FailureT?, ValidatableT?>(it)
-      findFirstFailure(validatable, toValidators(batchValidationConfig), throwableMapper) ?: validatable
-    }.firstOrNull { it.isLeft }.toFailureOptional()
-  }
+  (batchValidationConfig.findAndFilterDuplicatesConfigs.map { filterConfig ->
+    findFistNullValidatableOrDuplicate(
+      validatables,
+      invalidValidatable,
+      filterConfig
+    )
+  }.firstOrNull { it.isPresent } ?: Optional.empty())
+    .or {
+      validatables.asSequence().map {
+        val validatable = right<FailureT?, ValidatableT?>(it)
+        findFirstFailure(validatable, toValidators(batchValidationConfig), throwableMapper) ?: validatable
+      }.firstOrNull { it.isLeft }.toFailureOptional()
+    }
 }
 
 @JvmSynthetic

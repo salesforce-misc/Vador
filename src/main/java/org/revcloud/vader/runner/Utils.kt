@@ -12,6 +12,8 @@ import io.vavr.kotlin.right
 import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
+// TODO 29/07/21 gopala.akshintala: Split this class into individual utils 
+
 @JvmSynthetic
 internal fun <FailureT, ValidatableT> findFirstFailure(
   validatable: Either<FailureT?, ValidatableT?>,
@@ -68,7 +70,8 @@ internal fun <FailureT> validateNestedBatchSize(
   } else Optional.empty()
 }
 
-internal fun <ValidatableT, FailureT> handleNullValidatablesAndDuplicates(
+
+internal fun <ValidatableT, FailureT> segregateNullValidatablesAndDuplicatesInOrder(
   validatables: Collection<ValidatableT?>,
   nullValidatable: FailureT?,
   batchValidationConfig: BaseBatchValidationConfig<ValidatableT, FailureT?>
@@ -81,41 +84,56 @@ internal fun <ValidatableT, FailureT> handleNullValidatablesAndDuplicates(
   }
   val duplicateFinder = batchValidationConfig.findAndFilterDuplicatesWith
   val keyMapperForDuplicates = duplicateFinder ?: identity()
+
+  // Groups
+  // null - Null Validatables
+  // Optional.empty() - Validatables with Null keys
+  // Optional[Key] - Validatables with Nonnull keys
   val groups = validatables.withIndex().groupBy { (_, validatable) ->
     if (validatable == null) null else Optional.ofNullable(keyMapperForDuplicates.apply(validatable))
   }
-  val invalids: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
+  val nullValidatables: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
     groups[null]?.map { (index, _) -> index to left(nullValidatable) } ?: emptyList()
 
-  // TODO 11/04/21 gopala.akshintala: add test 
-  if (duplicateFinder == null) { // Skip the rest if duplicateFinder is not defined
+  // TODO 11/04/21 gopala.akshintala: add test
+  if (duplicateFinder == null) { // Skip rest if duplicateFinder is not configured
     val valids: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
       groups.filterKeys { it != null }.values.flatten()
         .map { (index, validatable) -> index to right(validatable) }
-    return (valids + invalids).sortedBy { it.first }.map { it.second }
+    return (valids + nullValidatables).sortedBy { it.first }.map { it.second }
   }
-  val failureForNullKeys = batchValidationConfig.andFailNullKeysWith
-  val withNullKeys: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
-    groups[Optional.empty()]?.map { (index, validatable) ->
-      index to if (failureForNullKeys == null) right(validatable) else left(failureForNullKeys)
-    } ?: emptyList()
+
+  val withNullKeys = findValidatablesWithNullKeys(batchValidationConfig.andFailNullKeysWith, groups)
+
   val partition = groups.filterKeys { it != null && it.isPresent }.values.partition { it.size == 1 }
-  val failureForDuplicate = batchValidationConfig.andFailDuplicatesWith
-  val duplicates: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
-    failureForDuplicate?.let {
-      partition.second.flatten().map { (index, _) -> index to left(it) }
-    } ?: emptyList()
+  val duplicates = findValidatablesWithDuplicateKeys(batchValidationConfig.andFailDuplicatesWith, partition)
 
   val nonDuplicates: List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
     partition.first.flatten().map { (index, validatable) -> index to right(validatable) }
-  return (nonDuplicates + duplicates + invalids + withNullKeys).sortedBy { it.first }
+  return (nonDuplicates + duplicates + nullValidatables + withNullKeys).sortedBy { it.first }
     .map { it.second }
 }
+
+private fun <FailureT, ValidatableT> findValidatablesWithNullKeys(
+  failureForNullKeys: FailureT?,
+  groups: Map<Optional<Any>?, List<IndexedValue<ValidatableT?>>>
+): List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
+  groups[Optional.empty()]?.map { (index, validatable) ->
+    index to if (failureForNullKeys == null) right(validatable) else left(failureForNullKeys)
+  } ?: emptyList()
+
+private fun <FailureT, ValidatableT> findValidatablesWithDuplicateKeys(
+  failureForDuplicates: FailureT?,
+  partition: Pair<List<List<IndexedValue<ValidatableT?>>>, List<List<IndexedValue<ValidatableT?>>>>
+): List<Pair<Int, Either<FailureT?, ValidatableT?>>> =
+  failureForDuplicates?.let {
+    partition.second.flatten().map { (index, _) -> index to left(it) }
+  } ?: emptyList()
 
 internal fun <ValidatableT, FailureT> findFistNullValidatableOrDuplicate(
   validatables: Collection<ValidatableT?>,
   nullValidatable: FailureT?,
-  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>
+  filterDuplicatesConfig: FilterDuplicatesConfig<ValidatableT, FailureT?>
 ): Optional<FailureT> {
   if (validatables.isEmpty()) {
     return Optional.empty()
@@ -123,7 +141,7 @@ internal fun <ValidatableT, FailureT> findFistNullValidatableOrDuplicate(
     val onlyValidatable = validatables.first()
     return if (onlyValidatable == null) Optional.ofNullable(nullValidatable) else Optional.empty()
   }
-  val duplicateFinder = batchValidationConfig.findAndFilterDuplicatesWith
+  val duplicateFinder = filterDuplicatesConfig.findAndFilterDuplicatesWith
   val keyMapperForDuplicates = duplicateFinder ?: identity()
   val groups = validatables.groupBy { if (it == null) null else Optional.ofNullable(keyMapperForDuplicates.apply(it)) }
   val nullValidatables = groups[null]
@@ -132,9 +150,9 @@ internal fun <ValidatableT, FailureT> findFistNullValidatableOrDuplicate(
   }
   val invalidsWithNullKeys = groups[Optional.empty()]
   if (invalidsWithNullKeys != null && invalidsWithNullKeys.isNotEmpty()) {
-    return Optional.ofNullable(batchValidationConfig.andFailNullKeysWith)
+    return Optional.ofNullable(filterDuplicatesConfig.andFailNullKeysWith)
   }
-  val failureForDuplicate = batchValidationConfig.andFailDuplicatesWith
+  val failureForDuplicate = filterDuplicatesConfig.andFailDuplicatesWith
   if (duplicateFinder != null && failureForDuplicate != null &&
     groups.filterKeys { it != null && it.isPresent }.values.any { it.size > 1 }
   ) {
@@ -143,7 +161,9 @@ internal fun <ValidatableT, FailureT> findFistNullValidatableOrDuplicate(
   return Optional.empty()
 }
 
-@JvmSynthetic
+/**
+ * This gives the result paired up with an identifier.
+ */
 internal fun <ValidatableT, FailureT, PairT> findFistNullValidatableOrDuplicate(
   validatables: Collection<ValidatableT?>,
   pairForInvalidMapper: (ValidatableT?) -> PairT?,
