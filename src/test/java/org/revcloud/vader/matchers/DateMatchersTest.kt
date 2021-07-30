@@ -24,4 +24,8 @@ class DateMatchersTest : StringSpec({
       isEqualToDayOfDate.apply(day, date) shouldBe result
     }
   }
+
+  "ISO8601Format" {
+    ISO8601DateFormat.matches("2021-07-30") shouldBe true
+  }
 })

@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.4.6-SNAPSHOT"
+version = "2.4.7.1"
 description = "Vader - An FP framework for Bean validation"
 
 repositories {
@@ -40,7 +40,7 @@ dependencies {
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
   testImplementation("org.assertj:assertj-vavr:0.4.1")
   testImplementation("org.assertj:assertj-core:3.19.0")
-  val kotestVersion = "4.6.0"
+  val kotestVersion = "4.6.1"
   testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
   testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
 }
