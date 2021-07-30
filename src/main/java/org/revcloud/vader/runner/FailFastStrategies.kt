@@ -42,30 +42,34 @@ internal fun <ValidatableT, FailureT> failFast(
 /**
  * Batch + Simple + Config
  *
- * @param nullValidatable
+ * @param failureForNullValidatable
  * @param throwableMapper
- * @param validationConfig
+ * @param batchValidationConfig
  * @param <FailureT>
  * @param <ValidatableT>
  * @return
  */
 @JvmSynthetic
 internal fun <FailureT, ValidatableT> failFastForEach(
-  validationConfig: BaseBatchValidationConfig<ValidatableT, FailureT?>,
-  nullValidatable: FailureT?,
+  batchValidationConfig: BaseBatchValidationConfig<ValidatableT, FailureT?>,
+  failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForEach<ValidatableT, FailureT> = { validatables: Collection<ValidatableT> ->
-  segregateNullValidatablesAndDuplicatesInOrder(validatables, nullValidatable, validationConfig)
-    .map { findFirstFailure(it, toValidators(validationConfig), throwableMapper) ?: it }
+  findAndFilterDuplicates(validatables, failureForNullValidatable, batchValidationConfig.findAndFilterDuplicatesConfigs)
+    .map { findFirstFailure(it, toValidators(batchValidationConfig), throwableMapper) ?: it }
 }
 
 @JvmSynthetic
 internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEach(
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
-  nullValidatable: FailureT?,
+  failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForEachNestedBatch1<ContainerValidatableT, FailureT> = { validatables: Collection<ContainerValidatableT> ->
-  segregateNullValidatablesAndDuplicatesInOrder(validatables, nullValidatable, batchOfBatch1ValidationConfig)
+  findAndFilterDuplicates(
+    validatables,
+    failureForNullValidatable,
+    batchOfBatch1ValidationConfig.findAndFilterDuplicatesConfigs
+  )
     .map { containerValidatable: Either<FailureT?, ContainerValidatableT?> ->
       findFirstFailure(
         containerValidatable,
@@ -79,7 +83,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEa
         .map { members: Collection<MemberValidatableT> ->
           failFastForEach(
             batchOfBatch1ValidationConfig.withMemberBatchValidationConfig._2,
-            nullValidatable,
+            failureForNullValidatable,
             throwableMapper
           )(members)
         }
@@ -104,19 +108,37 @@ internal fun <ValidatableT, FailureT> failFastForAny(
   invalidValidatable: FailureT,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForAny<ValidatableT, FailureT> = { validatables ->
-  (batchValidationConfig.findAndFilterDuplicatesConfigs.map { filterConfig ->
-    findFistNullValidatableOrDuplicate(
-      validatables,
-      invalidValidatable,
-      filterConfig
-    )
-  }.firstOrNull { it.isPresent } ?: Optional.empty())
-    .or {
-      validatables.asSequence().map {
-        val validatable = right<FailureT?, ValidatableT?>(it)
-        findFirstFailure(validatable, toValidators(batchValidationConfig), throwableMapper) ?: validatable
-      }.firstOrNull { it.isLeft }.toFailureOptional()
-    }
+  findFistNullValidatableOrDuplicate(
+    validatables,
+    invalidValidatable,
+    batchValidationConfig.findAndFilterDuplicatesConfigs
+  ).or {
+    validatables.asSequence().map {
+      val validatable = right<FailureT?, ValidatableT?>(it)
+      findFirstFailure(validatable, toValidators(batchValidationConfig), throwableMapper) ?: validatable
+    }.firstOrNull { it.isLeft }.toFailureOptional()
+  }
+}
+
+@JvmSynthetic
+internal fun <ValidatableT, FailureT, PairT> failFastForAny(
+  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
+  pairForInvalidMapper: (ValidatableT?) -> PairT?,
+  nullValidatable: FailureT,
+  throwableMapper: (Throwable) -> FailureT?
+): FailFastForAnyWithPair<ValidatableT, FailureT, PairT> = { validatables ->
+  findFistNullValidatableOrDuplicate(
+    validatables,
+    batchValidationConfig.findAndFilterDuplicatesConfigs,
+    nullValidatable,
+    pairForInvalidMapper
+  ).or {
+    validatables.asSequence().map { validatable ->
+      val validatableEtr = right<FailureT?, ValidatableT?>(validatable)
+      findFirstFailure(validatableEtr, toValidators(batchValidationConfig), throwableMapper)
+        ?.mapLeft { Tuple.of(pairForInvalidMapper(validatable), it) }
+    }.firstOrNull { it?.isLeft == true }.toFailureWithPairOptional()
+  }
 }
 
 @JvmSynthetic
@@ -148,25 +170,4 @@ internal fun <HeaderValidatableT, NestedHeaderValidatableT, FailureT> failFastFo
       findFirstFailure(right(validatable), headerValidationConfig.headerValidators, throwableMapper)
         .toFailureOptional()
     }
-}
-
-@JvmSynthetic
-internal fun <ValidatableT, FailureT, PairT> failFastForAny(
-  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
-  pairForInvalidMapper: (ValidatableT?) -> PairT?,
-  invalidValidatable: FailureT,
-  throwableMapper: (Throwable) -> FailureT?
-): FailFastForAnyWithPair<ValidatableT, FailureT, PairT> = { validatables ->
-  findFistNullValidatableOrDuplicate(
-    validatables,
-    pairForInvalidMapper,
-    invalidValidatable,
-    batchValidationConfig
-  ).or {
-    validatables.asSequence().map { validatable ->
-      val validatableEtr = right<FailureT?, ValidatableT?>(validatable)
-      findFirstFailure(validatableEtr, toValidators(batchValidationConfig), throwableMapper)
-        ?.mapLeft { Tuple.of(pairForInvalidMapper(validatable), it) }
-    }.firstOrNull { it?.isLeft == true }.toFailureWithPairOptional()
-  }
 }

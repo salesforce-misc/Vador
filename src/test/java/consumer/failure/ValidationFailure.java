@@ -22,6 +22,10 @@ public class ValidationFailure {
       new ValidationFailure(ValidationFailureMessage.NOTHING_TO_VALIDATE);
   public static final ValidationFailure DUPLICATE_ITEM =
       new ValidationFailure(ValidationFailureMessage.DUPLICATE_ITEM);
+  public static final ValidationFailure DUPLICATE_ITEM_1 =
+      new ValidationFailure(ValidationFailureMessage.DUPLICATE_ITEM_1);
+  public static final ValidationFailure DUPLICATE_ITEM_2 =
+      new ValidationFailure(ValidationFailureMessage.DUPLICATE_ITEM_2);
   public static final ValidationFailure NULL_KEY =
       new ValidationFailure(ValidationFailureMessage.NULL_KEY);
   public static final ValidationFailure INVALID_CONTAINER =

@@ -20,7 +20,7 @@ fun <FailureT, HeaderValidatableT, NestedHeaderValidatableT> validateAndFailFast
 ): Optional<FailureT> = failFastForHeader(headerValidationConfig, throwableMapper)(headerValidatable)
 
 /**
- * This deals with Batch of Headers. 
+ * This deals with Batch of Headers.
  * This is placed in this class instead of BatchRunner, so that consumers can fluently use both these overloads.
  */
 fun <FailureT, HeaderValidatableT> validateAndFailFastForHeader(

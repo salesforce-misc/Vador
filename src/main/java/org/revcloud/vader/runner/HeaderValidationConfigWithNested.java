@@ -2,6 +2,9 @@ package org.revcloud.vader.runner;
 
 import de.cronn.reflection.util.TypedPropertyGetter;
 import io.vavr.Tuple2;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.Singular;
@@ -12,26 +15,23 @@ import org.jetbrains.annotations.Nullable;
 import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.ValidatorEtr;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
 @Value
 @FieldDefaults(level = AccessLevel.PACKAGE)
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
-public class HeaderValidationConfigWithNested<HeaderValidatableT, NestedHeaderValidatableT, FailureT> extends
-    BaseHeaderValidationConfig<HeaderValidatableT, FailureT> {
+public class HeaderValidationConfigWithNested<
+        HeaderValidatableT, NestedHeaderValidatableT, FailureT>
+    extends BaseHeaderValidationConfig<HeaderValidatableT, FailureT> {
 
   @Singular
-  Collection<TypedPropertyGetter<HeaderValidatableT, Collection<NestedHeaderValidatableT>>> withBatchMappers;
+  Collection<TypedPropertyGetter<HeaderValidatableT, Collection<NestedHeaderValidatableT>>>
+      withBatchMappers;
 
   @Singular
   Collection<TypedPropertyGetter<NestedHeaderValidatableT, Collection<?>>> withNestedBatchMappers;
 
   @Nullable Tuple2<@NonNull Integer, FailureT> shouldHaveMinNestedBatchSize;
   @Nullable Tuple2<@NonNull Integer, FailureT> shouldHaveMaxNestedBatchSize;
-  @Singular
-  Collection<ValidatorEtr<HeaderValidatableT, FailureT>> withHeaderValidatorEtrs;
+  @Singular Collection<ValidatorEtr<HeaderValidatableT, FailureT>> withHeaderValidatorEtrs;
 
   @Nullable
   Tuple2<@NonNull Collection<Validator<? super HeaderValidatableT, FailureT>>, FailureT>

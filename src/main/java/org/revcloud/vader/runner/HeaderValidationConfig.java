@@ -14,9 +14,9 @@ import lombok.experimental.SuperBuilder;
 @FieldDefaults(level = AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
-public class HeaderValidationConfig<HeaderValidatableT, FailureT> extends BaseHeaderValidationConfig<HeaderValidatableT, FailureT> {
-  @Singular
-  Collection<TypedPropertyGetter<HeaderValidatableT, Collection<?>>> withBatchMappers;
+public class HeaderValidationConfig<HeaderValidatableT, FailureT>
+    extends BaseHeaderValidationConfig<HeaderValidatableT, FailureT> {
+  @Singular Collection<TypedPropertyGetter<HeaderValidatableT, Collection<?>>> withBatchMappers;
 
   public Set<String> getFieldNamesForBatch(Class<HeaderValidatableT> validatableClazz) {
     return HeaderValidationConfigEx.getFieldNamesForBatchEx(this, validatableClazz);

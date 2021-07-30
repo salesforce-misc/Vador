@@ -17,7 +17,9 @@ import org.revcloud.vader.types.validators.ValidatorEtr;
 abstract class BaseHeaderValidationConfig<HeaderValidatableT, FailureT> {
   @Nullable protected Tuple2<@NonNull Integer, FailureT> shouldHaveMinBatchSize;
   @Nullable protected Tuple2<@NonNull Integer, FailureT> shouldHaveMaxBatchSize;
-  @Singular protected Collection<ValidatorEtr<HeaderValidatableT, FailureT>> withHeaderValidatorEtrs;
+
+  @Singular
+  protected Collection<ValidatorEtr<HeaderValidatableT, FailureT>> withHeaderValidatorEtrs;
 
   @Nullable
   protected Tuple2<@NonNull Collection<Validator<? super HeaderValidatableT, FailureT>>, FailureT>

@@ -70,7 +70,6 @@ public class HeaderValidationConfigWithNestedTest {
     assertThat(result).contains(MIN_NESTED_BATCH_SIZE_NOT_MET_1);
   }
 
-
   @DisplayName("Min batch size for nested batch: Depth - 2")
   @Test
   void nestedBatchHeader2() {

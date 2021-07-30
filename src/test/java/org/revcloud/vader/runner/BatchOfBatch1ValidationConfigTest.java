@@ -18,7 +18,8 @@ import org.junit.jupiter.api.Test;
 
 class BatchOfBatch1ValidationConfigTest {
 
-  @DisplayName("Validate a structure like batchOf(Root[batchOf(bean)]) or like `List<Root<List<Bean>>`")
+  @DisplayName(
+      "Validate a structure like batchOf(Root[batchOf(bean)]) or like `List<Root<List<Bean>>`")
   @Test
   void nestedBatchFailFast() {
     final var memberBatchValidationConfig =
@@ -43,7 +44,7 @@ class BatchOfBatch1ValidationConfigTest {
     final var beanBatch = List.of(invalidBean, new Bean(1, "1"));
     final var itemsBatch = List.of(new Item(beanBatch));
     final var root = new Root(itemsBatch);
-    
+
     final var results =
         validateAndFailFastForEach(
             root.getItemsBatch(),
@@ -68,7 +69,7 @@ class BatchOfBatch1ValidationConfigTest {
   private static class Item {
     List<Bean> beanBatch;
   }
-  
+
   @Value
   private static class Root {
     List<Item> itemsBatch;
