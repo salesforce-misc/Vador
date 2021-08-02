@@ -46,31 +46,40 @@ internal fun <FailureT, ValidatableT> fireValidator(
     .flatMap { validatable } // Put the original Validatable in the right state
 
 @JvmSynthetic
-internal fun <FailureT> validateBatchSize(
-  headerItems: Collection<*>,
-  headerConfig: BaseHeaderValidationConfig<*, FailureT?>
+internal fun <ContainerValidatableT, NestedContainerValidatableT, FailureT> validateBatchSize(
+  container: ContainerValidatableT,
+  containerValidationConfig: ContainerValidationConfigWithNested<ContainerValidatableT, NestedContainerValidatableT, FailureT?>
 ): Optional<FailureT> {
-  val minBatchSize = headerConfig.shouldHaveMinBatchSize
-  if (minBatchSize != null && headerItems.size < minBatchSize._1) {
-    return Optional.ofNullable(minBatchSize._2)
+  val nestedContainerBatch: List<NestedContainerValidatableT> =
+    containerValidationConfig.withBatchMappers.mapNotNull { it[container] }.flatten()
+  return validateBatchSize(nestedContainerBatch, containerValidationConfig).or {
+    val nestedBatch: List<*> = nestedContainerBatch.mapNotNull { nestedContainer ->
+      containerValidationConfig.withNestedContainerValidationConfig.withBatchMappers.mapNotNull { it[nestedContainer] }.flatten()
+    }
+    validateBatchSize(nestedBatch, containerValidationConfig.withNestedContainerValidationConfig)
   }
-  val maxBatchSize = headerConfig.shouldHaveMaxBatchSize
-  return if (maxBatchSize != null && headerItems.size > maxBatchSize._1) {
-    Optional.ofNullable(maxBatchSize._2)
-  } else Optional.empty()
 }
 
 @JvmSynthetic
-internal fun <FailureT> validateNestedBatchSize(
-  headerItems: Collection<*>,
-  headerConfig: HeaderValidationConfigWithNested<*, *, FailureT?>
+internal fun <ContainerT, FailureT> validateBatchSize(
+  container: ContainerT,
+  containerValidationConfig: ContainerValidationConfig<ContainerT, FailureT?>
 ): Optional<FailureT> {
-  val minBatchSize = headerConfig.shouldHaveMinNestedBatchSize
-  if (minBatchSize != null && headerItems.size < minBatchSize._1) {
+  val memberBatch: List<*> = containerValidationConfig.withBatchMappers.mapNotNull { it[container] }.flatten()
+  return validateBatchSize(memberBatch, containerValidationConfig)
+}
+
+@JvmSynthetic
+private fun <FailureT> validateBatchSize(
+  memberBatch: Collection<*>,
+  containerConfig: BaseContainerValidationConfig<*, FailureT?>
+): Optional<FailureT> {
+  val minBatchSize = containerConfig.shouldHaveMinBatchSize
+  if (minBatchSize != null && memberBatch.size < minBatchSize._1) {
     return Optional.ofNullable(minBatchSize._2)
   }
-  val maxBatchSize = headerConfig.shouldHaveMaxNestedBatchSize
-  return if (maxBatchSize != null && headerItems.size > maxBatchSize._1) {
+  val maxBatchSize = containerConfig.shouldHaveMaxBatchSize
+  return if (maxBatchSize != null && memberBatch.size > maxBatchSize._1) {
     Optional.ofNullable(maxBatchSize._2)
   } else Optional.empty()
 }

@@ -3,8 +3,8 @@
 package org.revcloud.vader.matchers
 
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.anyOf
+import org.hamcrest.Matchers.`is`
 import org.hamcrest.core.AnyOf
 import org.hamcrest.core.IsNull
 

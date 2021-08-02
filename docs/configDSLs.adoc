@@ -1,0 +1,136 @@
+= Config DSL
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+:icons: font
+:tip-caption: 💡
+:caution-caption: ⚠️
+:sourcedir: ../src/main/java
+:testdir: ../src/test/java
+:imagesdir: ../images
+:vader-version: 2.4.7
+:toc: left
+
+== Config-Driven Validation
+
+Vader has a powerful and declarative Configuration DSL.
+A config object is 1-1 mapped with a Data Structure, and holds all the information required to validate that Data-structure.
+There are currently 4 flavors of configs depending on these factors:
+
+* Is the Data-structure under validation _Single (Non-Batch)_ or _Collection (Batch)_.
+* Does the Data-structure HAS-A Nested-Data-structure which needs to be validated too.
+** Is the Nested Data-structure _Single (Non-Batch)_ or _Collection (Batch)_.
+* Do the validations need to run from Container Context.
+
+Let's walk through each of these flavors with an example bean, validation requirements for its Data-structure and a Sample config for such requirements.
+
+NOTE: These examples don't exhaustively cover all the use-cases.
+You may refer the Javadoc of each validation config to find-out more.
+Also, the unit tests should help with the usage of these fields.
+As usual, file a git.soma issue if you have new and unique use-cases.
+
+== ValidationConfig DSL
+
+=== Flat
+
+This is the simplest config for a _Single (Non-Batch)_ bean with flat Data-structure.
+
+==== Example
+
+[source,java,indent=0]
+----
+include::{testdir}/org/revcloud/vader/runner/BaseValidationConfigTest.java[tag=flat-bean]
+----
+
+==== Validation Requirements
+
+* Configure to validate Mandatory fields.
+* Configure to validate Fields for SF ID format.
+* Configure other validators for the bean, written using one of `Validator*` types.
+
+==== Sample Config
+
+[source,java,indent=0]
+----
+include::{testdir}/org/revcloud/vader/runner/BaseValidationConfigTest.java[tag=validationConfig-for-flat-bean]
+----
+
+=== Nested
+
+image:nested-bean.png[]
+
+This is a case where a bean of data-type, say `ContainerT`, contains (HAS-A) a member bean of data-type say `MemberT`.
+Now validity of `ContainerT` depends on the validity of `MemberT`.
+In such case, both the data-structures can be independently validated by providing different `ValidationConfig` objects to each data-types to the Runner API and the results can be composed for Fail-Fast, as shown below.
+It supports nesting at any depth.
+
+=== Example
+
+[source,java,indent=0]
+----
+include::{testdir}/org/revcloud/vader/runner/ValidationConfigTest.java[tag=nested-bean]
+----
+
+==== Validation Requirements
+
+* Validate both data-structures independently.
+* Compose their results for Fail-Fast.
+
+=== Sample Configs
+
+ifdef::env-github[]
+
+[source,java,indent=0]
+----
+@Test
+void nestedBeanValidationWithInvalidMember() {
+  final var memberValidationConfig =
+      ValidationConfig.<Bean, ValidationFailure>toValidate()
+          .shouldHaveValidSFIdFormatForAllOrFailWithFn(
+              Tuple.of(
+                  List.of(Bean::getSfId1, Bean::getSfId2),
+                  (name, value) ->
+                      getFailureWithParams(
+                          ValidationFailureMessage.MSG_WITH_PARAMS, name, value)))
+          .prepare();
+  final var containerValidationConfig =
+      ValidationConfig.<ContainerBean, ValidationFailure>toValidate()
+          .shouldHaveFieldOrFailWithFn(
+              ContainerBean::getRequiredField,
+              (name, value) ->
+                  getFailureWithParams(ValidationFailureMessage.MSG_WITH_PARAMS, name, value))
+          .prepare();
+
+  final var invalidSfId = new ID("invalidSfId");
+  final var memberWithInvalidSfId =
+      new Bean(null, null, new ID("1ttxx00000000hZAAQ"), invalidSfId);
+  final var validContainer = new ContainerBean("requiredField", memberWithInvalidSfId);
+  final var result =
+      validateAndFailFast(
+              validContainer,
+              containerValidationConfig,
+              ValidationFailure::getValidationFailureForException)
+          .or(
+              () ->
+                  validateAndFailFast(
+                      memberWithInvalidSfId,
+                      memberValidationConfig,
+                      ValidationFailure::getValidationFailureForException));
+
+  assertThat(result).isPresent();
+  assertThat(result.get().getValidationFailureMessage().getParams())
+      .containsExactly(Bean.Fields.sfId2, invalidSfId);
+}
+----
+
+ifndef::env-github[]
+
+[source,java,indent=0]
+----
+include::{testdir}/org/revcloud/vader/runner/ValidationConfigTest.java[tag=validationConfig-for-nested-bean]
+----
+
+endif::[]
+
+== BatchValidationConfig DSL
+
+As the name indicates, use this to validate a Batch data-structure , say 

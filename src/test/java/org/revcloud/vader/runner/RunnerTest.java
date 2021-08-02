@@ -28,7 +28,7 @@ class RunnerTest {
                     bean -> Either.left(UNKNOWN_EXCEPTION)))
             .prepare();
     final var result =
-        Runner.validateAndFailFastForEach(
+        Runner.validateAndFailFast(
             new Bean(0), validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
@@ -51,7 +51,7 @@ class RunnerTest {
     final List<Validator<Bean, ValidationFailure>> validators =
         List.of(bean -> NONE, bean -> VALIDATION_FAILURE_1, bean -> VALIDATION_FAILURE_2);
     final var result =
-        Runner.validateAndAccumulateErrorsForValidators(
+        Runner.validateAndAccumulateErrors(
             new Bean(0), validators, NONE, ValidationFailure::getValidationFailureForException);
     assertThat(result).containsAll(List.of(NONE, VALIDATION_FAILURE_1, VALIDATION_FAILURE_2));
   }
@@ -64,14 +64,13 @@ class RunnerTest {
                 Tuple.of(List.of(bean -> NONE, bean -> NONE, bean -> UNKNOWN_EXCEPTION), NONE))
             .prepare();
     final var result =
-        Runner.validateAndFailFastForEach(
+        Runner.validateAndFailFast(
             new Bean(0), validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
   @Value
   private static class Bean {
-
     int id;
   }
 }

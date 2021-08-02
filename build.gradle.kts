@@ -15,13 +15,15 @@ plugins {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.4.7.1"
+version = "2.4.8-SNAPSHOT"
 description = "Vader - An FP framework for Bean validation"
 
 repositories {
   mavenCentral()
   maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
 }
+
+val asciidoclet by configurations.creating
 
 dependencies {
   api("io.vavr:vavr:0.10.3")
@@ -34,6 +36,7 @@ dependencies {
   implementation("com.force.api:swag:0.3.9")
 
   runtimeOnly("org.apache.logging.log4j:log4j-slf4j18-impl:2.14.1")
+  asciidoclet("org.asciidoctor:asciidoclet:1.+")
 
   testImplementation(platform("org.junit:junit-bom:5.8.0-M1"))
   testImplementation("org.junit.jupiter:junit-jupiter-api")
@@ -75,7 +78,16 @@ tasks {
       html.required.set(false)
     }
   }
+  register("configureJavadoc") {
+    doLast {
+      javadoc {
+        options.doclet = "org.asciidoctor.Asciidoclet"
+        options.docletpath = asciidoclet.files.toList()
+      }
+    }
+  }
   javadoc {
+    dependsOn("configureJavadoc")
     if (JavaVersion.current().isJava9Compatible) {
       (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
     }
@@ -199,18 +211,18 @@ spotless {
   kotlin {
     target("src/main/java/**/*.kt", "src/test/java/**/*.kt")
     targetExclude("$buildDir/generated/**/*.*")
-    ktlint("0.41.0").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
+    ktlint("0.42.0").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
   }
   kotlinGradle {
     target("*.gradle.kts")
-    ktlint("0.41.0").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
+    ktlint("0.42.0").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
   }
   java {
     target("src/main/java/**/*.java", "src/test/java/**/*.java")
     targetExclude("$buildDir/generated/**/*.*")
     importOrder()
     removeUnusedImports()
-    googleJavaFormat("1.10.0")
+    googleJavaFormat("1.11.0")
     trimTrailingWhitespace()
     indentWithSpaces(2)
     endWithNewline()
@@ -221,7 +233,7 @@ spotless {
     eclipseWtp(XML)
   }
   format("markdown") {
-    target("*.md")
+    target("*.md", "*.adoc")
     trimTrailingWhitespace()
     indentWithSpaces(2)
     endWithNewline()

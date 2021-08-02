@@ -1,0 +1,324 @@
+= 🦾 Vader 🦾
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+:icons: font
+:tip-caption: 💡
+:caution-caption: ⚠️
+:sourcedir: src/main/java
+:imagesdir: images
+:vader-version: 2.4.7
+:toc:
+:toc-placement!:
+
+image:vader.png[]
+
+[quote, Lord Vader]
+____
+
+A piece-of-code is a costly solution to solve a simple problem
+
+____
+
+'''
+
+== Mission Statement
+
+____
+
+*Abstract away the Validation Orchestration complexity with a Reusable Design, that sets a framework to Write & Wire validations that are easy to Test, Extend and Share*
+
+____
+
+'''
+
+== Artifact Coordinates
+
+[source,xml,subs=attributes+]
+----
+<dependency>
+  <groupId>com.salesforce.ccspayments</groupId>
+  <artifactId>vader</artifactId>
+  <version>{vader-version}</version>
+</dependency>
+
+----
+
+'''
+
+toc::[]
+
+== Why Vader?
+
+____
+
+*On core, there is no de-facto standard to write bean validations*
+
+link:docs/requirements.adoc[Requirements that lead to the birth of Vader]
+
+____
+
+Validation orchestration is predominantly done with `if-else-try-catch` pyramids, similar to https://github.com/overfullstack/railway-oriented-validation/blob/master/src/main/java/app/imperative/ImperativeValidation.java[this].
+A domain may have more than 60 validations across its batch & non-batch services.
+Having validations as loose functions for the above requirements, can create a mess of function calls:
+
+image:function-call-mess.png[inline]
+
+This approach can spike the https://www.ibm.com/developerworks/java/library/j-cq03316/[*Cyclomatic Complexity*]
+and https://www.sonarsource.com/docs/CognitiveComplexity.pdf[*Cognitive Complexity*] metrics and renders a code-base which is difficult to test, extend and maintain.
+
+=== The 3D design problem
+
+This problem is a 3-dimensional design problem stretching among - Sub-requests, Service routes ( sharing common fields &nodes), and Validation count.
+In the above imperative approach, we entangled all 3, which lead to chaos.
+We need a design, which treats all of these separately, let them be extended independently, and abstracts out validation sequencing and orchestration.
+
+*We need to separate _What-to-do_ from _How-to-do._*
+
+=== Demo pls!
+
+Watch this Tech-talk as a prerequisite to understanding, why `if-else-try-catch` is easy to start but difficult to manage and how Vader disciplines your code-base:
+
+Blog post: https://overfullstack.ga/posts/fight-complexity-with-fp/
+
+video::Dvr6gx4XaD8[youtube]
+
+'''
+
+=== More videos
+
+These recordings are initial presentations for Vader within the team.
+
+CAUTION: The Design has evolved after these recordings, but Vader's philosophy remains the same.
+Follow the rest of this doc to know more
+
+https://drive.google.com/open?id=1AciJ3xU5HFgeTwJxL0RME0mQVO08BMQ9[Brown Bag Session]
+https://drive.google.com/open?id=1Syi3smlcyFAL0ZoDuq5dWR1IALZNmNUm[An Internal Presentation] (This is partially recorded)
+
+'''
+
+== TL;DR Show me the code
+
+=== https://codesearch.data.sfdc.net/source/xref/app_main_core/app/main/core/billing-services/java/src/core/billing/service/billingschedule/config/BillingScheduleConfig.java#261[billing-services]
+
+'''
+
+== New in 2.0
+
+=== 🍭 link:docs/configDSLs.adoc[Config DSLs]
+
+=== 🤩 link:docs/specs.adoc[Specs]
+
+'''
+
+== What's Vader?
+
+*Vader is an independent Bean validation framework, not tied to any REST framework*.
+It's agnostic of its consumer's Rest framework, Request data-type or failure representation.
+Although it's written with the context explained above, its implementation is generic and can cater to anyone looking for a declarative way to validate their Beans/POJOs.
+
+Vader follows *Functional Programming* philosophy to segregate _What-to-do_ from _How-to-do_.
+The framework asks your validations to be broken into 3 *_decoupled_* parts:
+
+* Validations _(What-to-do)_ - Write your validations as First-Class Functions.
+* Configuration _(How-to-do)_ - Stitch your validations together into a Chain.
+* Orchestration _(How-to-do)_ - Call the API function as per the execution strategy (Fail-Fast or Error-Accumulation)
+
+Let's dive into how Vader can help you in each of these steps:
+
+'''
+
+== ƛ Data-types for Lambda
+
+The job of validator is simple, just to convey if a POJO is valid or why it's invalid (in the form of a Validation Failure).
+
+Vader provides various *Validator Data-Types*, to get this done.
+These are https://www.baeldung.com/java-8-functional-interfaces[Functional Interfaces] to which a lambda can be assigned.
+
+== Validator `(ValidatableT) -> FailureT`
+
+The Data type for simple first-class functions.
+It takes in a bean to be validated, represented by `ValidatableT`, and returns a failure `FailureT`.
+
+[source,java]
+----
+public static final Validator<Container, ValidationFailure> validation1 =
+  containerInputRepresentation -> {
+    if(containerInputRepresentation._isSetPaymentAuthorizationId()) {
+      return null;
+    } else {
+      return new ValidationFailure(...);
+    }
+  };
+----
+
+=== If you need more ⚡️Power⚡️
+
+image:more-power.gif[inline]
+
+== ValidatorEtr (`(Either<FailureT, ValidatableT>) -> Either<FailureT, ?>`)
+
+=== https://docs.vavr.io/#_either[Either Monad]
+
+Unlike `Validator` type (which works with Simple input/output types), `ValidatorEtr` lambda type works with `Either`
+type as input/output.
+The `Either` type is borrowed from https://docs.vavr.io/#_either[Vavr].
+
+=== What's so powerful about `Either`?
+
+With `Either`, You get all the functional programming powers.
+You can write linear programs with a lot less *Cyclomatic Complexity* & *Cognitive Complexity*.
+
+Please refer to this tech talk discussing these concepts: https://www.youtube.com/watch?v=Dvr6gx4XaD8&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or["Fight Complexity with Functional Programming - Gopal S. Akshintala - All Things Open, USA, 2020"]
+
+Lambdas assigned to `ValidatorEtr` take `Either<FailureT, ValidatableT>` as input.
+Since the bean is pre-wrapped in an `Either`, you can perform all the `Either` operations on the input like `map` , `flatMap`, `fold`, `filterOrElse` ( Refer https://www.javadoc.io/doc/io.vavr/vavr/0.10.2/io/vavr/control/Either.html[API] for more info).
+
+The result of the function is supposed to be `Either<FailureT, ?>`.
+This signifies, if there is a Validation Failure, keep it in the _left_ state.
+If the `Either` in the result is in the _right_ state, it is considered that the bean ** Passed** the validation.
+The wildcard `?` signifies it doesn't matter what is the value in the right state.
+
+[source,java]
+----
+public static final ValidatorEtr<Container, ValidationFailure> batchValidation1 =
+  containerInputRepresentation -> containerInputRepresentation
+    .filterOrElse(Container::_isSetAccountId, ignore-> new ValidationFailure(..);
+----
+
+TIP: Of-course, pre-wrapping bean into `Either` is just to avoid boiler-plate.
+You can very well use `Validator` and wrap/unwrap the bean yourself.
+
+== Why are there different Validator types?
+
+These types only differ stylistically.
+They are there to help developers focus only on their validation logic, not worry about boiler-plate and use a programming style (imperative or functional) that they are comfortable in.
+You can essentially use any Data type for your validators and in-fact you can even have a mix, based on your needs.
+Vader leaves the choice to the developer.
+
+'''
+
+== How to Stitch these Validators?
+
+Validators for different beans can be written in their own java classes.
+Using lambdas, we essentially *use functions as values*.
+So, all we need is an Ordered List (like `java.util.List`) to maintain the sequence of validations.
+We can chain all the validators, in the order of preference.
+
+[source,java]
+----
+List<ValidatorEtr<Container, ValidationFailure> validatorChain = List.of(validator1, validator2,...);
+----
+
+== How to combine Container & Member validators?
+
+But there's a catch!
+A List of Validators for a container node consists of a mix of all container validators and all its nested member validators.
+But they can't be put under one `List`, as they are functions on different Data Types.
+
+[source,java]
+----
+ValidatorEtr<Container, ValidationFailure> containerValidator =...; // Apply same anology for Validator
+ValidatorEtr<Member, ValidationFailure> memberValidator =...;
+List.of(containerValidator, memberValidator); // ^^^ Compile Error
+----
+
+So all nested member validators need to be lifted to the container type, essentially changing their type matching with the Container's, like: `ValidatorEtr<Container, ValidationFailure>`.
+
+We can achieve this with `org.revcloud.vader.lift.*Util` functions.
+These are *Higher-Order Functions*, which *lift* member validator to the container type.
+This takes a `containerToMemberMapper` which is function to extract member from container.
+
+[source,java]
+----
+ValidatorEtr<Member, ValidationFailure> memberValidator =...;
+ValidatorEtr<Container, ValidationFailure> liftedMemberValidator =...;
+List.of(containerValidator, liftToContainerValidatorType(memberValidator, containerToMemberMapper)); // Happy Compiler :)
+----
+
+*This is a powerful technique, which lets you validate any Bean with any level or nesting.
+It's easy to fit this model in our heads, as validator configuration aligns with Bean hierarchical-structure*
+
+image:hierarchical-validation.png[inline]
+
+This way, we can configure a *Chain* of validators in-order, sorting out all the container-member dependencies.
+This is nothing but, the most popular *Chain of Responsibility* Design pattern, with a functional touch-up.
+
+If the inter-dependencies between Container-Member happens to be more complex, we may end-up with _Graph_ relationship, but we can easily _flatten_ it into a Chain with a simple _Topological Sort_.
+
+== How to combine Validators & ValidatorEtrs?
+
+TIP: If you are using link:docs/configDSLs.adoc[`ValidationConfig` DSL] from 2.0, you don't need to worry about this, unless you are particular about the order of validators.
+
+Similarly, Vader has utils to lift `Validator` to `ValidatorEtr`.
+This is handy, when you have a mix of validations, and they all need to be of the same type to stitch them together.
+
+== Lift Util
+
+Below are the utils currently available, with self-explanatory names.
+There are multiple overloads suitable for simple/non-simple.
+The Java Docs should guide you to use proper overload:
+
+=== Aggregation Util: To lift Member validator to Container validator type
+
+These are available for both `Validator` and `ValidatorEtr`.
+
+[cols="<,<"]
+|===
+|liftToContainerValidatorType |liftAllToContainerValidatorType
+|liftToContainerValidatorType |liftAllToContainerValidatorType
+|===
+
+=== Validator Util: To lift Simple validator to ValidatorEtr type
+
+[cols="<,<"]
+|===
+|lift |liftAll
+|===
+
+== Deferred result
+
+If you skim through the source code, you can realize none of these Util functions does any execution.
+These Higher-Order functions simply take-in a function and return a lifted function, deferring the actual execution until you call any API method in the _Runner_ API below:
+
+'''
+
+== Validation Execution Strategies
+
+Now that we know how to write & wire validations, the last step to execute these validations is to *call an execution method, passing this config as a parameter*.
+
+This can be seen as the *Edge* for validation bounded context, where the actual execution of validations happen, and you get back the final results.
+_The complexity of how these validators are orchestrated per strategy is abstracted away from the consumer._
+
+*There are various flavors (Overloads) in the Runner for Batch/Non-Batch (Please refer to Java Docs)*.
+
+== `validateAndFailFastForEach(...)`
+
+== `validateAndFailFastForAny(...)`
+
+== `validateAndAccumulateErrors(...)`
+
+== What about exceptions?
+
+These Runner methods accept a parameter called `throwableMapper: (Throwable) -> FailureT`.
+If any of your validations throws a checked or unchecked exception, it shall be mapped into a `FailureT` using this function.
+
+'''
+
+== Current State
+
+* This idea was presented as a Tech-talk at many https://overfullstack.ga/posts/fight-complexity-with-fp/#My-Talk-on-this[International Conferences & Meetups]
+* This is currently consumed in *Production* by Payments, Tax and Billing domains.
+
+=== Future
+
+* Context-aware validations to share data among validations
+
+*👋🏼 If you have specific requirement, please log a git.soma issue 👋🏼*
+
+'''
+
+image:vader.gif[inline]
+
+'''
+
+== link:CONTRIBUTING.adoc[Wanna Contribute?]

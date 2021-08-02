@@ -9,16 +9,19 @@ import lombok.Singular;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.jetbrains.annotations.Nullable;
 
 @Value
 @FieldDefaults(level = AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
-public class HeaderValidationConfig<HeaderValidatableT, FailureT>
-    extends BaseHeaderValidationConfig<HeaderValidatableT, FailureT> {
-  @Singular Collection<TypedPropertyGetter<HeaderValidatableT, Collection<?>>> withBatchMappers;
+public class ContainerValidationConfig<ContainerValidatableT, FailureT>
+    extends BaseContainerValidationConfig<ContainerValidatableT, FailureT> {
 
-  public Set<String> getFieldNamesForBatch(Class<HeaderValidatableT> validatableClazz) {
-    return HeaderValidationConfigEx.getFieldNamesForBatchEx(this, validatableClazz);
+  @Singular
+  Collection<TypedPropertyGetter<ContainerValidatableT, @Nullable Collection<?>>> withBatchMappers;
+
+  public Set<String> getFieldNamesForBatch(Class<ContainerValidatableT> validatableClazz) {
+    return ContainerValidationConfigEx.getFieldNamesForBatchEx(this, validatableClazz);
   }
 }

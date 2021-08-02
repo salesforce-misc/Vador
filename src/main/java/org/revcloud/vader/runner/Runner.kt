@@ -7,41 +7,41 @@ import org.revcloud.vader.types.validators.Validator
 import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
-fun <FailureT, HeaderValidatableT> validateAndFailFastForHeader(
-  headerValidatable: HeaderValidatableT,
-  headerValidationConfig: HeaderValidationConfig<HeaderValidatableT, FailureT?>,
+fun <FailureT, ContainerValidatableT> validateAndFailFastForContainer(
+  container: ContainerValidatableT,
+  containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
-): Optional<FailureT> = failFastForHeader(headerValidationConfig, throwableMapper)(headerValidatable)
+): Optional<FailureT> = failFastForContainer(containerValidationConfig, throwableMapper)(container)
 
-fun <FailureT, HeaderValidatableT, NestedHeaderValidatableT> validateAndFailFastForHeader(
-  headerValidatable: HeaderValidatableT,
-  headerValidationConfig: HeaderValidationConfigWithNested<HeaderValidatableT, NestedHeaderValidatableT, FailureT?>,
+fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
+  container: ContainerValidatableT,
+  containerValidationConfig: ContainerValidationConfigWithNested<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
-): Optional<FailureT> = failFastForHeader(headerValidationConfig, throwableMapper)(headerValidatable)
+): Optional<FailureT> = failFastForContainer(containerValidationConfig, throwableMapper)(container)
 
 /**
- * This deals with Batch of Headers.
+ * This deals with Batch of Containers.
  * This is placed in this class instead of BatchRunner, so that consumers can fluently use both these overloads.
  */
-fun <FailureT, HeaderValidatableT> validateAndFailFastForHeader(
-  batchValidatable: Collection<HeaderValidatableT>,
-  headerValidationConfig: HeaderValidationConfig<HeaderValidatableT, FailureT?>,
+fun <FailureT, ContainerValidatableT> validateAndFailFastForContainer(
+  batchValidatable: Collection<ContainerValidatableT>,
+  containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): Optional<FailureT> = batchValidatable.asSequence()
-  .map { validatable: HeaderValidatableT ->
-    validateAndFailFastForHeader(validatable, headerValidationConfig, throwableMapper)
+  .map { validatable: ContainerValidatableT ->
+    validateAndFailFastForContainer(validatable, containerValidationConfig, throwableMapper)
   }.firstOrNull { it.isPresent } ?: Optional.empty()
 
-fun <FailureT, HeaderValidatableT, NestedHeaderValidatableT> validateAndFailFastForHeader(
-  batchValidatable: Collection<HeaderValidatableT>,
-  headerValidationConfig: HeaderValidationConfigWithNested<HeaderValidatableT, NestedHeaderValidatableT, FailureT?>,
+fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
+  batchValidatable: Collection<ContainerValidatableT>,
+  containerValidationConfig: ContainerValidationConfigWithNested<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): Optional<FailureT> = batchValidatable.asSequence()
-  .map { validatable: HeaderValidatableT ->
-    validateAndFailFastForHeader(validatable, headerValidationConfig, throwableMapper)
+  .map { validatable: ContainerValidatableT ->
+    validateAndFailFastForContainer(validatable, containerValidationConfig, throwableMapper)
   }.firstOrNull { it.isPresent } ?: Optional.empty()
 
-fun <FailureT, ValidatableT> validateAndFailFastForEach(
+fun <FailureT, ValidatableT> validateAndFailFast(
   validatable: ValidatableT,
   validationConfig: ValidationConfig<ValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
@@ -59,7 +59,7 @@ fun <FailureT, ValidatableT> validateAndFailFastForEach(
  * @param <ValidatableT>
  * @return List of Validation failures.
 </ValidatableT></FailureT> */
-fun <FailureT, ValidatableT> validateAndAccumulateErrorsForValidators(
+fun <FailureT, ValidatableT> validateAndAccumulateErrors(
   validatable: ValidatableT,
   validators: Collection<Validator<ValidatableT?, FailureT?>>,
   none: FailureT,

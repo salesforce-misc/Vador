@@ -6,7 +6,7 @@ import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_2;
 import static consumer.failure.ValidationFailure.MIN_NESTED_BATCH_SIZE_NOT_MET_1;
 import static consumer.failure.ValidationFailure.NONE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.revcloud.vader.runner.Runner.validateAndFailFastForHeader;
+import static org.revcloud.vader.runner.Runner.validateAndFailFastForContainer;
 
 import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
@@ -20,26 +20,30 @@ import lombok.experimental.FieldNameConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class HeaderValidationConfigWithNestedTest {
+class ContainerValidationConfigWithNestedTest {
+
   @DisplayName("Min batch size for nested batch: Depth - 1")
   @Test
   void nestedBatchHeader1() {
     final var header1RootValidationConfig =
-        HeaderValidationConfigWithNested.<Header1Root, Header2, ValidationFailure>toValidate()
+        ContainerValidationConfigWithNested.<Header1Root, Header2, ValidationFailure>toValidate()
             .withBatchMapper(Header1Root::getHeader2)
             .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_1))
-            .withNestedBatchMapper(Header2::getHeader3Batch)
-            .shouldHaveMinNestedBatchSize(Tuple.of(3, MIN_NESTED_BATCH_SIZE_NOT_MET_1))
+            .withNestedContainerValidationConfig(
+                ContainerValidationConfig.<Header2, ValidationFailure>toValidate()
+                    .withBatchMapper(Header2::getHeader3Batch)
+                    .shouldHaveMinBatchSize(Tuple.of(3, MIN_NESTED_BATCH_SIZE_NOT_MET_1))
+                    .prepare())
             .prepare();
     final var header2ValidationConfig =
-        HeaderValidationConfig.<Header2, ValidationFailure>toValidate()
+        ContainerValidationConfig.<Header2, ValidationFailure>toValidate()
             .withBatchMapper(Header2::getHeader3Batch)
             .shouldHaveMinBatchSize(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_2))
-            .withHeaderValidator(ignore -> NONE, NONE)
+            .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
     final var strBatch1ValidationConfig =
-        HeaderValidationConfig.<String, ValidationFailure>toValidate()
-            .withHeaderValidator(ignore -> NONE, NONE)
+        ContainerValidationConfig.<String, ValidationFailure>toValidate()
+            .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
 
     final var throwableMapper =
@@ -57,14 +61,15 @@ public class HeaderValidationConfigWithNestedTest {
     final var header1Root = new Header1Root(header2Batch, strBatch1);
 
     final var result =
-        validateAndFailFastForHeader(header1Root, header1RootValidationConfig, throwableMapper)
+        Runner.validateAndFailFastForContainer(
+                header1Root, header1RootValidationConfig, throwableMapper)
             .or(
                 () ->
-                    validateAndFailFastForHeader(
+                    Runner.validateAndFailFastForContainer(
                         header2Batch, header2ValidationConfig, throwableMapper))
             .or(
                 () ->
-                    validateAndFailFastForHeader(
+                    Runner.validateAndFailFastForContainer(
                         strBatch1, strBatch1ValidationConfig, throwableMapper));
 
     assertThat(result).contains(MIN_NESTED_BATCH_SIZE_NOT_MET_1);
@@ -74,23 +79,29 @@ public class HeaderValidationConfigWithNestedTest {
   @Test
   void nestedBatchHeader2() {
     final var header1RootValidationConfig =
-        HeaderValidationConfigWithNested.<Header1Root, Header2, ValidationFailure>toValidate()
+        ContainerValidationConfigWithNested.<Header1Root, Header2, ValidationFailure>toValidate()
             .withBatchMapper(Header1Root::getHeader2)
             .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_1))
-            .withNestedBatchMapper(Header2::getHeader3Batch)
-            .shouldHaveMinNestedBatchSize(Tuple.of(3, MIN_NESTED_BATCH_SIZE_NOT_MET_1))
+            .withNestedContainerValidationConfig(
+                ContainerValidationConfig.<Header2, ValidationFailure>toValidate()
+                    .withBatchMapper(Header2::getHeader3Batch)
+                    .shouldHaveMinBatchSize(Tuple.of(3, MIN_NESTED_BATCH_SIZE_NOT_MET_1))
+                    .prepare())
             .prepare();
     final var header2ValidationConfig =
-        HeaderValidationConfigWithNested.<Header2, Header3, ValidationFailure>toValidate()
+        ContainerValidationConfigWithNested.<Header2, Header3, ValidationFailure>toValidate()
             .withBatchMapper(Header2::getHeader3Batch)
             .shouldHaveMinBatchSize(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_2))
-            .withNestedBatchMapper(Header3::getBeanBatch)
-            .shouldHaveMaxNestedBatchSize(Tuple.of(3, MAX_NESTED_BATCH_SIZE_EXCEEDED_2))
-            .withHeaderValidator(ignore -> NONE, NONE)
+            .withNestedContainerValidationConfig(
+                ContainerValidationConfig.<Header3, ValidationFailure>toValidate()
+                    .withBatchMapper(Header3::getBeanBatch)
+                    .shouldHaveMaxBatchSize(Tuple.of(3, MAX_NESTED_BATCH_SIZE_EXCEEDED_2))
+                    .withContainerValidator(ignore -> NONE, NONE)
+                    .prepare())
             .prepare();
     final var strBatch1ValidationConfig =
-        HeaderValidationConfig.<String, ValidationFailure>toValidate()
-            .withHeaderValidator(ignore -> NONE, NONE)
+        ContainerValidationConfig.<String, ValidationFailure>toValidate()
+            .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
 
     final var throwableMapper =
@@ -108,14 +119,15 @@ public class HeaderValidationConfigWithNestedTest {
     final var header1Root = new Header1Root(header2Batch, strBatch1);
 
     final var result =
-        validateAndFailFastForHeader(header1Root, header1RootValidationConfig, throwableMapper)
+        Runner.validateAndFailFastForContainer(
+                header1Root, header1RootValidationConfig, throwableMapper)
             .or(
                 () ->
-                    validateAndFailFastForHeader(
+                    validateAndFailFastForContainer(
                         header2Batch, header2ValidationConfig, throwableMapper))
             .or(
                 () ->
-                    validateAndFailFastForHeader(
+                    Runner.validateAndFailFastForContainer(
                         strBatch1, strBatch1ValidationConfig, throwableMapper));
 
     assertThat(result).contains(MAX_NESTED_BATCH_SIZE_EXCEEDED_2);
@@ -138,7 +150,6 @@ public class HeaderValidationConfigWithNestedTest {
   @FieldNameConstants
   @AllArgsConstructor
   public static class Header1Root {
-
     List<Header2> header2;
     List<String> batch1Str;
   }

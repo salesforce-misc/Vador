@@ -12,7 +12,7 @@ internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, Failure
   fromValidators1(withValidators) + fromValidators2(withValidator) + withValidatorEtrs
 
 internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.getSpecsEx(): List<BaseSpec<ValidatableT, FailureT>> {
-  val specFactory = SpecFactory<ValidatableT, FailureT>()
+  val specFactory = SpecFactory<ValidatableT, FailureT?>()
   return (specify?.invoke(specFactory)?.map { it.done() as BaseSpec<ValidatableT, FailureT> } ?: emptyList()) +
     withSpecs.map { it.invoke(specFactory).done() as BaseSpec<ValidatableT, FailureT> }
 }
@@ -30,27 +30,17 @@ internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, Failure
 }
 
 internal fun <ValidatableT> BaseValidationConfig<ValidatableT, *>.getRequiredFieldNamesEx(beanClass: Class<ValidatableT>): Set<String> =
-  (shouldHaveFieldsOrFailWith.keys + (shouldHaveFieldsOrFailWithFn?._1 ?: emptyList()))
+  (shouldHaveFieldsOrFailWith.keys + (shouldHaveFieldsOrFailWithFn?._1 ?: emptyList()) + shouldHaveFieldOrFailWithFn.keys)
     .map { PropertyUtils.getPropertyName(beanClass, it) }.toSet()
 
 internal fun <ValidatableT> BaseValidationConfig<ValidatableT, *>.getRequiredFieldNamesForSFIdFormatEx(
   beanClass: Class<ValidatableT>
 ): Set<String> =
-  (
-    shouldHaveValidSFIdFormatOrFailWith.keys + (
-      shouldHaveValidSFIdFormatOrFailWithFn?._1
-        ?: emptyList()
-      )
-    )
+  (shouldHaveValidSFIdFormatForAllOrFailWith.keys + (shouldHaveValidSFIdFormatForAllOrFailWithFn?._1 ?: emptyList()) + shouldHaveValidSFIdFormatOrFailWithFn.keys)
     .map { PropertyUtils.getPropertyName(beanClass, it) }.toSet()
 
 internal fun <ValidatableT> BaseValidationConfig<ValidatableT, *>.getNonRequiredFieldNamesForSFIdFormatEx(
   beanClass: Class<ValidatableT>
 ): Set<String> =
-  (
-    absentOrHaveValidSFIdFormatOrFailWith.keys + (
-      absentOrHaveValidSFIdFormatOrFailWithFn?._1
-        ?: emptyList()
-      )
-    )
+  (absentOrHaveValidSFIdFormatForAllOrFailWith.keys + (absentOrHaveValidSFIdFormatForAllOrFailWithFn?._1 ?: emptyList()) + absentOrHaveValidSFIdFormatOrFailWithFn.keys)
     .map { PropertyUtils.getPropertyName(beanClass, it) }.toSet()

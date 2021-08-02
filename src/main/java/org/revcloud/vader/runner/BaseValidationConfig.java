@@ -4,11 +4,7 @@ import com.force.swag.id.ID;
 import de.cronn.reflection.util.TypedPropertyGetter;
 import io.vavr.Function2;
 import io.vavr.Tuple2;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import lombok.Getter;
 import lombok.NonNull;
@@ -24,49 +20,66 @@ import org.revcloud.vader.types.validators.ValidatorEtr;
 abstract class BaseValidationConfig<ValidatableT, FailureT> {
 
   @Singular("shouldHaveFieldOrFailWith")
-  protected Map<TypedPropertyGetter<ValidatableT, ?>, FailureT> shouldHaveFieldsOrFailWith;
+  protected Map<TypedPropertyGetter<ValidatableT, ?>, @Nullable FailureT>
+      shouldHaveFieldsOrFailWith;
 
   @Nullable
   protected Tuple2<
           @NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, ?>>,
-          @NonNull Function2<String, Object, FailureT>>
+          @NonNull Function2<String, Object, @Nullable FailureT>>
       shouldHaveFieldsOrFailWithFn;
 
+  @Singular("shouldHaveFieldOrFailWithFn")
+  protected Map<
+          TypedPropertyGetter<ValidatableT, ?>,
+          @NonNull Function2<String, Object, @Nullable FailureT>>
+      shouldHaveFieldOrFailWithFn;
+
   @Singular("shouldHaveValidSFIdFormatOrFailWith")
-  protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT>
-      shouldHaveValidSFIdFormatOrFailWith;
+  protected Map<TypedPropertyGetter<ValidatableT, ID>, @Nullable FailureT>
+      shouldHaveValidSFIdFormatForAllOrFailWith;
 
   @Nullable
   protected Tuple2<
           @NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, ID>>,
-          @NonNull Function2<String, ID, FailureT>>
+          @NonNull Function2<String, ID, @Nullable FailureT>>
+      shouldHaveValidSFIdFormatForAllOrFailWithFn;
+
+  @Singular("shouldHaveValidSFIdFormatOrFailWithFn")
+  protected Map<
+          TypedPropertyGetter<ValidatableT, ID>, @NonNull Function2<String, ID, @Nullable FailureT>>
       shouldHaveValidSFIdFormatOrFailWithFn;
 
   @Singular("absentOrHaveValidSFIdFormatOrFailWith")
-  protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT>
-      absentOrHaveValidSFIdFormatOrFailWith;
+  protected Map<TypedPropertyGetter<ValidatableT, ID>, @Nullable FailureT>
+      absentOrHaveValidSFIdFormatForAllOrFailWith;
 
   @Nullable
   protected Tuple2<
           @NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, ID>>,
-          @NonNull Function2<String, ID, FailureT>>
+          @NonNull Function2<String, ID, @Nullable FailureT>>
+      absentOrHaveValidSFIdFormatForAllOrFailWithFn;
+
+  @Singular("absentOrHaveValidSFIdFormatOrFailWithFn")
+  protected Map<
+          TypedPropertyGetter<ValidatableT, ID>, @NonNull Function2<String, ID, @Nullable FailureT>>
       absentOrHaveValidSFIdFormatOrFailWithFn;
 
   @Nullable protected Specs<ValidatableT, FailureT> specify;
 
   @Singular("withSpec")
-  protected Collection<? extends Spec<ValidatableT, FailureT>> withSpecs;
+  protected Collection<? extends Spec<ValidatableT, @Nullable FailureT>> withSpecs;
 
-  @Singular Collection<ValidatorEtr<ValidatableT, FailureT>> withValidatorEtrs;
+  @Singular Collection<ValidatorEtr<ValidatableT, @Nullable FailureT>> withValidatorEtrs;
 
   @Nullable
   Tuple2<
-          @NonNull Collection<? extends Validator<? super ValidatableT, FailureT>>,
+          @NonNull Collection<? extends Validator<? super ValidatableT, @Nullable FailureT>>,
           @NonNull FailureT>
       withValidators;
 
   @Singular("withValidator")
-  Map<? extends Validator<? super ValidatableT, FailureT>, FailureT> withValidator;
+  Map<? extends Validator<? super ValidatableT, FailureT>, @Nullable FailureT> withValidator;
 
   List<BaseSpec<ValidatableT, FailureT>> getSpecs() {
     return BaseValidationConfigEx.getSpecsEx(this);

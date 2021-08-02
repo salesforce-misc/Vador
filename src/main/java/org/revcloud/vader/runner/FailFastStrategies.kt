@@ -18,18 +18,8 @@ internal typealias FailFastForAny<ValidatableT, FailureT> = (Collection<Validata
 
 internal typealias FailFastForAnyWithPair<ValidatableT, FailureT, PairT> = (Collection<ValidatableT>) -> Optional<Tuple2<PairT?, FailureT?>>
 
-internal typealias FailFastForHeader<ValidatableT, FailureT> = (ValidatableT) -> Optional<FailureT>
+internal typealias FailFastForContainer<ValidatableT, FailureT> = (ValidatableT) -> Optional<FailureT>
 
-/**
- * Config
- *
- * @param invalidValidatable
- * @param throwableMapper
- * @param validationConfig
- * @param <FailureT>
- * @param <ValidatableT>
- * @return
- */
 @JvmSynthetic
 internal fun <ValidatableT, FailureT> failFast(
   validationConfig: ValidationConfig<ValidatableT, FailureT?>,
@@ -69,36 +59,32 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEa
     validatables,
     failureForNullValidatable,
     batchOfBatch1ValidationConfig.findAndFilterDuplicatesConfigs
-  )
-    .map { containerValidatable: Either<FailureT?, ContainerValidatableT?> ->
-      findFirstFailure(
-        containerValidatable,
-        toValidators(batchOfBatch1ValidationConfig),
-        throwableMapper
-      ) ?: containerValidatable
-    }
-    .map { validContainer: Either<FailureT?, ContainerValidatableT?> ->
-      validContainer
-        .map(batchOfBatch1ValidationConfig.withMemberBatchValidationConfig._1)
-        .map { members: Collection<MemberValidatableT> ->
-          failFastForEach(
-            batchOfBatch1ValidationConfig.withMemberBatchValidationConfig._2,
-            failureForNullValidatable,
-            throwableMapper
-          )(members)
-        }
-        .map { memberResults: List<Either<FailureT?, MemberValidatableT?>> -> memberResults.map { it.flatMap { validContainer } } }
-    }
-    .map { result: Either<FailureT?, List<Either<FailureT?, ContainerValidatableT?>>> ->
-      result.fold<Either<Either<FailureT?, List<FailureT?>>, ContainerValidatableT?>?>(
-        { containerFailure -> left(left(containerFailure)) },
-        { memberResults ->
-          val memberFailures = memberResults.filter { it.isLeft }
-          if (memberFailures.isEmpty()) right(memberFailures.firstOrNull()?.get())
-          else left(right(memberFailures.map { it.left }))
-        }
-      ).mapLeft { FFBatchOfBatchFailure(it) }
-    }
+  ).map { containerValidatable: Either<FailureT?, ContainerValidatableT?> ->
+    findFirstFailure(
+      containerValidatable,
+      toValidators(batchOfBatch1ValidationConfig),
+      throwableMapper
+    ) ?: containerValidatable
+  }.map { validContainer: Either<FailureT?, ContainerValidatableT?> ->
+    validContainer.map(batchOfBatch1ValidationConfig.withMemberBatchValidationConfig._1)
+      .map { members: Collection<MemberValidatableT> ->
+        failFastForEach(
+          batchOfBatch1ValidationConfig.withMemberBatchValidationConfig._2,
+          failureForNullValidatable,
+          throwableMapper
+        )(members)
+      }
+      .map { memberResults: List<Either<FailureT?, MemberValidatableT?>> -> memberResults.map { it.flatMap { validContainer } } }
+  }.map { result: Either<FailureT?, List<Either<FailureT?, ContainerValidatableT?>>> ->
+    result.fold<Either<Either<FailureT?, List<FailureT?>>, ContainerValidatableT?>?>(
+      { containerFailure -> left(left(containerFailure)) },
+      { memberResults ->
+        val memberFailures = memberResults.filter { it.isLeft }
+        if (memberFailures.isEmpty()) right(memberFailures.firstOrNull()?.get())
+        else left(right(memberFailures.map { it.left }))
+      }
+    ).mapLeft { FFBatchOfBatchFailure(it) }
+  }
 }
 
 // TODO 13/05/21 gopala.akshintala: Reconsider any advantage of having this as a HOF 
@@ -142,32 +128,24 @@ internal fun <ValidatableT, FailureT, PairT> failFastForAny(
 }
 
 @JvmSynthetic
-internal fun <HeaderValidatableT, FailureT> failFastForHeader(
-  headerValidationConfig: HeaderValidationConfig<HeaderValidatableT, FailureT?>,
+internal fun <ContainerValidatableT, FailureT> failFastForContainer(
+  containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
-): FailFastForHeader<HeaderValidatableT, FailureT> = { validatable: HeaderValidatableT ->
-  val batch: List<*> = headerValidationConfig.withBatchMappers.mapNotNull { it[validatable] }.flatten()
-  validateBatchSize(batch, headerValidationConfig).or {
-    findFirstFailure(right(validatable), headerValidationConfig.headerValidators, throwableMapper)
+): FailFastForContainer<ContainerValidatableT, FailureT> = { container: ContainerValidatableT ->
+  validateBatchSize(container, containerValidationConfig).or {
+    findFirstFailure(right(container), containerValidationConfig.containerValidators, throwableMapper)
       .toFailureOptional()
   }
 }
 
 @JvmSynthetic
-internal fun <HeaderValidatableT, NestedHeaderValidatableT, FailureT> failFastForHeader(
-  headerValidationConfig: HeaderValidationConfigWithNested<HeaderValidatableT, NestedHeaderValidatableT, FailureT?>,
+internal fun <ContainerValidatableT, NestedContainerValidatableT, FailureT> failFastForContainer(
+  containerValidationConfig: ContainerValidationConfigWithNested<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
-): FailFastForHeader<HeaderValidatableT, FailureT> = { validatable: HeaderValidatableT ->
-  val batch: List<NestedHeaderValidatableT> =
-    headerValidationConfig.withBatchMappers.mapNotNull { it[validatable] }.flatten()
-  val nestedBatch: List<*> = batch.mapNotNull { nestedHeader ->
-    headerValidationConfig.withNestedBatchMappers.mapNotNull { it[nestedHeader] }.flatten()
-  }
-  validateBatchSize(batch, headerValidationConfig)
+): FailFastForContainer<ContainerValidatableT, FailureT> = { container: ContainerValidatableT ->
+  validateBatchSize(container, containerValidationConfig)
     .or {
-      validateNestedBatchSize(nestedBatch, headerValidationConfig)
-    }.or {
-      findFirstFailure(right(validatable), headerValidationConfig.headerValidators, throwableMapper)
+      findFirstFailure(right(container), containerValidationConfig.containerValidators, throwableMapper)
         .toFailureOptional()
     }
 }

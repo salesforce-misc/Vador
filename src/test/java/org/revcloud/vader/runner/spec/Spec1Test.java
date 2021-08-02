@@ -5,7 +5,7 @@ import static consumer.failure.ValidationFailure.INVALID_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.revcloud.vader.matchers.AnyMatchers.anyOf;
 import static org.revcloud.vader.matchers.IntMatchers.inRangeInclusive;
-import static org.revcloud.vader.runner.Runner.validateAndFailFastForEach;
+import static org.revcloud.vader.runner.Runner.validateAndFailFast;
 
 import consumer.failure.ValidationFailure;
 import java.util.List;
@@ -30,13 +30,13 @@ class Spec1Test {
             .prepare();
     final var invalidBean = new Bean1(3);
     final var failureResult =
-        validateAndFailFastForEach(
+        validateAndFailFast(
             invalidBean, validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(failureResult).contains(INVALID_VALUE);
 
     final var validBean = new Bean1(1);
     final var noneResult =
-        validateAndFailFastForEach(
+        validateAndFailFast(
             validBean, validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(noneResult).isEmpty();
   }
@@ -55,13 +55,13 @@ class Spec1Test {
             .prepare();
     final var invalidBean = new Bean1(6);
     final var failureResult =
-        validateAndFailFastForEach(
+        validateAndFailFast(
             invalidBean, validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(failureResult).contains(INVALID_VALUE);
 
     final var validBean = new Bean1(3);
     final var noneResult =
-        validateAndFailFastForEach(
+        validateAndFailFast(
             validBean, validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(noneResult).isEmpty();
   }
@@ -80,13 +80,13 @@ class Spec1Test {
             .prepare();
     final var invalidBean = new Bean2("", null);
     final var failureResult =
-        validateAndFailFastForEach(
+        validateAndFailFast(
             invalidBean, validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(failureResult).contains(INVALID_COMBO_1);
 
     final var validBean = new Bean2("", "");
     final var noneResult =
-        validateAndFailFastForEach(
+        validateAndFailFast(
             validBean, validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(noneResult).isEmpty();
   }
@@ -105,13 +105,13 @@ class Spec1Test {
             .prepare();
     final var invalidBean = new Bean3("", null, "3");
     final var failureResult =
-        validateAndFailFastForEach(
+        validateAndFailFast(
             invalidBean, validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(failureResult).contains(INVALID_COMBO_1);
 
     final var validBean = new Bean3("", null, "");
     final var noneResult =
-        validateAndFailFastForEach(
+        validateAndFailFast(
             validBean, validationConfig, ValidationFailure::getValidationFailureForException);
     assertThat(noneResult).isEmpty();
   }
