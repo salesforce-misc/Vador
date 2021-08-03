@@ -53,15 +53,15 @@ internal fun <FailureT, ValidatableT> fireValidator(
 @JvmSynthetic
 internal fun <ContainerValidatableT, NestedContainerValidatableT, FailureT> validateBatchSize(
   container: ContainerValidatableT,
-  containerValidationConfig: ContainerValidationConfigWithNested<ContainerValidatableT, NestedContainerValidatableT, FailureT?>
+  containerValidationConfig: ContainerValidationConfigLevel2<ContainerValidatableT, NestedContainerValidatableT, FailureT?>
 ): Optional<FailureT> {
   val nestedContainerBatch: Collection<NestedContainerValidatableT> =
     containerValidationConfig.withBatchMappers.mapNotNull { it[container] }.flatten()
   return validateBatchSize(nestedContainerBatch, containerValidationConfig).or {
     val nestedBatch: Collection<*> = nestedContainerBatch.mapNotNull { nestedContainer ->
-      containerValidationConfig.withNestedContainerValidationConfig.withBatchMappers.mapNotNull { it[nestedContainer] }.flatten()
+      containerValidationConfig.withContainerLevel2ValidationConfig.withBatchMappers.mapNotNull { it[nestedContainer] }.flatten()
     }
-    validateBatchSize(nestedBatch, containerValidationConfig.withNestedContainerValidationConfig)
+    validateBatchSize(nestedBatch, containerValidationConfig.withContainerLevel2ValidationConfig)
   }
 }
 

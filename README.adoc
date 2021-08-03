@@ -4,9 +4,10 @@ Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :icons: font
 :tip-caption: 💡
 :caution-caption: ⚠️
+:hide-uri-scheme:
 :sourcedir: src/main/java
 :imagesdir: images
-:vader-version: 2.4.7
+:vader-version: 2.4.8
 :toc:
 :toc-placement!:
 
@@ -23,13 +24,8 @@ ____
 
 == Mission Statement
 
-____
-
+[.lead]
 *Abstract away the Validation Orchestration complexity with a Reusable Design, that sets a framework to Write & Wire validations that are easy to Test, Extend and Share*
-
-____
-
-'''
 
 == Artifact Coordinates
 
@@ -43,19 +39,14 @@ ____
 
 ----
 
-'''
-
 toc::[]
 
 == Why Vader?
 
-____
-
-*On core, there is no de-facto standard to write bean validations*
+[.lead]
+On core, there is no de-facto standard to write bean validations
 
 link:docs/requirements.adoc[Requirements that lead to the birth of Vader]
-
-____
 
 Validation orchestration is predominantly done with `if-else-try-catch` pyramids, similar to https://github.com/overfullstack/railway-oriented-validation/blob/master/src/main/java/app/imperative/ImperativeValidation.java[this].
 A domain may have more than 60 validations across its batch & non-batch services.
@@ -104,7 +95,7 @@ https://drive.google.com/open?id=1Syi3smlcyFAL0ZoDuq5dWR1IALZNmNUm[An Internal P
 
 == New in 2.0
 
-=== 🍭 link:docs/configDSLs.adoc[Config DSLs]
+=== 🍭 link:docs/config-dsls/configDSLs.adoc[Config DSLs]
 
 === 🤩 link:docs/specs.adoc[Specs]
 
@@ -247,7 +238,7 @@ If the inter-dependencies between Container-Member happens to be more complex, w
 
 == How to combine Validators & ValidatorEtrs?
 
-TIP: If you are using link:docs/configDSLs.adoc[`ValidationConfig` DSL] from 2.0, you don't need to worry about this, unless you are particular about the order of validators.
+TIP: If you are using link:docs/config-dsls/configDSLs.adoc[`*Config` DSL] from 2.0, you don't need to worry about this, unless you are particular about the order of validators.
 
 Similarly, Vader has utils to lift `Validator` to `ValidatorEtr`.
 This is handy, when you have a mix of validations, and they all need to be of the same type to stitch them together.

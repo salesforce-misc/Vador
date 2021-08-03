@@ -1,0 +1,73 @@
+= ContainerValidationConfigLevel2 DSL
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+:icons: font
+:tip-caption: 💡
+:caution-caption: ⚠️
+:sourcedir: ../../src/main/java
+:testdir: ../../src/test/java
+:imagesdir: ../../images
+:sectnums:
+:listing-caption: Snippet
+:toc:
+:toc-placement: preamble
+
+You need this when your container needs to peek 2 levels deep for validations relation to its batch members or containers it contains.
+
+== Example
+
+ifdef::env-github[]
+
+[source,java,indent=0]
+----
+class Bean {}
+
+class Header3 {
+  List<Bean> beanBatch;
+}
+
+class Header2 {
+  List<Header3> header3Batch;
+}
+
+class Header1Root {
+  List<Header2> header2;
+}
+----
+
+endif::[]
+ifndef::env-github[]
+
+[source,java,indent=0]
+----
+include::{testdir}/org/revcloud/vader/runner/ContainerValidationConfigLevel2Test.java[tag=container-config-level-2]
+----
+
+endif::[]
+
+To easily wrap your head around such data structure, visualise it like a *Tree*:
+
+image:container-level-2.png[]
+
+=== Validation Requirements
+
+* Validate a container with the information about its members at two levels deep.
+
+=== Demo
+
+ifdef::env-github[]
+
+[source,java,indent=0]
+----
+
+----
+
+endif::[]
+ifndef::env-github[]
+
+[source,java,indent=0]
+----
+include::{testdir}/org/revcloud/vader/runner/ContainerValidationConfigLevel2Test.java[tag=container-config-level-2-demo]
+----
+
+endif::[]

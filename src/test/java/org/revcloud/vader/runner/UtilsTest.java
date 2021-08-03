@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.revcloud.vader.runner.Utils.findAndFilterInvalids;
+import static org.revcloud.vader.runner.Utils.findFirstInvalid;
 
 import com.force.swag.id.ID;
 import consumer.failure.ValidationFailure;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 class UtilsTest {
 
+  // tag::batch-bean-demo[]
   @DisplayName("FailForDuplicates configured. FAIL: NullValidatbles, FAIL: Duplicates")
   @Test
   void filterNullValidatablesAndFailDuplicates() {
@@ -61,7 +63,9 @@ class UtilsTest {
     valids.forEachWithIndex(
         (r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId().toString()));
   }
+  // end::batch-bean-demo[]
 
+  // tag::batch-bean-multikey-demo[]
   @DisplayName(
       "Multiple Filters - FailForDuplicates configured. FAIL: NullValidatbles, FAIL: Duplicates")
   @Test
@@ -122,6 +126,7 @@ class UtilsTest {
     valids.forEachWithIndex(
         (r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId1().toString()));
   }
+  // end::batch-bean-multikey-demo[]
 
   @DisplayName("FailForDuplicates NOT configured. FAIL: NullValidatables, FILTER_ONLY: Duplicates")
   @Test
@@ -289,7 +294,7 @@ class UtilsTest {
                     .prepare())
             .prepare();
     final var result =
-        Utils.findFirstInvalid(
+        findFirstInvalid(
             validatables.toJavaList(),
             NOTHING_TO_VALIDATE,
             batchValidationConfig.findAndFilterDuplicatesConfigs);
@@ -311,7 +316,7 @@ class UtilsTest {
                     .prepare())
             .prepare();
     final var result =
-        Utils.findFirstInvalid(
+        findFirstInvalid(
             validatables.toJavaList(),
             NOTHING_TO_VALIDATE,
             batchValidationConfig.findAndFilterDuplicatesConfigs);
@@ -339,7 +344,7 @@ class UtilsTest {
                     .prepare())
             .prepare();
     final var result =
-        Utils.findFirstInvalid(
+        findFirstInvalid(
             validatables.toJavaList(),
             NOTHING_TO_VALIDATE,
             batchValidationConfig.findAndFilterDuplicatesConfigs);
@@ -363,7 +368,7 @@ class UtilsTest {
                     .prepare())
             .prepare();
     final var result =
-        Utils.findFirstInvalid(
+        findFirstInvalid(
             validatables.toJavaList(),
             NOTHING_TO_VALIDATE,
             batchValidationConfig.findAndFilterDuplicatesConfigs);
@@ -383,7 +388,7 @@ class UtilsTest {
                     .prepare())
             .prepare();
     final var result =
-        Utils.findFirstInvalid(
+        findFirstInvalid(
             validatables.toJavaList(),
             NOTHING_TO_VALIDATE,
             batchValidationConfig.findAndFilterDuplicatesConfigs);
@@ -391,15 +396,17 @@ class UtilsTest {
   }
 
   @Value
+  // tag::batch-bean[]
   private static class Bean {
-
     ID id;
   }
+  // end::batch-bean[]
 
   @Value
+  // tag::batch-bean-multikey[]
   private static class MultiKeyBean {
-
     ID id1;
     ID id2;
   }
+  // end::batch-bean-multikey[]
 }

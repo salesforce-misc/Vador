@@ -15,7 +15,7 @@ fun <FailureT, ContainerValidatableT> validateAndFailFastForContainer(
 
 fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
   container: ContainerValidatableT,
-  containerValidationConfig: ContainerValidationConfigWithNested<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
+  containerValidationConfig: ContainerValidationConfigLevel2<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): Optional<FailureT> = failFastForContainer(containerValidationConfig, throwableMapper)(container)
 
@@ -34,7 +34,7 @@ fun <FailureT, ContainerValidatableT> validateAndFailFastForContainer(
 
 fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
   batchValidatable: Collection<ContainerValidatableT>,
-  containerValidationConfig: ContainerValidationConfigWithNested<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
+  containerValidationConfig: ContainerValidationConfigLevel2<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): Optional<FailureT> = batchValidatable.asSequence()
   .map { validatable: ContainerValidatableT ->

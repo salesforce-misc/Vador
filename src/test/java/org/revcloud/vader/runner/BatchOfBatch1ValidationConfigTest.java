@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 
 class BatchOfBatch1ValidationConfigTest {
 
+  // tag::batch-of-batch-1-demo[]
   @DisplayName(
       "Validate a structure like batchOf(Root[batchOf(bean)]) or like `List<Root<List<Bean>>`")
   @Test
@@ -59,20 +60,27 @@ class BatchOfBatch1ValidationConfigTest {
     assertThat(failure.getBatchMemberFailures())
         .containsExactly(INVALID_COMBO_1, UNKNOWN_EXCEPTION);
   }
+  // end::batch-of-batch-1-demo[]
 
   @Value
+  // tag::batch-of-batch-1[]
   private static class Bean {
     int value;
     String label;
   }
+  // end::batch-of-batch-1[]
 
   @Value
+  // tag::batch-of-batch-1[]
   private static class Item {
     List<Bean> beanBatch;
   }
+  // end::batch-of-batch-1[]
 
   @Value
+  // tag::batch-of-batch-1[]
   private static class Root {
     List<Item> itemsBatch;
   }
+  // end::batch-of-batch-1[]
 }

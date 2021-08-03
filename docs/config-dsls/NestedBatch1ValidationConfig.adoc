@@ -1,0 +1,15 @@
+= NestedBatch1ValidationConfig DSL (TBD)
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+:icons: font
+:tip-caption: 💡
+:caution-caption: ⚠️
+:sourcedir: ../../src/main/java
+:testdir: ../../src/test/java
+:imagesdir: ../../images
+:sectnums:
+:listing-caption: Snippet
+:toc:
+:toc-placement: preamble
+
+If each of your _Batch_ bean, say `List<ContainerT>` HAS-A nested bean say `MemberT`, then their validity is inter-dependent 1:1. Each `ContainerT` in the batch is valid only if the `MemberT` it holds is valid. 

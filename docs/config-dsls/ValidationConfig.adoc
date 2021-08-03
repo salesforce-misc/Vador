@@ -1,45 +1,42 @@
-= Config DSL
+= ValidationConfig DSL
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
 :icons: font
 :tip-caption: 💡
 :caution-caption: ⚠️
-:sourcedir: ../src/main/java
-:testdir: ../src/test/java
-:imagesdir: ../images
-:vader-version: 2.4.7
-:toc: left
+:sourcedir: ../../src/main/java
+:testdir: ../../src/test/java
+:imagesdir: ../../images
+:sectnums:
+:listing-caption: Snippet
+:toc:
 
-== Config-Driven Validation
-
-Vader has a powerful and declarative Configuration DSL.
-A config object is 1-1 mapped with a Data Structure, and holds all the information required to validate that Data-structure.
-There are currently 4 flavors of configs depending on these factors:
-
-* Is the Data-structure under validation _Single (Non-Batch)_ or _Collection (Batch)_.
-* Does the Data-structure HAS-A Nested-Data-structure which needs to be validated too.
-** Is the Nested Data-structure _Single (Non-Batch)_ or _Collection (Batch)_.
-* Do the validations need to run from Container Context.
-
-Let's walk through each of these flavors with an example bean, validation requirements for its Data-structure and a Sample config for such requirements.
-
-NOTE: These examples don't exhaustively cover all the use-cases.
-You may refer the Javadoc of each validation config to find-out more.
-Also, the unit tests should help with the usage of these fields.
-As usual, file a git.soma issue if you have new and unique use-cases.
-
-== ValidationConfig DSL
-
-=== Flat
+== Flat
 
 This is the simplest config for a _Single (Non-Batch)_ bean with flat Data-structure.
 
-==== Example
+=== Example
+
+ifdef::env-github[]
+
+[source,java,indent=0]
+----
+class Bean {
+  String requiredField;
+  ID sfIdFormatField;
+  ID optionalSfIdFormatField;
+}
+----
+
+endif::[]
+ifndef::env-github[]
 
 [source,java,indent=0]
 ----
 include::{testdir}/org/revcloud/vader/runner/BaseValidationConfigTest.java[tag=flat-bean]
 ----
+
+endif::[]
 
 ==== Validation Requirements
 
@@ -47,14 +44,39 @@ include::{testdir}/org/revcloud/vader/runner/BaseValidationConfigTest.java[tag=f
 * Configure to validate Fields for SF ID format.
 * Configure other validators for the bean, written using one of `Validator*` types.
 
-==== Sample Config
+==== Demo
+
+ifdef::env-github[]
 
 [source,java,indent=0]
 ----
-include::{testdir}/org/revcloud/vader/runner/BaseValidationConfigTest.java[tag=validationConfig-for-flat-bean]
+@Test
+void getFieldNames() {
+final var validationConfig =
+    ValidationConfig.<Bean, ValidationFailure>toValidate()
+        .shouldHaveFieldOrFailWith(Bean::getRequiredField, NONE)
+        .shouldHaveValidSFIdFormatOrFailWith(Bean::getSfIdFormatField, NONE)
+        .absentOrHaveValidSFIdFormatOrFailWith(Bean::getOptionalSfIdFormatField, NONE)
+        .prepare();
+assertThat(validationConfig.getRequiredFieldNames(Bean.class)).contains(Fields.requiredField);
+assertThat(validationConfig.getRequiredFieldNamesForSFIdFormat(Bean.class))
+    .contains(Fields.sfIdFormatField);
+assertThat(validationConfig.getNonRequiredFieldNamesForSFIdFormat(Bean.class))
+    .contains(Fields.optionalSfIdFormatField);
+}
 ----
 
-=== Nested
+endif::[]
+ifndef::env-github[]
+
+[source,java,indent=0]
+----
+include::{testdir}/org/revcloud/vader/runner/BaseValidationConfigTest.java[tag=validationConfig-for-flat-bean-demo]
+----
+
+endif::[]
+
+== Nested
 
 image:nested-bean.png[]
 
@@ -65,17 +87,38 @@ It supports nesting at any depth.
 
 === Example
 
+ifdef::env-github[]
+
+[source,java,indent=0]
+----
+class Bean {
+  private final Integer requiredField1;
+  private final String requiredField2;
+  private final ID sfId1;
+  private final ID sfId2;
+}
+class ContainerBean {
+  String requiredField;
+  Bean bean;
+}
+----
+
+endif::[]
+ifndef::env-github[]
+
 [source,java,indent=0]
 ----
 include::{testdir}/org/revcloud/vader/runner/ValidationConfigTest.java[tag=nested-bean]
 ----
+
+endif::[]
 
 ==== Validation Requirements
 
 * Validate both data-structures independently.
 * Compose their results for Fail-Fast.
 
-=== Sample Configs
+==== Demo
 
 ifdef::env-github[]
 
@@ -122,15 +165,14 @@ void nestedBeanValidationWithInvalidMember() {
 }
 ----
 
+endif::[]
 ifndef::env-github[]
 
 [source,java,indent=0]
 ----
-include::{testdir}/org/revcloud/vader/runner/ValidationConfigTest.java[tag=validationConfig-for-nested-bean]
+include::{testdir}/org/revcloud/vader/runner/ValidationConfigTest.java[tag=validationConfig-for-nested-bean-demo]
 ----
 
 endif::[]
 
-== BatchValidationConfig DSL
-
-As the name indicates, use this to validate a Batch data-structure , say 
+''''

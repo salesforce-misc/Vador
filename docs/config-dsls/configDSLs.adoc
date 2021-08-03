@@ -1,0 +1,41 @@
+= Config DSL
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+:icons: font
+:tip-caption: 💡
+:caution-caption: ⚠️
+:sourcedir: ../../src/main/java
+:testdir: ../../src/test/java
+:imagesdir: ../../images
+:sectnums:
+:listing-caption: Snippet
+:toc:
+:toc-placement: preamble
+
+Vader has a powerful and declarative Configuration DSL.
+A config object is 1-1 mapped with a Data Structure, and holds all the information/requirements/specifications required to validate that Data-structure.
+
+== Config-Driven Validation
+
+There are currently different flavors of configs depending on these factors:
+
+* Is the Data-structure under validation _Single (Non-Batch)_ or _Collection (Batch)_.
+* Does the Data-structure HAS-A Nested-Data-structure which needs to be validated too.
+** Is the Nested Data-structure _Single (Non-Batch)_ or _Collection (Batch)_.
+* Do the validations need to run from Container Context.
+
+== DSL Flavors
+
+Let's walk through each of these flavors with an example bean, validation requirements for its Data-structure and a demo for such requirements using a runnable JUnit test.
+
+NOTE: These examples don't exhaustively cover all the use-cases.
+You may refer the Javadoc of each validation config to find-out more.
+Also, the unit tests should help with the usage of these fields.
+As usual, file a git.soma issue if you have new and unique use-cases.
+
+=== link:ValidationConfig.adoc[ValidationConfig]
+=== link:BatchValidationConfig.adoc[BatchValidationConfig]
+=== link:NestedBatch1ValidationConfig.adoc[NestedBatch1ValidationConfig(TBD)]
+=== link:BatchOfBatch1ValidationConfig.adoc[BatchOfBatch1ValidationConfig]
+=== link:ContainerValidationConfig.adoc[ContainerValidationConfig]
+=== link:ContainerValidationConfigWithNested.adoc[ContainerValidationConfigWithNested]

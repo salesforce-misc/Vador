@@ -15,25 +15,26 @@ import org.jetbrains.annotations.Nullable;
 @FieldDefaults(level = AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
-public class ContainerValidationConfigWithNested<
-        ContainerValidatableT, NestedContainerValidatableT, FailureT>
-    extends BaseContainerValidationConfig<ContainerValidatableT, FailureT> {
+public class ContainerValidationConfigLevel2<
+        ContainerLevel1ValidatableT, ContainerLevel2ValidatableT, FailureT>
+    extends BaseContainerValidationConfig<ContainerLevel1ValidatableT, FailureT> {
 
   @Singular
   Collection<
           TypedPropertyGetter<
-              ContainerValidatableT, @Nullable Collection<NestedContainerValidatableT>>>
+              ContainerLevel1ValidatableT, @Nullable Collection<ContainerLevel2ValidatableT>>>
       withBatchMappers;
 
-  ContainerValidationConfig<NestedContainerValidatableT, FailureT>
-      withNestedContainerValidationConfig;
+  ContainerValidationConfig<ContainerLevel2ValidatableT, FailureT>
+      withContainerLevel2ValidationConfig;
 
-  public Set<String> getFieldNamesForNestedBatch(
-      Class<NestedContainerValidatableT> validatableClazz) {
-    return ContainerValidationConfigEx.getFieldNamesForNestedBatchEx(this, validatableClazz);
+  public Set<String> getFieldNamesForBatchLevel2(
+      Class<ContainerLevel2ValidatableT> validatableClazz) {
+    return ContainerValidationConfigEx.getFieldNamesForBatchLevel2Ex(this, validatableClazz);
   }
 
-  public Set<String> getFieldNamesForBatch(Class<ContainerValidatableT> validatableClazz) {
+  public Set<String> getFieldNamesForBatchLevel1(
+      Class<ContainerLevel1ValidatableT> validatableClazz) {
     return ContainerValidationConfigEx.getFieldNamesForBatchEx(this, validatableClazz);
   }
 }

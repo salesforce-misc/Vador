@@ -126,7 +126,7 @@ class ValidationConfigTest {
         .containsExactly(Bean.Fields.sfId2, invalidSfId);
   }
 
-  // tag::validationConfig-for-nested-bean[]
+  // tag::validationConfig-for-nested-bean-demo[]
   @Test
   void nestedBeanValidationWithInvalidMember() {
     final var memberValidationConfig =
@@ -166,7 +166,7 @@ class ValidationConfigTest {
     assertThat(result.get().getValidationFailureMessage().getParams())
         .containsExactly(Bean.Fields.sfId2, invalidSfId);
   }
-  // end::validationConfig-for-nested-bean[]
+  // end::validationConfig-for-nested-bean-demo[]
 
   @Data
   @FieldNameConstants

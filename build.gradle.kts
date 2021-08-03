@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.4.8-SNAPSHOT"
+version = "2.4.8"
 description = "Vader - An FP framework for Bean validation"
 
 repositories {
@@ -26,7 +26,7 @@ repositories {
 val asciidoclet by configurations.creating
 
 dependencies {
-  api("io.vavr:vavr:0.10.3")
+  api("io.vavr:vavr:0.10.4")
   api("io.vavr:vavr-kotlin:0.10.2")
   api("org.hamcrest:hamcrest:2.2")
   api("org.exparity:hamcrest-date:2.0.7")

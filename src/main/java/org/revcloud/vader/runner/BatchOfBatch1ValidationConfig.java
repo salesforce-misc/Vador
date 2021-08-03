@@ -12,9 +12,11 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * This should be used for Batch that contains (HAS-A) a nested Batch (of type `Collection`) member
- * and the member needs a BatchValidationConfig of its own. - `1` in the data type indicates the
- * number of batch members it supports. - For other Simple fields, please use `liftUtil` to lift
- * corresponding validators.
+ * and the member needs a BatchValidationConfig of its own.
+ *
+ * <p>* `1` in the data type indicates the number of batch member types it supports.
+ *
+ * <p>* For other Simple fields, please use `liftUtil` to lift corresponding validators.
  *
  * @param <ContainerValidatableT> Container data type
  * @param <MemberValidatableT> Batch Member data type

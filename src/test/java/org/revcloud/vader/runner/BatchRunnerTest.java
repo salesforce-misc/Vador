@@ -117,8 +117,8 @@ class BatchRunnerTest {
   void failFastPartialFailuresForValidators() {
     final var validatables =
         List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
-    Predicate<Integer> predicateForValidId1 = id -> id >= 2;
-    Predicate<Integer> predicateForValidId2 = id -> id <= 2;
+    var predicateForValidId1 = (Predicate<Integer>) id -> id >= 2;
+    var predicateForValidId2 = (Predicate<Integer>) id -> id <= 2;
     List<Validator<Bean, ValidationFailure>> validators =
         List.of(
             bean -> NONE,
@@ -151,9 +151,9 @@ class BatchRunnerTest {
   void errorAccumulateForValidators() {
     final var validatables =
         List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
-    Predicate<Integer> predicateForValidId1 = id -> id >= 2;
-    Predicate<Integer> predicateForValidId2 = id -> id <= 2;
-    Predicate<Integer> predicateForValidId3 = id -> id >= 1;
+    var predicateForValidId1 = (Predicate<Integer>) id -> id >= 2;
+    var predicateForValidId2 = (Predicate<Integer>) id -> id <= 2;
+    var predicateForValidId3 = (Predicate<Integer>) id -> id >= 1;
     List<Validator<Bean, ValidationFailure>> validators =
         List.of(
             bean -> NONE,

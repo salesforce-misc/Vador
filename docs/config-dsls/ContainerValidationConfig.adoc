@@ -1,0 +1,102 @@
+= ContainerValidationConfig DSL
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+:icons: font
+:tip-caption: 💡
+:caution-caption: ⚠️
+:sourcedir: ../../src/main/java
+:testdir: ../../src/test/java
+:imagesdir: ../../images
+:sectnums:
+:listing-caption: Snippet
+:toc:
+:toc-placement: preamble
+
+This is handy when validation on a _Batch_ member beans need to run from the context of its container, say `ContainerT`.
+As container has the visibility over all its batch members, currently, the major use-case for this config is to collectively validate _Batch_ members size. 
+This config is agnostic of its members as long as the member is a `Collection`. Let's understand with an example:
+
+== Example
+
+ifdef::env-github[]
+
+[source,java,indent=0]
+----
+class Bean {}
+
+class Container2 {
+  List<Bean> beanBatch;
+}
+
+class Container1Root {
+  List<Container2> container2;
+}
+----
+
+endif::[]
+ifndef::env-github[]
+
+[source,java,indent=0]
+----
+include::{testdir}/org/revcloud/vader/runner/ContainerValidationConfigTest.java[tag=container-config-level-1]
+----
+
+endif::[]
+
+This has a Container which HAS-A _Batch_ of Containers. To easily wrap your head around such data structure, visualise it like a *Tree*:
+
+image:container.png[]
+
+=== Validation Requirements
+
+* Validate size of batch members in a container.
+* Compose the validation results from a container with results from the _Batch_ Container it contains.
+
+=== Demo
+
+ifdef::env-github[]
+
+[source,java,indent=0]
+----
+@DisplayName("Compose the validation results from a container with results from the Batch Container it contains")
+@Test
+void composeContainerValidationResults() {
+final var container1ValidationConfig =
+    ContainerValidationConfig.<Container1Root, ValidationFailure>toValidate()
+        .withBatchMapper(Container1Root::getContainer2)
+        .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_1))
+        .prepare();
+final var container2ValidationConfig =
+    ContainerValidationConfig.<Container2, ValidationFailure>toValidate()
+        .withBatchMapper(Container2::getBeanBatch)
+        .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_2))
+        .prepare();
+final var throwableMapper =
+    (Function1<Throwable, ValidationFailure>)
+        ValidationFailure::getValidationFailureForException;
+
+final var beanBatch = List.of(new Bean());
+final var container2Batch = List.of(new Container2(beanBatch), new Container2(emptyList()));
+final var container1 = new Container1Root(container2Batch);
+
+final var result =
+    Runner.validateAndFailFastForContainer(
+            container1, container1ValidationConfig, throwableMapper)
+        .or(
+            () ->
+                Runner.validateAndFailFastForContainer(
+                    container2Batch, container2ValidationConfig, throwableMapper));
+
+assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_2);
+}
+----
+
+endif::[]
+ifndef::env-github[]
+
+[source,java,indent=0]
+----
+include::{testdir}/org/revcloud/vader/runner/ContainerValidationConfigTest.java[tag=container-config-level-1-demo]
+----
+
+endif::[]

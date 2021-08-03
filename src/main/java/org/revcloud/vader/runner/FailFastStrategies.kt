@@ -190,7 +190,7 @@ internal fun <ContainerValidatableT, FailureT> failFastForContainer(
 
 @JvmSynthetic
 internal fun <ContainerValidatableT, NestedContainerValidatableT, FailureT> failFastForContainer(
-  containerValidationConfig: ContainerValidationConfigWithNested<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
+  containerValidationConfig: ContainerValidationConfigLevel2<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForContainer<ContainerValidatableT, FailureT> = { container: ContainerValidatableT ->
   validateBatchSize(container, containerValidationConfig)

@@ -2,14 +2,15 @@ package org.revcloud.vader.runner;
 
 import static consumer.failure.ValidationFailure.MAX_BATCH_SIZE_EXCEEDED;
 import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_1;
+import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_2;
 import static consumer.failure.ValidationFailure.NONE;
 import static consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
 import io.vavr.control.Either;
-import java.util.Collections;
 import java.util.List;
 import kotlin.jvm.functions.Function1;
 import lombok.AllArgsConstructor;
@@ -18,19 +19,19 @@ import lombok.Value;
 import lombok.experimental.FieldNameConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.runner.ContainerValidationConfigTest.HeaderBeanMultiBatch.Fields;
+import org.revcloud.vader.runner.ContainerValidationConfigTest.ContainerBeanMultiBatch.Fields;
 
 class ContainerValidationConfigTest {
 
   @Test
   void failFastForHeaderConfigWithValidators() {
     final var headerConfig =
-        ContainerValidationConfig.<Header2, ValidationFailure>toValidate()
-            .withBatchMapper(Header2::getBeanBatch)
+        ContainerValidationConfig.<Container2, ValidationFailure>toValidate()
+            .withBatchMapper(Container2::getBeanBatch)
             .withContainerValidator(ignore -> UNKNOWN_EXCEPTION, NONE)
             .prepare();
     final var batch = List.of(new Bean());
-    final var headerBean = new Header2(batch);
+    final var headerBean = new Container2(batch);
     final var result =
         Runner.validateAndFailFastForContainer(
             headerBean, headerConfig, ValidationFailure::getValidationFailureForException);
@@ -41,12 +42,12 @@ class ContainerValidationConfigTest {
   @Test
   void failFastForHeaderConfigWithValidators2() {
     final var headerConfig =
-        ContainerValidationConfig.<Header2, ValidationFailure>toValidate()
-            .withBatchMapper(Header2::getBeanBatch)
+        ContainerValidationConfig.<Container2, ValidationFailure>toValidate()
+            .withBatchMapper(Container2::getBeanBatch)
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
     final var batch = List.of(new Bean());
-    final var headerBean = new Header2(batch);
+    final var headerBean = new Container2(batch);
     final var result =
         Runner.validateAndFailFastForContainer(
             headerBean, headerConfig, ValidationFailure::getValidationFailureForException);
@@ -56,12 +57,12 @@ class ContainerValidationConfigTest {
   @Test
   void failFastForHeaderConfigMinBatchSize() {
     final var headerConfig =
-        ContainerValidationConfig.<Header2, ValidationFailure>toValidate()
-            .withBatchMapper(Header2::getBeanBatch)
+        ContainerValidationConfig.<Container2, ValidationFailure>toValidate()
+            .withBatchMapper(Container2::getBeanBatch)
             .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_1))
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
-    final var headerBean = new Header2(Collections.emptyList());
+    final var headerBean = new Container2(emptyList());
     final var result =
         Runner.validateAndFailFastForContainer(
             headerBean, headerConfig, ValidationFailure::getValidationFailureForException);
@@ -71,14 +72,13 @@ class ContainerValidationConfigTest {
   @Test
   void failFastForHeaderConfigMinBatchSizeForMultiBatch() {
     final var headerConfig =
-        ContainerValidationConfig.<HeaderBeanMultiBatch, ValidationFailure>toValidate()
+        ContainerValidationConfig.<ContainerBeanMultiBatch, ValidationFailure>toValidate()
             .withBatchMappers(
-                List.of(HeaderBeanMultiBatch::getBatch1, HeaderBeanMultiBatch::getBatch2))
+                List.of(ContainerBeanMultiBatch::getBatch1, ContainerBeanMultiBatch::getBatch2))
             .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_1))
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
-    final var headerBean =
-        new HeaderBeanMultiBatch(Collections.emptyList(), Collections.emptyList());
+    final var headerBean = new ContainerBeanMultiBatch(emptyList(), emptyList());
     final var result =
         Runner.validateAndFailFastForContainer(
             headerBean, headerConfig, ValidationFailure::getValidationFailureForException);
@@ -88,12 +88,11 @@ class ContainerValidationConfigTest {
   @Test
   void failFastForHeaderConfigMaxBatchSize() {
     final var headerConfig =
-        ContainerValidationConfig.<Header2, ValidationFailure>toValidate()
-            .withBatchMapper(Header2::getBeanBatch)
+        ContainerValidationConfig.<Container2, ValidationFailure>toValidate()
+            .withBatchMapper(Container2::getBeanBatch)
             .shouldHaveMaxBatchSize(Tuple.of(0, MAX_BATCH_SIZE_EXCEEDED))
-            .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
-    final var headerBean = new Header2(List.of(new Bean()));
+    final var headerBean = new Container2(List.of(new Bean()));
     final var result =
         Runner.validateAndFailFastForContainer(
             headerBean, headerConfig, ValidationFailure::getValidationFailureForException);
@@ -103,17 +102,17 @@ class ContainerValidationConfigTest {
   @Test
   void headerWithFailure() {
     final var headerValidationConfig =
-        ContainerValidationConfig.<Header2, ValidationFailure>toValidate()
+        ContainerValidationConfig.<Container2, ValidationFailure>toValidate()
             .withContainerValidatorEtrs(
                 List.of(
                     headerBean -> Either.right(NONE),
                     headerBean -> Either.left(UNKNOWN_EXCEPTION),
                     headerBean -> Either.right(NONE)))
-            .withBatchMapper(Header2::getBeanBatch)
+            .withBatchMapper(Container2::getBeanBatch)
             .prepare();
     final var result =
         Runner.validateAndFailFastForContainer(
-            new Header2(Collections.emptyList()),
+            new Container2(emptyList()),
             headerValidationConfig,
             ValidationFailure::getValidationFailureForException);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
@@ -122,68 +121,48 @@ class ContainerValidationConfigTest {
   @Test
   void getFieldNamesForBatch() {
     final var validationConfig =
-        ContainerValidationConfig.<HeaderBeanMultiBatch, ValidationFailure>toValidate()
+        ContainerValidationConfig.<ContainerBeanMultiBatch, ValidationFailure>toValidate()
             .withBatchMappers(
-                List.of(HeaderBeanMultiBatch::getBatch1, HeaderBeanMultiBatch::getBatch2))
+                List.of(ContainerBeanMultiBatch::getBatch1, ContainerBeanMultiBatch::getBatch2))
             .prepare();
-    assertThat(validationConfig.getFieldNamesForBatch(HeaderBeanMultiBatch.class))
+    assertThat(validationConfig.getFieldNamesForBatch(ContainerBeanMultiBatch.class))
         .containsExactly(Fields.batch1, Fields.batch2);
   }
 
+  // tag::container-config-level-1-demo[]
   @DisplayName(
-      "Nested batch with Failure in deepest level `Header1Nested -> List<Header2> -> List<Bean1> (^^^UNKNOWN_EXCEPTION)`")
+      "Compose the validation results from a container with results from the Batch Container it contains")
   @Test
-  void nestedBatchHeader1() {
-    final var header1NestedValidationConfig =
-        ContainerValidationConfig.<Header1Root, ValidationFailure>toValidate()
-            .withBatchMapper(Header1Root::getHeader2)
+  void composeContainerValidationResults() {
+    final var container1ValidationConfig =
+        ContainerValidationConfig.<Container1Root, ValidationFailure>toValidate()
+            .withBatchMapper(Container1Root::getContainer2)
             .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_1))
             .prepare();
-    final var header2ValidationConfig1 =
-        ContainerValidationConfig.<Header2, ValidationFailure>toValidate()
-            .withBatchMapper(Header2::getBeanBatch)
-            .withContainerValidator(ignore -> NONE, NONE)
-            .prepare();
-    final var strBatch1ValidationConfig =
-        ContainerValidationConfig.<String, ValidationFailure>toValidate()
-            .withContainerValidator(ignore -> NONE, NONE)
-            .prepare();
-    final var beanBatch2ValidationConfig =
-        ContainerValidationConfig.<Bean, ValidationFailure>toValidate()
-            .withContainerValidator(ignore -> UNKNOWN_EXCEPTION, NONE)
+    final var container2ValidationConfig =
+        ContainerValidationConfig.<Container2, ValidationFailure>toValidate()
+            .withBatchMapper(Container2::getBeanBatch)
+            .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_2))
             .prepare();
     final var throwableMapper =
         (Function1<Throwable, ValidationFailure>)
             ValidationFailure::getValidationFailureForException;
 
-    final var beanBatch2 = List.of(new Bean());
-    final var header2Batch = List.of(new Header2(beanBatch2));
-    final List<String> strBatch1 = Collections.emptyList();
-    final var header1Nested = new Header1Root(header2Batch, strBatch1);
+    final var beanBatch = List.of(new Bean());
+    final var container2Batch = List.of(new Container2(beanBatch), new Container2(emptyList()));
+    final var container1 = new Container1Root(container2Batch);
 
     final var result =
         Runner.validateAndFailFastForContainer(
-                header1Nested, header1NestedValidationConfig, throwableMapper)
+                container1, container1ValidationConfig, throwableMapper)
             .or(
                 () ->
                     Runner.validateAndFailFastForContainer(
-                            header2Batch, header2ValidationConfig1, throwableMapper)
-                        .or(
-                            () ->
-                                // TODO 27/07/21 gopala.akshintala: Handle multiple items in batch
-                                // in a generic way
-                                Runner.validateAndFailFastForContainer(
-                                    beanBatch2, beanBatch2ValidationConfig, throwableMapper)))
-            .or(
-                () ->
-                    Runner.validateAndFailFastForContainer(
-                        strBatch1, strBatch1ValidationConfig, throwableMapper));
+                        container2Batch, container2ValidationConfig, throwableMapper));
 
-    assertThat(result).contains(UNKNOWN_EXCEPTION);
+    assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_2);
   }
-
-  @Value
-  private static class Bean {}
+  // end::container-config-level-1-demo[]
 
   @Value
   private static class Bean1 {}
@@ -194,23 +173,29 @@ class ContainerValidationConfigTest {
   @Data
   @FieldNameConstants
   @AllArgsConstructor
-  public static class HeaderBeanMultiBatch {
-
+  public static class ContainerBeanMultiBatch {
     List<Bean1> batch1;
     List<Bean2> batch2;
   }
 
   @Value
-  private static class Header2 {
+  // tag::container-config-level-1[]
+  private static class Bean {}
+  // end::container-config-level-1[]
+
+  @Value
+  // tag::container-config-level-1[]
+  private static class Container2 {
     List<Bean> beanBatch;
   }
+  // end::container-config-level-1[]
 
   @Data
   @FieldNameConstants
   @AllArgsConstructor
-  public static class Header1Root {
-
-    List<Header2> header2;
-    List<String> batch1Str;
+  // tag::container-config-level-1[]
+  public static class Container1Root {
+    List<Container2> container2;
   }
+  // end::container-config-level-1[]
 }

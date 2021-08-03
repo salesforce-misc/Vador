@@ -33,7 +33,7 @@ class BaseValidationConfigTest {
         () -> validationConfig.getPredicateOfSpecForTest(duplicateSpecName));
   }
 
-  // tag::validationConfig-for-flat-bean[]
+  // tag::validationConfig-for-flat-bean-demo[]
   @Test
   void getFieldNames() {
     final var validationConfig =
@@ -48,7 +48,7 @@ class BaseValidationConfigTest {
     assertThat(validationConfig.getNonRequiredFieldNamesForSFIdFormat(Bean.class))
         .contains(Fields.optionalSfIdFormatField);
   }
-  // end::validationConfig-for-flat-bean[]
+  // end::validationConfig-for-flat-bean-demo[]
 
   @Data
   @FieldNameConstants
