@@ -2,10 +2,10 @@
 import net.sfdc.dci.BuildUtils
 
 def complianceFlags = [
-    enable: true,
-    validateSourceControlStatus: false,
-    validateScheduledBuild: false,
-    validateCommitsInPR: true
+  enable: true,
+  validateSourceControlStatus: false,
+  validateScheduledBuild: false,
+  validateCommitsInPR: true
 ]
 
 env.RELEASE_BRANCHES = ['master']
@@ -13,39 +13,39 @@ env.GUS_TEAM_NAME = 'Rev Centaurus'
 env.CI=true
 
 def envDef = [
-    compliance: complianceFlags, 
-    buildImage : 'ops0-artifactrepo1-0-prd.data.sfdc.net/dci/centos7-sfci-jdk11-maven:112ada4' 
+  compliance: complianceFlags, 
+  buildImage : 'ops0-artifactrepo1-0-prd.data.sfdc.net/dci/centos7-sfci-jdk11-maven:112ada4' 
 ]
 
 executePipeline(envDef) {
-    stage('Init') {
-        checkout scm
-        gradleInit()
-    }
+  stage('Init') {
+    checkout scm
+    gradleInit()
+  }
 
-    stage('Build') {
-        try {
-            sh './gradlew check'
-        } finally {
-            junit allowEmptyResults: false, testResults: "build/test-results/test/*.xml"
-        }
+  stage('Build') {
+    try {
+        sh './gradlew check'
+    } finally {
+        junit allowEmptyResults: false, testResults: "build/test-results/test/*.xml"
     }
-    
-    if (BuildUtils.isReleaseBuild(env)) {
-        stage('Release') {
-            sh './gradlew publish'
-        }
+  }
+  
+  if (BuildUtils.isReleaseBuild(env)) {
+    stage('Release') {
+        sh './gradlew publish'
     }
-    
-    stage('Check') {
-        try {
-            sh './gradlew check'
-        } finally {
-            junit allowEmptyResults: false, testResults: "**/build/test-results/test/*.xml"
-        }
+  }
+  
+  stage('Check') {
+    try {
+        sh './gradlew check'
+    } finally {
+        junit allowEmptyResults: false, testResults: "**/build/test-results/test/*.xml"
     }
-    
-    stage('Sonarqube') {
-      sonarqube()
-    }
+  }
+  
+  stage('Sonarqube') {
+    sonarqube()
+  }
 }

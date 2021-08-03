@@ -4,10 +4,9 @@ import io.vavr.Tuple2
 import io.vavr.control.Either
 
 /**
- * This is an inline wrapper to represent `FFBatchOfBatchFailure`
+ * This is an inline wrapper to represent `FFEBatchOfBatchFailure`
  */
-@JvmInline
-value class FFBatchOfBatchFailureWithPair<ContainerPairT, MemberPairT, FailureT>(val failure: Either<Tuple2<ContainerPairT?, FailureT?>?, List<Tuple2<MemberPairT?, FailureT?>>>) {
+class FFEBatchOfBatchFailureWithPair<ContainerPairT, MemberPairT, FailureT>(val failure: Either<Tuple2<ContainerPairT?, FailureT?>?, List<Tuple2<MemberPairT?, FailureT?>>>) : Either<Tuple2<ContainerPairT?, FailureT?>?, List<Tuple2<MemberPairT?, FailureT?>>> by failure {
   val containerFailure: Tuple2<ContainerPairT?, FailureT?>?
     get() = if (failure.isLeft) failure.left else null
 

@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This should be used for Batch that contains (HAS-A) a nested Batch (of type `Collection`) member
@@ -27,6 +28,6 @@ public class BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidata
     extends BaseBatchValidationConfig<ContainerValidatableT, FailureT> {
   Tuple2<
           Function1<ContainerValidatableT, Collection<MemberValidatableT>>,
-          BatchValidationConfig<MemberValidatableT, FailureT>>
+          BatchValidationConfig<MemberValidatableT, @Nullable FailureT>>
       withMemberBatchValidationConfig;
 }

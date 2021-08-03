@@ -8,8 +8,7 @@ import static consumer.failure.ValidationFailure.NULL_KEY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.revcloud.vader.runner.Utils.findAndFilterDuplicates;
-import static org.revcloud.vader.runner.Utils.findFistNullValidatableOrDuplicate;
+import static org.revcloud.vader.runner.Utils.findAndFilterInvalids;
 
 import com.force.swag.id.ID;
 import consumer.failure.ValidationFailure;
@@ -47,7 +46,7 @@ class UtilsTest {
             .prepare();
     final var results =
         List.ofAll(
-            findAndFilterDuplicates(
+            findAndFilterInvalids(
                 validatables.toJavaList(),
                 NOTHING_TO_VALIDATE,
                 batchValidationConfig.findAndFilterDuplicatesConfigs));
@@ -105,7 +104,7 @@ class UtilsTest {
             .prepare();
     final var results =
         List.ofAll(
-            findAndFilterDuplicates(
+            findAndFilterInvalids(
                 validatables.toJavaList(),
                 NOTHING_TO_VALIDATE,
                 batchValidationConfig.findAndFilterDuplicatesConfigs));
@@ -152,7 +151,7 @@ class UtilsTest {
             .prepare();
     final var results =
         List.ofAll(
-            findAndFilterDuplicates(
+            findAndFilterInvalids(
                 validatables.toJavaList(),
                 NOTHING_TO_VALIDATE,
                 batchValidationConfig.findAndFilterDuplicatesConfigs));
@@ -199,7 +198,7 @@ class UtilsTest {
             .prepare();
     final var results =
         List.ofAll(
-            findAndFilterDuplicates(
+            findAndFilterInvalids(
                 validatables.toJavaList(),
                 NOTHING_TO_VALIDATE,
                 batchValidationConfig.findAndFilterDuplicatesConfigs));
@@ -248,7 +247,7 @@ class UtilsTest {
             .prepare();
     final var results =
         List.ofAll(
-            findAndFilterDuplicates(
+            findAndFilterInvalids(
                 validatables.toJavaList(),
                 NOTHING_TO_VALIDATE,
                 batchValidationConfig.findAndFilterDuplicatesConfigs));
@@ -290,7 +289,7 @@ class UtilsTest {
                     .prepare())
             .prepare();
     final var result =
-        findFistNullValidatableOrDuplicate(
+        Utils.findFirstInvalid(
             validatables.toJavaList(),
             NOTHING_TO_VALIDATE,
             batchValidationConfig.findAndFilterDuplicatesConfigs);
@@ -312,7 +311,7 @@ class UtilsTest {
                     .prepare())
             .prepare();
     final var result =
-        findFistNullValidatableOrDuplicate(
+        Utils.findFirstInvalid(
             validatables.toJavaList(),
             NOTHING_TO_VALIDATE,
             batchValidationConfig.findAndFilterDuplicatesConfigs);
@@ -340,7 +339,7 @@ class UtilsTest {
                     .prepare())
             .prepare();
     final var result =
-        findFistNullValidatableOrDuplicate(
+        Utils.findFirstInvalid(
             validatables.toJavaList(),
             NOTHING_TO_VALIDATE,
             batchValidationConfig.findAndFilterDuplicatesConfigs);
@@ -364,7 +363,7 @@ class UtilsTest {
                     .prepare())
             .prepare();
     final var result =
-        findFistNullValidatableOrDuplicate(
+        Utils.findFirstInvalid(
             validatables.toJavaList(),
             NOTHING_TO_VALIDATE,
             batchValidationConfig.findAndFilterDuplicatesConfigs);
@@ -384,7 +383,7 @@ class UtilsTest {
                     .prepare())
             .prepare();
     final var result =
-        findFistNullValidatableOrDuplicate(
+        Utils.findFirstInvalid(
             validatables.toJavaList(),
             NOTHING_TO_VALIDATE,
             batchValidationConfig.findAndFilterDuplicatesConfigs);

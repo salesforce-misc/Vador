@@ -17,7 +17,7 @@ import java.util.Optional
 @JvmSynthetic
 internal fun <FailureT, ValidatableT> findFirstFailure(
   validatable: Either<FailureT?, ValidatableT?>,
-  validators: List<ValidatorEtr<ValidatableT?, FailureT?>>,
+  validators: Collection<ValidatorEtr<ValidatableT?, FailureT?>>,
   throwableMapper: (Throwable) -> FailureT?,
 ): Either<FailureT?, ValidatableT?>? =
   if (validatable.isLeft) validatable
@@ -27,10 +27,15 @@ internal fun <FailureT, ValidatableT> findFirstFailure(
     throwableMapper
   ).firstOrNull { it.isLeft }
 
+/**
+ * To fire Collection of validators on a validatable.
+ *
+ * @return - Sequence of validator results
+ */
 @JvmSynthetic
 internal fun <FailureT, ValidatableT> fireValidators(
   validatable: Either<FailureT?, ValidatableT?>,
-  validatorEtrs: List<ValidatorEtr<ValidatableT, FailureT>>,
+  validatorEtrs: Collection<ValidatorEtr<ValidatableT, FailureT>>,
   throwableMapper: (Throwable) -> FailureT?,
 ): Sequence<Either<FailureT?, ValidatableT?>> =
   validatorEtrs.asSequence().map { fireValidator(validatable, it, throwableMapper) }
@@ -50,10 +55,10 @@ internal fun <ContainerValidatableT, NestedContainerValidatableT, FailureT> vali
   container: ContainerValidatableT,
   containerValidationConfig: ContainerValidationConfigWithNested<ContainerValidatableT, NestedContainerValidatableT, FailureT?>
 ): Optional<FailureT> {
-  val nestedContainerBatch: List<NestedContainerValidatableT> =
+  val nestedContainerBatch: Collection<NestedContainerValidatableT> =
     containerValidationConfig.withBatchMappers.mapNotNull { it[container] }.flatten()
   return validateBatchSize(nestedContainerBatch, containerValidationConfig).or {
-    val nestedBatch: List<*> = nestedContainerBatch.mapNotNull { nestedContainer ->
+    val nestedBatch: Collection<*> = nestedContainerBatch.mapNotNull { nestedContainer ->
       containerValidationConfig.withNestedContainerValidationConfig.withBatchMappers.mapNotNull { it[nestedContainer] }.flatten()
     }
     validateBatchSize(nestedBatch, containerValidationConfig.withNestedContainerValidationConfig)
@@ -65,7 +70,7 @@ internal fun <ContainerT, FailureT> validateBatchSize(
   container: ContainerT,
   containerValidationConfig: ContainerValidationConfig<ContainerT, FailureT?>
 ): Optional<FailureT> {
-  val memberBatch: List<*> = containerValidationConfig.withBatchMappers.mapNotNull { it[container] }.flatten()
+  val memberBatch: Collection<*> = containerValidationConfig.withBatchMappers.mapNotNull { it[container] }.flatten()
   return validateBatchSize(memberBatch, containerValidationConfig)
 }
 
@@ -84,38 +89,38 @@ private fun <FailureT> validateBatchSize(
   } else Optional.empty()
 }
 
-internal fun <FailureT, ValidatableT> findAndFilterDuplicates(
+internal fun <FailureT, ValidatableT> findAndFilterInvalids(
   validatables: Collection<ValidatableT>,
   failureForNullValidatable: FailureT?,
   filterConfigs: Collection<FilterDuplicatesConfig<ValidatableT, FailureT?>>
-): List<Either<FailureT?, ValidatableT?>> {
-  val mapNullValidatables: List<Pair<ValidatableT?, Either<FailureT?, ValidatableT?>>> =
+): Collection<Either<FailureT?, ValidatableT?>> {
+  val mapNullValidatables: Collection<Pair<ValidatableT?, Either<FailureT?, ValidatableT?>>> =
     validatables.map { if (it == null) Pair(null, left(failureForNullValidatable)) else Pair(it, right(it)) }
   return if (filterConfigs.isEmpty()) {
     mapNullValidatables.map { it.second }
   } else {
-    findAndFilterDuplicates(
+    findAndFilterInvalids(
       mapNullValidatables.withIndex().map { Triple(it.index, it.value.first, it.value.second) },
       filterConfigs.iterator()
     ).sortedBy { it.first }.map { it.third }
   }
 }
 
-private tailrec fun <ValidatableT, FailureT> findAndFilterDuplicates(
-  validatables: List<Triple<Int, ValidatableT?, Either<FailureT?, ValidatableT?>>>,
+private tailrec fun <ValidatableT, FailureT> findAndFilterInvalids(
+  validatables: Collection<Triple<Int, ValidatableT?, Either<FailureT?, ValidatableT?>>>,
   filterConfigs: Iterator<FilterDuplicatesConfig<ValidatableT, FailureT?>>,
-): List<Triple<Int, ValidatableT?, Either<FailureT?, ValidatableT?>>> =
+): Collection<Triple<Int, ValidatableT?, Either<FailureT?, ValidatableT?>>> =
   if (!filterConfigs.hasNext()) {
     validatables
   } else {
     val results = segregateNullAndDuplicateKeysInOrder(validatables, filterConfigs.next())
-    findAndFilterDuplicates(results, filterConfigs)
+    findAndFilterInvalids(results, filterConfigs)
   }
 
 private fun <ValidatableT, FailureT> segregateNullAndDuplicateKeysInOrder(
-  validatables: List<Triple<Int, ValidatableT?, Either<FailureT?, ValidatableT?>>>,
+  validatables: Collection<Triple<Int, ValidatableT?, Either<FailureT?, ValidatableT?>>>,
   filterDuplicatesConfig: FilterDuplicatesConfig<ValidatableT, FailureT?>
-): List<Triple<Int, ValidatableT?, Either<FailureT?, ValidatableT?>>> {
+): Collection<Triple<Int, ValidatableT?, Either<FailureT?, ValidatableT?>>> {
   val duplicateFinder = filterDuplicatesConfig.findAndFilterDuplicatesWith
   val keyMapperForDuplicates = duplicateFinder ?: identity()
 
@@ -132,8 +137,8 @@ private fun <ValidatableT, FailureT> segregateNullAndDuplicateKeysInOrder(
 
 private fun <FailureT, ValidatableT> mapValidatablesWithNullKeys(
   failureForNullKeys: FailureT?,
-  groups: Map<Optional<Any>, List<Triple<Int, ValidatableT, Either<FailureT?, ValidatableT>>>>
-): List<Triple<Int, ValidatableT, Either<FailureT?, ValidatableT>>> =
+  groups: Map<Optional<Any>, Collection<Triple<Int, ValidatableT, Either<FailureT?, ValidatableT>>>>
+): Collection<Triple<Int, ValidatableT, Either<FailureT?, ValidatableT>>> =
   failureForNullKeys?.let {
     groups[Optional.empty()]?.map(mapWithFailure(it))
   } ?: groups[Optional.empty()] ?: emptyList()
@@ -154,25 +159,25 @@ private fun <FailureT, ValidatableT> mapWithFailure(failure: FailureT?) =
     }
   }
 
-internal fun <ValidatableT, FailureT> findFistNullValidatableOrDuplicate(
+internal fun <ValidatableT, FailureT> findFirstInvalid(
   validatables: Collection<ValidatableT?>,
   nullValidatable: FailureT?,
   filterDuplicatesConfigs: Collection<FilterDuplicatesConfig<ValidatableT, FailureT?>>,
 ): Optional<FailureT> =
-  findFistNullValidatableOrDuplicate<ValidatableT, FailureT, Nothing>(
+  findFirstInvalid<ValidatableT, FailureT, Nothing>(
     validatables,
     filterDuplicatesConfigs,
     nullValidatable
   ).map { it._2 }
 
-internal fun <ValidatableT, FailureT, PairT> findFistNullValidatableOrDuplicate(
+internal fun <ValidatableT, FailureT, PairT> findFirstInvalid(
   validatables: Collection<ValidatableT?>,
   filterDuplicatesConfigs: Collection<FilterDuplicatesConfig<ValidatableT, FailureT?>>,
   nullValidatable: FailureT? = null,
   pairForInvalidMapper: (ValidatableT?) -> PairT? = { null }
 ): Optional<Tuple2<PairT?, FailureT?>> =
   filterDuplicatesConfigs.asSequence().map {
-    findFistNullValidatableOrDuplicate(
+    findFirstInvalid(
       validatables,
       it,
       nullValidatable,
@@ -183,7 +188,7 @@ internal fun <ValidatableT, FailureT, PairT> findFistNullValidatableOrDuplicate(
 /**
  * This gives the result paired up with an identifier.
  */
-internal fun <ValidatableT, FailureT, PairT> findFistNullValidatableOrDuplicate(
+internal fun <ValidatableT, FailureT, PairT> findFirstInvalid(
   validatables: Collection<ValidatableT?>,
   filterDuplicatesConfig: FilterDuplicatesConfig<ValidatableT, FailureT?>,
   nullValidatable: FailureT? = null,

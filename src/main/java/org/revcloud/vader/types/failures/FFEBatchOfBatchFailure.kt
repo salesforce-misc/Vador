@@ -3,10 +3,9 @@ package org.revcloud.vader.types.failures
 import io.vavr.control.Either
 
 /**
- * This is an inline wrapper to represent `FFBatchOfBatchFailure`
+ * This is an inline wrapper to represent `FFEBatchOfBatchFailure`
  */
-@JvmInline
-value class FFBatchOfBatchFailure<FailureT>(val failure: Either<FailureT?, List<FailureT?>>) {
+class FFEBatchOfBatchFailure<FailureT>(val failure: Either<FailureT?, List<FailureT?>>) : Either<FailureT?, List<FailureT?>> by failure {
   val containerFailure: FailureT?
     get() = if (failure.isLeft) failure.left else null
 

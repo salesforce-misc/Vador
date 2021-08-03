@@ -55,8 +55,9 @@ class BatchOfBatch1ValidationConfigTest {
     final var result = results.get(0);
     VavrAssertions.assertThat(result).isLeft();
     final var failure = result.getLeft();
-    VavrAssertions.assertThat(failure.getFailure())
-        .containsOnRight(List.of(INVALID_COMBO_1, UNKNOWN_EXCEPTION));
+    assertThat(failure.getContainerFailure()).isNull();
+    assertThat(failure.getBatchMemberFailures())
+        .containsExactly(INVALID_COMBO_1, UNKNOWN_EXCEPTION);
   }
 
   @Value
