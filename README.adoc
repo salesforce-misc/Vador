@@ -7,7 +7,7 @@ Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :hide-uri-scheme:
 :sourcedir: src/main/java
 :imagesdir: images
-:vader-version: 2.4.8
+:vader-version: 2.4.9
 :toc:
 :toc-placement!:
 
@@ -20,20 +20,21 @@ A piece-of-code is a costly solution to solve a simple problem
 
 ____
 
-.Mission Statement
-****
+'''
+
+== Mission Statement
+
+[.lead]
 *Abstract away the Validation Orchestration complexity with a Reusable Design, that sets a framework to Write & Wire validations that are easy to Test, Extend and Share*
-****
+
+'''
 
 image:https://ccspaymentsci.dop.sfdc.net/buildStatus/icon?job=validation%2FVader%2Fmaster[Build Status,link=https://ccspaymentsci.dop.sfdc.net/job/validation/job/Vader/job/master/]
-image:https://img.shields.io/maven-metadata/v?label=nexus.soma&metadataUrl=https%3A%2F%2Fnexus.soma.salesforce.com%2Fnexus%2Fcontent%2Frepositories%2Freleases%2Fcom%2Fsalesforce%2Fccspayments%2Fvader%2Fmaven-metadata.xml[Version,link=https://nexus.soma.salesforce.com/nexus/content/repositories/releases/com/salesforce/ccspayments/vader/]
 image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=alert_status[Quality Gate Status,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
 image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=sqale_rating[Maintainability Rating,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
 image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=security_rating[Security Rating,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
 image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=coverage[Coverage,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
 image:https://img.shields.io/badge/QTC-Centaurus-eng.svg?logo=slack[Slack,link=https://sfdc-salescloud.slack.com/messages/TFBAFAVPH/team/]
-
-🚧 image:https://img.shields.io/badge/stability-work_in_progress-lightgrey.svg[stability-wip]
 
 == Artifact Coordinates
 
@@ -44,7 +45,6 @@ image:https://img.shields.io/badge/QTC-Centaurus-eng.svg?logo=slack[Slack,link=h
   <artifactId>vader</artifactId>
   <version>{vader-version}</version>
 </dependency>
-
 ----
 
 toc::[]
