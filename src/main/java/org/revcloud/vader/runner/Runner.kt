@@ -13,12 +13,6 @@ fun <FailureT, ContainerValidatableT> validateAndFailFastForContainer(
   throwableMapper: (Throwable) -> FailureT?
 ): Optional<FailureT> = failFastForContainer(containerValidationConfig, throwableMapper)(container)
 
-fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
-  container: ContainerValidatableT,
-  containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
-  throwableMapper: (Throwable) -> FailureT?
-): Optional<FailureT> = failFastForContainer(containerValidationConfig, throwableMapper)(container)
-
 /**
  * This deals with Batch of Containers.
  * This is placed in this class instead of BatchRunner, so that consumers can fluently use both these overloads.
@@ -31,6 +25,12 @@ fun <FailureT, ContainerValidatableT> validateAndFailFastForContainer(
   .map { validatable: ContainerValidatableT ->
     validateAndFailFastForContainer(validatable, containerValidationConfig, throwableMapper)
   }.firstOrNull { it.isPresent } ?: Optional.empty()
+
+fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
+  container: ContainerValidatableT,
+  containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
+  throwableMapper: (Throwable) -> FailureT?
+): Optional<FailureT> = failFastForContainer(containerValidationConfig, throwableMapper)(container)
 
 fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
   batchValidatable: Collection<ContainerValidatableT>,

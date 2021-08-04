@@ -20,7 +20,7 @@ class ContainerValidationConfigWith2LevelsTest {
 
   // tag::container-config-level-2-demo[]
   @DisplayName(
-      "Container with 2 levels: (Container1Root -> Container2 -> Container3) + Container with next 1 level: (Container2 -> Container3)")
+      "Container with 2 levels: (ContainerRoot -> Container1 -> Container2) + Container with next 1 level: (Container1 -> Container2)")
   @Test
   void containerValidationConfigWith2Levels1() {
     final var container1RootValidationConfig =
@@ -31,7 +31,7 @@ class ContainerValidationConfigWith2LevelsTest {
             .withContainerLevel1ValidationConfig(
                 ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
                     .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
-                    .shouldHaveMinBatchSize(Tuple.of(3, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
+                    .shouldHaveMinBatchSize(Tuple.of(5, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
                     .prepare())
             .prepare();
     final var container2ValidationConfig =
@@ -45,32 +45,37 @@ class ContainerValidationConfigWith2LevelsTest {
         (Function1<Throwable, ValidationFailure>)
             ValidationFailure::getValidationFailureForException;
 
+    // level-3
     final var beanBatch1 = List.of(new Bean());
     final var beanBatch2 = List.of(new Bean());
-    final var header3Batch1 =
-        List.of(new ContainerLevel2(beanBatch1), new ContainerLevel2(beanBatch2));
     final var beanBatch3 = List.of(new Bean());
     final var beanBatch4 = List.of(new Bean());
-    final var header3Batch2 =
+    // level-2
+    final var containerLevel2Batch1 =
+        List.of(new ContainerLevel2(beanBatch1), new ContainerLevel2(beanBatch2));
+    final var containerLevel2Batch2 =
         List.of(new ContainerLevel2(beanBatch3), new ContainerLevel2(beanBatch4));
-    final var header2Batch =
-        List.of(new ContainerLevel1(header3Batch1), new ContainerLevel1(header3Batch2));
-    final var header1Root = new ContainerRoot(header2Batch);
+    // level-1
+    final var containerLevel1Batch =
+        List.of(
+            new ContainerLevel1(containerLevel2Batch1), new ContainerLevel1(containerLevel2Batch2));
+    // root-level
+    final var containerRoot = new ContainerRoot(containerLevel1Batch);
 
     final var result =
         Runner.validateAndFailFastForContainer(
-                header1Root, container1RootValidationConfig, throwableMapper)
+                containerRoot, container1RootValidationConfig, throwableMapper)
             .or(
                 () ->
                     Runner.validateAndFailFastForContainer(
-                        header2Batch, container2ValidationConfig, throwableMapper));
+                        containerLevel1Batch, container2ValidationConfig, throwableMapper));
 
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_1);
   }
   // end::container-config-level-2-demo[]
 
   @DisplayName(
-      "Container with 2 levels: (Container1Root -> Container2 -> Container3) + Container with next 2 levels: (Container2 -> Container3 -> Bean)")
+      "Container with 2 levels: (ContainerRoot -> Container2 -> Container3) + Container with next 2 levels: (Container2 -> Container3 -> Bean)")
   @Test
   void containerValidationConfigWith2Levels2() {
     final var containerRootValidationConfig =
@@ -81,7 +86,7 @@ class ContainerValidationConfigWith2LevelsTest {
             .withContainerLevel1ValidationConfig(
                 ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
                     .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
-                    .shouldHaveMinBatchSize(Tuple.of(3, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
+                    .shouldHaveMinBatchSize(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
                     .prepare())
             .prepare();
     final var container1ValidationConfig =
@@ -93,24 +98,28 @@ class ContainerValidationConfigWith2LevelsTest {
                 ContainerValidationConfig.<ContainerLevel2, ValidationFailure>toValidate()
                     .withBatchMapper(ContainerLevel2::getBeanBatch)
                     .shouldHaveMaxBatchSize(Tuple.of(3, MAX_BATCH_SIZE_EXCEEDED_LEVEL_2))
-                    .withContainerValidator(ignore -> NONE, NONE)
                     .prepare())
             .prepare();
     final var throwableMapper =
         (Function1<Throwable, ValidationFailure>)
             ValidationFailure::getValidationFailureForException;
 
-    final var beanBatch1 = List.of(new Bean());
-    final var beanBatch2 = List.of(new Bean());
-    final var header3Batch1 =
-        List.of(new ContainerLevel2(beanBatch1), new ContainerLevel2(beanBatch2));
+    // level-3
+    final var beanBatch1 = List.of(new Bean(), new Bean());
+    final var beanBatch2 = List.of(new Bean(), new Bean());
     final var beanBatch3 = List.of(new Bean());
     final var beanBatch4 = List.of(new Bean());
-    final var header3Batch2 =
+    // level-2
+    final var containerLevel2Batch1 =
+        List.of(new ContainerLevel2(beanBatch1), new ContainerLevel2(beanBatch2));
+    final var containerLevel2Batch2 =
         List.of(new ContainerLevel2(beanBatch3), new ContainerLevel2(beanBatch4));
-    final var header2Batch =
-        List.of(new ContainerLevel1(header3Batch1), new ContainerLevel1(header3Batch2));
-    final var header1Root = new ContainerRoot(header2Batch);
+    // level-1
+    final var containerLevel1Batch =
+        List.of(
+            new ContainerLevel1(containerLevel2Batch1), new ContainerLevel1(containerLevel2Batch2));
+    // root
+    final var header1Root = new ContainerRoot(containerLevel1Batch);
 
     final var result =
         Runner.validateAndFailFastForContainer(
@@ -118,7 +127,7 @@ class ContainerValidationConfigWith2LevelsTest {
             .or(
                 () ->
                     validateAndFailFastForContainer(
-                        header2Batch, container1ValidationConfig, throwableMapper));
+                        containerLevel1Batch, container1ValidationConfig, throwableMapper));
 
     assertThat(result).contains(MAX_BATCH_SIZE_EXCEEDED_LEVEL_2);
   }

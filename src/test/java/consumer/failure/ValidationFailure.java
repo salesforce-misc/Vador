@@ -44,6 +44,12 @@ public class ValidationFailure {
       new ValidationFailure(ValidationFailureMessage.VALIDATION_FAILURE_3);
   public static final ValidationFailure REQUIRED_FIELD_MISSING =
       new ValidationFailure(ValidationFailureMessage.REQUIRED_FIELD_MISSING);
+  public static final ValidationFailure REQUIRED_FIELD_MISSING_1 =
+      new ValidationFailure(ValidationFailureMessage.REQUIRED_FIELD_MISSING_1);
+  public static final ValidationFailure REQUIRED_FIELD_MISSING_2 =
+      new ValidationFailure(ValidationFailureMessage.REQUIRED_FIELD_MISSING_2);
+  public static final ValidationFailure REQUIRED_LIST_MISSING =
+      new ValidationFailure(ValidationFailureMessage.REQUIRED_LIST_MISSING);
   public static final ValidationFailure INVALID_COMBO_1 =
       new ValidationFailure(ValidationFailureMessage.INVALID_COMBO_1);
   public static final ValidationFailure INVALID_COMBO_2 =
@@ -53,15 +59,17 @@ public class ValidationFailure {
   public static final ValidationFailure FIELD_INTEGRITY_EXCEPTION =
       new ValidationFailure(ValidationFailureMessage.FIELD_INTEGRITY_EXCEPTION);
   public static final ValidationFailure MIN_BATCH_SIZE_NOT_MET_LEVEL_0 =
-      new ValidationFailure(ValidationFailureMessage.MIN_BATCH_SIZE_EXCEEDED);
+      new ValidationFailure(ValidationFailureMessage.MIN_BATCH_SIZE_NOT_MET_LEVEL_0);
   public static final ValidationFailure MIN_BATCH_SIZE_NOT_MET_LEVEL_1 =
-      new ValidationFailure(ValidationFailureMessage.MIN_BATCH_SIZE_EXCEEDED);
+      new ValidationFailure(ValidationFailureMessage.MIN_BATCH_SIZE_NOT_MET_LEVEL_1);
   public static final ValidationFailure MAX_NESTED_BATCH_SIZE_EXCEEDED_2 =
-      new ValidationFailure(ValidationFailureMessage.MIN_BATCH_SIZE_EXCEEDED);
+      new ValidationFailure(ValidationFailureMessage.MAX_NESTED_BATCH_SIZE_EXCEEDED_2);
   public static final ValidationFailure MAX_BATCH_SIZE_EXCEEDED_LEVEL_2 =
-      new ValidationFailure(ValidationFailureMessage.MIN_BATCH_SIZE_EXCEEDED);
+      new ValidationFailure(ValidationFailureMessage.MAX_BATCH_SIZE_EXCEEDED_LEVEL_2);
+  public static final ValidationFailure MAX_BATCH_SIZE_EXCEEDED_LEVEL_3 =
+      new ValidationFailure(ValidationFailureMessage.MAX_BATCH_SIZE_EXCEEDED_LEVEL_3);
   public static final ValidationFailure MIN_BATCH_SIZE_NOT_MET_LEVEL_2 =
-      new ValidationFailure(ValidationFailureMessage.MIN_BATCH_SIZE_EXCEEDED);
+      new ValidationFailure(ValidationFailureMessage.MIN_BATCH_SIZE_NOT_MET_LEVEL_2);
   public static final ValidationFailure MAX_BATCH_SIZE_EXCEEDED =
       new ValidationFailure(ValidationFailureMessage.MAX_BATCH_SIZE_EXCEEDED);
   private final ValidationFailureMessage validationFailureMessage;

@@ -51,17 +51,17 @@ internal fun <FailureT, ValidatableT> fireValidator(
     .flatMap { validatable } // Put the original Validatable in the right state
 
 @JvmSynthetic
-internal fun <ContainerValidatableT, NestedContainerValidatableT, FailureT> validateBatchSize(
-  container: ContainerValidatableT,
-  containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>
+internal fun <ContainerRootValidatableT, ContainerLevel1ValidatableT, FailureT> validateBatchSize(
+  container: ContainerRootValidatableT,
+  containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerRootValidatableT, ContainerLevel1ValidatableT, FailureT?>
 ): Optional<FailureT> {
-  val nestedContainerBatch: Collection<NestedContainerValidatableT> =
+  val containerLevel1Batch: Collection<ContainerLevel1ValidatableT> =
     containerValidationConfig.withBatchMappers.mapNotNull { it[container] }.flatten()
-  return validateBatchSize(nestedContainerBatch, containerValidationConfig).or {
-    val nestedBatch: Collection<*> = nestedContainerBatch.mapNotNull { nestedContainer ->
-      containerValidationConfig.withContainerLevel1ValidationConfig.withBatchMappers.mapNotNull { it[nestedContainer] }.flatten()
-    }
-    validateBatchSize(nestedBatch, containerValidationConfig.withContainerLevel1ValidationConfig)
+  return validateBatchSize(containerLevel1Batch, containerValidationConfig).or {
+    val level2Batch: Collection<*> = containerLevel1Batch.mapNotNull { level1Container ->
+      containerValidationConfig.withContainerLevel1ValidationConfig.withBatchMappers.mapNotNull { it[level1Container] }.flatten()
+    }.flatten()
+    validateBatchSize(level2Batch, containerValidationConfig.withContainerLevel1ValidationConfig)
   }
 }
 

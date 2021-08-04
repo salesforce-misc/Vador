@@ -79,6 +79,65 @@ class BatchOfBatch1ValidationConfigTest {
   // end::batch-of-batch-1-demo[]
 
   @DisplayName(
+      "FailFastForEach with Pair -> Root[batchOf(Items(batchOf(Beans))]) or like `List<Item<List<Bean>>`")
+  @Test
+  void batchOfBatchFailFastForEachWithPair() {
+    final var memberBatchValidationConfig =
+        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+            .withSpec(
+                spec ->
+                    spec._2()
+                        .when(Bean::getValue)
+                        .matches(is(1))
+                        .then(Bean::getLabel)
+                        .shouldMatch(anyOf("1", "one"))
+                        .orFailWith(INVALID_COMBO_1))
+            .prepare();
+    final var itemBatchValidationConfig =
+        BatchOfBatch1ValidationConfig.<Item, Bean, ValidationFailure>toValidate()
+            .shouldHaveFieldOrFailWith(Item::getId, INVALID_ITEM)
+            .withMemberBatchValidationConfig(
+                Tuple.of(Item::getBeanBatch, memberBatchValidationConfig))
+            .prepare();
+
+    final var invalidBean1 = new Bean(1, "a");
+    final var beanBatch1 = List.of(invalidBean1, new Bean(1, "1"));
+    final var invalidBean2 = new Bean(2, "b");
+    final var beanBatch2 = List.of(invalidBean2, new Bean(2, "2"));
+    final var allValidBeanBatch3 = List.of(new Bean(3, "three"), new Bean(3, "3"));
+    final var invalidItem = new Item("", beanBatch2);
+    final var itemsBatch =
+        List.of(
+            new Item("item-1", beanBatch1), invalidItem, new Item("item-3", allValidBeanBatch3));
+    final var root = new Root(itemsBatch);
+
+    final var results =
+        validateAndFailFastForEach(
+            root.getItemsBatch(),
+            itemBatchValidationConfig,
+            Item::getId,
+            Bean::getValue,
+            NONE,
+            ValidationFailure::getValidationFailureForException);
+    assertThat(results).hasSize(3);
+
+    final var result1 = results.get(0);
+    VavrAssertions.assertThat(result1).isLeft();
+    final var failure = result1.getLeft();
+    assertThat(failure.getContainerFailure()).isNull();
+    assertThat(failure.getBatchMemberFailures()).containsExactly(Tuple.of(1, INVALID_COMBO_1));
+
+    final var result2 = results.get(1);
+    VavrAssertions.assertThat(result2).isLeft();
+    final var failure2 = result2.getLeft();
+    assertThat(failure2.getContainerFailure()).isEqualTo(Tuple.of("", INVALID_ITEM));
+    assertThat(failure2.getBatchMemberFailures()).isEmpty();
+
+    final var result3 = results.get(2);
+    VavrAssertions.assertThat(result3).isRight();
+  }
+
+  @DisplayName(
       "FailFastForAny -> Root[batchOf(Items(batchOf(Beans))]) or like `List<Item<List<Bean>>`")
   @Test
   void batchOfBatchFailFastForAny() {

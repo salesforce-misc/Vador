@@ -59,17 +59,18 @@ ifdef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-@DisplayName("Container with 2 levels: (Container1Root -> Container2 -> Container3) + Container with next 1 level: (Container2 -> Container3)")
+@DisplayName("Container with 2 levels: (ContainerRoot -> Container1 -> Container2) + Container with next 1 level: (Container1 -> Container2)")
 @Test
 void containerValidationConfigWith2Levels1() {
   final var container1RootValidationConfig =
-      ContainerValidationConfigWith2Levels.<ContainerRoot, ContainerLevel1, ValidationFailure>toValidate()
+      ContainerValidationConfigWith2Levels
+          .<ContainerRoot, ContainerLevel1, ValidationFailure>toValidate()
           .withBatchMapper(ContainerRoot::getContainerLevel1Batch)
           .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
           .withContainerLevel1ValidationConfig(
               ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
                   .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
-                  .shouldHaveMinBatchSize(Tuple.of(3, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
+                  .shouldHaveMinBatchSize(Tuple.of(5, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
                   .prepare())
           .prepare();
   final var container2ValidationConfig =
@@ -83,22 +84,30 @@ void containerValidationConfigWith2Levels1() {
       (Function1<Throwable, ValidationFailure>)
           ValidationFailure::getValidationFailureForException;
 
+  // level-3
   final var beanBatch1 = List.of(new Bean());
   final var beanBatch2 = List.of(new Bean());
-  final var header3Batch1 = List.of(new ContainerLevel2(beanBatch1), new ContainerLevel2(beanBatch2));
   final var beanBatch3 = List.of(new Bean());
   final var beanBatch4 = List.of(new Bean());
-  final var header3Batch2 = List.of(new ContainerLevel2(beanBatch3), new ContainerLevel2(beanBatch4));
-  final var header2Batch = List.of(new ContainerLevel1(header3Batch1), new ContainerLevel1(header3Batch2));
-  final var header1Root = new ContainerRoot(header2Batch);
-
+  // level-2
+  final var containerLevel2Batch1 =
+      List.of(new ContainerLevel2(beanBatch1), new ContainerLevel2(beanBatch2));
+  final var containerLevel2Batch2 =
+      List.of(new ContainerLevel2(beanBatch3), new ContainerLevel2(beanBatch4));
+  // level-1
+  final var containerLevel1Batch =
+      List.of(
+          new ContainerLevel1(containerLevel2Batch1), new ContainerLevel1(containerLevel2Batch2));
+  // root-level
+  final var containerRoot = new ContainerRoot(containerLevel1Batch);
+  
   final var result =
       Runner.validateAndFailFastForContainer(
-              header1Root, container1RootValidationConfig, throwableMapper)
+              containerRoot, container1RootValidationConfig, throwableMapper)
           .or(
               () ->
                   Runner.validateAndFailFastForContainer(
-                      header2Batch, container2ValidationConfig, throwableMapper));
+                      containerLevel1Batch, container2ValidationConfig, throwableMapper));
 
   assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_1);
 }
@@ -113,3 +122,6 @@ include::{testdir}/org/revcloud/vader/runner/ContainerValidationConfigWith2Level
 ----
 
 endif::[]
+
+NOTE: The params in the config supplied through `withContainerLevel1ValidationConfig` should be perceived from the Root container context. 
+For example in the above test, `shouldHaveMinBatchSize(Tuple.of(5, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))` specifies that the `ContainerRoot` should not have minimum 5 `ContainerLevel2` beans, but it only has 4. 
