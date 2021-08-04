@@ -6,7 +6,7 @@ Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :caution-caption: ⚠️
 :sourcedir: ../../src/main/java
 :testdir: ../../src/test/java
-:imagesdir: ../../images
+:imagesdir: ../../images/config-dsl
 :sectnums:
 :listing-caption: Snippet
 :toc:
@@ -14,6 +14,9 @@ Gopal S Akshintala <gopala.akshintala@salesforce.com>
 
 Vader has a powerful and declarative Configuration DSL.
 A config object is 1-1 mapped with a Data Structure, and holds all the information/requirements/specifications required to validate that Data-structure.
+This is a powerful coz it lets you validate any Bean with any level or nesting, be it _Single_ or _Batch_. It's easy to fit this model in our heads, as validation configuration aligns with Bean hierarchical-structure.
+
+image:hierarchical-validation.png[]
 
 == Config-Driven Validation
 
@@ -38,4 +41,4 @@ As usual, file a git.soma issue if you have new and unique use-cases.
 === link:NestedBatch1ValidationConfig.adoc[NestedBatch1ValidationConfig(TBD)]
 === link:BatchOfBatch1ValidationConfig.adoc[BatchOfBatch1ValidationConfig]
 === link:ContainerValidationConfig.adoc[ContainerValidationConfig]
-=== link:ContainerValidationConfigWithNested.adoc[ContainerValidationConfigWithNested]
+=== link:ContainerValidationConfigWith2Levels.adoc[ContainerValidationConfigWith2Levels]

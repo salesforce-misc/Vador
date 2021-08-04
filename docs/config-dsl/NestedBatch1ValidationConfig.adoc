@@ -6,7 +6,7 @@ Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :caution-caption: ⚠️
 :sourcedir: ../../src/main/java
 :testdir: ../../src/test/java
-:imagesdir: ../../images
+:imagesdir: ../../images/config-dsl
 :sectnums:
 :listing-caption: Snippet
 :toc:

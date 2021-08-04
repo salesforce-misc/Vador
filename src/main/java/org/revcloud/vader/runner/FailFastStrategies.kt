@@ -118,9 +118,8 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT, ContainerPair
       failureForNullValidatable,
       throwableMapper,
       containerPairForInvalidMapper
-    )(
-      containerValidatables
-    ).map { FFABatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>(left(it)) }
+    )(containerValidatables)
+      .map { FFABatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>(left(it)) }
       .or {
         containerValidatables.asSequence()
           .map { batchOfBatch1ValidationConfig.withMemberBatchValidationConfig._1.apply(it) }
@@ -190,7 +189,7 @@ internal fun <ContainerValidatableT, FailureT> failFastForContainer(
 
 @JvmSynthetic
 internal fun <ContainerValidatableT, NestedContainerValidatableT, FailureT> failFastForContainer(
-  containerValidationConfig: ContainerValidationConfigLevel2<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
+  containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForContainer<ContainerValidatableT, FailureT> = { container: ContainerValidatableT ->
   validateBatchSize(container, containerValidationConfig)

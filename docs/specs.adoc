@@ -24,7 +24,7 @@ Let’s understand this with an example:
 
 === A Validation through code:
 
-[source,java]
+[source,java,indent=0,options="nowrap"]
 ----
 public static final SimpleValidator<ReferenceItemBaseInputRepresentation, ValidationFailure> billingMethodBillingTermCombo = inputRepresentation -> {
   final var billingTerm = inputRepresentation.getBillingTerm().getInternalName();
@@ -126,7 +126,7 @@ ____
 
 *The above validation using a spec*
 
-[source,java]
+[source,java,indent=0,options="nowrap"]
 ----
 spec._2().nameForTest(BILLING_TERM_BILLING_METHOD_COMBO_SPEC)        
   .when(ReferenceItemBaseInputRepresentation::getBillingMethod)        
@@ -140,7 +140,7 @@ spec._2().nameForTest(BILLING_TERM_BILLING_METHOD_COMBO_SPEC)
 These Specs go into your DI config (Typically Spring Config on a Core module) and are handed over to Vader for execution
 like below:
 
-[source,java]
+[source,java,indent=0,options="nowrap"]
 ----
 ValidationConfig<Bean, ValidationFailure> validationConfig =
   ValidationConfig.<Bean, ValidationFailure>toValidate()
@@ -179,7 +179,7 @@ doesn’t apply to Specs.
 * _Hey, but what if I really had a typo or I changed something unintentionally. I need tests to fail and alert me._
 * Agreed! tests in these scenarios give us one extra layer of protection. But, test your Spec not the implementation
 behind it. For example:
-[source,java]
+[source,java,indent=0,options="nowrap"]
 ----
 spec._1().nameForTest(BDOM_RANGE_SPEC)
   .given(ReferenceItemBaseInputRepresentation::getBillDayOfMonth)
@@ -199,7 +199,7 @@ data types align together. *So, if a Spec compiles it works as written.*
 your case and help you from the pain of writing tests.
 * And, why not! we just said you don’t need tests, but who said Specs are not testable? This is how simple it is to
 unit test them:
-[source,java]
+[source,java,indent=0,options="nowrap"]
 ----
 @Test
 public void invalidBillingTermFails() {
@@ -226,7 +226,7 @@ This deals with a single field. Use this spec if you wish to validate a field ag
 Validatable or one or more http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/Matchers.html[Matchers]. Vader
 also provides some link:matchers.md[Matchers out of the box]. Example:
 
-[source,java]
+[source,java,indent=0,options="nowrap"]
 ----
 spec._1().nameForTest(BILLING_TERM_SPEC)
   .given(ReferenceItemBaseInputRepresentation::getBillingTerm)
@@ -234,7 +234,7 @@ spec._1().nameForTest(BILLING_TERM_SPEC)
   .orFailWith(ofFieldIntegrity(INVALID_BILLING_TERM))
 ----
 
-[source,java]
+[source,java,indent=0,options="nowrap"]
 ----
 spec._1().nameForTest(BDOM_RANGE_SPEC)
   .given(ReferenceItemBaseInputRepresentation::getBillDayOfMonth)
@@ -249,7 +249,7 @@ This deals with two inter-dependent fields. Their relation can be validated in t
 * By providing valid when-then Matchers.
 * By providing a `Map` which acts as _Matrix_ of possible values for both the fields.
 * By providing an assert function which takes these two fields as input.
-[source,java]
+[source,java,indent=0,options="nowrap"]
 ----
 spec._2().nameForTest(END_DATE_BILLING_METHOD_SPEC_2)
   .when(ReferenceItemBaseInputRepresentation::getBillingMethod)
@@ -259,7 +259,7 @@ spec._2().nameForTest(END_DATE_BILLING_METHOD_SPEC_2)
   .orFailWith(ofFieldIntegrity(INVALID_END_DATE_FOR_ORDER_AMOUNT))
 ----
 
-[source,java]
+[source,java,indent=0,options="nowrap"]
 ----
 spec._2().nameForTest(BILLING_TERM_BILLING_TERM_UNIT_COMBO_SPEC)
   .when(ReferenceItemBaseInputRepresentation::getBillingTerm)
@@ -269,7 +269,7 @@ spec._2().nameForTest(BILLING_TERM_BILLING_TERM_UNIT_COMBO_SPEC)
     INVALID_BILLING_TERM_UNIT, bt, btu)))
 ----
 
-[source,java]
+[source,java,indent=0,options="nowrap"]
 ----
 spec._2().nameForTest(START_DATE_END_DATE_SPEC)
   .when(ReferenceItemBaseInputRepresentation::getStartDate)
@@ -283,7 +283,7 @@ spec._2().nameForTest(START_DATE_END_DATE_SPEC)
 This deals with 3 inter-dependent fields. Based on the value of 1 field, the other 2 fields can be compared similar to
 Spec 2.
 
-[source,java]
+[source,java,indent=0,options="nowrap"]
 ----
 spec._3().nameForTest(BDOM_FOR_EVERGREEN_SPEC)
   .when(ReferenceItemBaseInputRepresentation::getBillingMethod)
@@ -294,7 +294,7 @@ spec._3().nameForTest(BDOM_FOR_EVERGREEN_SPEC)
   .orFailWith(ofFieldIntegrity(INVALID_BILL_DAY_OF_MONTH_FOR_EVERGREEN))
 ----
 
-[source,java]
+[source,java,indent=0,options="nowrap"]
 ----
 spec._3().nameForTest(BDOM_FOR_ORDER_AMOUNT_SPEC)
   .when(ReferenceItemBaseInputRepresentation::getBillingMethod)
@@ -311,7 +311,7 @@ spec._3().nameForTest(BDOM_FOR_ORDER_AMOUNT_SPEC)
 Constraints in each spec abide logical `OR`. Mutiple Specs can be composed for Fail-Fast by using `specify`
 or `withSpecs` DSL function of `ValidationConfig`.
 
-[source,java]
+[source,java,indent=0,options="nowrap"]
 ----
 public static final Specs<ReferenceItemBaseInputRepresentation, BillingScheduleFailure> bsSpecs = spec -> List.of(
   spec._1().nameForTest(BILLING_TYPE_SPEC)

@@ -13,13 +13,12 @@ internal fun <ContainerValidatableT, FailureT> ContainerValidationConfig<Contain
 ): Set<String> =
   withBatchMappers.map { PropertyUtils.getPropertyName(validatableClazz, it) }.toSet()
 
-internal fun <ContainerValidatableT, FailureT> ContainerValidationConfigLevel2<ContainerValidatableT?, *, FailureT?>.getFieldNamesForBatchEx(
+internal fun <ContainerValidatableT, FailureT> ContainerValidationConfigWith2Levels<ContainerValidatableT?, *, FailureT?>.getFieldNamesForBatchEx(
   validatableClazz: Class<ContainerValidatableT>
 ): Set<String> =
   withBatchMappers.map { PropertyUtils.getPropertyName(validatableClazz, it) }.toSet()
 
-internal fun <NestedContainerValidatableT, FailureT> ContainerValidationConfigLevel2<*, NestedContainerValidatableT?, FailureT?>.getFieldNamesForBatchLevel2Ex(
+internal fun <NestedContainerValidatableT, FailureT> ContainerValidationConfigWith2Levels<*, NestedContainerValidatableT?, FailureT?>.getFieldNamesForBatchLevel1Ex(
   validatableClazz: Class<NestedContainerValidatableT>
 ): Set<String> =
-  withContainerLevel2ValidationConfig.withBatchMappers.map { PropertyUtils.getPropertyName(validatableClazz, it) }
-    .toSet()
+  withContainerLevel1ValidationConfig.withBatchMappers.map { PropertyUtils.getPropertyName(validatableClazz, it) }.toSet()

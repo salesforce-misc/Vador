@@ -6,7 +6,7 @@ Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :caution-caption: ⚠️
 :sourcedir: ../../src/main/java
 :testdir: ../../src/test/java
-:imagesdir: ../../images
+:imagesdir: ../../images/config-dsl
 :sectnums:
 :listing-caption: Snippet
 :toc:
@@ -15,11 +15,13 @@ Gopal S Akshintala <gopala.akshintala@salesforce.com>
 
 This is the simplest config for a _Single (Non-Batch)_ bean with flat Data-structure.
 
+image:bean.png[]
+
 === Example
 
 ifdef::env-github[]
 
-[source,java,indent=0]
+[source,java,indent=0,options="nowrap"]
 ----
 class Bean {
   String requiredField;
@@ -31,7 +33,7 @@ class Bean {
 endif::[]
 ifndef::env-github[]
 
-[source,java,indent=0]
+[source,java,indent=0,options="nowrap"]
 ----
 include::{testdir}/org/revcloud/vader/runner/BaseValidationConfigTest.java[tag=flat-bean]
 ----
@@ -48,28 +50,28 @@ endif::[]
 
 ifdef::env-github[]
 
-[source,java,indent=0]
+[source,java,indent=0,options="nowrap"]
 ----
 @Test
 void getFieldNames() {
-final var validationConfig =
-    ValidationConfig.<Bean, ValidationFailure>toValidate()
-        .shouldHaveFieldOrFailWith(Bean::getRequiredField, NONE)
-        .shouldHaveValidSFIdFormatOrFailWith(Bean::getSfIdFormatField, NONE)
-        .absentOrHaveValidSFIdFormatOrFailWith(Bean::getOptionalSfIdFormatField, NONE)
-        .prepare();
-assertThat(validationConfig.getRequiredFieldNames(Bean.class)).contains(Fields.requiredField);
-assertThat(validationConfig.getRequiredFieldNamesForSFIdFormat(Bean.class))
-    .contains(Fields.sfIdFormatField);
-assertThat(validationConfig.getNonRequiredFieldNamesForSFIdFormat(Bean.class))
-    .contains(Fields.optionalSfIdFormatField);
+  final var validationConfig =
+      ValidationConfig.<Bean, ValidationFailure>toValidate()
+          .shouldHaveFieldOrFailWith(Bean::getRequiredField, NONE)
+          .shouldHaveValidSFIdFormatOrFailWith(Bean::getSfIdFormatField, NONE)
+          .absentOrHaveValidSFIdFormatOrFailWith(Bean::getOptionalSfIdFormatField, NONE)
+          .prepare();
+  assertThat(validationConfig.getRequiredFieldNames(Bean.class)).contains(Fields.requiredField);
+  assertThat(validationConfig.getRequiredFieldNamesForSFIdFormat(Bean.class))
+      .contains(Fields.sfIdFormatField);
+  assertThat(validationConfig.getNonRequiredFieldNamesForSFIdFormat(Bean.class))
+      .contains(Fields.optionalSfIdFormatField);
 }
 ----
 
 endif::[]
 ifndef::env-github[]
 
-[source,java,indent=0]
+[source,java,indent=0,options="nowrap"]
 ----
 include::{testdir}/org/revcloud/vader/runner/BaseValidationConfigTest.java[tag=validationConfig-for-flat-bean-demo]
 ----
@@ -89,7 +91,7 @@ It supports nesting at any depth.
 
 ifdef::env-github[]
 
-[source,java,indent=0]
+[source,java,indent=0,options="nowrap"]
 ----
 class Bean {
   private final Integer requiredField1;
@@ -106,7 +108,7 @@ class ContainerBean {
 endif::[]
 ifndef::env-github[]
 
-[source,java,indent=0]
+[source,java,indent=0,options="nowrap"]
 ----
 include::{testdir}/org/revcloud/vader/runner/ValidationConfigTest.java[tag=nested-bean]
 ----
@@ -122,7 +124,7 @@ endif::[]
 
 ifdef::env-github[]
 
-[source,java,indent=0]
+[source,java,indent=0,options="nowrap"]
 ----
 @Test
 void nestedBeanValidationWithInvalidMember() {
@@ -168,11 +170,9 @@ void nestedBeanValidationWithInvalidMember() {
 endif::[]
 ifndef::env-github[]
 
-[source,java,indent=0]
+[source,java,indent=0,options="nowrap"]
 ----
 include::{testdir}/org/revcloud/vader/runner/ValidationConfigTest.java[tag=validationConfig-for-nested-bean-demo]
 ----
 
 endif::[]
-
-''''

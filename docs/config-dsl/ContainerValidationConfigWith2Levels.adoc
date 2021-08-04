@@ -1,0 +1,115 @@
+= ContainerValidationConfigWith2Levels DSL
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+:icons: font
+:tip-caption: 💡
+:caution-caption: ⚠️
+:sourcedir: ../../src/main/java
+:testdir: ../../src/test/java
+:imagesdir: ../../images/config-dsl
+:sectnums:
+:listing-caption: Snippet
+:toc:
+:toc-placement: preamble
+
+You need this when your container needs to peek 2 levels deep for validations related to its batch members or containers it contains.
+
+To easily wrap your head around such data structure, visualise it like a *Tree*:
+
+image:container-level-2.png[]
+
+== Example
+
+ifdef::env-github[]
+
+[source,java,indent=0,options="nowrap"]
+----
+class Bean {}
+
+class ContainerLevel2 {
+  List<Bean> beanBatch;
+}
+
+class ContainerLevel1 {
+  List<ContainerLevel2> containerLevel2Batch;
+}
+
+class ContainerRoot {
+  List<ContainerLevel1> containerLevel1Batch;
+}
+----
+
+endif::[]
+ifndef::env-github[]
+
+[source,java,indent=0,options="nowrap"]
+----
+include::{testdir}/org/revcloud/vader/runner/ContainerValidationConfigWith2LevelsTest.java[tag=container-config-level-2]
+----
+
+endif::[]
+
+=== Validation Requirements
+
+* Validate a container with the information about its members at two levels deep.
+
+=== Demo
+
+ifdef::env-github[]
+
+[source,java,indent=0,options="nowrap"]
+----
+@DisplayName("Container with 2 levels: (Container1Root -> Container2 -> Container3) + Container with next 1 level: (Container2 -> Container3)")
+@Test
+void containerValidationConfigWith2Levels1() {
+  final var container1RootValidationConfig =
+      ContainerValidationConfigWith2Levels.<ContainerRoot, ContainerLevel1, ValidationFailure>toValidate()
+          .withBatchMapper(ContainerRoot::getContainerLevel1Batch)
+          .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
+          .withContainerLevel1ValidationConfig(
+              ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
+                  .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
+                  .shouldHaveMinBatchSize(Tuple.of(3, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
+                  .prepare())
+          .prepare();
+  final var container2ValidationConfig =
+      ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
+          .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
+          .shouldHaveMinBatchSize(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_2))
+          .withContainerValidator(ignore -> NONE, NONE)
+          .prepare();
+
+  final var throwableMapper =
+      (Function1<Throwable, ValidationFailure>)
+          ValidationFailure::getValidationFailureForException;
+
+  final var beanBatch1 = List.of(new Bean());
+  final var beanBatch2 = List.of(new Bean());
+  final var header3Batch1 = List.of(new ContainerLevel2(beanBatch1), new ContainerLevel2(beanBatch2));
+  final var beanBatch3 = List.of(new Bean());
+  final var beanBatch4 = List.of(new Bean());
+  final var header3Batch2 = List.of(new ContainerLevel2(beanBatch3), new ContainerLevel2(beanBatch4));
+  final var header2Batch = List.of(new ContainerLevel1(header3Batch1), new ContainerLevel1(header3Batch2));
+  final var header1Root = new ContainerRoot(header2Batch);
+
+  final var result =
+      Runner.validateAndFailFastForContainer(
+              header1Root, container1RootValidationConfig, throwableMapper)
+          .or(
+              () ->
+                  Runner.validateAndFailFastForContainer(
+                      header2Batch, container2ValidationConfig, throwableMapper));
+
+  assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_1);
+}
+----
+
+endif::[]
+ifndef::env-github[]
+
+[source,java,indent=0,options="nowrap"]
+----
+include::{testdir}/org/revcloud/vader/runner/ContainerValidationConfigWith2LevelsTest.java[tag=container-config-level-2-demo]
+----
+
+endif::[]

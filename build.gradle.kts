@@ -1,5 +1,6 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep.XML
+import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
 
 plugins {
   kotlin("jvm")
@@ -15,7 +16,7 @@ plugins {
 }
 
 group = "com.salesforce.ccspayments"
-version = "2.4.8"
+version = "2.4.9-SNAPSHOT"
 description = "Vader - An FP framework for Bean validation"
 
 repositories {
@@ -24,6 +25,7 @@ repositories {
 }
 
 val asciidoclet by configurations.creating
+val lombokForSonarQube by configurations.creating
 
 dependencies {
   api("io.vavr:vavr:0.10.4")
@@ -37,6 +39,7 @@ dependencies {
 
   runtimeOnly("org.apache.logging.log4j:log4j-slf4j18-impl:2.14.1")
   asciidoclet("org.asciidoctor:asciidoclet:1.+")
+  lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
 
   testImplementation(platform("org.junit:junit-bom:5.8.0-M1"))
   testImplementation("org.junit.jupiter:junit-jupiter-api")
@@ -46,6 +49,12 @@ dependencies {
   val kotestVersion = "4.6.1"
   testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
   testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+}
+
+sonarqube {
+  properties {
+    property("sonar.java.libraries", lombokForSonarQube.files.last().toString())
+  }
 }
 
 java {
