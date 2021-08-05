@@ -54,7 +54,6 @@ class SpecFactoryTest {
 
   @Value
   private static class Bean {
-
     String value;
   }
 }

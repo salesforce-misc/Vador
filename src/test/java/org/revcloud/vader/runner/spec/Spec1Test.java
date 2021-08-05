@@ -31,13 +31,13 @@ class Spec1Test {
     final var invalidBean = new Bean1(3);
     final var failureResult =
         validateAndFailFast(
-            invalidBean, validationConfig, ValidationFailure::getValidationFailureForException);
+            invalidBean, validationConfig);
     assertThat(failureResult).contains(INVALID_VALUE);
 
     final var validBean = new Bean1(1);
     final var noneResult =
         validateAndFailFast(
-            validBean, validationConfig, ValidationFailure::getValidationFailureForException);
+            validBean, validationConfig);
     assertThat(noneResult).isEmpty();
   }
 
@@ -56,13 +56,13 @@ class Spec1Test {
     final var invalidBean = new Bean1(6);
     final var failureResult =
         validateAndFailFast(
-            invalidBean, validationConfig, ValidationFailure::getValidationFailureForException);
+            invalidBean, validationConfig);
     assertThat(failureResult).contains(INVALID_VALUE);
 
     final var validBean = new Bean1(3);
     final var noneResult =
         validateAndFailFast(
-            validBean, validationConfig, ValidationFailure::getValidationFailureForException);
+            validBean, validationConfig);
     assertThat(noneResult).isEmpty();
   }
 
@@ -81,13 +81,13 @@ class Spec1Test {
     final var invalidBean = new Bean2("", null);
     final var failureResult =
         validateAndFailFast(
-            invalidBean, validationConfig, ValidationFailure::getValidationFailureForException);
+            invalidBean, validationConfig);
     assertThat(failureResult).contains(INVALID_COMBO_1);
 
     final var validBean = new Bean2("", "");
     final var noneResult =
         validateAndFailFast(
-            validBean, validationConfig, ValidationFailure::getValidationFailureForException);
+            validBean, validationConfig);
     assertThat(noneResult).isEmpty();
   }
 
@@ -106,13 +106,13 @@ class Spec1Test {
     final var invalidBean = new Bean3("", null, "3");
     final var failureResult =
         validateAndFailFast(
-            invalidBean, validationConfig, ValidationFailure::getValidationFailureForException);
+            invalidBean, validationConfig);
     assertThat(failureResult).contains(INVALID_COMBO_1);
 
     final var validBean = new Bean3("", null, "");
     final var noneResult =
         validateAndFailFast(
-            validBean, validationConfig, ValidationFailure::getValidationFailureForException);
+            validBean, validationConfig);
     assertThat(noneResult).isEmpty();
   }
 

@@ -1,9 +1,9 @@
 package org.revcloud.vader.runner;
 
 import static consumer.failure.ValidationFailure.MAX_BATCH_SIZE_EXCEEDED_LEVEL_2;
-import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_LEVEL_0;
 import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_LEVEL_1;
 import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_LEVEL_2;
+import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL;
 import static consumer.failure.ValidationFailure.NONE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest.ContainerLevel1WithMultiBatch.Fields.beanBatch;
@@ -15,7 +15,6 @@ import static org.revcloud.vader.runner.Runner.validateAndFailFastForContainer;
 import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
 import java.util.List;
-import kotlin.jvm.functions.Function1;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
@@ -34,7 +33,7 @@ class ContainerValidationConfigWith2LevelsTest {
         ContainerValidationConfigWith2Levels
             .<ContainerRoot, ContainerLevel1, ValidationFailure>toValidate()
             .withBatchMapper(ContainerRoot::getContainerLevel1Batch)
-            .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
+            .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
             .withScopeOf1LevelDeep(
                 ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
                     .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
@@ -47,10 +46,6 @@ class ContainerValidationConfigWith2LevelsTest {
             .shouldHaveMinBatchSize(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_2))
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
-
-    final var throwableMapper =
-        (Function1<Throwable, ValidationFailure>)
-            ValidationFailure::getValidationFailureForException;
 
     // level-3
     final var beanBatch1 = List.of(new Bean());
@@ -71,11 +66,11 @@ class ContainerValidationConfigWith2LevelsTest {
 
     final var result =
         Runner.validateAndFailFastForContainer(
-                containerRoot, container1RootValidationConfig, throwableMapper)
+                containerRoot, container1RootValidationConfig)
             .or(
                 () ->
                     Runner.validateAndFailFastForContainer(
-                        containerLevel1Batch, container2ValidationConfig, throwableMapper));
+                        containerLevel1Batch, container2ValidationConfig));
 
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_1);
   }
@@ -89,7 +84,7 @@ class ContainerValidationConfigWith2LevelsTest {
         ContainerValidationConfigWith2Levels
             .<ContainerRoot, ContainerLevel1, ValidationFailure>toValidate()
             .withBatchMapper(ContainerRoot::getContainerLevel1Batch)
-            .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
+            .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
             .withScopeOf1LevelDeep(
                 ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
                     .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
@@ -107,9 +102,6 @@ class ContainerValidationConfigWith2LevelsTest {
                     .shouldHaveMaxBatchSize(Tuple.of(3, MAX_BATCH_SIZE_EXCEEDED_LEVEL_2))
                     .prepare())
             .prepare();
-    final var throwableMapper =
-        (Function1<Throwable, ValidationFailure>)
-            ValidationFailure::getValidationFailureForException;
 
     // level-3
     final var beanBatch1 = List.of(new Bean(), new Bean());
@@ -130,11 +122,11 @@ class ContainerValidationConfigWith2LevelsTest {
 
     final var result =
         Runner.validateAndFailFastForContainer(
-                header1Root, containerRootValidationConfig, throwableMapper)
+                header1Root, containerRootValidationConfig)
             .or(
                 () ->
                     validateAndFailFastForContainer(
-                        containerLevel1Batch, container1ValidationConfig, throwableMapper));
+                        containerLevel1Batch, container1ValidationConfig));
 
     assertThat(result).contains(MAX_BATCH_SIZE_EXCEEDED_LEVEL_2);
   }

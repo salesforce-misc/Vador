@@ -41,7 +41,7 @@ internal fun <FailureT, ValidatableT> fireValidators(
   validatorEtrs.asSequence().map { fireValidator(validatable, it, throwableMapper) }
 
 @JvmSynthetic
-internal fun <FailureT, ValidatableT> fireValidator(
+private fun <FailureT, ValidatableT> fireValidator(
   validatable: Either<FailureT?, ValidatableT?>,
   validatorEtr: ValidatorEtr<ValidatableT, FailureT>,
   throwableMapper: (Throwable) -> FailureT?,

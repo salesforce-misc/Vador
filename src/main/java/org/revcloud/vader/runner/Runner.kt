@@ -7,44 +7,49 @@ import org.revcloud.vader.types.validators.Validator
 import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
+@JvmOverloads
 fun <FailureT, ContainerValidatableT> validateAndFailFastForContainer(
   container: ContainerValidatableT,
   containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
-  throwableMapper: (Throwable) -> FailureT?
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> = failFastForContainer(containerValidationConfig, throwableMapper)(container)
 
 /**
  * This deals with Batch of Containers.
  * This is placed in this class instead of BatchRunner, so that consumers can fluently use both these overloads.
  */
+@JvmOverloads
 fun <FailureT, ContainerValidatableT> validateAndFailFastForContainer(
   batchValidatable: Collection<ContainerValidatableT>,
   containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
-  throwableMapper: (Throwable) -> FailureT?
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> = batchValidatable.asSequence()
   .map { validatable: ContainerValidatableT ->
     validateAndFailFastForContainer(validatable, containerValidationConfig, throwableMapper)
   }.firstOrNull { it.isPresent } ?: Optional.empty()
 
+@JvmOverloads
 fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
   container: ContainerValidatableT,
   containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
-  throwableMapper: (Throwable) -> FailureT?
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> = failFastForContainer(containerValidationConfig, throwableMapper)(container)
 
+@JvmOverloads
 fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
   batchValidatable: Collection<ContainerValidatableT>,
   containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
-  throwableMapper: (Throwable) -> FailureT?
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> = batchValidatable.asSequence()
   .map { validatable: ContainerValidatableT ->
     validateAndFailFastForContainer(validatable, containerValidationConfig, throwableMapper)
   }.firstOrNull { it.isPresent } ?: Optional.empty()
 
+@JvmOverloads
 fun <FailureT, ValidatableT> validateAndFailFast(
   validatable: ValidatableT,
   validationConfig: ValidationConfig<ValidatableT, FailureT?>,
-  throwableMapper: (Throwable) -> FailureT?
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> = failFast(validationConfig, throwableMapper)(validatable)
 
 // --- ERROR ACCUMULATION ---
@@ -63,7 +68,7 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
   validatable: ValidatableT,
   validators: Collection<Validator<ValidatableT?, FailureT?>>,
   none: FailureT,
-  throwableMapper: (Throwable) -> FailureT?,
+  throwableMapper: (Throwable) -> FailureT? = { throw it },
 ): List<FailureT?> =
   validateAndAccumulateErrors(validatable, liftAllToEtr(validators, none), none, throwableMapper)
 
@@ -83,7 +88,7 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
   validatable: ValidatableT,
   validators: List<ValidatorEtr<ValidatableT?, FailureT?>>,
   none: FailureT,
-  throwableMapper: (Throwable) -> FailureT?,
+  throwableMapper: (Throwable) -> FailureT? = { throw it },
 ): List<FailureT?> {
   val results = accumulationStrategy(validators, throwableMapper)(validatable)
     .map { result -> result.fold({ it }, { none }) }

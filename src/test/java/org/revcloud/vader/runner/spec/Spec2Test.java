@@ -135,25 +135,25 @@ class Spec2Test {
     final var invalidBean1 = new Bean(1, "a", null, null);
     final var failureResult1 =
         Runner.validateAndFailFast(
-            invalidBean1, validationConfig, ValidationFailure::getValidationFailureForException);
+            invalidBean1, validationConfig);
     assertThat(failureResult1).contains(INVALID_COMBO_1);
 
     final var invalidBean2 = new Bean(2, "b", null, null);
     final var failureResult2 =
         Runner.validateAndFailFast(
-            invalidBean2, validationConfig, ValidationFailure::getValidationFailureForException);
+            invalidBean2, validationConfig);
     assertThat(failureResult2).contains(INVALID_COMBO_2);
 
     final var validBean1 = new Bean(1, "one", null, null);
     final var noneResult1 =
         Runner.validateAndFailFast(
-            validBean1, validationConfig, ValidationFailure::getValidationFailureForException);
+            validBean1, validationConfig);
     assertThat(noneResult1).isEmpty();
 
     final var validBean2 = new Bean(2, "two", null, null);
     final var noneResult2 =
         Runner.validateAndFailFast(
-            validBean2, validationConfig, ValidationFailure::getValidationFailureForException);
+            validBean2, validationConfig);
     assertThat(noneResult2).isEmpty();
   }
 
@@ -180,19 +180,19 @@ class Spec2Test {
     final var invalidBean1 = new Bean(1, "a", null, null);
     final var failureResult1 =
         Runner.validateAndFailFast(
-            invalidBean1, validationConfig, ValidationFailure::getValidationFailureForException);
+            invalidBean1, validationConfig);
     assertThat(failureResult1).contains(INVALID_COMBO_1);
 
     final var invalidBean2 = new Bean(1, "one", null, null);
     final var failureResult2 =
         Runner.validateAndFailFast(
-            invalidBean2, validationConfig, ValidationFailure::getValidationFailureForException);
+            invalidBean2, validationConfig);
     assertThat(failureResult2).isEmpty();
 
     final var invalidBean3 = new Bean(1, "1", null, null);
     final var failureResult3 =
         Runner.validateAndFailFast(
-            invalidBean3, validationConfig, ValidationFailure::getValidationFailureForException);
+            invalidBean3, validationConfig);
     assertThat(failureResult3).isEmpty();
   }
 

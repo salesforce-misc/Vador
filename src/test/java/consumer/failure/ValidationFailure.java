@@ -58,8 +58,8 @@ public class ValidationFailure {
       new ValidationFailure(ValidationFailureMessage.INVALID_VALUE);
   public static final ValidationFailure FIELD_INTEGRITY_EXCEPTION =
       new ValidationFailure(ValidationFailureMessage.FIELD_INTEGRITY_EXCEPTION);
-  public static final ValidationFailure MIN_BATCH_SIZE_NOT_MET_LEVEL_0 =
-      new ValidationFailure(ValidationFailureMessage.MIN_BATCH_SIZE_NOT_MET_LEVEL_0);
+  public static final ValidationFailure MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL =
+      new ValidationFailure(ValidationFailureMessage.MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL);
   public static final ValidationFailure MIN_BATCH_SIZE_NOT_MET_LEVEL_1 =
       new ValidationFailure(ValidationFailureMessage.MIN_BATCH_SIZE_NOT_MET_LEVEL_1);
   public static final ValidationFailure MAX_NESTED_BATCH_SIZE_EXCEEDED_2 =

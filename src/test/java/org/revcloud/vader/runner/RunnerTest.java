@@ -29,7 +29,7 @@ class RunnerTest {
             .prepare();
     final var result =
         Runner.validateAndFailFast(
-            new Bean(0), validationConfig, ValidationFailure::getValidationFailureForException);
+            new Bean(0), validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -65,7 +65,7 @@ class RunnerTest {
             .prepare();
     final var result =
         Runner.validateAndFailFast(
-            new Bean(0), validationConfig, ValidationFailure::getValidationFailureForException);
+            new Bean(0), validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 

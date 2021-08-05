@@ -85,10 +85,6 @@ void containerValidationConfigWith2Levels1() {
           .withContainerValidator(ignore -> NONE, NONE)
           .prepare();
 
-  final var throwableMapper =
-      (Function1<Throwable, ValidationFailure>)
-          ValidationFailure::getValidationFailureForException;
-
   // level-3
   final var beanBatch1 = List.of(new Bean());
   final var beanBatch2 = List.of(new Bean());
@@ -108,11 +104,11 @@ void containerValidationConfigWith2Levels1() {
   
   final var result =
       Runner.validateAndFailFastForContainer(
-              containerRoot, container1RootValidationConfig, throwableMapper)
+              containerRoot, container1RootValidationConfig)
           .or(
               () ->
                   Runner.validateAndFailFastForContainer(
-                      containerLevel1Batch, container2ValidationConfig, throwableMapper));
+                      containerLevel1Batch, container2ValidationConfig));
 
   assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_1);
 }

@@ -15,21 +15,22 @@ import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
 /** == FOR EACH == */
-
+@JvmOverloads
 fun <FailureT, ValidatableT> validateAndFailFastForEach(
   validatables: List<ValidatableT>,
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
-  nullValidatable: FailureT?,
-  throwableMapper: (Throwable) -> FailureT?
+  nullValidatable: FailureT? = null,
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): List<Either<FailureT?, ValidatableT?>> =
   failFastForEach(batchValidationConfig, nullValidatable, throwableMapper)(validatables)
 
+@JvmOverloads
 fun <FailureT, ValidatableT, PairT> validateAndFailFastForEach(
   validatables: List<ValidatableT>,
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
   pairForInvalidMapper: (ValidatableT) -> PairT?,
-  nullValidatable: FailureT,
-  throwableMapper: (Throwable) -> FailureT?
+  nullValidatable: FailureT? = null,
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): List<Either<Tuple2<PairT?, FailureT?>, ValidatableT?>> {
   val orderedValidationResults: List<Either<FailureT?, ValidatableT?>> =
     validateAndFailFastForEach(
@@ -54,13 +55,14 @@ private fun <FailureT, ValidatableT, PairT> pairInvalidsWithIdentifier(
     result.mapLeft { Tuple.of(pairForInvalidMapper(validatable), it) }
   }
 
+@JvmOverloads
 fun <FailureT, ContainerValidatableT, MemberValidatableT, ContainerPairT, MemberPairT> validateAndFailFastForEach(
   validatables: List<ContainerValidatableT>,
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
   containerPairForInvalidMapper: (ContainerValidatableT?) -> ContainerPairT?,
   memberPairForInvalidMapper: (MemberValidatableT?) -> MemberPairT?,
-  nullValidatable: FailureT?,
-  throwableMapper: (Throwable) -> FailureT?
+  nullValidatable: FailureT? = null,
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): List<Either<FFEBatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>, ContainerValidatableT?>> {
   val orderedValidationResults: List<Either<FFEBatchOfBatchFailure<FailureT?>, ContainerValidatableT?>> =
     validateAndFailFastForEach(
@@ -104,39 +106,55 @@ private fun <FailureT, ContainerValidatableT, MemberValidatableT, ContainerPairT
       }.mapLeft { FFEBatchOfBatchFailureWithPair(it) }
     }
 
+@JvmOverloads
 fun <FailureT, ContainerValidatableT, MemberValidatableT> validateAndFailFastForEach(
   validatables: List<ContainerValidatableT>,
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
-  nullValidatable: FailureT?,
-  throwableMapper: (Throwable) -> FailureT?
+  nullValidatable: FailureT? = null,
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): List<Either<FFEBatchOfBatchFailure<FailureT?>, ContainerValidatableT?>> =
-  failFastForEachNested(batchOfBatch1ValidationConfig, nullValidatable, throwableMapper)(validatables)
+  failFastForEachNested(batchOfBatch1ValidationConfig, nullValidatable, throwableMapper)(
+    validatables
+  )
 
 /** == FOR ANY == */
 
+@JvmOverloads
 fun <FailureT, ContainerValidatableT, MemberValidatableT> validateAndFailFastForAny(
   validatables: List<ContainerValidatableT>,
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
-  nullValidatable: FailureT?,
-  throwableMapper: (Throwable) -> FailureT?
+  nullValidatable: FailureT? = null,
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> =
-  failFastForAnyNested(batchOfBatch1ValidationConfig, nullValidatable, throwableMapper)(validatables)
+  failFastForAnyNested(
+    batchOfBatch1ValidationConfig,
+    nullValidatable,
+    throwableMapper
+  )(validatables)
 
+@JvmOverloads
 fun <FailureT, ContainerValidatableT, MemberValidatableT, ContainerPairT, MemberPairT> validateAndFailFastForAny(
   validatables: List<ContainerValidatableT>,
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
   containerPairForInvalidMapper: (ContainerValidatableT?) -> ContainerPairT?,
   memberPairForInvalidMapper: (MemberValidatableT?) -> MemberPairT?,
-  nullValidatable: FailureT?,
-  throwableMapper: (Throwable) -> FailureT?
+  nullValidatable: FailureT? = null,
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FFABatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>> =
-  failFastForAnyNested(batchOfBatch1ValidationConfig, nullValidatable, throwableMapper, containerPairForInvalidMapper, memberPairForInvalidMapper)(validatables)
+  failFastForAnyNested(
+    batchOfBatch1ValidationConfig,
+    nullValidatable,
+    throwableMapper,
+    containerPairForInvalidMapper,
+    memberPairForInvalidMapper
+  )(validatables)
 
+@JvmOverloads
 fun <FailureT, ValidatableT> validateAndFailFastForAny(
   validatables: List<ValidatableT>,
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
-  nullValidatable: FailureT,
-  throwableMapper: (Throwable) -> FailureT?
+  nullValidatable: FailureT? = null,
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> =
   failFastForAny(batchValidationConfig, nullValidatable, throwableMapper)(validatables)
 
@@ -144,12 +162,13 @@ fun <FailureT, ValidatableT> validateAndFailFastForAny(
  * This returns the first failures of first invalid item in a batch and pairs it with an identifier using the `pairForInvalidMapper`
  * This can be used for `AllOrNone` scenarios in batch
  */
+@JvmOverloads
 fun <FailureT, ValidatableT, PairT> validateAndFailFastForAny(
   validatables: List<ValidatableT>,
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
   pairForInvalidMapper: (ValidatableT?) -> PairT?,
-  nullValidatable: FailureT,
-  throwableMapper: (Throwable) -> FailureT?
+  nullValidatable: FailureT? = null,
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<Tuple2<PairT?, FailureT?>> =
   failFastForAny(batchValidationConfig, nullValidatable, throwableMapper, pairForInvalidMapper)(
     validatables
@@ -188,6 +207,6 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
 fun <FailureT, ValidatableT> validateAndAccumulateErrors(
   validatables: List<ValidatableT>,
   validatorEtrs: List<ValidatorEtr<ValidatableT?, FailureT?>>,
-  throwableMapper: (Throwable) -> FailureT?,
+  throwableMapper: (Throwable) -> FailureT? = { throw it },
 ): List<List<Either<FailureT?, ValidatableT?>>> =
   validatables.map(accumulationStrategy(validatorEtrs, throwableMapper))

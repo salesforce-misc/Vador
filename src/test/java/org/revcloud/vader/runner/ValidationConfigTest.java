@@ -47,24 +47,21 @@ class ValidationConfigTest {
     final var result1 =
         validateAndFailFast(
             validatableWithBlankReqField,
-            validationConfig,
-            ValidationFailure::getValidationFailureForException);
+            validationConfig);
     assertThat(result1).contains(REQUIRED_FIELD_MISSING_2);
 
     final var validatableWithNullReqField = new Bean(null, "2", null, null, List.of("1"));
     final var result2 =
         validateAndFailFast(
             validatableWithNullReqField,
-            validationConfig,
-            ValidationFailure::getValidationFailureForException);
+            validationConfig);
     assertThat(result2).contains(REQUIRED_FIELD_MISSING_1);
 
     final var validatableWithEmptyReqList = new Bean(1, "2", null, null, emptyList());
     final var result3 =
         validateAndFailFast(
             validatableWithEmptyReqList,
-            validationConfig,
-            ValidationFailure::getValidationFailureForException);
+            validationConfig);
     assertThat(result3).contains(REQUIRED_LIST_MISSING);
   }
 
@@ -82,8 +79,7 @@ class ValidationConfigTest {
             .prepare();
     var bean1 = new Bean1(Optional.empty());
     final var result =
-        validateAndFailFast(
-            bean1, validationConfig, ValidationFailure::getValidationFailureForException);
+        validateAndFailFast(bean1, validationConfig);
     assertThat(result).contains(REQUIRED_FIELD_MISSING);
   }
 
@@ -102,10 +98,7 @@ class ValidationConfigTest {
     assertThat(validationConfig.getRequiredFieldNames(Bean.class)).isEqualTo(expectedFieldNames);
     final var withRequiredFieldNull = new Bean(1, "", null, null, emptyList());
     final var result =
-        validateAndFailFast(
-            withRequiredFieldNull,
-            validationConfig,
-            ValidationFailure::getValidationFailureForException);
+        validateAndFailFast(withRequiredFieldNull, validationConfig);
     assertThat(result).isPresent();
     assertThat(result.get().getValidationFailureMessage().getParams())
         .containsExactly(Bean.Fields.requiredField2, "");
@@ -128,10 +121,7 @@ class ValidationConfigTest {
     final var validatableWithInvalidSfId =
         new Bean(0, "1", new ID("1ttxx00000000hZAAQ"), new ID("invalidSfId"), emptyList());
     final var result =
-        validateAndFailFast(
-            validatableWithInvalidSfId,
-            validationConfig,
-            ValidationFailure::getValidationFailureForException);
+        validateAndFailFast(validatableWithInvalidSfId, validationConfig);
     assertThat(result).contains(FIELD_INTEGRITY_EXCEPTION);
   }
 
@@ -155,8 +145,7 @@ class ValidationConfigTest {
     final var result =
         validateAndFailFast(
             validatableWithInvalidSfId,
-            validationConfig,
-            ValidationFailure::getValidationFailureForException);
+            validationConfig);
     assertThat(result).isPresent();
     assertThat(result.get().getValidationFailureMessage().getParams())
         .containsExactly(Bean.Fields.sfId2, invalidSfId);

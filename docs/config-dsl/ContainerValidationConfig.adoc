@@ -139,9 +139,6 @@ void composeContainerValidationResults() {
           .withBatchMapper(Container1::getBeanBatch)
           .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
           .prepare();
-  final var throwableMapper =
-      (Function1<Throwable, ValidationFailure>)
-          ValidationFailure::getValidationFailureForException;
 
   final var beanBatch = List.of(new Bean());
   final var container2Batch = List.of(new Container1(beanBatch), new Container1(emptyList()));
@@ -149,11 +146,11 @@ void composeContainerValidationResults() {
 
   final var result =
       Runner.validateAndFailFastForContainer(
-              container1, containerRootValidationConfig, throwableMapper)
+              container1, containerRootValidationConfig)
           .or(
               () ->
                   Runner.validateAndFailFastForContainer(
-                      container2Batch, containerValidationConfig, throwableMapper));
+                      container2Batch, containerValidationConfig));
 
   assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_1);
 }

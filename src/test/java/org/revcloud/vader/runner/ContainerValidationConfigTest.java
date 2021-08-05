@@ -1,7 +1,7 @@
 package org.revcloud.vader.runner;
 
 import static consumer.failure.ValidationFailure.MAX_BATCH_SIZE_EXCEEDED;
-import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_LEVEL_0;
+import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL;
 import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_LEVEL_1;
 import static consumer.failure.ValidationFailure.NONE;
 import static consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
@@ -12,7 +12,6 @@ import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
 import io.vavr.control.Either;
 import java.util.List;
-import kotlin.jvm.functions.Function1;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
@@ -35,8 +34,7 @@ class ContainerValidationConfigTest {
     final var result =
         Runner.validateAndFailFastForContainer(
             headerBean,
-            containerValidationConfig,
-            ValidationFailure::getValidationFailureForException);
+            containerValidationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -64,8 +62,7 @@ class ContainerValidationConfigTest {
     final var result =
         Runner.validateAndFailFastForContainer(
             headerBean,
-            containerValidationConfig,
-            ValidationFailure::getValidationFailureForException);
+            containerValidationConfig);
     assertThat(result).isEmpty();
   }
 
@@ -74,16 +71,15 @@ class ContainerValidationConfigTest {
     final var containerValidationConfig =
         ContainerValidationConfig.<Container1, ValidationFailure>toValidate()
             .withBatchMapper(Container1::getBeanBatch)
-            .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
+            .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
     final var headerBean = new Container1(emptyList());
     final var result =
         Runner.validateAndFailFastForContainer(
             headerBean,
-            containerValidationConfig,
-            ValidationFailure::getValidationFailureForException);
-    assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_0);
+            containerValidationConfig);
+    assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL);
   }
 
   // tag::container-config-level-1-container-with-multi-batch-demo[]
@@ -93,16 +89,15 @@ class ContainerValidationConfigTest {
         ContainerValidationConfig.<ContainerWithMultiBatch, ValidationFailure>toValidate()
             .withBatchMappers(
                 List.of(ContainerWithMultiBatch::getBatch1, ContainerWithMultiBatch::getBatch2))
-            .shouldHaveMinBatchSize(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
+            .shouldHaveMinBatchSize(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
     final var headerBean = new ContainerWithMultiBatch(emptyList(), List.of(new Bean2()));
     final var result =
         Runner.validateAndFailFastForContainer(
             headerBean,
-            containerValidationConfig,
-            ValidationFailure::getValidationFailureForException);
-    assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_0);
+            containerValidationConfig);
+    assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL);
   }
   // end::container-config-level-1-container-with-multi-batch-demo[]
 
@@ -117,8 +112,7 @@ class ContainerValidationConfigTest {
     final var result =
         Runner.validateAndFailFastForContainer(
             headerBean,
-            containerValidationConfig,
-            ValidationFailure::getValidationFailureForException);
+            containerValidationConfig);
     assertThat(result).contains(MAX_BATCH_SIZE_EXCEEDED);
   }
 
@@ -136,8 +130,7 @@ class ContainerValidationConfigTest {
     final var result =
         Runner.validateAndFailFastForContainer(
             new Container1(emptyList()),
-            containerValidationConfig,
-            ValidationFailure::getValidationFailureForException);
+            containerValidationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -160,16 +153,13 @@ class ContainerValidationConfigTest {
     final var containerRootValidationConfig =
         ContainerValidationConfig.<ContainerRoot, ValidationFailure>toValidate()
             .withBatchMapper(ContainerRoot::getContainer1Batch)
-            .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
+            .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
             .prepare();
     final var containerValidationConfig =
         ContainerValidationConfig.<Container1, ValidationFailure>toValidate()
             .withBatchMapper(Container1::getBeanBatch)
             .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
             .prepare();
-    final var throwableMapper =
-        (Function1<Throwable, ValidationFailure>)
-            ValidationFailure::getValidationFailureForException;
 
     final var beanBatch = List.of(new Bean());
     final var container2Batch = List.of(new Container1(beanBatch), new Container1(emptyList()));
@@ -177,11 +167,11 @@ class ContainerValidationConfigTest {
 
     final var result =
         Runner.validateAndFailFastForContainer(
-                container1, containerRootValidationConfig, throwableMapper)
+                container1, containerRootValidationConfig)
             .or(
                 () ->
                     Runner.validateAndFailFastForContainer(
-                        container2Batch, containerValidationConfig, throwableMapper));
+                        container2Batch, containerValidationConfig));
 
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_1);
   }
