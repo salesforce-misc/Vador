@@ -12,11 +12,16 @@ Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :toc:
 :toc-placement: preamble
 
-You need this when your container needs to peek 2 levels deep for validations related to its batch members or containers it contains.
+You need this when your container needs to peek 2 levels deep for validations related to one of its batch Container. 
+Think of it as extending/zooming the scope/depth of validation root container, a level more.
 
 To easily wrap your head around such data structure, visualise it like a *Tree*:
 
 image:container-level-2.png[]
+
+* It's not a mistake in the picture above, that both Batches are of type `Batch<Container1>`. Unlike link:ContainerValidationConfig.adoc[ContainerValidationConfig], this config can only zoom into batches of same data type.
+* But the batches at level-2 can be batches of any data-type, as we use the same link:ContainerValidationConfig.adoc[ContainerValidationConfig] to declare this configuration.
+* Container at any level can be chosen as root for this validation config and doesn't necessarily have to be the top most root.
 
 == Example
 
@@ -67,7 +72,7 @@ void containerValidationConfigWith2Levels1() {
           .<ContainerRoot, ContainerLevel1, ValidationFailure>toValidate()
           .withBatchMapper(ContainerRoot::getContainerLevel1Batch)
           .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
-          .withContainerLevel1ValidationConfig(
+          .withScopeOf1LevelDeep(
               ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
                   .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
                   .shouldHaveMinBatchSize(Tuple.of(5, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
@@ -123,5 +128,5 @@ include::{testdir}/org/revcloud/vader/runner/ContainerValidationConfigWith2Level
 
 endif::[]
 
-NOTE: The params in the config supplied through `withContainerLevel1ValidationConfig` should be perceived from the Root container context. 
+NOTE: The params in the config supplied through `withScopeOf1LevelDeep` should be perceived from the Root container context. 
 For example in the above test, `shouldHaveMinBatchSize(Tuple.of(5, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))` specifies that the `ContainerRoot` should not have minimum 5 `ContainerLevel2` beans, but it only has 4. 

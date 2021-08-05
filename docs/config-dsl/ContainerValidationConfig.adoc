@@ -14,12 +14,13 @@ Gopal S Akshintala <gopala.akshintala@salesforce.com>
 
 This is handy when validation on a _Batch_ member beans need to run from the context of its container, say `ContainerT`.
 As container has the visibility over all its batch members, currently, the major use-case is declarative configuration of min and max size of _Batch_ members.
-You can also configure validations on a container, just like any other bean.
-This config is agnostic of its members as long as the member is a `Collection`. Let's understand with an example:
+You can also configure validations on a container, just like any other bean. Let's understand with an example:
 
 To easily wrap your head around such data structure, visualise it like a *Tree*:
 
 image:container.png[]
+
+The batches can be `Collection` of same or different data type. As long as the batch member is a `Collection`, this config is agnostic of Data types within the collection.
 
 == Example: Container with Multi-Batch
 

@@ -9,6 +9,7 @@ import io.vavr.Tuple2
 import io.vavr.control.Either
 import org.revcloud.vader.runner.SpecFactory.BaseSpec
 import org.revcloud.vader.types.validators.ValidatorEtr
+import java.util.Optional
 
 @JvmSynthetic
 private fun <ValidatableT, FailureT, FieldT> toValidatorEtrs1(
@@ -80,6 +81,7 @@ private val isFieldPresent: (Any?) -> Boolean = {
     null -> false
     is String -> it.isNotBlank()
     is List<*> -> it.isNotEmpty()
+    is Optional<*> -> it.isPresent
     else -> true
   }
 }

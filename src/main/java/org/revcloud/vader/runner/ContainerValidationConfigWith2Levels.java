@@ -25,8 +25,7 @@ public class ContainerValidationConfigWith2Levels<
               ContainerRootLevelValidatableT, @Nullable Collection<ContainerLevel1ValidatableT>>>
       withBatchMappers;
 
-  ContainerValidationConfig<ContainerLevel1ValidatableT, FailureT>
-      withContainerLevel1ValidationConfig;
+  ContainerValidationConfig<ContainerLevel1ValidatableT, FailureT> withScopeOf1LevelDeep;
 
   public Set<String> getFieldNamesForBatchLevel1(
       Class<ContainerLevel1ValidatableT> validatableClazz) {

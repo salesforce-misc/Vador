@@ -40,7 +40,18 @@ class ContainerValidationConfigTest {
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
-  // TODO 29/04/21 gopala.akshintala: Write display names for tests
+  @Test
+  void failFastForHeaderConfigValidatorsCount() {
+    final var containerValidationConfig =
+        ContainerValidationConfig.<Container1, ValidationFailure>toValidate()
+            .withBatchMapper(Container1::getBeanBatch)
+            .withContainerValidator(ignore -> UNKNOWN_EXCEPTION, NONE)
+            .withContainerValidator(ignore -> UNKNOWN_EXCEPTION, NONE)
+            .withContainerValidator(ignore -> UNKNOWN_EXCEPTION, NONE)
+            .prepare();
+    assertThat(containerValidationConfig.getContainerValidators()).hasSize(3);
+  }
+
   @Test
   void failFastForHeaderConfigWithValidators2() {
     final var containerValidationConfig =

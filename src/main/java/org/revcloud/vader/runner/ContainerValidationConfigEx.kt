@@ -21,4 +21,4 @@ internal fun <ContainerValidatableT, FailureT> ContainerValidationConfigWith2Lev
 internal fun <NestedContainerValidatableT, FailureT> ContainerValidationConfigWith2Levels<*, NestedContainerValidatableT?, FailureT?>.getFieldNamesForBatchLevel1Ex(
   validatableClazz: Class<NestedContainerValidatableT>
 ): Set<String> =
-  withContainerLevel1ValidationConfig.withBatchMappers.map { PropertyUtils.getPropertyName(validatableClazz, it) }.toSet()
+  withScopeOf1LevelDeep.withBatchMappers.map { PropertyUtils.getPropertyName(validatableClazz, it) }.toSet()

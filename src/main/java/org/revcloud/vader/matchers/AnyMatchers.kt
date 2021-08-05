@@ -9,6 +9,8 @@ import org.hamcrest.core.AnyOf
 import org.hamcrest.core.IsNull
 
 fun <T> anyOf(vararg ts: T): AnyOf<T> = anyOf(ts.map { `is`(it) })
+
+@SafeVarargs
 fun <T> anyOf(vararg matchers: Matcher<T>): AnyOf<T> = anyOf(*matchers)
 
 @SafeVarargs

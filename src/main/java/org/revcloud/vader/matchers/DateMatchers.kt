@@ -7,7 +7,6 @@ import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 import java.time.LocalDate
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Date
 
@@ -48,16 +47,7 @@ val ISO8601DateFormat: Matcher<Any?> = object : TypeSafeMatcher<Any?>() {
 }
 
 private fun isValidIS0LocalDateFormat(dateAsString: String): Boolean =
-  try {
-    parseISOLocalDate(dateAsString)
-    true
-  } catch (e: Exception) {
-    false
-  }
+  runCatching { parseStringToISOLocalDate(dateAsString) }.isSuccess
 
-private fun parseISOLocalDate(date: String): Date? =
-  Date.from(
-    LocalDate
-      .parse(date.trim(), DateTimeFormatter.ISO_LOCAL_DATE)
-      .atStartOfDay(ZoneOffset.UTC).toInstant()
-  )
+private fun parseStringToISOLocalDate(date: String): LocalDate =
+  LocalDate.parse(date.trim(), DateTimeFormatter.ISO_LOCAL_DATE)

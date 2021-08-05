@@ -16,16 +16,20 @@ import consumer.failure.ValidationFailureMessage;
 import io.vavr.Tuple;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
 import lombok.experimental.FieldNameConstants;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class ValidationConfigTest {
 
+  @DisplayName("Cases covered - Missing Field, String Field, List Field")
   @Test
-  void failFastWithRequiredFieldsMissingForValidators() {
+  void failFastWithRequiredFieldsMissings() {
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate()
             .shouldHaveFieldsOrFailWith(
@@ -62,6 +66,25 @@ class ValidationConfigTest {
             validationConfig,
             ValidationFailure::getValidationFailureForException);
     assertThat(result3).contains(REQUIRED_LIST_MISSING);
+  }
+
+  @DisplayName("Cases covered - Optional field missing")
+  @Test
+  void failFastWithRequiredFieldMissing2() {
+    final var validationConfig =
+        ValidationConfig.<Bean1, ValidationFailure>toValidate()
+            .shouldHaveFieldOrFailWithFn(
+                Bean1::getStr,
+                (fieldName, value) -> {
+                  assertThat(fieldName).isEqualTo(Bean1.Fields.str);
+                  return REQUIRED_FIELD_MISSING;
+                })
+            .prepare();
+    var bean1 = new Bean1(Optional.empty());
+    final var result =
+        validateAndFailFast(
+            bean1, validationConfig, ValidationFailure::getValidationFailureForException);
+    assertThat(result).contains(REQUIRED_FIELD_MISSING);
   }
 
   @Test
@@ -183,6 +206,7 @@ class ValidationConfigTest {
 
   @Data
   @FieldNameConstants
+  @AllArgsConstructor
   // tag::nested-bean[]
   public static class Bean {
     private final Integer requiredField1;
@@ -200,4 +224,11 @@ class ValidationConfigTest {
     Bean bean;
   }
   // end::nested-bean[]
+
+  @Data
+  @FieldNameConstants
+  @AllArgsConstructor
+  public static class Bean1 {
+    Optional<String> str;
+  }
 }

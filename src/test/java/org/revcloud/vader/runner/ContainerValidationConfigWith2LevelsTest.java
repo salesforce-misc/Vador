@@ -6,13 +6,20 @@ import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_LEVEL_1;
 import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_LEVEL_2;
 import static consumer.failure.ValidationFailure.NONE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest.ContainerLevel1WithMultiBatch.Fields.beanBatch;
+import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest.ContainerLevel1WithMultiBatch.Fields.containerLevel2Batch;
+import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest.ContainerRootWithMultiContainerBatch.Fields.containerLevel1Batch1;
+import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest.ContainerRootWithMultiContainerBatch.Fields.containerLevel1Batch2;
 import static org.revcloud.vader.runner.Runner.validateAndFailFastForContainer;
 
 import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
 import java.util.List;
 import kotlin.jvm.functions.Function1;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Value;
+import lombok.experimental.FieldNameConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +35,7 @@ class ContainerValidationConfigWith2LevelsTest {
             .<ContainerRoot, ContainerLevel1, ValidationFailure>toValidate()
             .withBatchMapper(ContainerRoot::getContainerLevel1Batch)
             .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
-            .withContainerLevel1ValidationConfig(
+            .withScopeOf1LevelDeep(
                 ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
                     .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
                     .shouldHaveMinBatchSize(Tuple.of(5, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
@@ -83,7 +90,7 @@ class ContainerValidationConfigWith2LevelsTest {
             .<ContainerRoot, ContainerLevel1, ValidationFailure>toValidate()
             .withBatchMapper(ContainerRoot::getContainerLevel1Batch)
             .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
-            .withContainerLevel1ValidationConfig(
+            .withScopeOf1LevelDeep(
                 ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
                     .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
                     .shouldHaveMinBatchSize(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
@@ -94,7 +101,7 @@ class ContainerValidationConfigWith2LevelsTest {
             .<ContainerLevel1, ContainerLevel2, ValidationFailure>toValidate()
             .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
             .shouldHaveMinBatchSize(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_2))
-            .withContainerLevel1ValidationConfig(
+            .withScopeOf1LevelDeep(
                 ContainerValidationConfig.<ContainerLevel2, ValidationFailure>toValidate()
                     .withBatchMapper(ContainerLevel2::getBeanBatch)
                     .shouldHaveMaxBatchSize(Tuple.of(3, MAX_BATCH_SIZE_EXCEEDED_LEVEL_2))
@@ -132,6 +139,35 @@ class ContainerValidationConfigWith2LevelsTest {
     assertThat(result).contains(MAX_BATCH_SIZE_EXCEEDED_LEVEL_2);
   }
 
+  @Test
+  void getFieldNamesForBatch() {
+    final var validationConfig =
+        ContainerValidationConfigWith2Levels
+            .<ContainerRootWithMultiContainerBatch, ContainerLevel1WithMultiBatch,
+                ValidationFailure>
+                toValidate()
+            .withBatchMappers(
+                List.of(
+                    ContainerRootWithMultiContainerBatch::getContainerLevel1Batch1,
+                    ContainerRootWithMultiContainerBatch::getContainerLevel1Batch2))
+            .withScopeOf1LevelDeep(
+                ContainerValidationConfig
+                    .<ContainerLevel1WithMultiBatch, ValidationFailure>toValidate()
+                    .withBatchMappers(
+                        List.of(
+                            ContainerLevel1WithMultiBatch::getContainerLevel2Batch,
+                            ContainerLevel1WithMultiBatch::getBeanBatch))
+                    .shouldHaveMinBatchSize(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
+                    .prepare())
+            .prepare();
+    assertThat(
+            validationConfig.getFieldNamesForBatchRootLevel(
+                ContainerRootWithMultiContainerBatch.class))
+        .containsExactly(containerLevel1Batch1, containerLevel1Batch2);
+    assertThat(validationConfig.getFieldNamesForBatchLevel1(ContainerLevel1WithMultiBatch.class))
+        .containsExactly(containerLevel2Batch, beanBatch);
+  }
+
   @Value
   // tag::container-config-level-2[]
   private static class Bean {}
@@ -157,4 +193,21 @@ class ContainerValidationConfigWith2LevelsTest {
     List<ContainerLevel1> containerLevel1Batch;
   }
   // end::container-config-level-2[]
+
+  @Data
+  @FieldNameConstants
+  @AllArgsConstructor
+  public static class ContainerLevel1WithMultiBatch {
+    List<ContainerLevel2> containerLevel2Batch;
+    List<Bean> beanBatch;
+  }
+
+  @Data
+  @FieldNameConstants
+  @AllArgsConstructor
+  // tag::container-config-level-2[]
+  public static class ContainerRootWithMultiContainerBatch {
+    List<ContainerLevel1WithMultiBatch> containerLevel1Batch1;
+    List<ContainerLevel1WithMultiBatch> containerLevel1Batch2;
+  }
 }

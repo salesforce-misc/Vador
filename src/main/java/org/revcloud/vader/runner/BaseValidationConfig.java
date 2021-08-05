@@ -81,6 +81,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
   @Singular("withValidator")
   Map<? extends Validator<? super ValidatableT, FailureT>, @Nullable FailureT> withValidator;
 
+  // ! TODO 05/08/21 gopala.akshintala: Migrate them to be used with custom assertions
   List<BaseSpec<ValidatableT, FailureT>> getSpecs() {
     return BaseValidationConfigEx.getSpecsEx(this);
   }

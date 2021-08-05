@@ -59,9 +59,9 @@ internal fun <ContainerRootValidatableT, ContainerLevel1ValidatableT, FailureT> 
     containerValidationConfig.withBatchMappers.mapNotNull { it[container] }.flatten()
   return validateBatchSize(containerLevel1Batch, containerValidationConfig).or {
     val level2Batch: Collection<*> = containerLevel1Batch.mapNotNull { level1Container ->
-      containerValidationConfig.withContainerLevel1ValidationConfig.withBatchMappers.mapNotNull { it[level1Container] }.flatten()
+      containerValidationConfig.withScopeOf1LevelDeep.withBatchMappers.mapNotNull { it[level1Container] }.flatten()
     }.flatten()
-    validateBatchSize(level2Batch, containerValidationConfig.withContainerLevel1ValidationConfig)
+    validateBatchSize(level2Batch, containerValidationConfig.withScopeOf1LevelDeep)
   }
 }
 
