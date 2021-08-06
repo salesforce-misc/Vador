@@ -27,9 +27,7 @@ class InheritanceLiftEtrUtilKtTest {
         ValidationConfig.<Child, ValidationFailure>toValidate()
             .withValidators(Tuple.of(List.of(v1, v2), NONE))
             .prepare();
-    final var result =
-        Runner.validateAndFailFast(
-            new Child(), validationConfig);
+    final var result = Runner.validateAndFailFast(new Child(), validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -43,9 +41,7 @@ class InheritanceLiftEtrUtilKtTest {
             .withValidatorEtrs(liftAllToChildValidatorType(List.of(v1, v2)))
             .withValidatorEtr(v3)
             .prepare();
-    final var result =
-        Runner.validateAndFailFast(
-            new Child(), validationConfig);
+    final var result = Runner.validateAndFailFast(new Child(), validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 

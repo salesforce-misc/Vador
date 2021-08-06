@@ -1,8 +1,8 @@
 package org.revcloud.vader.runner;
 
 import static consumer.failure.ValidationFailure.MAX_BATCH_SIZE_EXCEEDED;
-import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL;
 import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_LEVEL_1;
+import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL;
 import static consumer.failure.ValidationFailure.NONE;
 import static consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 import static java.util.Collections.emptyList;
@@ -32,9 +32,7 @@ class ContainerValidationConfigTest {
     final var batch = List.of(new Bean());
     final var headerBean = new Container1(batch);
     final var result =
-        Runner.validateAndFailFastForContainer(
-            headerBean,
-            containerValidationConfig);
+        Runner.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -60,9 +58,7 @@ class ContainerValidationConfigTest {
     final var batch = List.of(new Bean());
     final var headerBean = new Container1(batch);
     final var result =
-        Runner.validateAndFailFastForContainer(
-            headerBean,
-            containerValidationConfig);
+        Runner.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).isEmpty();
   }
 
@@ -76,9 +72,7 @@ class ContainerValidationConfigTest {
             .prepare();
     final var headerBean = new Container1(emptyList());
     final var result =
-        Runner.validateAndFailFastForContainer(
-            headerBean,
-            containerValidationConfig);
+        Runner.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL);
   }
 
@@ -94,9 +88,7 @@ class ContainerValidationConfigTest {
             .prepare();
     final var headerBean = new ContainerWithMultiBatch(emptyList(), List.of(new Bean2()));
     final var result =
-        Runner.validateAndFailFastForContainer(
-            headerBean,
-            containerValidationConfig);
+        Runner.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL);
   }
   // end::container-config-level-1-container-with-multi-batch-demo[]
@@ -110,9 +102,7 @@ class ContainerValidationConfigTest {
             .prepare();
     final var headerBean = new Container1(List.of(new Bean()));
     final var result =
-        Runner.validateAndFailFastForContainer(
-            headerBean,
-            containerValidationConfig);
+        Runner.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).contains(MAX_BATCH_SIZE_EXCEEDED);
   }
 
@@ -129,8 +119,7 @@ class ContainerValidationConfigTest {
             .prepare();
     final var result =
         Runner.validateAndFailFastForContainer(
-            new Container1(emptyList()),
-            containerValidationConfig);
+            new Container1(emptyList()), containerValidationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -166,8 +155,7 @@ class ContainerValidationConfigTest {
     final var container1 = new ContainerRoot(container2Batch);
 
     final var result =
-        Runner.validateAndFailFastForContainer(
-                container1, containerRootValidationConfig)
+        Runner.validateAndFailFastForContainer(container1, containerRootValidationConfig)
             .or(
                 () ->
                     Runner.validateAndFailFastForContainer(

@@ -27,9 +27,7 @@ class RunnerTest {
                     bean -> Either.right(NONE),
                     bean -> Either.left(UNKNOWN_EXCEPTION)))
             .prepare();
-    final var result =
-        Runner.validateAndFailFast(
-            new Bean(0), validationConfig);
+    final var result = Runner.validateAndFailFast(new Bean(0), validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -63,9 +61,7 @@ class RunnerTest {
             .withValidators(
                 Tuple.of(List.of(bean -> NONE, bean -> NONE, bean -> UNKNOWN_EXCEPTION), NONE))
             .prepare();
-    final var result =
-        Runner.validateAndFailFast(
-            new Bean(0), validationConfig);
+    final var result = Runner.validateAndFailFast(new Bean(0), validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 

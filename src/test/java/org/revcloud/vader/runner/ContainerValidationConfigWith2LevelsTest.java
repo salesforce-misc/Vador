@@ -65,8 +65,7 @@ class ContainerValidationConfigWith2LevelsTest {
     final var containerRoot = new ContainerRoot(containerLevel1Batch);
 
     final var result =
-        Runner.validateAndFailFastForContainer(
-                containerRoot, container1RootValidationConfig)
+        Runner.validateAndFailFastForContainer(containerRoot, container1RootValidationConfig)
             .or(
                 () ->
                     Runner.validateAndFailFastForContainer(
@@ -121,8 +120,7 @@ class ContainerValidationConfigWith2LevelsTest {
     final var header1Root = new ContainerRoot(containerLevel1Batch);
 
     final var result =
-        Runner.validateAndFailFastForContainer(
-                header1Root, containerRootValidationConfig)
+        Runner.validateAndFailFastForContainer(header1Root, containerRootValidationConfig)
             .or(
                 () ->
                     validateAndFailFastForContainer(

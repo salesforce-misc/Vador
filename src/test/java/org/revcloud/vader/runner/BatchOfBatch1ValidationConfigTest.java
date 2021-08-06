@@ -54,10 +54,7 @@ class BatchOfBatch1ValidationConfigTest {
     final var root = new Root(itemsBatch);
 
     final var results =
-        validateAndFailFastForEach(
-            root.getItemsBatch(),
-            itemBatchValidationConfig,
-            NONE);
+        validateAndFailFastForEach(root.getItemsBatch(), itemBatchValidationConfig, NONE);
     assertThat(results).hasSize(3);
 
     final var result1 = results.get(0);
@@ -112,10 +109,7 @@ class BatchOfBatch1ValidationConfigTest {
 
     final var results =
         validateAndFailFastForEach(
-            root.getItemsBatch(),
-            itemBatchValidationConfig,
-            Item::getId,
-            Bean::getValue);
+            root.getItemsBatch(), itemBatchValidationConfig, Item::getId, Bean::getValue);
     assertThat(results).hasSize(3);
 
     final var result1 = results.get(0);
@@ -167,10 +161,7 @@ class BatchOfBatch1ValidationConfigTest {
             new Item("item-1", beanBatch1), invalidItem, new Item("item-3", allValidBeanBatch3));
     final var root = new Root(itemsBatch);
 
-    final var result =
-        validateAndFailFastForAny(
-            root.getItemsBatch(),
-            itemBatchValidationConfig);
+    final var result = validateAndFailFastForAny(root.getItemsBatch(), itemBatchValidationConfig);
     assertThat(result).isPresent();
     assertThat(result.get()).isEqualTo(INVALID_ITEM);
   }
@@ -210,9 +201,7 @@ class BatchOfBatch1ValidationConfigTest {
 
     final var result =
         validateAndFailFastForAny(
-            root.getItemsBatch(),
-            Item::getId, Bean::getValue, itemBatchValidationConfig
-        );
+            root.getItemsBatch(), Item::getId, Bean::getValue, itemBatchValidationConfig);
     assertThat(result).isPresent();
     assertThat(result.get().getContainerFailure())
         .isEqualTo(Tuple.of(invalidItem.getId(), INVALID_ITEM));

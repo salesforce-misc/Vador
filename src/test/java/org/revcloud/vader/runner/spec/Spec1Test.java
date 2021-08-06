@@ -29,15 +29,11 @@ class Spec1Test {
                         .shouldMatch(anyOf(1, 2)))
             .prepare();
     final var invalidBean = new Bean1(3);
-    final var failureResult =
-        validateAndFailFast(
-            invalidBean, validationConfig);
+    final var failureResult = validateAndFailFast(invalidBean, validationConfig);
     assertThat(failureResult).contains(INVALID_VALUE);
 
     final var validBean = new Bean1(1);
-    final var noneResult =
-        validateAndFailFast(
-            validBean, validationConfig);
+    final var noneResult = validateAndFailFast(validBean, validationConfig);
     assertThat(noneResult).isEmpty();
   }
 
@@ -54,15 +50,11 @@ class Spec1Test {
                         .shouldMatchAnyOf(List.of(anyOf(1, 2), inRangeInclusive(3, 5))))
             .prepare();
     final var invalidBean = new Bean1(6);
-    final var failureResult =
-        validateAndFailFast(
-            invalidBean, validationConfig);
+    final var failureResult = validateAndFailFast(invalidBean, validationConfig);
     assertThat(failureResult).contains(INVALID_VALUE);
 
     final var validBean = new Bean1(3);
-    final var noneResult =
-        validateAndFailFast(
-            validBean, validationConfig);
+    final var noneResult = validateAndFailFast(validBean, validationConfig);
     assertThat(noneResult).isEmpty();
   }
 
@@ -79,15 +71,11 @@ class Spec1Test {
                         .shouldMatchField(Bean2::getField2))
             .prepare();
     final var invalidBean = new Bean2("", null);
-    final var failureResult =
-        validateAndFailFast(
-            invalidBean, validationConfig);
+    final var failureResult = validateAndFailFast(invalidBean, validationConfig);
     assertThat(failureResult).contains(INVALID_COMBO_1);
 
     final var validBean = new Bean2("", "");
-    final var noneResult =
-        validateAndFailFast(
-            validBean, validationConfig);
+    final var noneResult = validateAndFailFast(validBean, validationConfig);
     assertThat(noneResult).isEmpty();
   }
 
@@ -104,15 +92,11 @@ class Spec1Test {
                         .shouldMatchAnyOfFields(List.of(Bean3::getField2, Bean3::getField3)))
             .prepare();
     final var invalidBean = new Bean3("", null, "3");
-    final var failureResult =
-        validateAndFailFast(
-            invalidBean, validationConfig);
+    final var failureResult = validateAndFailFast(invalidBean, validationConfig);
     assertThat(failureResult).contains(INVALID_COMBO_1);
 
     final var validBean = new Bean3("", null, "");
-    final var noneResult =
-        validateAndFailFast(
-            validBean, validationConfig);
+    final var noneResult = validateAndFailFast(validBean, validationConfig);
     assertThat(noneResult).isEmpty();
   }
 

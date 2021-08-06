@@ -72,6 +72,7 @@ public class ValidationFailure {
       new ValidationFailure(ValidationFailureMessage.MIN_BATCH_SIZE_NOT_MET_LEVEL_2);
   public static final ValidationFailure MAX_BATCH_SIZE_EXCEEDED =
       new ValidationFailure(ValidationFailureMessage.MAX_BATCH_SIZE_EXCEEDED);
+
   private final ValidationFailureMessage validationFailureMessage;
   private String exceptionMsg;
 

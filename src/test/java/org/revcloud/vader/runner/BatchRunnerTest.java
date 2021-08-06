@@ -1,6 +1,7 @@
 package org.revcloud.vader.runner;
 
 import static consumer.failure.ValidationFailure.NONE;
+import static consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
 import static consumer.failure.ValidationFailure.VALIDATION_FAILURE_1;
 import static consumer.failure.ValidationFailure.VALIDATION_FAILURE_2;
 import static consumer.failure.ValidationFailure.VALIDATION_FAILURE_3;
@@ -19,6 +20,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.Value;
+import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.ValidatorEtr;
@@ -42,10 +44,7 @@ class BatchRunnerTest {
             .withValidatorEtrs(validators)
             .prepare();
     final var resultsWithIds =
-        validateAndFailFastForEach(
-            validatables,
-            Bean::getId,
-            batchValidationConfig);
+        validateAndFailFastForEach(validatables, Bean::getId, batchValidationConfig);
 
     final var ids =
         resultsWithIds.stream()
@@ -77,10 +76,7 @@ class BatchRunnerTest {
         BatchValidationConfig.<Bean, ValidationFailure>toValidate()
             .withValidatorEtrs(validators)
             .prepare();
-    final var result =
-        BatchRunner.validateAndFailFastForAny(
-            validatables,
-            batchValidationConfig);
+    final var result = BatchRunner.validateAndFailFastForAny(validatables, batchValidationConfig);
     assertThat(result).contains(VALIDATION_FAILURE_1);
   }
 
@@ -100,10 +96,7 @@ class BatchRunnerTest {
             .withValidatorEtrs(validators)
             .prepare();
     final var result =
-        BatchRunner.validateAndFailFastForAny(
-            validatables,
-            Bean::getId, 
-            batchValidationConfig);
+        BatchRunner.validateAndFailFastForAny(validatables, Bean::getId, batchValidationConfig);
     assertThat(result).contains(Tuple.of(2, VALIDATION_FAILURE_2));
   }
 
@@ -122,10 +115,7 @@ class BatchRunnerTest {
         BatchValidationConfig.<Bean, ValidationFailure>toValidate()
             .withValidators(Tuple.of(validators, NONE))
             .prepare();
-    final var results =
-        BatchRunner.validateAndFailFastForEach(
-            validatables,
-            batchValidationConfig);
+    final var results = validateAndFailFastForEach(validatables, batchValidationConfig);
     assertEquals(results.size(), validatables.size());
     assertTrue(results.get(2).isRight());
     assertEquals(results.get(2), Either.right(new Bean(2)));
@@ -137,6 +127,39 @@ class BatchRunnerTest {
         results.stream()
             .skip(results.size() - 2)
             .allMatch(vf -> vf.isLeft() && vf.getLeft() == VALIDATION_FAILURE_2));
+  }
+
+  @Test
+  void handleNullValidatablesByDefault() {
+    final var validatables =
+        io.vavr.collection.List.of(new Bean(0), new Bean(1), null, new Bean(3), null).toJavaList();
+    final var batchValidationConfig =
+        BatchValidationConfig.<Bean, ValidationFailure>toValidate().prepare();
+    final var results = validateAndFailFastForEach(validatables, batchValidationConfig);
+    assertEquals(results.size(), validatables.size());
+
+    VavrAssertions.assertThat(results.get(0)).isRight().containsOnRight(new Bean(0));
+    VavrAssertions.assertThat(results.get(1)).isRight().containsOnRight(new Bean(1));
+    VavrAssertions.assertThat(results.get(2)).isLeft().containsOnLeft(null);
+    VavrAssertions.assertThat(results.get(3)).isRight().containsOnRight(new Bean(3));
+    VavrAssertions.assertThat(results.get(4)).isLeft().containsOnLeft(null);
+  }
+
+  @Test
+  void handleNullValidatablesWithFailure() {
+    final var validatables =
+        io.vavr.collection.List.of(new Bean(0), new Bean(1), null, new Bean(3), null).toJavaList();
+    final var batchValidationConfig =
+        BatchValidationConfig.<Bean, ValidationFailure>toValidate().prepare();
+    final var results =
+        validateAndFailFastForEach(validatables, batchValidationConfig, NOTHING_TO_VALIDATE);
+    assertEquals(results.size(), validatables.size());
+
+    VavrAssertions.assertThat(results.get(0)).isRight().containsOnRight(new Bean(0));
+    VavrAssertions.assertThat(results.get(1)).isRight().containsOnRight(new Bean(1));
+    VavrAssertions.assertThat(results.get(2)).isLeft().containsOnLeft(NOTHING_TO_VALIDATE);
+    VavrAssertions.assertThat(results.get(3)).isRight().containsOnRight(new Bean(3));
+    VavrAssertions.assertThat(results.get(4)).isLeft().containsOnLeft(NOTHING_TO_VALIDATE);
   }
 
   @Test

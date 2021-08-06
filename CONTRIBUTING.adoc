@@ -1,4 +1,14 @@
 = Contributing
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+:icons: font
+:tip-caption: 💡
+:caution-caption: ⚠️
+:hide-uri-scheme:
+:sourcedir: src/main/java
+:imagesdir: images
+:vader-version: 2.4.9
+:toc:
 
 == Source-code Setup
 
@@ -25,28 +35,27 @@
 == SonarQube
 
 * The codebase is hooked to SonarQube and all the quality analysis and code-coverage can be checked https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader[in this portal]
-* The https://sonarqube.soma.salesforce.com/profiles/show?language=java&name=Vader+way[Quality Profile] has the sonar rules configured.
+* The https://sonarqube.soma.salesforce.com/profiles/show?language=java&name=Vader+way[Quality Profile(QP)] has the sonar rules configured. For admin access on this profile, you may approach existing admins of this QP or reach out to #dpx-sonarqube-support on Slack.
 
-== Formatting
+== Code Formatting
 
 * This repo uses https://github.com/diffplug/spotless[*Spotless*] for formatting files, as this repo has code from more than one programming-language.
 * The SFCI build (even your local `gradle build`) fails if the check-in (or code) has any are formatting errors.
-* Please run `./gradlew spotlessApply` before check-in to fix any formatting errors. Or my recommendation, replace your kbd[Cmd+Shift+L] habit with kbd[Ctrl]-kbd[Ctrl] and run `gradle :spotlessApply`
+* Please run `./gradlew spotlessApply` before check-in to fix any formatting errors.
+
+TIP: If you are on Intellij, replace your kbd[Cmd+Shift+L] habit with kbd[Ctrl]-kbd[Ctrl] and run `gradle :spotlessApply` (Or the respective action if you are on Eclipse).
 
 == CI/CD
 
-* SFCI is used for CI/CD. A jenkins job runs for every commit push on any branch.
-* However, to publish a jar to nexus, only commits on `master` branch are considered. You can get more information from link:JenkinsFile[JenkinsFile].
-* The job status can be monitored from the https://ccspaymentsci.dop.sfdc.net/job/validation/job/Vader/job/master/[SFCI Portal] or wait for the build-shield at the top to turn red/green.
+* SFCI is used for CI/CD. A jenkins job runs for every commit pushed on any branch.
+* However, to publish a jar to nexus, only commits on *master* branch are considered. You can get more information from link:JenkinsFile[JenkinsFile].
+* The job status can be monitored from the https://ccspaymentsci.dop.sfdc.net/job/validation/job/Vader/job/master/[SFCI Portal].
 
 == Manual publishing
 
 * If you want to manually publish jar to nexus from your local, you need to have the necessary permissions to release jar
- into Nexus for both SNAPSHOTS and RELEASE channels. This Gus item was raised for Nexus
- access: https://gus.my.salesforce.com/a07B0000007Qt0BIAS. Please reach out to this team for any Nexus related
- permissions, problems, or requirements.
-* As of today, the permissions are maintained by providing a role `CCSPayments`. We are planning to create an AD group
- for this.
+ into Nexus for both SNAPSHOT and RELEASE channels. This https://gus.my.salesforce.com/a07B0000007Qt0BIAS[Gus Item] was raised for Nexus access.
+* Please reach out to this team for any Nexus related permissions, problems, or requirements. As of today, the permissions are maintained by providing a role `CCSPayments`. We are planning to create an AD group for this.
 * In link:build.gradle.kts[], increment the version property `version = "<Version-Number>"` and run this command:
 
 [source,bash]
@@ -54,4 +63,4 @@
 ./gradlew publish
 ----
 
-* After publishing, you can verify it by searching in the https://nexus.soma.salesforce.com/nexus/index.html#welcome[Nexus Repo].
+* The published jar should be found in https://nexus.soma.salesforce.com/nexus/index.html#welcome[Nexus Repo].
