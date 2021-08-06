@@ -4,7 +4,6 @@ import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
 
 plugins {
   kotlin("jvm")
-  `java-library`
   `maven-publish`
   jacoco
   idea
@@ -15,24 +14,43 @@ plugins {
   id("org.sonarqube") version "3.3"
 }
 
-group = "com.salesforce.ccspayments"
-version = "2.5.0-SNAPSHOT"
-description = "Vader - An FP framework for Bean validation"
+allprojects {
+  group = "com.salesforce.ccspayments"
+  version = "2.5.0-SNAPSHOT"
 
-repositories {
-  mavenCentral()
-  maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
+  repositories {
+    mavenCentral()
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
+  }
+  apply(plugin = "org.jetbrains.kotlin.jvm")
+  dependencies {
+    val testImplementation by configurations
+    testImplementation(platform("org.junit:junit-bom:5.8.0-M1"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+  }
+  
+  tasks {
+    test {
+      useJUnitPlatform()
+    }
+  }
 }
+
+description = "Vader - An FP framework for Bean validation"
 
 val asciidoclet by configurations.creating
 val lombokForSonarQube by configurations.creating
 
 dependencies {
-  api("io.vavr:vavr:0.10.4")
-  api("io.vavr:vavr-kotlin:0.10.2")
-  api("org.hamcrest:hamcrest:2.2")
-  api("org.exparity:hamcrest-date:2.0.7")
+  api(project(":matchers"))
+  api(libs.hamcrest.core)
+  api(libs.hamcrest.date)
+  api(libs.kotlin.vavr)
+  api(libs.java.vavr)
+
   api("de.cronn:reflection-util:2.10.0")
+
   compileOnly("org.jetbrains:annotations:20.1.0")
   implementation("org.slf4j:slf4j-api:2.0.0-alpha1")
   implementation("com.force.api:swag:0.3.9")
@@ -41,14 +59,8 @@ dependencies {
   asciidoclet("org.asciidoctor:asciidoclet:1.+")
   lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
 
-  testImplementation(platform("org.junit:junit-bom:5.8.0-M1"))
-  testImplementation("org.junit.jupiter:junit-jupiter-api")
-  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
   testImplementation("org.assertj:assertj-vavr:0.4.1")
   testImplementation("org.assertj:assertj-core:3.19.0")
-  val kotestVersion = "4.6.1"
-  testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
-  testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
 }
 
 sonarqube {
@@ -76,9 +88,6 @@ tasks {
   delombok {
     quiet.set(true)
     input.setFrom("src/main/java")
-  }
-  test {
-    useJUnitPlatform()
   }
   jacocoTestReport {
     reports {
@@ -248,3 +257,4 @@ spotless {
     endWithNewline()
   }
 }
+
