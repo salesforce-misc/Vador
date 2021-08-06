@@ -11,15 +11,15 @@ import java.util.Optional
 
 internal typealias FailFast<ValidatableT, FailureT> = (ValidatableT) -> Optional<FailureT>
 
-internal typealias FailFastForEach<ValidatableT, FailureT> = (Collection<ValidatableT>) -> List<Either<FailureT?, ValidatableT?>>
+internal typealias FailFastForEach<ValidatableT, FailureT> = (Collection<ValidatableT?>) -> List<Either<FailureT?, ValidatableT?>>
 
-internal typealias FailFastForEachNestedBatch1<ValidatableT, FailureT> = (Collection<ValidatableT>) -> List<Either<FFEBatchOfBatchFailure<FailureT?>, ValidatableT?>>
+internal typealias FailFastForEachNestedBatch1<ValidatableT, FailureT> = (Collection<ValidatableT?>) -> List<Either<FFEBatchOfBatchFailure<FailureT?>, ValidatableT?>>
 
-internal typealias FailFastForAny<ValidatableT, FailureT> = (Collection<ValidatableT>) -> Optional<FailureT>
+internal typealias FailFastForAny<ValidatableT, FailureT> = (Collection<ValidatableT?>) -> Optional<FailureT>
 
-internal typealias FailFastForAnyWithPair<ValidatableT, FailureT, PairT> = (Collection<ValidatableT>) -> Optional<Tuple2<PairT?, FailureT?>>
+internal typealias FailFastForAnyWithPair<ValidatableT, FailureT, PairT> = (Collection<ValidatableT?>) -> Optional<Tuple2<PairT?, FailureT?>>
 
-internal typealias FailFastForAnyNestedWithPair<ValidatableT, FailureT, ContainerPairT, MemberPairT> = (Collection<ValidatableT>) -> Optional<FFABatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>>
+internal typealias FailFastForAnyNestedWithPair<ValidatableT, FailureT, ContainerPairT, MemberPairT> = (Collection<ValidatableT?>) -> Optional<FFABatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>>
 
 internal typealias FailFastForContainer<ValidatableT, FailureT> = (ValidatableT) -> Optional<FailureT>
 
@@ -47,7 +47,7 @@ internal fun <FailureT, ValidatableT> failFastForEach(
   batchValidationConfig: BaseBatchValidationConfig<ValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
-): FailFastForEach<ValidatableT, FailureT> = { validatables: Collection<ValidatableT> ->
+): FailFastForEach<ValidatableT, FailureT> = { validatables: Collection<ValidatableT?> ->
   findAndFilterInvalids(
     validatables,
     failureForNullValidatable,
@@ -61,7 +61,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEa
   failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForEachNestedBatch1<ContainerValidatableT, FailureT> =
-  { containerValidatables: Collection<ContainerValidatableT> ->
+  { containerValidatables: Collection<ContainerValidatableT?> ->
     failFastForEach(
       batchOfBatch1ValidationConfig,
       failureForNullValidatable, throwableMapper
@@ -95,7 +95,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForAn
   failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForAny<ContainerValidatableT, FailureT> =
-  { containerValidatables: Collection<ContainerValidatableT> ->
+  { containerValidatables: Collection<ContainerValidatableT?> ->
     failFastForAnyNested<ContainerValidatableT, MemberValidatableT, FailureT, Nothing, Nothing>(
       batchOfBatch1ValidationConfig,
       failureForNullValidatable,
@@ -112,7 +112,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT, ContainerPair
   containerPairForInvalidMapper: (ContainerValidatableT?) -> ContainerPairT? = { null },
   memberPairForInvalidMapper: (MemberValidatableT?) -> MemberPairT? = { null }
 ): FailFastForAnyNestedWithPair<ContainerValidatableT, FailureT, ContainerPairT, MemberPairT> =
-  { containerValidatables: Collection<ContainerValidatableT> ->
+  { containerValidatables: Collection<ContainerValidatableT?> ->
     failFastForAny(
       batchOfBatch1ValidationConfig,
       failureForNullValidatable,

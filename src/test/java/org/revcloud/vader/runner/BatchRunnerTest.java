@@ -44,9 +44,8 @@ class BatchRunnerTest {
     final var resultsWithIds =
         validateAndFailFastForEach(
             validatables,
-            batchValidationConfig,
             Bean::getId,
-            NONE);
+            batchValidationConfig);
 
     final var ids =
         resultsWithIds.stream()
@@ -81,8 +80,7 @@ class BatchRunnerTest {
     final var result =
         BatchRunner.validateAndFailFastForAny(
             validatables,
-            batchValidationConfig,
-            NONE);
+            batchValidationConfig);
     assertThat(result).contains(VALIDATION_FAILURE_1);
   }
 
@@ -104,9 +102,8 @@ class BatchRunnerTest {
     final var result =
         BatchRunner.validateAndFailFastForAny(
             validatables,
-            batchValidationConfig,
-            Bean::getId,
-            NONE);
+            Bean::getId, 
+            batchValidationConfig);
     assertThat(result).contains(Tuple.of(2, VALIDATION_FAILURE_2));
   }
 
@@ -128,8 +125,7 @@ class BatchRunnerTest {
     final var results =
         BatchRunner.validateAndFailFastForEach(
             validatables,
-            batchValidationConfig,
-            NONE);
+            batchValidationConfig);
     assertEquals(results.size(), validatables.size());
     assertTrue(results.get(2).isRight());
     assertEquals(results.get(2), Either.right(new Bean(2)));

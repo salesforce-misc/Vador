@@ -115,8 +115,7 @@ class BatchOfBatch1ValidationConfigTest {
             root.getItemsBatch(),
             itemBatchValidationConfig,
             Item::getId,
-            Bean::getValue,
-            NONE);
+            Bean::getValue);
     assertThat(results).hasSize(3);
 
     final var result1 = results.get(0);
@@ -171,8 +170,7 @@ class BatchOfBatch1ValidationConfigTest {
     final var result =
         validateAndFailFastForAny(
             root.getItemsBatch(),
-            itemBatchValidationConfig,
-            NONE);
+            itemBatchValidationConfig);
     assertThat(result).isPresent();
     assertThat(result.get()).isEqualTo(INVALID_ITEM);
   }
@@ -213,9 +211,8 @@ class BatchOfBatch1ValidationConfigTest {
     final var result =
         validateAndFailFastForAny(
             root.getItemsBatch(),
-            itemBatchValidationConfig,
-            Item::getId,
-            Bean::getValue);
+            Item::getId, Bean::getValue, itemBatchValidationConfig
+        );
     assertThat(result).isPresent();
     assertThat(result.get().getContainerFailure())
         .isEqualTo(Tuple.of(invalidItem.getId(), INVALID_ITEM));
