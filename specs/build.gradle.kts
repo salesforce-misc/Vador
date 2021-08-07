@@ -1,6 +1,4 @@
 plugins {
-  kotlin("jvm")
-  java
   id("io.freefair.lombok")
 }
 

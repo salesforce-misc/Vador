@@ -18,6 +18,16 @@ allprojects {
   group = "com.salesforce.ccspayments"
   version = "2.5.0-SNAPSHOT"
 
+  apply(plugin = "java")
+  
+  tasks {
+    java {
+      withJavadocJar()
+      withSourcesJar()
+      sourceCompatibility = JavaVersion.VERSION_11
+    }
+  }
+  
   repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
@@ -28,6 +38,8 @@ description = "Vader - An FP framework for Bean validation"
 
 subprojects {
   apply(plugin = "org.jetbrains.kotlin.jvm")
+  apply(plugin = "java-library")
+  apply(plugin = "maven-publish")
 
   val asciidoclet: Configuration by configurations.creating
   val lombokForSonarQube: Configuration by configurations.creating
@@ -51,15 +63,11 @@ subprojects {
       property("sonar.coverage.jacoco.xmlReportPaths", "../build/reports/jacoco/test/jacocoTestReport.xml")
       property("sonar.tests", "src/test")
       property("sonar.sources", "src/main")
+      property("sonar.java.binaries", "build/classes")
     }
   }
 
   tasks {
-    java {
-      withJavadocJar()
-      withSourcesJar()
-      sourceCompatibility = JavaVersion.VERSION_11
-    }
     test {
       useJUnitPlatform()
     }
@@ -81,6 +89,69 @@ subprojects {
       options.encoding("UTF-8")
     }
   }
+
+  /********************/
+/* Publish to Nexus */
+  /********************/
+  tasks {
+    withType<PublishToMavenRepository>().configureEach {
+      doLast {
+        logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to ${repository.name}")
+      }
+    }
+
+    withType<PublishToMavenLocal>().configureEach {
+      doLast {
+        logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to MavenLocal.")
+      }
+    }
+  }
+
+  publishing {
+    publications.create<MavenPublication>("mavenJava") {
+      artifactId = tasks.jar.get().archiveBaseName.get()
+      from(components["java"])
+      pom {
+        name.set(project.name)
+        description.set(project.description)
+        url.set("https://git.soma.salesforce.com/CCSPayments/Vader")
+        licenses {
+          license {
+            name.set("The Apache License, Version 2.0")
+            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+          }
+        }
+        developers {
+          developer {
+            id.set("gopala.akshintala@salesforce.com")
+            name.set("Gopal S Akshintala")
+            email.set("gopala.akshintala@salesforce.com")
+          }
+        }
+        scm {
+          connection.set("scm:git:https://git.soma.salesforce.com/ccspayments/vader")
+          developerConnection.set("scm:git:git@git.soma.salesforce.com:ccspayments/vader.git")
+          url.set("https://git.soma.salesforce.com/ccspayments/vader")
+        }
+      }
+    }
+    repositories {
+      maven {
+        name = "Nexus"
+        val releasesRepoUrl =
+          uri("https://nexus.soma.salesforce.com/nexus/content/repositories/releases")
+        val snapshotsRepoUrl =
+          uri("https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots")
+        url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+        val nexusUsername: String by project
+        val nexusPassword: String by project
+        credentials {
+          username = nexusUsername
+          password = nexusPassword
+        }
+      }
+    }
+  }
 }
 
 tasks.named("sonarqube").configure {
@@ -89,10 +160,10 @@ tasks.named("sonarqube").configure {
 
 tasks {
   jacocoTestReport {
-    dependsOn(allprojects.map { it.tasks.withType<Test>() })
+    dependsOn(subprojects.map { it.tasks.withType<Test>() })
     dependsOn(subprojects.map { it.tasks.withType<JacocoReport>() })
-    sourceDirectories.setFrom(allprojects.map { it.the<SourceSetContainer>()["main"].allSource.srcDirs })
-    classDirectories.setFrom(allprojects.map { it.the<SourceSetContainer>()["main"].output })
+    sourceDirectories.setFrom(subprojects.map { it.the<SourceSetContainer>()["main"].allSource.srcDirs })
+    classDirectories.setFrom(subprojects.map { it.the<SourceSetContainer>()["main"].output })
     executionData.setFrom(
       project.fileTree(".") {
         include("**/build/jacoco/test.exec")
@@ -110,69 +181,6 @@ afterEvaluate {
   tasks {
     check.configure {
       dependsOn(jacocoTestReport)
-    }
-  }
-}
-
-/********************/
-/* Publish to Nexus */
-/********************/
-tasks {
-  withType<PublishToMavenRepository>().configureEach {
-    doLast {
-      logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to ${repository.name}")
-    }
-  }
-
-  withType<PublishToMavenLocal>().configureEach {
-    doLast {
-      logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to MavenLocal.")
-    }
-  }
-}
-
-publishing {
-  publications.create<MavenPublication>("mavenJava") {
-    artifactId = "vader"
-    from(components["java"])
-    pom {
-      name.set("Vader")
-      description.set("An FP framework for Bean validation")
-      url.set("https://git.soma.salesforce.com/CCSPayments/Vader")
-      licenses {
-        license {
-          name.set("The Apache License, Version 2.0")
-          url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-        }
-      }
-      developers {
-        developer {
-          id.set("gopala.akshintala@salesforce.com")
-          name.set("Gopal S Akshintala")
-          email.set("gopala.akshintala@salesforce.com")
-        }
-      }
-      scm {
-        connection.set("scm:git:https://git.soma.salesforce.com/ccspayments/vader")
-        developerConnection.set("scm:git:git@git.soma.salesforce.com:ccspayments/vader.git")
-        url.set("https://git.soma.salesforce.com/ccspayments/vader")
-      }
-    }
-  }
-  repositories {
-    maven {
-      name = "Nexus"
-      val releasesRepoUrl =
-        uri("https://nexus.soma.salesforce.com/nexus/content/repositories/releases")
-      val snapshotsRepoUrl =
-        uri("https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots")
-      url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
-      val nexusUsername: String by project
-      val nexusPassword: String by project
-      credentials {
-        username = nexusUsername
-        password = nexusPassword
-      }
     }
   }
 }

@@ -29,7 +29,9 @@ executePipeline(envDef) {
   
   if (BuildUtils.isReleaseBuild(env)) {
     stage('Release') {
-        sh './gradlew publish'
+        sh './gradlew vader:publish'
+        sh './gradlew specs:publish'
+        sh './gradlew matchers:publish'
     }
   }
   
