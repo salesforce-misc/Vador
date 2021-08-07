@@ -1,6 +1,6 @@
 @file:JvmName("SpecEx")
 
-package org.revcloud.vader
+package org.revcloud.vader.specs.factory
 
 import org.revcloud.vader.specs.specs.Spec1
 import org.revcloud.vader.specs.specs.Spec2
