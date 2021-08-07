@@ -7,10 +7,12 @@
         <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.20/18bcea7d5df4d49227b4a0743a536208ce4825bb/lombok-1.18.20.jar" />
         </processorPath>
-        <module name="vader.test" />
-        <module name="vader.specs.test" />
-        <module name="vader.specs.main" />
-        <module name="vader.main" />
+        <module name="vader-root.main" />
+        <module name="vader-root.vader.main" />
+        <module name="vader-root.specs.main" />
+        <module name="vader-root.specs.test" />
+        <module name="vader-root.test" />
+        <module name="vader-root.vader.test" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="11" />

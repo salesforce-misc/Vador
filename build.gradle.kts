@@ -22,10 +22,20 @@ allprojects {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
   }
+}
 
+description = "Vader - An FP framework for Bean validation"
+
+subprojects {
   apply(plugin = "org.jetbrains.kotlin.jvm")
 
+  val asciidoclet: Configuration by configurations.creating
+  val lombokForSonarQube: Configuration by configurations.creating
+
   dependencies {
+    asciidoclet("org.asciidoctor:asciidoclet:1.+")
+    lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
+
     val testImplementation by configurations
     testImplementation(platform("org.junit:junit-bom:5.8.0-M1"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
@@ -35,63 +45,40 @@ allprojects {
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
   }
 
-  java {
-    withJavadocJar()
-    withSourcesJar()
-    sourceCompatibility = JavaVersion.VERSION_11
-  }
-
-  tasks {
-    test {
-      useJUnitPlatform()
-    }
-  }
-}
-
-description = "Vader - An FP framework for Bean validation"
-
-val asciidoclet: Configuration by configurations.creating
-val lombokForSonarQube: Configuration by configurations.creating
-
-dependencies {
-  api(project(":specs"))
-
-  api(libs.hamcrest.core)
-  api(libs.hamcrest.date)
-  api(libs.kotlin.vavr)
-  api(libs.java.vavr)
-  api(libs.jetbrains.annotations)
-
-  api("de.cronn:reflection-util:2.10.0")
-
-  implementation("org.slf4j:slf4j-api:2.0.0-alpha1")
-  implementation("com.force.api:swag:0.3.9")
-
-  runtimeOnly("org.apache.logging.log4j:log4j-slf4j18-impl:2.14.1")
-  asciidoclet("org.asciidoctor:asciidoclet:1.+")
-  lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
-
-  testImplementation(project(":matchers"))
-  testImplementation("org.assertj:assertj-vavr:0.4.1")
-  testImplementation("org.assertj:assertj-core:3.19.0")
-}
-
-sonarqube {
-  properties {
-    property("sonar.java.libraries", lombokForSonarQube.files.last().toString())
-    property("sonar.host.url", "http://localhost:9000")
-    property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
-    property("sonar.tests", "src/test")
-    property("sonar.sources", "src/main")
-  }
-}
-
-subprojects {
   sonarqube {
     properties {
+      property("sonar.java.libraries", lombokForSonarQube.files.last().toString())
       property("sonar.coverage.jacoco.xmlReportPaths", "../build/reports/jacoco/test/jacocoTestReport.xml")
       property("sonar.tests", "src/test")
       property("sonar.sources", "src/main")
+    }
+  }
+
+  tasks {
+    java {
+      withJavadocJar()
+      withSourcesJar()
+      sourceCompatibility = JavaVersion.VERSION_11
+    }
+    test {
+      useJUnitPlatform()
+    }
+    register("configureJavadoc") {
+      doLast {
+        javadoc {
+          options.doclet = "org.asciidoctor.Asciidoclet"
+          options.docletpath = asciidoclet.files.toList()
+        }
+      }
+    }
+    javadoc {
+      dependsOn("configureJavadoc")
+      if (JavaVersion.current().isJava9Compatible) {
+        (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
+      }
+      // TODO 22/05/21 gopala.akshintala: Turn this on after writing all javadocs
+      isFailOnError = false
+      options.encoding("UTF-8")
     }
   }
 }
@@ -100,20 +87,7 @@ tasks.named("sonarqube").configure {
   dependsOn(allprojects.map { it.tasks.withType<Test>() })
 }
 
-if (!providers.systemProperty("idea.sync.active").forUseAtConfigurationTime().orNull.toBoolean()) {
-  kotlin.sourceSets.main {
-    kotlin.setSrcDirs(listOf(tasks.delombok))
-  }
-  sourceSets.main {
-    java.setSrcDirs(listOf(tasks.delombok))
-  }
-}
-
 tasks {
-  delombok {
-    quiet.set(true)
-    input.setFrom("src/main/java")
-  }
   jacocoTestReport {
     dependsOn(allprojects.map { it.tasks.withType<Test>() })
     dependsOn(subprojects.map { it.tasks.withType<JacocoReport>() })
@@ -129,23 +103,6 @@ tasks {
       csv.required.set(false)
       html.required.set(false)
     }
-  }
-  register("configureJavadoc") {
-    doLast {
-      javadoc {
-        options.doclet = "org.asciidoctor.Asciidoclet"
-        options.docletpath = asciidoclet.files.toList()
-      }
-    }
-  }
-  javadoc {
-    dependsOn("configureJavadoc")
-    if (JavaVersion.current().isJava9Compatible) {
-      (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
-    }
-    // TODO 22/05/21 gopala.akshintala: Turn this on after writing all javadocs
-    isFailOnError = false
-    options.encoding("UTF-8")
   }
 }
 

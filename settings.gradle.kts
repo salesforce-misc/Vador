@@ -26,6 +26,7 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "vader"
+rootProject.name = "vader-root"
 include("matchers")
 include("specs")
+include("vader")
