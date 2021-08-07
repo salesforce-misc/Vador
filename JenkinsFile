@@ -24,11 +24,7 @@ executePipeline(envDef) {
   }
 
   stage('Build') {
-    try {
-        sh './gradlew check'
-    } finally {
-        junit allowEmptyResults: false, testResults: "build/test-results/test/*.xml"
-    }
+    sh './gradlew check'
   }
   
   if (BuildUtils.isReleaseBuild(env)) {
@@ -38,11 +34,7 @@ executePipeline(envDef) {
   }
   
   stage('Check') {
-    try {
-        sh './gradlew check'
-    } finally {
-        junit allowEmptyResults: false, testResults: "**/build/test-results/test/*.xml"
-    }
+    sh './gradlew check'
   }
   
   stage('Sonarqube') {

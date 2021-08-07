@@ -5,8 +5,8 @@ import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
 plugins {
   kotlin("jvm")
   `maven-publish`
-  jacoco
   idea
+  jacoco
   id("io.freefair.lombok")
   id("io.gitlab.arturbosch.detekt") version "1.18.0-RC2"
   id("com.adarshr.test-logger") version "3.0.0"
@@ -79,7 +79,25 @@ dependencies {
 sonarqube {
   properties {
     property("sonar.java.libraries", lombokForSonarQube.files.last().toString())
+    property("sonar.host.url", "http://localhost:9000")
+    property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
+    property("sonar.tests", "src/test")
+    property("sonar.sources", "src/main")
   }
+}
+
+subprojects {
+  sonarqube {
+    properties {
+      property("sonar.coverage.jacoco.xmlReportPaths", "../build/reports/jacoco/test/jacocoTestReport.xml")
+      property("sonar.tests", "src/test")
+      property("sonar.sources", "src/main")
+    }
+  }
+}
+
+tasks.named("sonarqube").configure {
+  dependsOn(allprojects.map { it.tasks.withType<Test>() })
 }
 
 if (!providers.systemProperty("idea.sync.active").forUseAtConfigurationTime().orNull.toBoolean()) {
@@ -97,6 +115,15 @@ tasks {
     input.setFrom("src/main/java")
   }
   jacocoTestReport {
+    dependsOn(allprojects.map { it.tasks.withType<Test>() })
+    dependsOn(subprojects.map { it.tasks.withType<JacocoReport>() })
+    sourceDirectories.setFrom(allprojects.map { it.the<SourceSetContainer>()["main"].allSource.srcDirs })
+    classDirectories.setFrom(allprojects.map { it.the<SourceSetContainer>()["main"].output })
+    executionData.setFrom(
+      project.fileTree(".") {
+        include("**/build/jacoco/test.exec")
+      }
+    )
     reports {
       xml.required.set(true)
       csv.required.set(false)
@@ -126,9 +153,6 @@ afterEvaluate {
   tasks {
     check.configure {
       dependsOn(jacocoTestReport)
-    }
-    jacocoTestReport.configure {
-      dependsOn(test)
     }
   }
 }

@@ -1,5 +1,6 @@
 plugins {
   `maven-publish`
+  jacoco
 }
 
 dependencies {

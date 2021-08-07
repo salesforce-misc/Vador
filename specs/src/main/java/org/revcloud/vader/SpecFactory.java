@@ -49,7 +49,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
 
     public abstract Predicate<@Nullable ValidatableT> toPredicate();
 
-    // TODO 05/06/21 gopala.akshintala: Replace with `when` expression
+    // TODO 05/06/21 gopala.akshintala: Replace with `when` expression checking instanceOf
     @SuppressWarnings("unused")
     public FailureT getFailure(@Nullable ValidatableT ignore) {
       return orFailWith;
