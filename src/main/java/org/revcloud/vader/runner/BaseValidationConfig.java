@@ -15,9 +15,9 @@ import lombok.NonNull;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.Nullable;
-import org.revcloud.vader.SpecFactory.BaseSpec;
-import org.revcloud.vader.types.specs.Spec;
-import org.revcloud.vader.types.specs.Specs;
+import org.revcloud.vader.specs.specs.BaseSpec;
+import org.revcloud.vader.specs.types.Spec;
+import org.revcloud.vader.specs.types.Specs;
 import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.ValidatorEtr;
 

@@ -1,12 +1,12 @@
-package org.revcloud.vader;
+package org.revcloud.vader.specs.factory;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.revcloud.vader.failure.ValidationFailure.INVALID_VALUE;
-import static org.revcloud.vader.failure.ValidationFailure.NONE;
+import static org.revcloud.vader.specs.failure.ValidationFailure.INVALID_VALUE;
+import static org.revcloud.vader.specs.failure.ValidationFailure.NONE;
 
 import lombok.Value;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.failure.ValidationFailure;
+import org.revcloud.vader.specs.failure.ValidationFailure;
 
 class SpecFactoryTest {
 

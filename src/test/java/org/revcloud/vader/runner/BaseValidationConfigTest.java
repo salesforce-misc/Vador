@@ -12,7 +12,7 @@ import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.runner.BaseValidationConfigTest.Bean.Fields;
-import org.revcloud.vader.types.specs.Specs;
+import org.revcloud.vader.specs.types.Specs;
 
 class BaseValidationConfigTest {
 

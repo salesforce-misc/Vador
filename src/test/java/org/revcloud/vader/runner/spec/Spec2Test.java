@@ -22,8 +22,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.runner.Runner;
 import org.revcloud.vader.runner.ValidationConfig;
-import org.revcloud.vader.types.specs.Spec;
-import org.revcloud.vader.types.specs.Specs;
+import org.revcloud.vader.specs.types.Spec;
+import org.revcloud.vader.specs.types.Specs;
 
 class Spec2Test {
 

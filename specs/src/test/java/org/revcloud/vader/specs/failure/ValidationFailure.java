@@ -4,7 +4,7 @@
  * Company Confidential
  */
 
-package org.revcloud.vader.failure;
+package org.revcloud.vader.specs.failure;
 
 import lombok.Data;
 

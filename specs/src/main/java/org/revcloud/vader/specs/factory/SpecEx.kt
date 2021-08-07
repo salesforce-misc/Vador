@@ -2,16 +2,19 @@
 
 package org.revcloud.vader
 
+import org.revcloud.vader.specs.specs.Spec1
+import org.revcloud.vader.specs.specs.Spec2
+import org.revcloud.vader.specs.specs.Spec3
 import java.util.function.Predicate
 
-internal fun <ValidatableT, FailureT, GivenT> SpecFactory.Spec1<ValidatableT, FailureT, GivenT>.toPredicateEx(): Predicate<ValidatableT?> =
+internal fun <ValidatableT, FailureT, GivenT> Spec1<ValidatableT, FailureT, GivenT>.toPredicateEx(): Predicate<ValidatableT?> =
   Predicate { validatable ->
     val givenValue: GivenT = given.apply(validatable)
     shouldMatchAnyOf.any { it.matches(givenValue) } ||
       shouldMatchAnyOfFields.any { it.apply(validatable) == givenValue }
   }
 
-internal fun <ValidatableT, FailureT, WhenT, ThenT> SpecFactory.Spec2<ValidatableT, FailureT, WhenT, ThenT>.toPredicateEx(): Predicate<ValidatableT?> {
+internal fun <ValidatableT, FailureT, WhenT, ThenT> Spec2<ValidatableT, FailureT, WhenT, ThenT>.toPredicateEx(): Predicate<ValidatableT?> {
   return Predicate { validatable ->
     if ((matchesAnyOf.isNotEmpty() || shouldMatchAnyOf.isNotEmpty()) && (shouldRelateWith.isNotEmpty() || shouldRelateWithFn != null)) {
       throw IllegalArgumentException("`when-matches/matchesAnyOf + then-shouldMatch/shouldMatchAnyOf` cannot be given along with `shouldRelateWith` or `shouldRelateWithFn`")
@@ -37,7 +40,7 @@ internal fun <ValidatableT, FailureT, WhenT, ThenT> SpecFactory.Spec2<Validatabl
   }
 }
 
-internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> SpecFactory.Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T>.toPredicateEx(): Predicate<ValidatableT?> =
+internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T>.toPredicateEx(): Predicate<ValidatableT?> =
   Predicate { validatable ->
     val whenValue = `when`.apply(validatable)
     if (matchesAnyOf.none { it.matches(whenValue) }) {
