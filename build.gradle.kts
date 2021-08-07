@@ -19,15 +19,18 @@ allprojects {
   version = "2.5.0-SNAPSHOT"
 
   apply(plugin = "java")
-  
+
   tasks {
     java {
       withJavadocJar()
       withSourcesJar()
       sourceCompatibility = JavaVersion.VERSION_11
     }
+    test {
+      useJUnitPlatform()
+    }
   }
-  
+
   repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
@@ -40,6 +43,7 @@ subprojects {
   apply(plugin = "org.jetbrains.kotlin.jvm")
   apply(plugin = "java-library")
   apply(plugin = "maven-publish")
+  apply(plugin = "jacoco")
 
   val asciidoclet: Configuration by configurations.creating
   val lombokForSonarQube: Configuration by configurations.creating
@@ -68,9 +72,6 @@ subprojects {
   }
 
   tasks {
-    test {
-      useJUnitPlatform()
-    }
     register("configureJavadoc") {
       doLast {
         javadoc {
@@ -87,6 +88,13 @@ subprojects {
       // TODO 22/05/21 gopala.akshintala: Turn this on after writing all javadocs
       isFailOnError = false
       options.encoding("UTF-8")
+    }
+    jacocoTestReport {
+      reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.required.set(false)
+      }
     }
   }
 
@@ -154,10 +162,6 @@ subprojects {
   }
 }
 
-tasks.named("sonarqube").configure {
-  dependsOn(allprojects.map { it.tasks.withType<Test>() })
-}
-
 tasks {
   jacocoTestReport {
     dependsOn(subprojects.map { it.tasks.withType<Test>() })
@@ -174,6 +178,9 @@ tasks {
       csv.required.set(false)
       html.required.set(false)
     }
+  }
+  named("sonarqube").configure {
+    dependsOn(subprojects.map { it.tasks.withType<Test>() })
   }
 }
 
