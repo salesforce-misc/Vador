@@ -32,7 +32,7 @@ class ContainerValidationConfigTest {
     final var batch = List.of(new Bean());
     final var headerBean = new Container1(batch);
     final var result =
-        Runner.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+        Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -58,7 +58,7 @@ class ContainerValidationConfigTest {
     final var batch = List.of(new Bean());
     final var headerBean = new Container1(batch);
     final var result =
-        Runner.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+        Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).isEmpty();
   }
 
@@ -72,7 +72,7 @@ class ContainerValidationConfigTest {
             .prepare();
     final var headerBean = new Container1(emptyList());
     final var result =
-        Runner.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+        Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL);
   }
 
@@ -88,7 +88,7 @@ class ContainerValidationConfigTest {
             .prepare();
     final var headerBean = new ContainerWithMultiBatch(emptyList(), List.of(new Bean2()));
     final var result =
-        Runner.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+        Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL);
   }
   // end::container-config-level-1-container-with-multi-batch-demo[]
@@ -102,7 +102,7 @@ class ContainerValidationConfigTest {
             .prepare();
     final var headerBean = new Container1(List.of(new Bean()));
     final var result =
-        Runner.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+        Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).contains(MAX_BATCH_SIZE_EXCEEDED);
   }
 
@@ -118,7 +118,7 @@ class ContainerValidationConfigTest {
             .withBatchMapper(Container1::getBeanBatch)
             .prepare();
     final var result =
-        Runner.validateAndFailFastForContainer(
+        Vader.validateAndFailFastForContainer(
             new Container1(emptyList()), containerValidationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
@@ -155,10 +155,10 @@ class ContainerValidationConfigTest {
     final var container1 = new ContainerRoot(container2Batch);
 
     final var result =
-        Runner.validateAndFailFastForContainer(container1, containerRootValidationConfig)
+        Vader.validateAndFailFastForContainer(container1, containerRootValidationConfig)
             .or(
                 () ->
-                    Runner.validateAndFailFastForContainer(
+                    Vader.validateAndFailFastForContainer(
                         container2Batch, containerValidationConfig));
 
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_1);

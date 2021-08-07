@@ -6,8 +6,8 @@ import static consumer.failure.ValidationFailure.NONE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.revcloud.vader.matchers.AnyMatchers.anyOf;
-import static org.revcloud.vader.runner.BatchRunner.validateAndFailFastForAny;
-import static org.revcloud.vader.runner.BatchRunner.validateAndFailFastForEach;
+import static org.revcloud.vader.runner.VaderBatch.validateAndFailFastForAny;
+import static org.revcloud.vader.runner.VaderBatch.validateAndFailFastForEach;
 
 import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;

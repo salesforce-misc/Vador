@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.vavr.api.VavrAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.revcloud.vader.runner.BatchRunner.validateAndFailFastForEach;
+import static org.revcloud.vader.runner.VaderBatch.validateAndFailFastForEach;
 
 import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
@@ -26,7 +26,7 @@ import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.ValidatorEtr;
 
 /** gakshintala created on 7/22/20. */
-class BatchRunnerTest {
+class BatchVaderKtTest {
 
   @Test
   void failFastPartialFailures() {
@@ -76,7 +76,7 @@ class BatchRunnerTest {
         BatchValidationConfig.<Bean, ValidationFailure>toValidate()
             .withValidatorEtrs(validators)
             .prepare();
-    final var result = BatchRunner.validateAndFailFastForAny(validatables, batchValidationConfig);
+    final var result = VaderBatch.validateAndFailFastForAny(validatables, batchValidationConfig);
     assertThat(result).contains(VALIDATION_FAILURE_1);
   }
 
@@ -96,7 +96,7 @@ class BatchRunnerTest {
             .withValidatorEtrs(validators)
             .prepare();
     final var result =
-        BatchRunner.validateAndFailFastForAny(validatables, Bean::getId, batchValidationConfig);
+        VaderBatch.validateAndFailFastForAny(validatables, Bean::getId, batchValidationConfig);
     assertThat(result).contains(Tuple.of(2, VALIDATION_FAILURE_2));
   }
 
@@ -176,7 +176,7 @@ class BatchRunnerTest {
             bean -> predicateForValidId2.test(bean.getId()) ? NONE : VALIDATION_FAILURE_2,
             bean -> predicateForValidId3.test(bean.getId()) ? NONE : VALIDATION_FAILURE_3);
     final var result =
-        BatchRunner.validateAndAccumulateErrors(validatables, validators, NONE, throwable -> null);
+        VaderBatch.validateAndAccumulateErrors(validatables, validators, NONE, throwable -> null);
 
     assertEquals(result.size(), validatables.size());
     assertTrue(result.stream().allMatch(r -> r.size() == validators.size()));

@@ -9,7 +9,7 @@ import static consumer.failure.ValidationFailure.REQUIRED_LIST_MISSING;
 import static consumer.failure.ValidationFailure.getFailureWithParams;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.revcloud.vader.runner.Runner.validateAndFailFast;
+import static org.revcloud.vader.runner.Vader.validateAndFailFast;
 
 import com.force.swag.id.ID;
 import consumer.failure.ValidationFailure;

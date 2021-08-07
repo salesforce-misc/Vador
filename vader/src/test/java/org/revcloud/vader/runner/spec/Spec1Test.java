@@ -5,7 +5,7 @@ import static consumer.failure.ValidationFailure.INVALID_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.revcloud.vader.matchers.AnyMatchers.anyOf;
 import static org.revcloud.vader.matchers.IntMatchers.inRangeInclusive;
-import static org.revcloud.vader.runner.Runner.validateAndFailFast;
+import static org.revcloud.vader.runner.Vader.validateAndFailFast;
 
 import consumer.failure.ValidationFailure;
 import java.util.List;

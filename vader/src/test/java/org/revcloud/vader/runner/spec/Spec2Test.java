@@ -20,7 +20,7 @@ import lombok.Value;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.runner.Runner;
+import org.revcloud.vader.runner.Vader;
 import org.revcloud.vader.runner.ValidationConfig;
 import org.revcloud.vader.specs.types.Spec;
 import org.revcloud.vader.specs.types.Specs;
@@ -133,19 +133,19 @@ class Spec2Test {
         ValidationConfig.<Bean, ValidationFailure>toValidate().specify(specs).prepare();
 
     final var invalidBean1 = new Bean(1, "a", null, null);
-    final var failureResult1 = Runner.validateAndFailFast(invalidBean1, validationConfig);
+    final var failureResult1 = Vader.validateAndFailFast(invalidBean1, validationConfig);
     assertThat(failureResult1).contains(INVALID_COMBO_1);
 
     final var invalidBean2 = new Bean(2, "b", null, null);
-    final var failureResult2 = Runner.validateAndFailFast(invalidBean2, validationConfig);
+    final var failureResult2 = Vader.validateAndFailFast(invalidBean2, validationConfig);
     assertThat(failureResult2).contains(INVALID_COMBO_2);
 
     final var validBean1 = new Bean(1, "one", null, null);
-    final var noneResult1 = Runner.validateAndFailFast(validBean1, validationConfig);
+    final var noneResult1 = Vader.validateAndFailFast(validBean1, validationConfig);
     assertThat(noneResult1).isEmpty();
 
     final var validBean2 = new Bean(2, "two", null, null);
-    final var noneResult2 = Runner.validateAndFailFast(validBean2, validationConfig);
+    final var noneResult2 = Vader.validateAndFailFast(validBean2, validationConfig);
     assertThat(noneResult2).isEmpty();
   }
 
@@ -170,15 +170,15 @@ class Spec2Test {
                             .orFailWith(INVALID_COMBO_1)))
             .prepare();
     final var invalidBean1 = new Bean(1, "a", null, null);
-    final var failureResult1 = Runner.validateAndFailFast(invalidBean1, validationConfig);
+    final var failureResult1 = Vader.validateAndFailFast(invalidBean1, validationConfig);
     assertThat(failureResult1).contains(INVALID_COMBO_1);
 
     final var invalidBean2 = new Bean(1, "one", null, null);
-    final var failureResult2 = Runner.validateAndFailFast(invalidBean2, validationConfig);
+    final var failureResult2 = Vader.validateAndFailFast(invalidBean2, validationConfig);
     assertThat(failureResult2).isEmpty();
 
     final var invalidBean3 = new Bean(1, "1", null, null);
-    final var failureResult3 = Runner.validateAndFailFast(invalidBean3, validationConfig);
+    final var failureResult3 = Vader.validateAndFailFast(invalidBean3, validationConfig);
     assertThat(failureResult3).isEmpty();
   }
 

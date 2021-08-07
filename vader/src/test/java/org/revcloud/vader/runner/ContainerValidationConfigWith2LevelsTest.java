@@ -10,7 +10,7 @@ import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest
 import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest.ContainerLevel1WithMultiBatch.Fields.containerLevel2Batch;
 import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest.ContainerRootWithMultiContainerBatch.Fields.containerLevel1Batch1;
 import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest.ContainerRootWithMultiContainerBatch.Fields.containerLevel1Batch2;
-import static org.revcloud.vader.runner.Runner.validateAndFailFastForContainer;
+import static org.revcloud.vader.runner.Vader.validateAndFailFastForContainer;
 
 import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
@@ -65,10 +65,10 @@ class ContainerValidationConfigWith2LevelsTest {
     final var containerRoot = new ContainerRoot(containerLevel1Batch);
 
     final var result =
-        Runner.validateAndFailFastForContainer(containerRoot, container1RootValidationConfig)
+        Vader.validateAndFailFastForContainer(containerRoot, container1RootValidationConfig)
             .or(
                 () ->
-                    Runner.validateAndFailFastForContainer(
+                    Vader.validateAndFailFastForContainer(
                         containerLevel1Batch, container2ValidationConfig));
 
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_1);
@@ -120,7 +120,7 @@ class ContainerValidationConfigWith2LevelsTest {
     final var header1Root = new ContainerRoot(containerLevel1Batch);
 
     final var result =
-        Runner.validateAndFailFastForContainer(header1Root, containerRootValidationConfig)
+        Vader.validateAndFailFastForContainer(header1Root, containerRootValidationConfig)
             .or(
                 () ->
                     validateAndFailFastForContainer(

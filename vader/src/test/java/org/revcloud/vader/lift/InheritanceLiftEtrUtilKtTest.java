@@ -12,7 +12,7 @@ import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.runner.Runner;
+import org.revcloud.vader.runner.Vader;
 import org.revcloud.vader.runner.ValidationConfig;
 import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.ValidatorEtr;
@@ -27,7 +27,7 @@ class InheritanceLiftEtrUtilKtTest {
         ValidationConfig.<Child, ValidationFailure>toValidate()
             .withValidators(Tuple.of(List.of(v1, v2), NONE))
             .prepare();
-    final var result = Runner.validateAndFailFast(new Child(), validationConfig);
+    final var result = Vader.validateAndFailFast(new Child(), validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -41,7 +41,7 @@ class InheritanceLiftEtrUtilKtTest {
             .withValidatorEtrs(liftAllToChildValidatorType(List.of(v1, v2)))
             .withValidatorEtr(v3)
             .prepare();
-    final var result = Runner.validateAndFailFast(new Child(), validationConfig);
+    final var result = Vader.validateAndFailFast(new Child(), validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 

@@ -1,4 +1,4 @@
-@file:JvmName("BatchRunner")
+@file:JvmName("VaderBatch")
 
 package org.revcloud.vader.runner
 
