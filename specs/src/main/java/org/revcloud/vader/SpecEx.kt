@@ -1,6 +1,6 @@
 @file:JvmName("SpecEx")
 
-package org.revcloud.vader.runner
+package org.revcloud.vader
 
 import java.util.function.Predicate
 

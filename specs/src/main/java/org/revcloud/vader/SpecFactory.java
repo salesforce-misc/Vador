@@ -1,4 +1,4 @@
-package org.revcloud.vader.runner;
+package org.revcloud.vader;
 
 import io.vavr.Function1;
 import io.vavr.Function2;
@@ -22,9 +22,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
 
   private static final String INVALID_FAILURE_CONFIG =
       "For Spec with: %s Either 'orFailWith' or 'orFailWithFn' should be passed, but not both";
-
-  SpecFactory() {}
-
+  
   @SuppressWarnings({"java:S100", "java:S1452"})
   public <GivenT> Spec1.Spec1Builder<ValidatableT, FailureT, GivenT, ?, ?> _1() {
     return Spec1.check();
@@ -49,11 +47,11 @@ public final class SpecFactory<ValidatableT, FailureT> {
     @Nullable protected String nameForTest;
     @Nullable protected FailureT orFailWith;
 
-    protected abstract Predicate<@Nullable ValidatableT> toPredicate();
+    public abstract Predicate<@Nullable ValidatableT> toPredicate();
 
     // TODO 05/06/21 gopala.akshintala: Replace with `when` expression
     @SuppressWarnings("unused")
-    protected FailureT getFailure(@Nullable ValidatableT ignore) {
+    public FailureT getFailure(@Nullable ValidatableT ignore) {
       return orFailWith;
     }
   }
@@ -80,7 +78,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
     }
 
     @Override
-    protected FailureT getFailure(@Nullable ValidatableT validatable) {
+    public FailureT getFailure(@Nullable ValidatableT validatable) {
       if ((orFailWith == null) == (orFailWithFn == null)) {
         throw new IllegalArgumentException(String.format(INVALID_FAILURE_CONFIG, nameForTest));
       }
@@ -120,7 +118,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
     }
 
     @Override
-    protected FailureT getFailure(@Nullable ValidatableT validatable) {
+    public FailureT getFailure(@Nullable ValidatableT validatable) {
       if ((orFailWith == null) == (orFailWithFn == null)) {
         throw new IllegalArgumentException(String.format(INVALID_FAILURE_CONFIG, nameForTest));
       }
@@ -165,7 +163,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
     }
 
     @Override
-    protected FailureT getFailure(@Nullable ValidatableT validatable) {
+    public FailureT getFailure(@Nullable ValidatableT validatable) {
       if ((orFailWith == null) == (orFailWithFn == null)) {
         throw new IllegalArgumentException(String.format(INVALID_FAILURE_CONFIG, nameForTest));
       }

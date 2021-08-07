@@ -1,12 +1,12 @@
-package org.revcloud.vader.runner;
+package org.revcloud.vader;
 
-import static consumer.failure.ValidationFailure.INVALID_VALUE;
-import static consumer.failure.ValidationFailure.NONE;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.revcloud.vader.failure.ValidationFailure.INVALID_VALUE;
+import static org.revcloud.vader.failure.ValidationFailure.NONE;
 
-import consumer.failure.ValidationFailure;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
+import org.revcloud.vader.failure.ValidationFailure;
 
 class SpecFactoryTest {
 

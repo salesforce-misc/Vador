@@ -1,19 +1,12 @@
 plugins {
-  kotlin("jvm")
   `maven-publish`
 }
-
-java.sourceCompatibility = JavaVersion.VERSION_11
 
 dependencies {
   api(libs.hamcrest.core)
   api(libs.hamcrest.date)
   api(libs.kotlin.vavr)
   api(libs.java.vavr)
-
-  val kotestVersion = "4.6.1"
-  testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
-  testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
 }
 
 publishing {

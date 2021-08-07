@@ -4,8 +4,10 @@ pluginManagement {
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
   }
   val kotlinVersion: String by settings
+  val lombokGradlePluginVersion: String by settings
   plugins {
     kotlin("jvm") version kotlinVersion
+    id("io.freefair.lombok") version lombokGradlePluginVersion
   }
 }
 
@@ -18,9 +20,12 @@ dependencyResolutionManagement {
       alias("hamcrest-date").to("org.exparity:hamcrest-date:2.0.7")
       alias("java-vavr").to("io.vavr:vavr:0.10.4")
       alias("kotlin-vavr").to("io.vavr:vavr-kotlin:0.10.2")
+      alias("jetbrains-annotations").to("org.jetbrains:annotations:21.0.1")
+      alias("findbugs").to("com.google.code.findbugs:annotations:3.0.1")
     }
   }
 }
 
 rootProject.name = "vader"
 include("matchers")
+include("specs")

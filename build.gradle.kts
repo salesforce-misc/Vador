@@ -7,7 +7,7 @@ plugins {
   `maven-publish`
   jacoco
   idea
-  id("io.freefair.lombok") version "6.1.0-m3"
+  id("io.freefair.lombok")
   id("io.gitlab.arturbosch.detekt") version "1.18.0-RC2"
   id("com.adarshr.test-logger") version "3.0.0"
   id("com.diffplug.spotless") version "5.14.2"
@@ -22,14 +22,25 @@ allprojects {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
   }
+
   apply(plugin = "org.jetbrains.kotlin.jvm")
+
   dependencies {
     val testImplementation by configurations
     testImplementation(platform("org.junit:junit-bom:5.8.0-M1"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    val kotestVersion = "4.6.1"
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
   }
-  
+
+  java {
+    withJavadocJar()
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_11
+  }
+
   tasks {
     test {
       useJUnitPlatform()
@@ -39,19 +50,20 @@ allprojects {
 
 description = "Vader - An FP framework for Bean validation"
 
-val asciidoclet by configurations.creating
-val lombokForSonarQube by configurations.creating
+val asciidoclet: Configuration by configurations.creating
+val lombokForSonarQube: Configuration by configurations.creating
 
 dependencies {
-  api(project(":matchers"))
+  api(project(":specs"))
+
   api(libs.hamcrest.core)
   api(libs.hamcrest.date)
   api(libs.kotlin.vavr)
   api(libs.java.vavr)
+  api(libs.jetbrains.annotations)
 
   api("de.cronn:reflection-util:2.10.0")
 
-  compileOnly("org.jetbrains:annotations:20.1.0")
   implementation("org.slf4j:slf4j-api:2.0.0-alpha1")
   implementation("com.force.api:swag:0.3.9")
 
@@ -59,6 +71,7 @@ dependencies {
   asciidoclet("org.asciidoctor:asciidoclet:1.+")
   lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
 
+  testImplementation(project(":matchers"))
   testImplementation("org.assertj:assertj-vavr:0.4.1")
   testImplementation("org.assertj:assertj-core:3.19.0")
 }
@@ -67,12 +80,6 @@ sonarqube {
   properties {
     property("sonar.java.libraries", lombokForSonarQube.files.last().toString())
   }
-}
-
-java {
-  withJavadocJar()
-  withSourcesJar()
-  sourceCompatibility = JavaVersion.VERSION_11
 }
 
 if (!providers.systemProperty("idea.sync.active").forUseAtConfigurationTime().orNull.toBoolean()) {
@@ -257,4 +264,3 @@ spotless {
     endWithNewline()
   }
 }
-
