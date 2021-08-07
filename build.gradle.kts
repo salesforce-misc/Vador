@@ -17,20 +17,6 @@ plugins {
 allprojects {
   group = "com.salesforce.ccspayments"
   version = "2.5.0-SNAPSHOT"
-
-  apply(plugin = "java")
-
-  tasks {
-    java {
-      withJavadocJar()
-      withSourcesJar()
-      sourceCompatibility = JavaVersion.VERSION_11
-    }
-    test {
-      useJUnitPlatform()
-    }
-  }
-
   repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
@@ -88,6 +74,19 @@ subprojects {
       // TODO 22/05/21 gopala.akshintala: Turn this on after writing all javadocs
       isFailOnError = false
       options.encoding("UTF-8")
+    }
+    java {
+      withJavadocJar()
+      withSourcesJar()
+      sourceCompatibility = JavaVersion.VERSION_11
+    }
+    compileKotlin {
+      kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
+      }
+    }
+    test {
+      useJUnitPlatform()
     }
     jacocoTestReport {
       reports {

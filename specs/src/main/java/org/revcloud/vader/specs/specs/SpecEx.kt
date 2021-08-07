@@ -1,10 +1,7 @@
 @file:JvmName("SpecEx")
 
-package org.revcloud.vader.specs.factory
+package org.revcloud.vader.specs.specs
 
-import org.revcloud.vader.specs.specs.Spec1
-import org.revcloud.vader.specs.specs.Spec2
-import org.revcloud.vader.specs.specs.Spec3
 import java.util.function.Predicate
 
 internal fun <ValidatableT, FailureT, GivenT> Spec1<ValidatableT, FailureT, GivenT>.toPredicateEx(): Predicate<ValidatableT?> =
