@@ -2,17 +2,22 @@
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
 :icons: font
-:tip-caption: 💡
-:caution-caption: ⚠️
-:sourcedir: ../../src/main/java
-:testdir: ../../src/test/java
-:imagesdir: ../../images/config-dsl
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
 :sectnums:
 :listing-caption: Snippet
 :toc:
 :toc-placement: preamble
+:sourcedir: ../../vader/src/main/java
+:testdir: ../../vader/src/test/java
+:imagesdir: ../../images/config-dsl
 
-If each of your _Batch_ bean, say `List<ContainerT>` HAS-A nested batch say `List<MemberT>`. These batches are inter-dependent 1(ContainerT):N(MemberT). Each `ContainerT` validity depends on all it's N nested `MemberT`s validity. But don't worry, the challenge is already solved by Vader. You just need to ask him to do it for you, by hooking `BatchValidationConfig<MemberT, FailureT>` into `BatchOfBatch1ValidationConfig<ContainerT, MemberT, FailureT>`.
+If each of your _Batch_ bean, say `List<ContainerT>` HAS-A nested batch member say `List<MemberT>`. These batches are inter-dependent 1(ContainerT):N(MemberT). Each `ContainerT` validity depends on all it's N nested `MemberT`s validity. But don't worry, the challenge is already solved by Vader. You just need to ask him to do it for you, by hooking `BatchValidationConfig<MemberT, FailureT>` into `BatchOfBatch1ValidationConfig<ContainerT, MemberT, FailureT>`.
 
 To easily wrap your head around such data structure, visualise it like a *Tree*:
 

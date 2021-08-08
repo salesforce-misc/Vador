@@ -1,13 +1,21 @@
 = Matchers
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
-:tip-caption: 💡
-:caution-caption: ⚠️
-:imagesdir: images
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
 :toc:
+:toc-placement: preamble
+:imagesdir: ../images
 
-Vader provides few matchers out of the box to help write Specs. These matchers address generic use-cases common among
-consumers. New matchers can be added as needed/requested. Currently, these are the available matchers:
+Vader provides few matchers out of the box to help write Specs.
+These matchers address generic use-cases common among consumers.
+New matchers can be added as needed/requested.
+Currently, these are the available matchers:
 
 * AnyMatchers
 ** `anyOf`
@@ -18,3 +26,15 @@ consumers. New matchers can be added as needed/requested. Currently, these are t
 ** `isEqualToDayOfDate`
 * IntMatchers
 ** inRangeInclusive
+
+[.lead]
+This is a separate artifact, please use these coordinates to include them in your module.
+
+[source,xml]
+----
+<dependency>
+    <groupId>com.salesforce.ccspayments</groupId>
+    <artifactId>vader-matchers</artifactId>
+    <version>${revcloud.vader.version}</version>
+</dependency>
+----

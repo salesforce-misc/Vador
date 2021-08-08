@@ -2,14 +2,21 @@
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
 :icons: font
-:tip-caption: 💡
-:caution-caption: ⚠️
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
 :hide-uri-scheme:
-:sourcedir: src/main/java
-:imagesdir: images
-:vader-version: 2.4.9
+:listing-caption: Snippet
+:sectnums:
 :toc:
 :toc-placement!:
+:vader-version: 2.4.9
+:imagesdir: images
+:sourcedir: src/main/java
 
 image:vader.png[]
 
@@ -28,6 +35,7 @@ ____
 *Abstract away the Validation Orchestration complexity with a Reusable Design, that sets a framework to Write & Wire validations that are easy to Test, Extend and Share*
 
 '''
+[#shields]
 
 image:https://ccspaymentsci.dop.sfdc.net/buildStatus/icon?job=validation%2FVader%2Fmaster[Build Status,link=https://ccspaymentsci.dop.sfdc.net/job/validation/job/Vader/job/master/]
 image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=alert_status[Quality Gate Status,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
@@ -94,8 +102,6 @@ endif::[]
 
 And the corresponding https://overfullstack.ga/posts/fight-complexity-with-fp/[Blog Post]
 
-'''
-
 === More videos
 
 These recordings are initial presentations for Vader within the team.
@@ -106,13 +112,9 @@ Follow the rest of this doc to know more
 https://drive.google.com/open?id=1AciJ3xU5HFgeTwJxL0RME0mQVO08BMQ9[Brown Bag Session]
 https://drive.google.com/open?id=1Syi3smlcyFAL0ZoDuq5dWR1IALZNmNUm[An Internal Presentation] (This is partially recorded)
 
-'''
-
 == TL;DR Show me the code
 
 === https://codesearch.data.sfdc.net/source/xref/app_main_core/app/main/core/billing-services/java/src/core/billing/service/billingschedule/config/BillingScheduleConfig.java#261[billing-services]
-
-'''
 
 == New in v2.0
 
@@ -162,7 +164,7 @@ public static final Validator<Container, ValidationFailure> validation1 =
   };
 ----
 
-=== If you need more ⚡️Power⚡️
+== If you need more ⚡️Power⚡️
 
 image:more-power.gif[inline]
 
@@ -181,13 +183,10 @@ You can write linear programs with a lot less *Cyclomatic Complexity* & *Cogniti
 
 Please refer to this tech talk discussing these concepts: https://www.youtube.com/watch?v=Dvr6gx4XaD8&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or["Fight Complexity with Functional Programming - Gopal S. Akshintala - All Things Open, USA, 2020"]
 
-Lambdas assigned to `ValidatorEtr` take `Either<FailureT, ValidatableT>` as input.
+Lambdas assigned to `ValidatorEtr` take `Either<FailureT, ValidatableT>` as input and should return `Either<FailureT, ?>`.
 Since the bean is pre-wrapped in an `Either`, you can perform all the `Either` operations on the input like `map` , `flatMap`, `fold`, `filterOrElse` ( Refer https://www.javadoc.io/doc/io.vavr/vavr/0.10.2/io/vavr/control/Either.html[API] for more info).
 
-The result of the function is supposed to be `Either<FailureT, ?>`.
-This signifies, if there is a Validation Failure, keep it in the _left_ state.
-If the `Either` in the result is in the _right_ state, it is considered that the bean ** Passed** the validation.
-The wildcard `?` signifies it doesn't matter what is the value in the right state.
+If there is a Validation Failure, keep the result in the _left_ state. If the `Either` in the result is in the _right_ state, it is considered that the bean **Passed** the validation. The wildcard `?` signifies it doesn't matter what's the value in the right state.
 
 [source,java,indent=0,options="nowrap"]
 ----
@@ -204,9 +203,10 @@ You can very well use `Validator` and wrap/unwrap the bean yourself.
 [.lead]
 These types only differ syntactically
 
-They are there to help developers focus only on their validation logic, not worry about boiler-plate and use a programming style (imperative or functional) that they are comfortable in.
-You can essentially use any Data type for your validators and in-fact you can even have a mix, based on your needs.
-Vader leaves the choice to the developer.
+They are there to help developers focus only on their validation logic, not worry about boiler-plate and use a programming style (imperative or functional)
+that they are comfortable in. You can essentially use any Data type for your validators and in-fact you can even have a mix, based on your needs.
+
+NOTE: Vader leaves the choice to the developer!
 
 == How to Stitch these Validators?
 
@@ -233,7 +233,8 @@ ValidatorEtr<Member, ValidationFailure> memberValidator =...;
 List.of(containerValidator, memberValidator); // ^^^ Compile Error
 ----
 
-So all nested member validators need to be lifted to the container type, essentially changing their type matching with the Container's, like: `ValidatorEtr<Container, ValidationFailure>`.
+So all nested member validators need to be lifted to the container type, essentially changing their type matching with the Container's,
+like: `ValidatorEtr<Container, ValidationFailure>`.
 
 We can achieve this with `org.revcloud.vader.lift.*Util` functions.
 These are *Higher-Order Functions*, which *lift* member validator to the container type.
@@ -251,11 +252,13 @@ image:lift.jpg[]
 This way, we can configure a *Chain* of validators in-order, sorting out all the container-member dependencies.
 This is nothing but, the most popular *Chain of Responsibility* Design pattern, with a functional touch-up.
 
-If the inter-dependencies between Container-Member happens to be more complex, we may end-up with _Graph_ relationship, but we can easily _flatten_ it into a Chain with a simple _Topological Sort_.
+If the inter-dependencies between Container-Member happens to be more complex, we may end-up with _Graph_ relationship,
+but we can easily _flatten_ it into a Chain with a simple _Topological Sort_.
 
 == How to combine Validators & ValidatorEtrs?
 
-TIP: If you are using link:docs/config-dsl/configDSLs.adoc[`*Config` DSL] from 2.0, you don't need to worry about this, unless you are particular about the order of validators.
+TIP: If you are using link:docs/config-dsl/configDSLs.adoc[`*Config` DSL] from 2.0, you don't need to worry about this,
+unless you are particular about the order of validators.
 
 Similarly, Vader has utils to lift `Validator` to `ValidatorEtr`.
 This is handy, when you have a mix of validations, and they all need to be of the same type to stitch them together.
@@ -286,7 +289,7 @@ These are available for both `Validator` and `ValidatorEtr`.
 == Deferred result
 
 If you skim through the source code, you can realize none of these Util functions does any execution.
-These Higher-Order functions simply take-in a function and return a lifted function, deferring the actual execution until you call any API method in the _Runner_ API below:
+These Higher-Order functions simply take-in a function and return a lifted function, deferring the actual execution until you call any API method from `Vader/VaderBatch` below:
 
 == Validation Execution Strategies
 
@@ -295,28 +298,49 @@ Now that we know how to write & wire validations, the last step to execute these
 This can be seen as the *Edge* for validation bounded context, where the actual execution of validations happen, and you get back the final results.
 _The complexity of how these validators are orchestrated per strategy is abstracted away from the consumer._
 
-*There are various flavors (Overloads) in the Runner for Batch/Non-Batch (Please refer to Java Docs)*.
+*There are various orchestration flavors (Overloads) from `Vader` and `VaderBatch` APIs (Please refer to Java Docs)*.
 
+[discrete]
 == `validateAndFailFastForEach(...)`
 
+[discrete]
 == `validateAndFailFastForAny(...)`
 
+[discrete]
 == `validateAndAccumulateErrors(...)`
 
+[discrete]
 == What about exceptions?
 
-These Runner methods accept a parameter called `throwableMapper: (Throwable) -> FailureT`.
+These API methods accept a parameter called `throwableMapper: (Throwable) -> FailureT`.
 If any of your validations throws a checked or unchecked exception, it shall be mapped into a `FailureT` using this function.
 
-== Current State
+== How can I trust Vader?
 
+[.lead]
+Well, coz that’s the bread-&-jam of what we promise
+
+* It’s our responsibility to address all the edge cases and automate them thoroughly, for various types of POJOs.
+* We take code-quality & security seriously!
+** This code base has integration with *SonarQube*.
+** We openly display our <<shields, Code-Quality Shields>> at the top.
+* This is currently being consumed in *Production*
+** By 3 Teams:
+*** Rev-Hydra
+*** Rev-Delphinus
+*** Rev-Centaurus
+** In 3 different domains
+*** Payments
+*** Tax
+*** Billing
 * This idea was presented as a Tech-talk at many https://overfullstack.ga/posts/fight-complexity-with-fp/#My-Talk-on-this[International Conferences & Meetups]
-* This is currently consumed in *Production* by Payments, Tax and Billing domains.
 
-*👋🏼 If you have specific requirement, please log a git.soma issue 👋🏼*
+That said, just like us, Vader matures day-by-day, and if any of your special use-cases don’t work, we shall love to fix them ASAP (TBD - Will publish SLA for P0, P1 etc).
+
+[.lead]
+👋🏼 If you are facing any trouble or have any feature requests, please log a git.soma issue 👋🏼
 
 image:vader.gif[]
 
-'''
-
 == link:CONTRIBUTING.adoc[Wanna Collab & Contribute?]
+:!sectnums:

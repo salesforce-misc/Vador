@@ -1,10 +1,15 @@
 = Requirements
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
-:tip-caption: 💡
-:caution-caption: ⚠️
-:imagesdir: ../images
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
 :toc:
+:imagesdir: ../images
 
 == Why a new Framework for Bean validation?
 
@@ -39,24 +44,24 @@ that support _batch_ accept list of JSON sub-requests. A simplified version of a
 [source,jsonc]
 ----
 [
-    {
-        "amount": 99,
-        "accountId": "{{validAccountId}}",
-        ...,
-        "paymentMethod": {
-            ...
-        },
+  {
+    "amount": 99,
+    "accountId": "{{validAccountId}}",
+    ...,
+    "paymentMethod": {
         ...
     },
-    {
-        "amount": 77,
-        "accountId": "{{validAccountId}}",
-        ...,
-        "paymentMethod": {
-            ...
-        },
+    ...
+  },
+  {
+    "amount": 77,
+    "accountId": "{{validAccountId}}",
+    ...,
+    "paymentMethod": {
         ...
-    }
+    },
+    ...
+  }
 ]
 ----
 
