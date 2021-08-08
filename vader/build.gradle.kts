@@ -1,17 +1,14 @@
 plugins {
-  kotlin("jvm")
-  java
   id("io.freefair.lombok")
+  id("com.github.spotbugs")
 }
 
 dependencies {
   api(project(":specs"))
   api(libs.hamcrest.core)
   api(libs.hamcrest.date)
-  api(libs.kotlin.vavr)
+  implementation(libs.kotlin.vavr)
   api(libs.java.vavr)
-  compileOnly(libs.findbugs)
-  testCompileOnly(libs.findbugs)
   compileOnly(libs.jetbrains.annotations)
   api("de.cronn:reflection-util:2.10.0")
 
@@ -42,3 +39,7 @@ tasks {
   }
 }
 
+spotbugs {
+  // ! TODO 08/08/21 gopala.akshintala: Probably enable someday 
+  ignoreFailures.set(true)
+}

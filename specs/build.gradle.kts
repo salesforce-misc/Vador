@@ -1,15 +1,12 @@
 plugins {
   id("io.freefair.lombok")
+  id("com.github.spotbugs")
 }
 
 dependencies {
   api(libs.hamcrest.core)
   api(libs.java.vavr)
   compileOnly(libs.jetbrains.annotations)
-
-  // This is for lombok config addSuppressFBWarnings = true
-  compileOnly(libs.findbugs)
-  testCompileOnly(libs.findbugs)
 }
 
 if (!providers.systemProperty("idea.sync.active").forUseAtConfigurationTime().orNull.toBoolean()) {
@@ -28,3 +25,7 @@ tasks {
   }
 }
 
+spotbugs {
+  // ! TODO 08/08/21 gopala.akshintala: Probably enable someday 
+  ignoreFailures.set(true)
+}

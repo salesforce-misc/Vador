@@ -21,7 +21,6 @@ dependencyResolutionManagement {
       alias("java-vavr").to("io.vavr:vavr:0.10.4")
       alias("kotlin-vavr").to("io.vavr:vavr-kotlin:0.10.2")
       alias("jetbrains-annotations").to("org.jetbrains:annotations:21.0.1")
-      alias("findbugs").to("com.google.code.findbugs:annotations:3.0.1")
     }
   }
 }

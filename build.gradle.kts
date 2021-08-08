@@ -12,6 +12,7 @@ plugins {
   id("com.adarshr.test-logger") version "3.0.0"
   id("com.diffplug.spotless") version "5.14.2"
   id("org.sonarqube") version "3.3"
+  id("com.github.spotbugs") version "4.7.2" apply false
 }
 
 allprojects {
@@ -95,12 +96,6 @@ subprojects {
         html.required.set(false)
       }
     }
-  }
-
-  /********************/
-/* Publish to Nexus */
-  /********************/
-  tasks {
     withType<PublishToMavenRepository>().configureEach {
       doLast {
         logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to ${repository.name}")
@@ -113,13 +108,13 @@ subprojects {
       }
     }
   }
-
   publishing {
     publications.create<MavenPublication>("mavenJava") {
-      artifactId = tasks.jar.get().archiveBaseName.get()
+      val subprojectJarName = tasks.jar.get().archiveBaseName.get()
+      artifactId = if (subprojectJarName == "vader") "vader" else "vader-$subprojectJarName"
       from(components["java"])
       pom {
-        name.set(project.name)
+        name.set(artifactId)
         description.set(project.description)
         url.set("https://git.soma.salesforce.com/CCSPayments/Vader")
         licenses {
