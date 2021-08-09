@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 
 class ValidationConfigTest {
 
+  // tag::validationConfig-for-flat-bean-demo[]
   @DisplayName("Cases covered - Missing Field, String Field, List Field")
   @Test
   void failFastWithRequiredFieldsMissings() {
@@ -56,6 +57,7 @@ class ValidationConfigTest {
     final var result3 = validateAndFailFast(validatableWithEmptyReqList, validationConfig);
     assertThat(result3).contains(REQUIRED_LIST_MISSING);
   }
+  // end::validationConfig-for-flat-bean-demo[]
 
   @DisplayName("Cases covered - Optional field missing")
   @Test

@@ -15,8 +15,8 @@ import org.revcloud.vader.types.validators.ValidatorEtr;
 @Getter
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 abstract class BaseContainerValidationConfig<ContainerValidatableT, FailureT> {
-  @Nullable protected Tuple2<@NonNull Integer, @Nullable FailureT> shouldHaveMinBatchSize;
-  @Nullable protected Tuple2<@NonNull Integer, @Nullable FailureT> shouldHaveMaxBatchSize;
+  @Nullable protected Tuple2<@NonNull Integer, @Nullable FailureT> shouldHaveMinBatchSizeOrFailWith;
+  @Nullable protected Tuple2<@NonNull Integer, @Nullable FailureT> shouldHaveMaxBatchSizeOrFailWith;
 
   @Singular
   protected Collection<ValidatorEtr<ContainerValidatableT, @Nullable FailureT>>

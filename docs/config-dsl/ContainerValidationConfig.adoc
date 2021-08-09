@@ -1,16 +1,6 @@
 = ContainerValidationConfig DSL
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
-:icons: font
-ifdef::env-github[]
-:tip-caption: :bulb:
-:note-caption: :information_source:
-:important-caption: :heavy_exclamation_mark:
-:caution-caption: :fire:
-:warning-caption: :warning:
-endif::[]
-:sectnums:
-:listing-caption: Snippet
 :toc:
 :toc-placement: preamble
 :sourcedir: ../../vader/src/main/java
@@ -19,14 +9,18 @@ endif::[]
 
 This is handy when validation on a _Batch_ member beans need to run from the context of its container, say `ContainerT`.
 As container has the visibility over all its batch members, currently, the major use-case is declarative configuration of min and max size of _Batch_ members.
-You can also configure validations on a container, just like any other bean. Let's understand with an example:
+You can also configure validations on a container, just like any other bean.Let's understand with an example:
 
 To easily wrap your head around such data structure, visualise it like a *Tree*:
 
 image:container.png[]
 
-The batches can be `Collection` of same or different data type. As long as the batch member is a `Collection`, this config is agnostic of Data types within the collection.
+The batches can be `Collection` of same or different data type. 
+As long as the batch member is a `Collection`, this config is agnostic of Data types within the collection.
 
+TIP: Before diving into the examples, you may find this comparison useful: link:configDSLs.adoc#_containervalidationconfig_vs_validationconfig[ContainerValidationConfig++*++ Vs ++*++ValidationConfig].
+
+[#_example_container_with_multi_batch]
 == Example: Container with Multi-Batch
 
 ifdef::env-github[]
@@ -69,7 +63,7 @@ void failFastForHeaderConfigMinBatchSizeForMultiBatch() {
       ContainerValidationConfig.<ContainerWithMultiBatch, ValidationFailure>toValidate()
           .withBatchMappers(
               List.of(ContainerWithMultiBatch::getBatch1, ContainerWithMultiBatch::getBatch2))
-          .shouldHaveMinBatchSize(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
+          .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
           .withContainerValidator(ignore -> NONE, NONE)
           .prepare();
   final var headerBean = new ContainerWithMultiBatch(emptyList(), List.of(new Bean2()));
@@ -137,12 +131,12 @@ void composeContainerValidationResults() {
   final var containerRootValidationConfig =
       ContainerValidationConfig.<ContainerRoot, ValidationFailure>toValidate()
           .withBatchMapper(ContainerRoot::getContainer1Batch)
-          .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
+          .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
           .prepare();
   final var containerValidationConfig =
       ContainerValidationConfig.<Container1, ValidationFailure>toValidate()
           .withBatchMapper(Container1::getBeanBatch)
-          .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
+          .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
           .prepare();
 
   final var beanBatch = List.of(new Bean());

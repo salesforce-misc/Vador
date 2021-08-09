@@ -79,11 +79,11 @@ private fun <FailureT> validateBatchSize(
   memberBatch: Collection<*>,
   containerConfig: BaseContainerValidationConfig<*, FailureT?>
 ): Optional<FailureT> {
-  val minBatchSize = containerConfig.shouldHaveMinBatchSize
+  val minBatchSize = containerConfig.shouldHaveMinBatchSizeOrFailWith
   if (minBatchSize != null && memberBatch.size < minBatchSize._1) {
     return Optional.ofNullable(minBatchSize._2)
   }
-  val maxBatchSize = containerConfig.shouldHaveMaxBatchSize
+  val maxBatchSize = containerConfig.shouldHaveMaxBatchSizeOrFailWith
   return if (maxBatchSize != null && memberBatch.size > maxBatchSize._1) {
     Optional.ofNullable(maxBatchSize._2)
   } else Optional.empty()

@@ -1,16 +1,6 @@
 = NestedBatch1ValidationConfig DSL (TBD)
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
-:icons: font
-ifdef::env-github[]
-:tip-caption: :bulb:
-:note-caption: :information_source:
-:important-caption: :heavy_exclamation_mark:
-:caution-caption: :fire:
-:warning-caption: :warning:
-endif::[]
-:sectnums:
-:listing-caption: Snippet
 :toc:
 :toc-placement: preamble
 :sourcedir: ../../vader/src/main/java

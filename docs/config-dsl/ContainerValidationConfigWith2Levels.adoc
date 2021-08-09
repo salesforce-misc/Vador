@@ -1,16 +1,6 @@
 = ContainerValidationConfigWith2Levels DSL
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
-:icons: font
-ifdef::env-github[]
-:tip-caption: :bulb:
-:note-caption: :information_source:
-:important-caption: :heavy_exclamation_mark:
-:caution-caption: :fire:
-:warning-caption: :warning:
-endif::[]
-:sectnums:
-:listing-caption: Snippet
 :toc:
 :toc-placement: preamble
 :sourcedir: ../../vader/src/main/java
@@ -76,17 +66,17 @@ void containerValidationConfigWith2Levels1() {
       ContainerValidationConfigWith2Levels
           .<ContainerRoot, ContainerLevel1, ValidationFailure>toValidate()
           .withBatchMapper(ContainerRoot::getContainerLevel1Batch)
-          .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
+          .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
           .withScopeOf1LevelDeep(
               ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
                   .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
-                  .shouldHaveMinBatchSize(Tuple.of(5, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
+                  .shouldHaveMinBatchSizeOrFailWith(Tuple.of(5, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
                   .prepare())
           .prepare();
   final var container2ValidationConfig =
       ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
           .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
-          .shouldHaveMinBatchSize(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_2))
+          .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_2))
           .withContainerValidator(ignore -> NONE, NONE)
           .prepare();
 
@@ -130,4 +120,4 @@ include::{testdir}/org/revcloud/vader/runner/ContainerValidationConfigWith2Level
 endif::[]
 
 NOTE: The params in the config supplied through `withScopeOf1LevelDeep` should be perceived from the Root container context. 
-For example in the above test, `shouldHaveMinBatchSize(Tuple.of(5, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))` specifies that the `ContainerRoot` should not have minimum 5 `ContainerLevel2` beans, but it only has 4. 
+For example in the above test, `shouldHaveMinBatchSizeOrFailWith(Tuple.of(5, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))` specifies that the `ContainerRoot` should not have minimum 5 `ContainerLevel2` beans, but it only has 4. 

@@ -67,7 +67,7 @@ class ContainerValidationConfigTest {
     final var containerValidationConfig =
         ContainerValidationConfig.<Container1, ValidationFailure>toValidate()
             .withBatchMapper(Container1::getBeanBatch)
-            .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
+            .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
     final var headerBean = new Container1(emptyList());
@@ -83,7 +83,7 @@ class ContainerValidationConfigTest {
         ContainerValidationConfig.<ContainerWithMultiBatch, ValidationFailure>toValidate()
             .withBatchMappers(
                 List.of(ContainerWithMultiBatch::getBatch1, ContainerWithMultiBatch::getBatch2))
-            .shouldHaveMinBatchSize(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
+            .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
     final var headerBean = new ContainerWithMultiBatch(emptyList(), List.of(new Bean2()));
@@ -98,7 +98,7 @@ class ContainerValidationConfigTest {
     final var containerValidationConfig =
         ContainerValidationConfig.<Container1, ValidationFailure>toValidate()
             .withBatchMapper(Container1::getBeanBatch)
-            .shouldHaveMaxBatchSize(Tuple.of(0, MAX_BATCH_SIZE_EXCEEDED))
+            .shouldHaveMaxBatchSizeOrFailWith(Tuple.of(0, MAX_BATCH_SIZE_EXCEEDED))
             .prepare();
     final var headerBean = new Container1(List.of(new Bean()));
     final var result =
@@ -142,12 +142,12 @@ class ContainerValidationConfigTest {
     final var containerRootValidationConfig =
         ContainerValidationConfig.<ContainerRoot, ValidationFailure>toValidate()
             .withBatchMapper(ContainerRoot::getContainer1Batch)
-            .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
+            .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
             .prepare();
     final var containerValidationConfig =
         ContainerValidationConfig.<Container1, ValidationFailure>toValidate()
             .withBatchMapper(Container1::getBeanBatch)
-            .shouldHaveMinBatchSize(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
+            .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
             .prepare();
 
     final var beanBatch = List.of(new Bean());

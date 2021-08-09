@@ -1,25 +1,16 @@
 = Specs
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
-:icons: font
-ifdef::env-github[]
-:tip-caption: :bulb:
-:note-caption: :information_source:
-:important-caption: :heavy_exclamation_mark:
-:caution-caption: :fire:
-:warning-caption: :warning:
-endif::[]
-:sectnums:
-:listing-caption: Snippet
 :toc:
+:toc-placement: preamble
 :imagesdir: ../images
+
+[.lead]
+*A Spec is a Configuration, which lets you reuse a well-tested algorithmic pattern/template for a validation, by specifying the placeholders to fill.*
 
 == 🌈 Spec-Spectrum
 
 image:spec-spectrum.png[inline]
-
-[.lead]
-*A Spec is a Configuration, which lets you reuse a well-tested algorithmic pattern/template for a validation, by specifying the placeholders to fill.*
 
 On a shared codebase, same algorithms get written in different styles. This leads to increase of entropy, maintenance and coverage overhead in a codebase.
 Can these common algorithmic patters be abstracted out into templates, with a way to _Specify_ the missing pieces and reuse these generic validation algorithms?
@@ -111,7 +102,6 @@ void invalidBillingMethodBillingTermComboFails() {
                 String.valueOf(inputRep.getBillingMethod())}));
   Assertions.assertEquals(expectedResult, ReferenceBaseItemValidator.billingMethodBillingTermCombo.unchecked().apply(inputRep));
 }
-
 ----
 
 === Problems
@@ -120,11 +110,8 @@ void invalidBillingMethodBillingTermComboFails() {
 * For similar validations, we need to repeat/duplicate the same algorithmic structure and of-course 2X repetition for tests.
 * In a shared code-based, multiple developers resort to different styles of writing the same type of validations, leading to a spike in _Cognitive Complexity_
 
-____
-
+[.lead]
 Instead of this ☝🏼, is there a way to just specify my validation, without writing any code?
-
-____
 
 === Checkout Specs:
 

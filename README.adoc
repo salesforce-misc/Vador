@@ -1,23 +1,13 @@
 = 🦾 Vader 🦾
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
-:icons: font
-ifdef::env-github[]
-:tip-caption: :bulb:
-:note-caption: :information_source:
-:important-caption: :heavy_exclamation_mark:
-:caution-caption: :fire:
-:warning-caption: :warning:
-endif::[]
 :hide-uri-scheme:
-:listing-caption: Snippet
-:sectnums:
 :toc:
 :toc-placement!:
 :vader-version: 2.4.9
 :imagesdir: images
-:sourcedir: src/main/java
 
+[.text-center]
 image:vader.png[]
 
 [quote,Lord Vader]

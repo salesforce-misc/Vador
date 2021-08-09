@@ -1,16 +1,6 @@
 = ValidationConfig DSL
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
-:icons: font
-ifdef::env-github[]
-:tip-caption: :bulb:
-:note-caption: :information_source:
-:important-caption: :heavy_exclamation_mark:
-:caution-caption: :fire:
-:warning-caption: :warning:
-endif::[]
-:sectnums:
-:listing-caption: Snippet
 :toc:
 :sourcedir: ../../vader/src/main/java
 :testdir: ../../vader/src/test/java
@@ -57,19 +47,33 @@ ifdef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
+@DisplayName("Cases covered - Missing Field, String Field, List Field")
 @Test
-void getFieldNames() {
+void failFastWithRequiredFieldsMissings() {
   final var validationConfig =
       ValidationConfig.<Bean, ValidationFailure>toValidate()
-          .shouldHaveFieldOrFailWith(Bean::getRequiredField, NONE)
-          .shouldHaveValidSFIdFormatOrFailWith(Bean::getSfIdFormatField, NONE)
-          .absentOrHaveValidSFIdFormatOrFailWith(Bean::getOptionalSfIdFormatField, NONE)
+          .shouldHaveFieldsOrFailWith(
+              Map.of(
+                  Bean::getRequiredField1, REQUIRED_FIELD_MISSING_1,
+                  Bean::getRequiredField2, REQUIRED_FIELD_MISSING_2,
+                  Bean::getRequiredList, REQUIRED_LIST_MISSING))
+          .shouldHaveValidSFIdFormatForAllOrFailWith(
+              Map.of(
+                  Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION,
+                  Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION))
           .prepare();
-  assertThat(validationConfig.getRequiredFieldNames(Bean.class)).contains(Fields.requiredField);
-  assertThat(validationConfig.getRequiredFieldNamesForSFIdFormat(Bean.class))
-      .contains(Fields.sfIdFormatField);
-  assertThat(validationConfig.getNonRequiredFieldNamesForSFIdFormat(Bean.class))
-      .contains(Fields.optionalSfIdFormatField);
+
+  final var validatableWithBlankReqField = new Bean(0, "", null, null, List.of("1"));
+  final var result1 = validateAndFailFast(validatableWithBlankReqField, validationConfig);
+  assertThat(result1).contains(REQUIRED_FIELD_MISSING_2);
+
+  final var validatableWithNullReqField = new Bean(null, "2", null, null, List.of("1"));
+  final var result2 = validateAndFailFast(validatableWithNullReqField, validationConfig);
+  assertThat(result2).contains(REQUIRED_FIELD_MISSING_1);
+
+  final var validatableWithEmptyReqList = new Bean(1, "2", null, null, emptyList());
+  final var result3 = validateAndFailFast(validatableWithEmptyReqList, validationConfig);
+  assertThat(result3).contains(REQUIRED_LIST_MISSING);
 }
 ----
 
@@ -78,7 +82,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/runner/BaseValidationConfigTest.java[tag=validationConfig-for-flat-bean-demo]
+include::{testdir}/org/revcloud/vader/runner/ValidationConfigTest.java[tag=validationConfig-for-flat-bean-demo]
 ----
 
 endif::[]
