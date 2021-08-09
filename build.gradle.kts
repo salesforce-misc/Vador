@@ -17,7 +17,7 @@ plugins {
 
 allprojects {
   group = "com.salesforce.ccspayments"
-  version = "2.5.0-SNAPSHOT"
+  version = "2.5.0"
   repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")

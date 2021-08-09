@@ -4,7 +4,7 @@ Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :hide-uri-scheme:
 :toc:
 :toc-placement!:
-:vader-version: 2.4.9
+:vader-version: 2.5.0
 :imagesdir: images
 
 [.text-center]

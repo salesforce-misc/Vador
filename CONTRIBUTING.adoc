@@ -12,7 +12,7 @@ endif::[]
 :hide-uri-scheme:
 :sourcedir: src/main/java
 :imagesdir: images
-:vader-version: 2.4.9
+:vader-version: 2.5.0
 :toc:
 
 == Source-code Setup
