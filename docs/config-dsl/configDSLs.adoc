@@ -1,27 +1,36 @@
 = Config DSL
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
 :toc:
 :toc-placement: preamble
 :sourcedir: ../../vader/src/main/java
 :testdir: ../../vader/src/test/java
-:imagesdir: ../../images/config-dsl
+:imagesdir: ../../images
 
 Vader has a powerful and declarative Configuration DSL.
 A config object is 1-1 mapped with a Data Structure, and holds all the information/requirements/specifications required to validate that Data-structure.
-This is a powerful coz it lets you validate any Bean with any level or nesting, be it _Single_ or _Batch_.It's easy to fit this model in our heads, as validation configuration aligns with Bean hierarchical-structure.
+This is a powerful coz it lets you validate any Bean with any level or nesting, be it _Single_ or _Batch_.
+It's easy to fit this model in our heads, as validation configuration aligns with Bean hierarchical-structure.
 
 [.text-center]
-image:../hierarchical-validation.png[]
+image:hierarchical-validation.png[]
 
 == Config-Driven Validation
 
-There are currently different flavors of configs depending on these factors:
+Config provide DSL methods (builder pattern) which guides you to prepare your Validation definition. 
+Depending on the context and your intent, there are different flavors of configs depending on these factors:
 
 * Is the Data-structure under validation _Single (Non-Batch)_ or _Collection (Batch)_.
 * Does the Data-structure HAS-A Nested-Data-structure which needs to be validated too.
 ** Is the Nested Data-structure _Single (Non-Batch)_ or _Collection (Batch)_.
-* Do the validations need to run from Container Context.
+* Do the intend to run validations from Container Context.
 
 == Config DSL Flavors
 
@@ -70,7 +79,5 @@ ValidationConfig.<ContainerWithMultiBatch, ValidationFailure>toValidate()
   .shouldHaveFieldOrFailWith(ContainerWithMultiBatch::getBatch1, FIELD_MISSING).prepare();
 ----
 
-This similarity may cause confusion as to which one to use.The answer is based on your intent.
-If you look at the list being empty/`null` as `INVALID_BATCH_SIZE`, go with link:ContainerValidationConfig.adoc[ContainerValidationConfig].If you look at it as any other mandatory field, go with link:BatchValidationConfig.adoc[BatchValidationConfig].
-
-But the actual reason why there are two types of configs is the use case where you need to size validation based on multiple batches, link:ContainerValidationConfig.adoc#_example_container_with_multi_batch[like this].This can't be achieved using link:BatchValidationConfig.adoc[BatchValidationConfig]. That's where having the scope of the entire container helps.
+This similarity may cause confusion as to which one to use. The answer is - "it depends on your intent".
+If you look at the list being empty/`null` as `INVALID_BATCH_SIZE`, go with link:ContainerValidationConfig.adoc[ContainerValidationConfig]. If you look at it as any other mandatory field, go with link:BatchValidationConfig.adoc[BatchValidationConfig]. These configs are separated out to keep this intent clear.

@@ -1,0 +1,50 @@
+= BSG Batch validation
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:hide-uri-scheme:
+:imagesdir: images
+:!sectnums:
+
+[source,java,indent=0,options="nowrap"]
+----
+class BillingScheduleGroupInputRepresentation {
+  ID billingScheduleGroupId;
+  List<ReferenceItemInputRepresentation> referenceItems;
+  boolean isSetBillingScheduleGroupId;
+  boolean isSetReferenceItems;
+}
+----
+
+image:bsg-batch.png[]
+
+== Validation Requirements
+
+* Fail all the duplicate in the batch with same `bsgId`.
+* `RefItems` should be a mandatory field.
+* `bsgId` should be mandatory and be in valid SF ID format.
+* Validate each from `List<BSG>` and fail-fast on any failure.
+
+== Code
+
+[source,java,indent=0,options="nowrap"]
+----
+final var bsgBatchValidationConfig = BatchValidationConfig.<BillingScheduleGroupInputRepresentation, BillingScheduleFailure>toValidate()
+  .findAndFilterDuplicatesConfig(FilterDuplicatesConfig.<BillingScheduleGroupInputRepresentation, BillingScheduleFailure>toValidate()
+      .findAndFilterDuplicatesWith(BillingScheduleGroupInputRepresentation::getBillingScheduleGroupId)
+      .andFailDuplicatesWith(ofInvalidAPIInput(DUPLICATE_BILLING_SCHEDULE_GROUP_NOT_ALLOWED)).prepare())
+  .shouldHaveFieldOrFailWithFn(BillingScheduleGroupInputRepresentation::getReferenceItems, requiredFieldMissingMapper)
+  .shouldHaveValidSFIdFormatOrFailWithFn(BillingScheduleGroupInputRepresentation::getBillingScheduleGroupId, invalidSfIdFormatFailureMapper).prepare();
+
+final Optional<Tuple2<ID, BillingScheduleFailure>> bsgValidationResult = 
+  VaderBatch.validateAndFailFastForAny(
+        inputRequest.getBillingScheduleGroups(),
+        BillingScheduleGroupInputRepresentation::getBillingScheduleGroupId,
+        bsgBatchValidationConfig);
+----

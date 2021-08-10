@@ -1,0 +1,70 @@
+= Data structure to Validate
+:Revision: 1.0
+:hide-uri-scheme:
+:imagesdir: images
+:!sectnums:
+
+[source,json,indent=0,options="nowrap"]
+----
+{
+  "billingScheduleGroups": [
+    {
+      "billingScheduleGroupId": "801RM0000007uUmYAI",
+      "referenceItems": [
+        {
+          "referenceId": "801xx000003GjsdAAC",
+          "referenceItemId": "802xx000001ni4xAAA",
+          "offsetReferenceItemId": "802xx000001ni6ZAAQ",
+          "cancellationEffectiveDate": "2021-01-02",
+          "offsetAmount": -120
+        }
+      ]
+    },
+    {
+      "billingScheduleGroupId": "801RM0000008uUmYAI",
+      "referenceItems": [
+        {
+          "referenceId": "801xx000004GjsdAAC",
+          "referenceItemId": "802xx000001ni5xAAA",
+          "offsetReferenceItemId": "802xx000002ni6ZAAQ",
+          "cancellationEffectiveDate": "2021-02-02",
+          "offsetAmount": -120
+        },
+        {
+          "referenceId": "801xx000004GjsdAAC",
+          "referenceItemId": "802xx000001ni5xAAA",
+          "offsetReferenceItemId": "802xx000002ni6ZAAQ",
+          "cancellationEffectiveDate": "2021-02-02",
+          "offsetAmount": -120
+        }
+      ]
+    }
+  ]
+}
+----
+
+[source,java,indent=0,options="nowrap"]
+----
+class class ReferenceItemInputRepresentation {
+  ID referenceId;
+  ID referenceItemId;
+  ID offsetReferenceItemId;
+  String cancellationEffectiveDate;
+  Double offsetAmount;  
+}
+
+class BillingScheduleGroupInputRepresentation {
+  ID billingScheduleGroupId;
+  List<ReferenceItemInputRepresentation> referenceItems;
+  boolean isSetBillingScheduleGroupId;
+  boolean isSetReferenceItems;
+}
+
+class BillingScheduleGroupListInputRepresentation {
+  List<BillingScheduleGroupInputRepresentation> billingScheduleGroups;
+}
+----
+
+== Flow picked to solve
+
+=== `BillingCancellationValidationHelper.validateInput()`

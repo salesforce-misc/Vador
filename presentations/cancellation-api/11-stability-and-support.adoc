@@ -1,0 +1,33 @@
+= 🏛 Stability and Support 
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:hide-uri-scheme:
+:imagesdir: images
+:!sectnums:
+
+== Stability
+
+* It’s our responsibility to address all the edge cases and automate them thoroughly, for various types of POJOs.
+* We take code-quality & security seriously!
+** This code base has integration with https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader[*SonarQube*].
+** We openly display our link:../../README.adoc#shields[Code-Quality Shields] at the top.
+** ~80 unit tests currently guarding this, with a test coverage of `81.9%`
+* 0 bugs and no perf impact reported by any of the consumer teams till now.
+
+== Long Term Support
+
+* This library is currently being supported by *Rev-Delphinus*
+* We added a lot of documentation with runnable examples (in-fact each unit test in the repo is a runnable example). 
+We are committed to keep iterating and improving it. 
+* We are happy to provide 1:1 support, until the documentation is comprehensive.
+* Vader is under active development. We have a *Healthy backlog* of features and are eager to take-up more feature requests.
+
+
+

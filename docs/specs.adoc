@@ -1,6 +1,13 @@
 = Specs
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
 :toc:
 :toc-placement: preamble
 :imagesdir: ../images
@@ -124,9 +131,9 @@ spec._2().nameForTest(BILLING_TERM_BILLING_METHOD_COMBO_SPEC)
   .then(ReferenceItemBaseInputRepresentation::getBillingTerm)        
   .shouldRelateWith(BILLING_METHOD_BILLING_TERM_COMBO)        
   .orFailWithFn((bt, bm) -> ofFieldIntegrity(getErrorMessageWithParams(INVALID_BILLING_TERM_BILLING_METHOD_COMBO, bt, bm)))
-
-// ***!! NO FTESTS/UNIT TESTS REQUIRED FOR THESE SPECS !!*** 🤫
 ----
+
+TIP: No Ftests/unit tests required for these specs !! 🤫
 
 These Specs go into your DI config (Typically Spring Config on a Core module) and are handed over to Vader for execution like below:
 
@@ -149,7 +156,7 @@ var results = validateAndFailFast(..., validationConfig);
 
 == 🚨 Specs do NOT need Tests!!? 😱
 
-Wait!Before you scream! Hear out the rationale behind this *Recommendation*.
+Wait! Before you scream! Hear out the rationale behind this *Recommendation*.
 There are mainly two parts in this feature:
 
 * *What-to-do:* Specs

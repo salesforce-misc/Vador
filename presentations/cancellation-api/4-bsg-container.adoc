@@ -1,0 +1,40 @@
+= BSG Container level validation
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:hide-uri-scheme:
+:imagesdir: images
+:!sectnums:
+
+[source,java,indent=0,options="nowrap"]
+----
+class BillingScheduleGroupInputRepresentation {
+  List<?> referenceItems;
+}
+----
+
+image:bsg-container.png[]
+
+== Validation Requirements
+
+* Each `BSG` HAS-A batch **Member** - `List<RefItem>`
+* `List<RefItem>` should not be empty, need min size of 1, fail otherwise.
+* Validate each from the `List<BSG>` and Fail fast.
+
+== Code
+
+[source,java,indent=0,options="nowrap"]
+----
+final var bsgHeaderValidationConfig = ContainerValidationConfig.<BillingScheduleGroupInputRepresentation, BillingScheduleFailure>toValidate()
+  .withBatchMapper(BillingScheduleGroupInputRepresentation::getReferenceItems)
+  .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, ofInvalidBatchSize(INPUT_DATA_MISSING_REFERENCE_IDS))).prepare();
+
+final Optional<BillingScheduleFailure> result =
+  Vader.validateAndFailFastForContainer(rootContainer.getBillingScheduleGroups(), bsgHeaderValidationConfig)
+----

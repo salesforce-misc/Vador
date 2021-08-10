@@ -1,0 +1,54 @@
+= Root Container with 2 levels validation
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:hide-uri-scheme:
+:imagesdir: images
+:!sectnums:
+
+[source,java,indent=0,options="nowrap"]
+----
+class BillingScheduleGroupInputRepresentation {
+  List<?> referenceItems;
+}
+
+class BillingScheduleGroupListInputRepresentation {
+  List<BillingScheduleGroupInputRepresentation> billingScheduleGroups;
+}
+----
+
+image:bsg-container-with-2-levels.png[]
+
+== Validation Requirements
+
+* `Root` HAS-A Batch **Member** - `List<BSG>`
+* `List<BSG>` should not be empty, need min size of 1, fail otherwise.
+* `List<BSG>` size should be max 10, fail otherwise.
+* Stretch the scope of validation to 1 level deep
+** Each `BSG` has a batch **Member** - `List<RefItem>`
+** `List<List<RefItem>>` under the `Root` should be max 100, fail otherwise.
+
+== Code
+
+[source,java,indent=0,options="nowrap"]
+----
+final var rootHeaderValidationConfig = ContainerValidationConfigWith2Levels.<BillingScheduleGroupListInputRepresentation, BillingScheduleGroupInputRepresentation, BillingScheduleFailure>toValidate()
+  .withBatchMapper(BillingScheduleGroupListInputRepresentation::getBillingScheduleGroups)
+  .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, ofInvalidBatchSize(INPUT_DATA_MISSING_REFERENCE_IDS)))
+  .shouldHaveMaxBatchSizeOrFailWith(Tuple.of(MAX_BILLING_SCHEDULE_GROUPS_ALLOWED, ofQueryTooComplicated(MAX_10_BSG_CANCELLATION_PERMITTED)))
+  .withScopeOf1LevelDeep(bsgContainerConfigWithRootScope).prepare();
+
+final var bsgContainerConfigWithRootScope = ContainerValidationConfig.<BillingScheduleGroupInputRepresentation, BillingScheduleFailure>toValidate()
+  .withBatchMapper(BillingScheduleGroupInputRepresentation::getReferenceItems)
+  .shouldHaveMaxBatchSizeOrFailWith(Tuple.of(MAX_OFFSET_REFERENCE_IDS_ALLOWED, ofQueryTooComplicated(MAX_100_REFERENCE_BS_CAN_BE_OFFSET))).prepare();
+
+final Optional<BillingScheduleFailure> result =
+  Vader.validateAndFailFastForContainer(rootContainer, rootHeaderValidationConfig)
+----
+

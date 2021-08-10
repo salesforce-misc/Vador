@@ -1,0 +1,50 @@
+= 🍫 Retro on Benefits
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:hide-uri-scheme:
+:imagesdir: images
+
+== Readability
+
+We don't need analogies to stress on how important readability is and how Config is more readable than code with nested `if/else/for`.
+
+== Maintainability 
+
+Strips out a lot of the code/logic to maintain.
+
+== Complexity 
+
+* No branching => No Cyclomatic complexity. 
+* It abstracts away all the implementation complexity.
+* Saves a lot of Man hours while writing and 10X more while reading. An *8-pointer Story for Free* 🤑
+
+== Testability 
+
+Think of writing config as fill in the blanks for well-tested algorithm templates, so you don't need to write any code, which implies no need to write any tests.
+
+NOTE: You can always test your config (to double-check if right values are provided), but no need to re-test the already well-tested implementation.
+
+== Flexibility 
+
+* This is decoupled from the API orchestration method. For example, currently it's *Fail-Fast for Any*.
+But if you want to migrate to Fail-Fast for each item (to handle partial failures) or if you have another route like SObject where you need to accumulate all errors, that's as simple as calling a different API method without changing anything else.
+* If you wish to skip some validations or add new validations depending on the route, you can have different configs instances for different routes.
+
+== Extensibility
+
+Config can easily be changed or extended or reused.
+
+== Re-usability
+
+Config is mapped to a data structure. Which means, if the validation requirements are same, you can *reuse* the config everywhere the data-structure is used, say in a different API. 
+
+== Learning Curve
+
+We use the same Config pattern through-out, with self-explaining DSL methods to drive your development. This keeps the scope and slope of your learning curve required, low.

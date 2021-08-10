@@ -1,0 +1,72 @@
+= RefItem Batch validation
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:hide-uri-scheme:
+:imagesdir: images
+:!sectnums:
+
+[source,java,indent=0,options="nowrap"]
+----
+class class ReferenceItemInputRepresentation {
+  ID referenceId;
+  ID referenceItemId;
+  ID offsetReferenceItemId;
+  String cancellationEffectiveDate;
+  Double offsetAmount;  
+}
+----
+
+image:refItem-batch.png[]
+
+== Validation Requirements
+
+* Let's look at another batch validation, with more requirements - `List<RefItem>`.
+* Fail all the duplicates in the batch with *Multiple filters*
+** `RefItemId`
+** `OffsetRefItemId`
+* Mandatory fields
+** `RefId`
+** `RefItemId`
+** `OffsetRefItemId`
+* `CancellationEffectiveDate` should be in `ISO8601Format`
+
+== Code
+
+[source,java,indent=0,options="nowrap"]
+----
+final var refItemBatchValidationConfig = BatchValidationConfig.<ReferenceItemInputRepresentation, BillingScheduleFailure>toValidate()
+  .findAndFilterDuplicatesConfigs(refItemFilterDuplicatesConfig)
+  .shouldHaveFieldsOrFailWithFn(Tuple.of(List.of(
+          ReferenceItemInputRepresentation::getOffsetAmount,
+          ReferenceItemInputRepresentation::getcancellationEffectiveDate), requiredFieldMissingMapper))
+  .shouldHaveValidSFIdFormatForAllOrFailWithFn(Tuple.of(List.of(
+          ReferenceItemInputRepresentation::getReferenceId,
+          ReferenceItemInputRepresentation::getReferenceItemId,
+          ReferenceItemInputRepresentation::getOffsetReferenceItemId), invalidSfIdFormatFailureMapper))
+  .withSpec(spec -> spec._1() <1>
+          .given(ReferenceItemInputRepresentation::getcancellationEffectiveDate)
+          .shouldMatch(ISO8601DateFormat())
+          .orFailWith(ofInvalidAPIInput(INVALID_CANCELLATION_DATE_FORMAT))).prepare();
+
+final var refItemFilterDuplicatesConfig = List.of(
+  FilterDuplicatesConfig.<ReferenceItemInputRepresentation, BillingScheduleFailure>toValidate()
+          .findAndFilterDuplicatesWith(ReferenceItemInputRepresentation::getReferenceItemIdAsString)
+          .andFailDuplicatesWith(ofInvalidAPIInput(DUPLICATE_REFERENCE_ITEM_IDS_IN_REQUEST)).prepare(),
+  FilterDuplicatesConfig.<ReferenceItemInputRepresentation, BillingScheduleFailure>toValidate()
+          .findAndFilterDuplicatesWith(ReferenceItemInputRepresentation::getOffsetReferenceItemIdAsString)
+          .andFailDuplicatesWith(ofInvalidAPIInput(DUPLICATE_OFFSET_REFERENCE_ITEM_IDS_IN_REQUEST)).prepare());
+
+final Optional<Tuple2<ID, BillingScheduleFailure>> refItemValidationResult = 
+  VaderBatch.validateAndFailFastForAny(
+        getAllRefItems(inputRequest.getBillingScheduleGroups()),
+        ReferenceItemInputRepresentation::getReferenceItemId,
+        refItemBatchValidationConfig);
+----
+<1> 🤓 link:../../docs/specs.adoc[Specs]

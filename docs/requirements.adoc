@@ -1,6 +1,13 @@
 = Requirements
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
 :toc:
 :imagesdir: ../images
 
@@ -85,9 +92,9 @@ execute these validations).
  valid requests are processed through multiple layers of the application. We have to hold on to the invalid
  sub-requests till the end and skip them from processing.
 * *Meta-requirements:*
-* Accommodate a century of validations across a domain
-* Unit testability for Validations
-* No compromise on Performance
+** Accommodate a century of validations across a domain
+** Unit testability for Validations
+** No compromise on Performance
 
 ____
 

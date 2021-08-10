@@ -13,8 +13,7 @@ internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, Failure
   fromValidators1(withValidators) + fromValidators2(withValidator) + withValidatorEtrs
 
 internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.getSpecsEx(): List<BaseSpec<ValidatableT, FailureT>> {
-  val specFactory =
-    SpecFactory<ValidatableT, FailureT?>()
+  val specFactory = SpecFactory<ValidatableT, FailureT?>()
   return (specify?.invoke(specFactory)?.map { it.done() as BaseSpec<ValidatableT, FailureT> } ?: emptyList()) +
     withSpecs.map { it.invoke(specFactory).done() as BaseSpec<ValidatableT, FailureT> }
 }

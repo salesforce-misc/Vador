@@ -1,0 +1,31 @@
+= 🦾 Problem to Solve 🦾
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:hide-uri-scheme:
+:imagesdir: images
+:!sectnums:
+
+
+== But! this is not about [.line-through]#Vader#!
+
+=== We have a *Problem to Solve* and how can we solve it easily and elegantly.
+
+{empty} +
+{empty} +
+
+****
+* Define the problem to solve
+* Config driven validation
+** Convert validations to Config
+** Retro on the benefits.
+* Vader's Track record 
+* Stability & Support
+* Next Steps
+****

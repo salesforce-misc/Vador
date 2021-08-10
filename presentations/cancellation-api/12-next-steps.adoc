@@ -1,0 +1,22 @@
+= 🐾 Next steps 🐾
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:hide-uri-scheme:
+:imagesdir: images
+:!sectnums:
+
+====
+* Please review the POC, all the examples we discussed are present in that.
+* Please help us with your *Feedback*.
+====
+
+== Incremental adaption
+* If you feel this is suitable and helpful for current Cancellation API and future services your team writes, we can come up with an incremental adaption plan.
+* Kick-start and pick the same piece used in the POC and turn it prod ready.
