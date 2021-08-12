@@ -12,3 +12,4 @@ ifdef::env-github[]
 endif::[]
 :listing-caption: Snippet
 :sectnums:
+:source-linenums-option:
