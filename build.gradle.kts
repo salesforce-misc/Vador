@@ -13,6 +13,8 @@ plugins {
   id("com.diffplug.spotless") version "5.14.2"
   id("org.sonarqube") version "3.3"
   id("com.github.spotbugs") version "4.7.2" apply false
+  id("org.asciidoctor.jvm.gems") version "3.3.2"
+  id("org.asciidoctor.jvm.revealjs") version "3.3.2"
 }
 
 allprojects {
@@ -58,6 +60,12 @@ subprojects {
     }
   }
 
+  java {
+    withJavadocJar()
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_11
+  }
+  
   tasks {
     register("configureJavadoc") {
       doLast {
@@ -76,19 +84,10 @@ subprojects {
       isFailOnError = false
       options.encoding("UTF-8")
     }
-    java {
-      withJavadocJar()
-      withSourcesJar()
-      sourceCompatibility = JavaVersion.VERSION_11
-    }
-    compileKotlin {
-      kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-      }
-    }
-    test {
-      useJUnitPlatform()
-    }
+    compileKotlin.get().kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+    compileTestKotlin.get().kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+    test.get().useJUnitPlatform()
+    
     jacocoTestReport {
       reports {
         xml.required.set(true)
