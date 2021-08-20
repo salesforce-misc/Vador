@@ -31,8 +31,7 @@ class ContainerValidationConfigTest {
             .prepare();
     final var batch = List.of(new Bean());
     final var headerBean = new Container1(batch);
-    final var result =
-        Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+    final var result = Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -57,8 +56,7 @@ class ContainerValidationConfigTest {
             .prepare();
     final var batch = List.of(new Bean());
     final var headerBean = new Container1(batch);
-    final var result =
-        Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+    final var result = Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).isEmpty();
   }
 
@@ -71,8 +69,7 @@ class ContainerValidationConfigTest {
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
     final var headerBean = new Container1(emptyList());
-    final var result =
-        Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+    final var result = Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL);
   }
 
@@ -87,8 +84,7 @@ class ContainerValidationConfigTest {
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
     final var headerBean = new ContainerWithMultiBatch(emptyList(), List.of(new Bean2()));
-    final var result =
-        Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+    final var result = Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL);
   }
   // end::container-config-level-1-container-with-multi-batch-demo[]
@@ -101,8 +97,7 @@ class ContainerValidationConfigTest {
             .shouldHaveMaxBatchSizeOrFailWith(Tuple.of(0, MAX_BATCH_SIZE_EXCEEDED))
             .prepare();
     final var headerBean = new Container1(List.of(new Bean()));
-    final var result =
-        Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+    final var result = Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).contains(MAX_BATCH_SIZE_EXCEEDED);
   }
 

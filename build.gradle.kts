@@ -1,6 +1,7 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep.XML
 import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
+import io.gitlab.arturbosch.detekt.Detekt
 
 plugins {
   kotlin("jvm")
@@ -8,13 +9,13 @@ plugins {
   idea
   jacoco
   id("io.freefair.lombok")
-  id("io.gitlab.arturbosch.detekt") version "1.18.0-RC2"
+  id("io.gitlab.arturbosch.detekt") version "1.18.0"
   id("com.adarshr.test-logger") version "3.0.0"
   id("com.diffplug.spotless") version "5.14.2"
   id("org.sonarqube") version "3.3"
-  id("com.github.spotbugs") version "4.7.2" apply false
   id("org.asciidoctor.jvm.gems") version "3.3.2"
   id("org.asciidoctor.jvm.revealjs") version "3.3.2"
+  id("com.github.spotbugs") version "4.7.2"
 }
 
 allprojects {
@@ -23,6 +24,39 @@ allprojects {
   repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
+  }
+  apply(plugin = "com.diffplug.spotless")
+  spotless {
+    kotlin {
+      target("src/main/java/**/*.kt", "src/test/java/**/*.kt")
+      targetExclude("$buildDir/generated/**/*.*")
+      ktlint("0.42.0").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
+    }
+    kotlinGradle {
+      target("*.gradle.kts")
+      ktlint("0.42.0").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
+    }
+    java {
+      target("src/main/java/**/*.java", "src/test/java/**/*.java")
+      targetExclude("$buildDir/generated/**/*.*")
+      importOrder()
+      removeUnusedImports()
+      googleJavaFormat("1.11.0")
+      trimTrailingWhitespace()
+      indentWithSpaces(2)
+      endWithNewline()
+    }
+    format("xml") {
+      targetExclude("pom.xml")
+      target("*.xml")
+      eclipseWtp(XML)
+    }
+    format("markdown") {
+      target("*.md", "*.adoc")
+      trimTrailingWhitespace()
+      indentWithSpaces(2)
+      endWithNewline()
+    }
   }
 }
 
@@ -33,6 +67,8 @@ subprojects {
   apply(plugin = "java-library")
   apply(plugin = "maven-publish")
   apply(plugin = "jacoco")
+  apply(plugin = "com.adarshr.test-logger")
+  apply(plugin = "com.github.spotbugs")
 
   val asciidoclet: Configuration by configurations.creating
   val lombokForSonarQube: Configuration by configurations.creating
@@ -53,10 +89,21 @@ subprojects {
   sonarqube {
     properties {
       property("sonar.java.libraries", lombokForSonarQube.files.last().toString())
-      property("sonar.coverage.jacoco.xmlReportPaths", "../build/reports/jacoco/test/jacocoTestReport.xml")
       property("sonar.tests", "src/test")
       property("sonar.sources", "src/main")
       property("sonar.java.binaries", "build/classes")
+      property(
+        "sonar.coverage.jacoco.xmlReportPaths",
+        "../build/reports/jacoco/test/jacocoTestReport.xml"
+      )
+      property(
+        "sonar.kotlin.detekt.reportPaths",
+        "../build/reports/detekt/detekt.xml"
+      )
+      property(
+        "detekt.sonar.kotlin.config.path",
+        "../config/detekt/detekt.yml"
+      )
     }
   }
 
@@ -65,7 +112,7 @@ subprojects {
     withSourcesJar()
     sourceCompatibility = JavaVersion.VERSION_11
   }
-  
+
   tasks {
     register("configureJavadoc") {
       doLast {
@@ -87,7 +134,6 @@ subprojects {
     compileKotlin.get().kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
     compileTestKotlin.get().kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
     test.get().useJUnitPlatform()
-    
     jacocoTestReport {
       reports {
         xml.required.set(true)
@@ -100,12 +146,31 @@ subprojects {
         logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to ${repository.name}")
       }
     }
-
     withType<PublishToMavenLocal>().configureEach {
       doLast {
         logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to MavenLocal.")
       }
     }
+    testlogger {
+      theme = ThemeType.MOCHA
+      showExceptions = true
+      showStackTraces = true
+      showFullStackTraces = true
+      showCauses = true
+      slowThreshold = 2000
+      showSummary = true
+      showSimpleNames = true
+      showPassed = true
+      showSkipped = true
+      showFailed = true
+      showStandardStreams = true
+      showPassedStandardStreams = true
+      showSkippedStandardStreams = true
+      showFailedStandardStreams = true
+      logLevel = LogLevel.LIFECYCLE
+    }
+    spotbugs.ignoreFailures.set(true)
+    spotbugsTest.get().enabled = false
   }
   publishing {
     publications.create<MavenPublication>("mavenJava") {
@@ -175,81 +240,31 @@ tasks {
   named("sonarqube").configure {
     dependsOn(subprojects.map { it.tasks.withType<Test>() })
   }
+  register<Detekt>("detektAll") {
+    parallel = true
+    ignoreFailures = false
+    autoCorrect = false
+    buildUponDefaultConfig = true
+    setSource(files(projectDir))
+    include("**/*.kt")
+    include("**/*.kts")
+    exclude("**/resources/**")
+    exclude("**/build/**")
+    config.setFrom(files(project.rootDir.resolve("config/detekt/detekt.yml")))
+    baseline.set(project.rootDir.resolve("config/baseline.xml"))
+    reports {
+      xml.enabled = true
+      html.enabled = false
+      txt.enabled = false
+    }
+  }
 }
 
 afterEvaluate {
   tasks {
     check.configure {
       dependsOn(jacocoTestReport)
+      dependsOn(named("detektAll"))
     }
-  }
-}
-
-testlogger {
-  theme = ThemeType.MOCHA
-  showExceptions = true
-  showStackTraces = true
-  showFullStackTraces = true
-  showCauses = true
-  slowThreshold = 2000
-  showSummary = true
-  showSimpleNames = true
-  showPassed = true
-  showSkipped = true
-  showFailed = true
-  showStandardStreams = true
-  showPassedStandardStreams = true
-  showSkippedStandardStreams = true
-  showFailedStandardStreams = true
-  logLevel = LogLevel.LIFECYCLE
-}
-
-detekt {
-  baseline = file("${rootProject.projectDir}/config/baseline.xml")
-  config = files("config/detekt/detekt.yml")
-  buildUponDefaultConfig = true
-  reports {
-    xml {
-      enabled = true
-    }
-    html {
-      enabled = false
-    }
-    txt {
-      enabled = false
-    }
-  }
-}
-
-spotless {
-  kotlin {
-    target("src/main/java/**/*.kt", "src/test/java/**/*.kt")
-    targetExclude("$buildDir/generated/**/*.*")
-    ktlint("0.42.0").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
-  }
-  kotlinGradle {
-    target("*.gradle.kts")
-    ktlint("0.42.0").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
-  }
-  java {
-    target("src/main/java/**/*.java", "src/test/java/**/*.java")
-    targetExclude("$buildDir/generated/**/*.*")
-    importOrder()
-    removeUnusedImports()
-    googleJavaFormat("1.11.0")
-    trimTrailingWhitespace()
-    indentWithSpaces(2)
-    endWithNewline()
-  }
-  format("xml") {
-    targetExclude("pom.xml")
-    target("*.xml")
-    eclipseWtp(XML)
-  }
-  format("markdown") {
-    target("*.md", "*.adoc")
-    trimTrailingWhitespace()
-    indentWithSpaces(2)
-    endWithNewline()
   }
 }

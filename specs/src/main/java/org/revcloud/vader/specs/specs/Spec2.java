@@ -20,8 +20,7 @@ import org.jetbrains.annotations.Nullable;
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PACKAGE)
 @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
-public class Spec2<ValidatableT, FailureT, WhenT, ThenT>
-    extends BaseSpec<ValidatableT, FailureT> {
+public class Spec2<ValidatableT, FailureT, WhenT, ThenT> extends BaseSpec<ValidatableT, FailureT> {
 
   @NonNull Function1<ValidatableT, ? extends WhenT> when;
 

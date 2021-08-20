@@ -55,7 +55,7 @@ endif::[]
 * The SFCI build (even your local `gradle build`) fails if the check-in (or code) has any are formatting errors.
 * Please run `./gradlew spotlessApply` before check-in to fix any formatting errors.
 
-TIP: If you are on Intellij, replace your kbd[Cmd+Shift+L] habit with kbd[Ctrl]-kbd[Ctrl] and run `gradle :spotlessApply` (Or the respective action if you are on Eclipse).
+TIP: If you are on Intellij, replace your kbd[Cmd+Shift+L] habit with kbd[Ctrl]-kbd[Ctrl] and run `gradle spotlessApply` (Or the respective action if you are on Eclipse).
 
 == CI/CD
 

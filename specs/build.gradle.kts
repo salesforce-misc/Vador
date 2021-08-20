@@ -24,8 +24,3 @@ tasks {
     input.setFrom("src/main/java")
   }
 }
-
-spotbugs {
-  // ! TODO 08/08/21 gopala.akshintala: Probably enable someday 
-  ignoreFailures.set(true)
-}

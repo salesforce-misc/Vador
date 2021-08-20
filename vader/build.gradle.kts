@@ -17,7 +17,6 @@ dependencies {
 
   runtimeOnly("org.apache.logging.log4j:log4j-slf4j18-impl:2.14.1")
 
-
   testImplementation(project(":matchers"))
   testImplementation("org.assertj:assertj-vavr:0.4.1")
   testImplementation("org.assertj:assertj-core:3.19.0")

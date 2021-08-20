@@ -33,7 +33,7 @@ class BaseValidationConfigTest {
         IllegalArgumentException.class,
         () -> validationConfig.getPredicateOfSpecForTest(duplicateSpecName));
   }
-  
+
   @Test
   void getFieldNames() {
     final var validationConfig =

@@ -2,3 +2,6 @@ build:
   maxIssues: 999
 comments:
   active: false
+style:
+  MaxLineLength:
+    active: false

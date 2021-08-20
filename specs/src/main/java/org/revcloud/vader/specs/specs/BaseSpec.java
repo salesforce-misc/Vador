@@ -14,10 +14,8 @@ public abstract class BaseSpec<ValidatableT, FailureT> {
 
   protected static final String INVALID_FAILURE_CONFIG =
       "For Spec with: %s Either 'orFailWith' or 'orFailWithFn' should be passed, but not both";
-  @Nullable
-  protected String nameForTest;
-  @Nullable
-  protected FailureT orFailWith;
+  @Nullable protected String nameForTest;
+  @Nullable protected FailureT orFailWith;
 
   public abstract Predicate<@Nullable ValidatableT> toPredicate();
 

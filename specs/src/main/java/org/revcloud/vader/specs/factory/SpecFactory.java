@@ -21,5 +21,4 @@ public final class SpecFactory<ValidatableT, FailureT> {
       Spec3.Spec3Builder<ValidatableT, FailureT, WhenT, Then1T, Then2T, ?, ?> _3() {
     return Spec3.check();
   }
-
 }
