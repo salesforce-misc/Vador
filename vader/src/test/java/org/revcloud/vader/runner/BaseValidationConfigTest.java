@@ -1,12 +1,16 @@
 package org.revcloud.vader.runner;
 
+import static consumer.failure.ValidationFailure.INVALID_UDD_ID;
 import static consumer.failure.ValidationFailure.NONE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.force.swag.id.ID;
 import consumer.failure.ValidationFailure;
+import io.vavr.Tuple;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Value;
 import lombok.experimental.FieldNameConstants;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
@@ -49,7 +53,24 @@ class BaseValidationConfigTest {
         .contains(Fields.optionalSfIdFormatField);
   }
 
+  @Test
+  void idConfig() {
+    final var entityInfo = new EntityInfo();
+    final var config = ValidationConfig.<Bean, ValidationFailure>toValidate()
+        .withIdConfig(IDConfig.<Bean, ValidationFailure, EntityInfo>toValidate()
+            .withIdValidator(BaseValidationConfigTest::uddUtil)
+            .shouldHaveValidSFIdFormatOrFailWith(Tuple.of(Bean::getSfIdFormatField, entityInfo, INVALID_UDD_ID))
+            .prepare()).prepare();
+    final var result = Vader.validateAndFailFast(new Bean(null, new ID("invalidId"), null), config);
+    assertThat(result).contains(INVALID_UDD_ID);
+  }
+
+  private static boolean uddUtil(ID idToValidate, EntityInfo entityInfo) {
+    return !idToValidate.toString().equalsIgnoreCase("invalidId");
+  }
+
   @Data
+  @AllArgsConstructor
   @FieldNameConstants
   // tag::flat-bean[]
   public static class Bean {
@@ -58,4 +79,7 @@ class BaseValidationConfigTest {
     ID optionalSfIdFormatField;
   }
   // end::flat-bean[]
+  
+  @Value
+  private static class EntityInfo {}
 }

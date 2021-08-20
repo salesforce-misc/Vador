@@ -32,6 +32,8 @@ public class ValidationFailure {
       new ValidationFailure(ValidationFailureMessage.INVALID_PARENT);
   public static final ValidationFailure INVALID_ITEM =
       new ValidationFailure(ValidationFailureMessage.INVALID_ITEM);
+  public static final ValidationFailure INVALID_UDD_ID =
+      new ValidationFailure(ValidationFailureMessage.INVALID_UDD_ID);
   public static final ValidationFailure INVALID_MEMBER =
       new ValidationFailure(ValidationFailureMessage.INVALID_CHILD);
   public static final ValidationFailure UNKNOWN_EXCEPTION =
