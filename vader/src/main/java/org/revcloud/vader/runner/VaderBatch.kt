@@ -113,7 +113,7 @@ fun <FailureT, ContainerValidatableT, MemberValidatableT> validateAndFailFastFor
   nullValidatable: FailureT? = null,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): List<Either<FFEBatchOfBatchFailure<FailureT?>, ContainerValidatableT?>> =
-  failFastForEachNested(batchOfBatch1ValidationConfig, nullValidatable, throwableMapper)(validatables)
+  failFastForEachBatchOfBatch1(batchOfBatch1ValidationConfig, nullValidatable, throwableMapper)(validatables)
 
 /** == FOR ANY == */
 

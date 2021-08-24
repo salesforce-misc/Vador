@@ -85,34 +85,28 @@ subprojects {
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
   }
-
   sonarqube {
     properties {
-      property("sonar.java.libraries", lombokForSonarQube.files.last().toString())
-      property("sonar.tests", "src/test")
+      property("sonar.projectName", name)
       property("sonar.sources", "src/main")
+      property("sonar.tests", "src/test")
+      property("sonar.java.libraries", lombokForSonarQube.files.last().toString())
       property("sonar.java.binaries", "build/classes")
       property(
         "sonar.coverage.jacoco.xmlReportPaths",
-        "../build/reports/jacoco/test/jacocoTestReport.xml"
+        "$rootDir/build/reports/jacoco/test/jacocoTestReport.xml"
       )
       property(
         "sonar.kotlin.detekt.reportPaths",
-        "../build/reports/detekt/detekt.xml"
-      )
-      property(
-        "detekt.sonar.kotlin.config.path",
-        "../config/detekt/detekt.yml"
+        "$rootDir/build/reports/detekt/detekt.xml"
       )
     }
   }
-
   java {
     withJavadocJar()
     withSourcesJar()
     sourceCompatibility = JavaVersion.VERSION_11
   }
-
   tasks {
     register("configureJavadoc") {
       doLast {
@@ -219,7 +213,15 @@ subprojects {
     }
   }
 }
-
+sonarqube {
+  properties {
+    property("sonar.modules", subprojects.joinToString(",") { it.name })
+    property(
+      "detekt.sonar.kotlin.config.path",
+      "$rootDir/config/detekt/detekt.yml"
+    )
+  }
+}
 tasks {
   jacocoTestReport {
     dependsOn(subprojects.map { it.tasks.withType<Test>() })
@@ -237,21 +239,18 @@ tasks {
       html.required.set(false)
     }
   }
-  named("sonarqube").configure {
-    dependsOn(subprojects.map { it.tasks.withType<Test>() })
-  }
   register<Detekt>("detektAll") {
     parallel = true
     ignoreFailures = false
     autoCorrect = false
     buildUponDefaultConfig = true
-    setSource(files(projectDir))
+    setSource(subprojects.map { it.the<SourceSetContainer>()["main"].allJava.srcDirs })
     include("**/*.kt")
     include("**/*.kts")
     exclude("**/resources/**")
     exclude("**/build/**")
-    config.setFrom(files(project.rootDir.resolve("config/detekt/detekt.yml")))
-    baseline.set(project.rootDir.resolve("config/baseline.xml"))
+    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+    baseline.set(File("$rootDir/config/baseline.xml"))
     reports {
       xml.enabled = true
       html.enabled = false
@@ -259,12 +258,12 @@ tasks {
     }
   }
 }
-
 afterEvaluate {
   tasks {
     check.configure {
       dependsOn(jacocoTestReport)
       dependsOn(named("detektAll"))
     }
+    sonarqube.configure { dependsOn(check) }
   }
 }

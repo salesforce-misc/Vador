@@ -56,7 +56,7 @@ internal fun <FailureT, ValidatableT> failFastForEach(
 }
 
 @JvmSynthetic
-internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEachNested(
+internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEachBatchOfBatch1(
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
@@ -65,28 +65,27 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEa
     failFastForEach(
       batchOfBatch1ValidationConfig,
       failureForNullValidatable, throwableMapper
-    )(
-      containerValidatables
-    ).map { validContainer: Either<FailureT?, ContainerValidatableT?> ->
-      validContainer.map(batchOfBatch1ValidationConfig.withMemberBatchValidationConfig._1)
-        .map { members: Collection<MemberValidatableT> ->
-          failFastForEach(
-            batchOfBatch1ValidationConfig.withMemberBatchValidationConfig._2,
-            failureForNullValidatable,
-            throwableMapper
-          )(members)
-        }
-        .map { memberResults: List<Either<FailureT?, MemberValidatableT?>> -> memberResults.map { it.flatMap { validContainer } } }
-    }.map { result: Either<FailureT?, List<Either<FailureT?, ContainerValidatableT?>>> ->
-      result.fold<Either<Either<FailureT?, List<FailureT?>>, ContainerValidatableT?>?>(
-        { containerFailure -> left(left(containerFailure)) },
-        { memberResults ->
-          val memberFailures = memberResults.filter { it.isLeft }
-          if (memberFailures.isEmpty()) right(memberFailures.firstOrNull()?.get())
-          else left(right(memberFailures.map { it.left }))
-        }
-      ).mapLeft { FFEBatchOfBatchFailure(it) }
-    }
+    )(containerValidatables)
+      .map { validContainer: Either<FailureT?, ContainerValidatableT?> ->
+        validContainer.map(batchOfBatch1ValidationConfig.withMemberBatchValidationConfig._1)
+          .map { members: Collection<MemberValidatableT> ->
+            failFastForEach(
+              batchOfBatch1ValidationConfig.withMemberBatchValidationConfig._2,
+              failureForNullValidatable,
+              throwableMapper
+            )(members)
+          }
+          .map { memberResults: List<Either<FailureT?, MemberValidatableT?>> -> memberResults.map { it.flatMap { validContainer } } }
+      }.map { result: Either<FailureT?, List<Either<FailureT?, ContainerValidatableT?>>> ->
+        result.fold<Either<Either<FailureT?, List<FailureT?>>, ContainerValidatableT?>?>(
+          { containerFailure -> left(left(containerFailure)) },
+          { memberResults ->
+            val memberFailures = memberResults.filter { it.isLeft }
+            if (memberFailures.isEmpty()) right(memberFailures.firstOrNull()?.get())
+            else left(right(memberFailures.map { it.left }))
+          }
+        ).mapLeft { FFEBatchOfBatchFailure(it) }
+      }
   }
 
 @JvmSynthetic
