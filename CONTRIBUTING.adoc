@@ -25,6 +25,7 @@ endif::[]
 == Source-code Setup
 
 * This is a simple Gradle project and has its own Gradle wrapper. So nothing to install.
+* Follow these simple instructions from https://git.soma.salesforce.com/MoBE/gradle-init-scripts/blob/master/README.md[this repo] to setup your Gradle to connect with Salesforce Nexus.
 * You need to add your nexus credentials in `~/.gradle/gradle.properties` file (create file if not present), which are used by your local gradle to connect to nexus for downloading artifacts.
 * Follow these simple instructions from https://git.soma.salesforce.com/MoBE/gradle-init-scripts/[here] to setup gradle to use https://nexus.soma.salesforce.com/nexus/[nexus.soma repository] for downloading dependency jars.
 
