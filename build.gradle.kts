@@ -216,10 +216,7 @@ subprojects {
 sonarqube {
   properties {
     property("sonar.modules", subprojects.joinToString(",") { it.name })
-    property(
-      "detekt.sonar.kotlin.config.path",
-      "$rootDir/config/detekt/detekt.yml"
-    )
+    property("detekt.sonar.kotlin.config.path", "$rootDir/config/detekt/detekt.yml")
   }
 }
 tasks {
@@ -244,7 +241,7 @@ tasks {
     ignoreFailures = false
     autoCorrect = false
     buildUponDefaultConfig = true
-    setSource(subprojects.map { it.the<SourceSetContainer>()["main"].allJava.srcDirs })
+    setSource(subprojects.map { File("${it.name}/src/main") })
     include("**/*.kt")
     include("**/*.kts")
     exclude("**/resources/**")
