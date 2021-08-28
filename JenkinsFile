@@ -38,6 +38,7 @@ executePipeline(envDef) {
   }
   
   stage('Sonarqube') {
+    sh "sed -i 's/${WORKSPACE.replace("/","\\/")}/\\/tmp\\/project/' build/reports/detekt/detekt.xml"
     sonarqube()
   }
 }
