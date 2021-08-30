@@ -106,6 +106,7 @@ CAUTION: The Design has evolved after these recordings, but Vader's philosophy r
 Follow the rest of this doc to know more
 
 https://drive.google.com/open?id=1AciJ3xU5HFgeTwJxL0RME0mQVO08BMQ9[Brown Bag Session]
+
 https://drive.google.com/open?id=1Syi3smlcyFAL0ZoDuq5dWR1IALZNmNUm[An Internal Presentation] (This is partially recorded)
 
 == TL;DR Show me the code
@@ -254,7 +255,7 @@ If the inter-dependencies between Container-Member happens to be more complex, w
 
 == How to combine Validators & ValidatorEtrs?
 
-TIP: If you are using link:docs/config-dsl/configDSLs.adoc[`*Config` DSL] from 2.0, you don't need to worry about this, unless you are particular about the order of validators.
+TIP: If you are using link:docs/config-dsl/configDSLs.adoc[Config DSL] from 2.0, you don't need to worry about this, unless you are particular about the order of validators.
 
 Similarly, Vader has utils to lift `Validator` to `ValidatorEtr`.
 This is handy, when you have a mix of validations, and they all need to be of the same type to stitch them together.
