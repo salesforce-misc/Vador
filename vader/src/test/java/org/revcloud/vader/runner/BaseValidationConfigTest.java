@@ -56,11 +56,15 @@ class BaseValidationConfigTest {
   @Test
   void idConfig() {
     final var entityInfo = new EntityInfo();
-    final var config = ValidationConfig.<Bean, ValidationFailure>toValidate()
-        .withIdConfig(IDConfig.<Bean, ValidationFailure, EntityInfo>toValidate()
-            .withIdValidator(BaseValidationConfigTest::uddUtil)
-            .shouldHaveValidSFIdFormatOrFailWith(Tuple.of(Bean::getSfIdFormatField, entityInfo, INVALID_UDD_ID))
-            .prepare()).prepare();
+    final var config =
+        ValidationConfig.<Bean, ValidationFailure>toValidate()
+            .withIdConfig(
+                IDConfig.<Bean, ValidationFailure, EntityInfo>toValidate()
+                    .withIdValidator(BaseValidationConfigTest::uddUtil)
+                    .shouldHaveValidSFIdFormatOrFailWith(
+                        Tuple.of(Bean::getSfIdFormatField, entityInfo, INVALID_UDD_ID))
+                    .prepare())
+            .prepare();
     final var result = Vader.validateAndFailFast(new Bean(null, new ID("invalidId"), null), config);
     assertThat(result).contains(INVALID_UDD_ID);
   }
@@ -79,7 +83,7 @@ class BaseValidationConfigTest {
     ID optionalSfIdFormatField;
   }
   // end::flat-bean[]
-  
+
   @Value
   private static class EntityInfo {}
 }

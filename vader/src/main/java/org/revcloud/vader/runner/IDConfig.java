@@ -18,8 +18,10 @@ import org.jetbrains.annotations.Nullable;
 @Builder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 public class IDConfig<ValidatableT, FailureT, EntityIdInfoT> {
   @Nullable Function2<ID, EntityIdInfoT, @NonNull Boolean> withIdValidator;
-  
+
   @Singular("shouldHaveValidSFIdFormatOrFailWith")
-  Collection<Tuple3<TypedPropertyGetter<ValidatableT, ID>, ? extends EntityIdInfoT, @Nullable FailureT>>
+  Collection<
+          Tuple3<
+              TypedPropertyGetter<ValidatableT, ID>, ? extends EntityIdInfoT, @Nullable FailureT>>
       shouldHaveValidSFIdFormatForAllOrFailWith;
 }

@@ -6,7 +6,6 @@ import de.cronn.reflection.util.PropertyUtils
 import de.cronn.reflection.util.TypedPropertyGetter
 import io.vavr.Function2
 import io.vavr.Tuple2
-import io.vavr.Tuple3
 import io.vavr.control.Either
 import org.revcloud.vader.specs.specs.BaseSpec
 import org.revcloud.vader.types.validators.ValidatorEtr
@@ -47,15 +46,12 @@ private fun <ValidatableT, FailureT, FieldT> toValidatorEtrs3(
     }
   }
 
-// // MutableList<out Tuple3<TypedPropertyGetter<ValidatableT, ID>, out Any, FailureT?>>,
-// fieldEval: Function2<ID, out Any, Boolean>?
-
 @JvmSynthetic
 private fun <ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
-  config: IDConfig<ValidatableT, FailureT, EntityInfoT>,
+  config: IDConfig<ValidatableT, FailureT, EntityInfoT>?,
   fieldEvalFallback: (ID) -> Boolean
-): List<ValidatorEtr<ValidatableT, FailureT>> {
-  return config.shouldHaveValidSFIdFormatForAllOrFailWith?.mapNotNull { (fieldMapper, entityInfo, failure) ->
+): List<ValidatorEtr<ValidatableT, FailureT>> =
+  config?.shouldHaveValidSFIdFormatForAllOrFailWith?.mapNotNull { (fieldMapper, entityInfo, failure) ->
     fieldMapper?.let {
       ValidatorEtr { validatable ->
         validatable.map(fieldMapper::get)
@@ -71,7 +67,6 @@ private fun <ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
       }
     }
   } ?: emptyList()
-}
 
 @JvmSynthetic
 internal fun <ValidatableT, FailureT> toValidators(
@@ -90,12 +85,6 @@ internal fun <ValidatableT, FailureT> toValidators(
     config.specs.map { it.toValidator() } +
     config.getValidators()
   )
-
-internal fun <ValidatableT, FailureT> someFun(
-  config: BaseValidationConfig<ValidatableT, FailureT>) {
-  val shouldHaveValidSFIdFormatForAllOrFailWith: MutableCollection<out Tuple3<TypedPropertyGetter<ValidatableT, ID>, out Any, FailureT?>>? =
-    config.withIdConfig.shouldHaveValidSFIdFormatForAllOrFailWith
-}
 
 private fun <FailureT, FieldT, ValidatableT> applyFailureFn(
   failureFn: Function2<String, FieldT, FailureT>?,

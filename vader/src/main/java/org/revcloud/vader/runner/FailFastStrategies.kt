@@ -24,9 +24,9 @@ internal typealias FailFastForAnyNestedWithPair<ValidatableT, FailureT, Containe
 internal typealias FailFastForContainer<ValidatableT, FailureT> = (ValidatableT) -> Optional<FailureT>
 
 @JvmSynthetic
-internal fun <ValidatableT, FailureT> failFast(
+internal inline fun <ValidatableT, FailureT> failFast(
   validationConfig: ValidationConfig<ValidatableT, FailureT?>,
-  throwableMapper: (Throwable) -> FailureT?
+  crossinline throwableMapper: (Throwable) -> FailureT?
 ): FailFast<ValidatableT, FailureT> = { validatable: ValidatableT ->
   findFirstFailure(right(validatable), toValidators(validationConfig), throwableMapper)
     .toFailureOptional()
@@ -43,10 +43,10 @@ internal fun <ValidatableT, FailureT> failFast(
  * @return
  */
 @JvmSynthetic
-internal fun <FailureT, ValidatableT> failFastForEach(
+internal inline fun <FailureT, ValidatableT> failFastForEach(
   batchValidationConfig: BaseBatchValidationConfig<ValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
-  throwableMapper: (Throwable) -> FailureT?
+  crossinline throwableMapper: (Throwable) -> FailureT?
 ): FailFastForEach<ValidatableT, FailureT> = { validatables: Collection<ValidatableT?> ->
   findAndFilterInvalids(
     validatables,
@@ -56,10 +56,10 @@ internal fun <FailureT, ValidatableT> failFastForEach(
 }
 
 @JvmSynthetic
-internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEachBatchOfBatch1(
+internal inline fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEachBatchOfBatch1(
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
-  throwableMapper: (Throwable) -> FailureT?
+  crossinline throwableMapper: (Throwable) -> FailureT?
 ): FailFastForEachNestedBatch1<ContainerValidatableT, FailureT> =
   { containerValidatables: Collection<ContainerValidatableT?> ->
     failFastForEach(
@@ -89,10 +89,10 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEa
   }
 
 @JvmSynthetic
-internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForAnyNested(
+internal inline fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForAnyNested(
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
-  throwableMapper: (Throwable) -> FailureT?
+  crossinline throwableMapper: (Throwable) -> FailureT?
 ): FailFastForAny<ContainerValidatableT, FailureT> =
   { containerValidatables: Collection<ContainerValidatableT?> ->
     failFastForAnyNested<ContainerValidatableT, MemberValidatableT, FailureT, Nothing, Nothing>(
@@ -104,12 +104,12 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForAn
   }
 
 @JvmSynthetic
-internal fun <ContainerValidatableT, MemberValidatableT, FailureT, ContainerPairT, MemberPairT> failFastForAnyNested(
+internal inline fun <ContainerValidatableT, MemberValidatableT, FailureT, ContainerPairT, MemberPairT> failFastForAnyNested(
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
-  throwableMapper: (Throwable) -> FailureT?,
-  containerPairForInvalidMapper: (ContainerValidatableT?) -> ContainerPairT? = { null },
-  memberPairForInvalidMapper: (MemberValidatableT?) -> MemberPairT? = { null }
+  crossinline throwableMapper: (Throwable) -> FailureT?,
+  crossinline containerPairForInvalidMapper: (ContainerValidatableT?) -> ContainerPairT? = { null },
+  crossinline memberPairForInvalidMapper: (MemberValidatableT?) -> MemberPairT? = { null }
 ): FailFastForAnyNestedWithPair<ContainerValidatableT, FailureT, ContainerPairT, MemberPairT> =
   { containerValidatables: Collection<ContainerValidatableT?> ->
     failFastForAny(
@@ -140,10 +140,10 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT, ContainerPair
 
 // TODO 13/05/21 gopala.akshintala: Reconsider any advantage of having this as a HOF 
 @JvmSynthetic
-internal fun <ValidatableT, FailureT> failFastForAny(
+internal inline fun <ValidatableT, FailureT> failFastForAny(
   batchValidationConfig: BaseBatchValidationConfig<ValidatableT, FailureT?>,
   nullValidatable: FailureT?,
-  throwableMapper: (Throwable) -> FailureT?
+  crossinline throwableMapper: (Throwable) -> FailureT?
 ): FailFastForAny<ValidatableT, FailureT> = { validatables ->
   failFastForAny<ValidatableT, FailureT, Nothing>(
     batchValidationConfig,
@@ -153,11 +153,11 @@ internal fun <ValidatableT, FailureT> failFastForAny(
 }
 
 @JvmSynthetic
-internal fun <ValidatableT, FailureT, PairT> failFastForAny(
+internal inline fun <ValidatableT, FailureT, PairT> failFastForAny(
   batchValidationConfig: BaseBatchValidationConfig<ValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
-  throwableMapper: (Throwable) -> FailureT?,
-  pairForInvalidMapper: (ValidatableT?) -> PairT? = { null }
+  crossinline throwableMapper: (Throwable) -> FailureT?,
+  crossinline pairForInvalidMapper: (ValidatableT?) -> PairT? = { null }
 ): FailFastForAnyWithPair<ValidatableT, FailureT, PairT> = { validatables ->
   findFirstInvalid(
     validatables,
@@ -173,9 +173,9 @@ internal fun <ValidatableT, FailureT, PairT> failFastForAny(
 }
 
 @JvmSynthetic
-internal fun <ContainerValidatableT, FailureT> failFastForContainer(
+internal inline fun <ContainerValidatableT, FailureT> failFastForContainer(
   containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
-  throwableMapper: (Throwable) -> FailureT?
+  crossinline throwableMapper: (Throwable) -> FailureT?
 ): FailFastForContainer<ContainerValidatableT, FailureT> = { container: ContainerValidatableT ->
   validateBatchSize(container, containerValidationConfig).or {
     findFirstFailure(
@@ -187,9 +187,9 @@ internal fun <ContainerValidatableT, FailureT> failFastForContainer(
 }
 
 @JvmSynthetic
-internal fun <ContainerValidatableT, NestedContainerValidatableT, FailureT> failFastForContainer(
+internal inline fun <ContainerValidatableT, NestedContainerValidatableT, FailureT> failFastForContainer(
   containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
-  throwableMapper: (Throwable) -> FailureT?
+  crossinline throwableMapper: (Throwable) -> FailureT?
 ): FailFastForContainer<ContainerValidatableT, FailureT> = { container: ContainerValidatableT ->
   validateBatchSize(container, containerValidationConfig)
     .or {

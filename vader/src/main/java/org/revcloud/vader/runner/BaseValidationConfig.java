@@ -70,8 +70,8 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
   protected Map<
           TypedPropertyGetter<ValidatableT, ID>, @NonNull Function2<String, ID, @Nullable FailureT>>
       absentOrHaveValidSFIdFormatOrFailWithFn;
-  
-  protected IDConfig<ValidatableT, FailureT, ?> withIdConfig;
+
+  @Nullable protected IDConfig<ValidatableT, FailureT, ?> withIdConfig;
 
   @Nullable protected Specs<ValidatableT, FailureT> specify;
 
@@ -88,7 +88,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
 
   @Singular("withValidator")
   Map<? extends Validator<? super ValidatableT, FailureT>, @Nullable FailureT> withValidator;
-  
+
   // ! TODO 05/08/21 gopala.akshintala: Migrate them to be used with custom assertions
   List<BaseSpec<ValidatableT, FailureT>> getSpecs() {
     return BaseValidationConfigEx.getSpecsEx(this);

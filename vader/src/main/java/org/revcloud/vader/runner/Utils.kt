@@ -15,10 +15,10 @@ import java.util.Optional
 // TODO 29/07/21 gopala.akshintala: Split this class into individual utils 
 
 @JvmSynthetic
-internal fun <FailureT, ValidatableT> findFirstFailure(
+internal inline fun <FailureT, ValidatableT> findFirstFailure(
   validatable: Either<FailureT?, ValidatableT?>,
   validators: Collection<ValidatorEtr<ValidatableT?, FailureT?>>,
-  throwableMapper: (Throwable) -> FailureT?,
+  crossinline throwableMapper: (Throwable) -> FailureT?,
 ): Either<FailureT?, ValidatableT?>? =
   if (validatable.isLeft) validatable
   else fireValidators(
@@ -33,18 +33,18 @@ internal fun <FailureT, ValidatableT> findFirstFailure(
  * @return - Sequence of validator results
  */
 @JvmSynthetic
-internal fun <FailureT, ValidatableT> fireValidators(
+internal inline fun <FailureT, ValidatableT> fireValidators(
   validatable: Either<FailureT?, ValidatableT?>,
   validatorEtrs: Collection<ValidatorEtr<ValidatableT, FailureT>>,
-  throwableMapper: (Throwable) -> FailureT?,
+  crossinline throwableMapper: (Throwable) -> FailureT?,
 ): Sequence<Either<FailureT?, ValidatableT?>> =
   validatorEtrs.asSequence().map { fireValidator(validatable, it, throwableMapper) }
 
 @JvmSynthetic
-private fun <FailureT, ValidatableT> fireValidator(
+private inline fun <FailureT, ValidatableT> fireValidator(
   validatable: Either<FailureT?, ValidatableT?>,
   validatorEtr: ValidatorEtr<ValidatableT, FailureT>,
-  throwableMapper: (Throwable) -> FailureT?,
+  crossinline throwableMapper: (Throwable) -> FailureT?,
 ): Either<FailureT?, ValidatableT?> =
   liftTry(validatorEtr).apply(validatable)
     .fold({ left<FailureT?, ValidatableT?>(throwableMapper(it)) }) { it }
@@ -170,11 +170,11 @@ internal fun <ValidatableT, FailureT> findFirstInvalid(
     nullValidatable
   ).map { it._2 }
 
-internal fun <ValidatableT, FailureT, PairT> findFirstInvalid(
+internal inline fun <ValidatableT, FailureT, PairT> findFirstInvalid(
   validatables: Collection<ValidatableT?>,
   filterDuplicatesConfigs: Collection<FilterDuplicatesConfig<ValidatableT, FailureT?>>,
   nullValidatable: FailureT? = null,
-  pairForInvalidMapper: (ValidatableT?) -> PairT? = { null }
+  crossinline pairForInvalidMapper: (ValidatableT?) -> PairT? = { null }
 ): Optional<Tuple2<PairT?, FailureT?>> =
   filterDuplicatesConfigs.asSequence().map {
     findFirstInvalid(
@@ -188,7 +188,7 @@ internal fun <ValidatableT, FailureT, PairT> findFirstInvalid(
 /**
  * This gives the result paired up with an identifier.
  */
-internal fun <ValidatableT, FailureT, PairT> findFirstInvalid(
+internal inline fun <ValidatableT, FailureT, PairT> findFirstInvalid(
   validatables: Collection<ValidatableT?>,
   filterDuplicatesConfig: FilterDuplicatesConfig<ValidatableT, FailureT?>,
   nullValidatable: FailureT? = null,
