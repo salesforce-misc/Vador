@@ -241,6 +241,7 @@ tasks {
     ignoreFailures = false
     autoCorrect = false
     buildUponDefaultConfig = true
+    basePath = projectDir.toString()
     setSource(subprojects.map { File("${it.name}/src/main") })
     include("**/*.kt")
     include("**/*.kts")
