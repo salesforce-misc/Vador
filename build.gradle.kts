@@ -2,6 +2,7 @@ import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep.XML
 import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
 import io.gitlab.arturbosch.detekt.Detekt
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm")
@@ -125,8 +126,12 @@ subprojects {
       isFailOnError = false
       options.encoding("UTF-8")
     }
-    compileKotlin.get().kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
-    compileTestKotlin.get().kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+    withType<KotlinCompile> {
+      kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
+        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+      }
+    }
     test.get().useJUnitPlatform()
     jacocoTestReport {
       reports {

@@ -26,6 +26,7 @@ endif::[]
 
 * This is a simple Gradle project and has its own Gradle wrapper. So nothing to install.
 * You need to add your nexus credentials in `~/.gradle/gradle.properties` file (create file if not present), which are used by your local gradle to connect to nexus for downloading artifacts.
+* Follow these simple instructions from https://git.soma.salesforce.com/MoBE/gradle-init-scripts/[here] to setup gradle to connect to Nexus. 
 
 [source,properties]
 ----
