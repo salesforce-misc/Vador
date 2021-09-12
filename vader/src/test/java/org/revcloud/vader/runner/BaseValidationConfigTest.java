@@ -1,7 +1,7 @@
 package org.revcloud.vader.runner;
 
-import static consumer.failure.ValidationFailure.INVALID_UDD_ID;
 import static consumer.failure.ValidationFailure.INVALID_OPTIONAL_UDD_ID;
+import static consumer.failure.ValidationFailure.INVALID_UDD_ID;
 import static consumer.failure.ValidationFailure.NONE;
 import static io.vavr.control.Either.left;
 import static io.vavr.control.Either.right;
@@ -83,18 +83,19 @@ class BaseValidationConfigTest {
                     .shouldHaveValidSFIdFormatOrFailWith(
                         Tuple.of(Bean::getSfIdFormatField1, entityInfo, INVALID_UDD_ID))
                     .absentOrHaveValidSFIdFormatOrFailWith(
-                        Tuple.of(Bean::getOptionalSfIdFormatField, entityInfo, INVALID_OPTIONAL_UDD_ID)
-                    )
+                        Tuple.of(
+                            Bean::getOptionalSfIdFormatField, entityInfo, INVALID_OPTIONAL_UDD_ID))
                     .prepare())
             .prepare();
     final var validBean = new Bean(null, new ID("validId"), null);
-    final var validatables = List.of(
-        validBean,
-        new Bean(null, new ID("invalidId"), null),
-        new Bean(null, new ID("validId"), new ID("invalidId")));
-    final var results = VaderBatch.validateAndFailFastForEach(
-        validatables, config);
-    assertThat(results).containsExactly(right(validBean), left(INVALID_UDD_ID), left(INVALID_OPTIONAL_UDD_ID));
+    final var validatables =
+        List.of(
+            validBean,
+            new Bean(null, new ID("invalidId"), null),
+            new Bean(null, new ID("validId"), new ID("invalidId")));
+    final var results = VaderBatch.validateAndFailFastForEach(validatables, config);
+    assertThat(results)
+        .containsExactly(right(validBean), left(INVALID_UDD_ID), left(INVALID_OPTIONAL_UDD_ID));
   }
 
   private static boolean uddUtil(ID idToValidate, EntityInfo entityInfo) {

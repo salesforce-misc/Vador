@@ -21,7 +21,7 @@ plugins {
 
 allprojects {
   group = "com.salesforce.ccspayments"
-  version = "2.5.1-SNAPSHOT"
+  version = "2.6.1"
   repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
@@ -79,7 +79,7 @@ subprojects {
     lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
 
     val testImplementation by configurations
-    testImplementation(platform("org.junit:junit-bom:5.8.0-M1"))
+    testImplementation(platform("org.junit:junit-bom:5.8.0"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     val kotestVersion = "4.6.1"
