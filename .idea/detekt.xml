@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DetektProjectConfiguration">
+    <enableDetekt>true</enableDetekt>
+    <enableFormatting>true</enableFormatting>
+    <configPaths>config/detekt/detekt.yml</configPaths>
+    <baselinePath>config/baseline.xml</baselinePath>
+    <pluginPaths>/usr/local/bin/ktlint</pluginPaths>
+  </component>
+</project>

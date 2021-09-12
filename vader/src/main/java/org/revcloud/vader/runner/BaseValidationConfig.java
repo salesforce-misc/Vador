@@ -41,36 +41,40 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
           @NonNull Function2<String, Object, @Nullable FailureT>>
       shouldHaveFieldOrFailWithFn;
 
+  /** <--- ID --- */
   @Singular("shouldHaveValidSFIdFormatOrFailWith")
-  protected Map<TypedPropertyGetter<ValidatableT, ID>, @Nullable FailureT>
+  protected Map<TypedPropertyGetter<ValidatableT, @Nullable ID>, @Nullable FailureT>
       shouldHaveValidSFIdFormatForAllOrFailWith;
 
   @Nullable
   protected Tuple2<
-          @NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, ID>>,
-          @NonNull Function2<String, ID, @Nullable FailureT>>
+          @NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, @Nullable ID>>,
+          @NonNull Function2<String, @Nullable ID, @Nullable FailureT>>
       shouldHaveValidSFIdFormatForAllOrFailWithFn;
 
   @Singular("shouldHaveValidSFIdFormatOrFailWithFn")
   protected Map<
-          TypedPropertyGetter<ValidatableT, ID>, @NonNull Function2<String, ID, @Nullable FailureT>>
+          TypedPropertyGetter<ValidatableT, ID>,
+          @NonNull Function2<String, @Nullable ID, @Nullable FailureT>>
       shouldHaveValidSFIdFormatOrFailWithFn;
 
   @Singular("absentOrHaveValidSFIdFormatOrFailWith")
-  protected Map<TypedPropertyGetter<ValidatableT, ID>, @Nullable FailureT>
+  protected Map<TypedPropertyGetter<ValidatableT, @Nullable ID>, @Nullable FailureT>
       absentOrHaveValidSFIdFormatForAllOrFailWith;
 
   @Nullable
   protected Tuple2<
           @NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, ID>>,
-          @NonNull Function2<String, ID, @Nullable FailureT>>
+          @NonNull Function2<String, @Nullable ID, @Nullable FailureT>>
       absentOrHaveValidSFIdFormatForAllOrFailWithFn;
 
   @Singular("absentOrHaveValidSFIdFormatOrFailWithFn")
   protected Map<
-          TypedPropertyGetter<ValidatableT, ID>, @NonNull Function2<String, ID, @Nullable FailureT>>
+          TypedPropertyGetter<ValidatableT, ID>,
+          @NonNull Function2<String, @Nullable ID, @Nullable FailureT>>
       absentOrHaveValidSFIdFormatOrFailWithFn;
 
+  /** --- ID ---> */
   @Nullable protected IDConfig<ValidatableT, FailureT, ?> withIdConfig;
 
   @Nullable protected Specs<ValidatableT, FailureT> specify;

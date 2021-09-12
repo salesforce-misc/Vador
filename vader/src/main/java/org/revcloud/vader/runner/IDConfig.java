@@ -22,6 +22,46 @@ public class IDConfig<ValidatableT, FailureT, EntityIdInfoT> {
   @Singular("shouldHaveValidSFIdFormatOrFailWith")
   Collection<
           Tuple3<
-              TypedPropertyGetter<ValidatableT, ID>, ? extends EntityIdInfoT, @Nullable FailureT>>
+              @NonNull TypedPropertyGetter<ValidatableT, @Nullable ID>,
+              ? extends EntityIdInfoT,
+              @Nullable FailureT>>
       shouldHaveValidSFIdFormatForAllOrFailWith;
+
+  @Nullable
+  Tuple3<
+          @NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, @Nullable ID>>,
+          ? extends EntityIdInfoT,
+          @NonNull Function2<String, @Nullable ID, @Nullable FailureT>>
+      shouldHaveValidSFIdFormatForAllOrFailWithFn;
+
+  @Singular("shouldHaveValidSFIdFormatOrFailWithFn")
+  Collection<
+          Tuple3<
+              @NonNull TypedPropertyGetter<ValidatableT, @Nullable ID>,
+              ? extends EntityIdInfoT,
+              @NonNull Function2<String, @Nullable ID, @Nullable FailureT>>>
+      shouldHaveValidSFIdFormatOrFailWithFn;
+
+  @Singular("absentOrHaveValidSFIdFormatOrFailWith")
+  Collection<
+          Tuple3<
+              @NonNull TypedPropertyGetter<ValidatableT, @Nullable ID>,
+              ? extends EntityIdInfoT,
+              @Nullable FailureT>>
+      absentOrHaveValidSFIdFormatForAllOrFailWith;
+
+  @Nullable
+  Tuple3<
+          @NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, ID>>,
+          ? extends EntityIdInfoT,
+          @NonNull Function2<String, @Nullable ID, @Nullable FailureT>>
+      absentOrHaveValidSFIdFormatForAllOrFailWithFn;
+
+  @Singular("absentOrHaveValidSFIdFormatOrFailWithFn")
+  Collection<
+          Tuple3<
+              @NonNull TypedPropertyGetter<ValidatableT, @Nullable ID>,
+              ? extends EntityIdInfoT,
+              @NonNull Function2<String, @Nullable ID, @Nullable FailureT>>>
+      absentOrHaveValidSFIdFormatOrFailWithFn;
 }

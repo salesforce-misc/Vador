@@ -1,7 +1,10 @@
 package org.revcloud.vader.runner;
 
 import static consumer.failure.ValidationFailure.INVALID_UDD_ID;
+import static consumer.failure.ValidationFailure.INVALID_OPTIONAL_UDD_ID;
 import static consumer.failure.ValidationFailure.NONE;
+import static io.vavr.control.Either.left;
+import static io.vavr.control.Either.right;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.force.swag.id.ID;
@@ -43,12 +46,12 @@ class BaseValidationConfigTest {
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate()
             .shouldHaveFieldOrFailWith(Bean::getRequiredField, NONE)
-            .shouldHaveValidSFIdFormatOrFailWith(Bean::getSfIdFormatField, NONE)
+            .shouldHaveValidSFIdFormatOrFailWith(Bean::getSfIdFormatField1, NONE)
             .absentOrHaveValidSFIdFormatOrFailWith(Bean::getOptionalSfIdFormatField, NONE)
             .prepare();
     assertThat(validationConfig.getRequiredFieldNames(Bean.class)).contains(Fields.requiredField);
     assertThat(validationConfig.getRequiredFieldNamesForSFIdFormat(Bean.class))
-        .contains(Fields.sfIdFormatField);
+        .contains(Fields.sfIdFormatField1);
     assertThat(validationConfig.getNonRequiredFieldNamesForSFIdFormat(Bean.class))
         .contains(Fields.optionalSfIdFormatField);
   }
@@ -62,11 +65,36 @@ class BaseValidationConfigTest {
                 IDConfig.<Bean, ValidationFailure, EntityInfo>toValidate()
                     .withIdValidator(BaseValidationConfigTest::uddUtil)
                     .shouldHaveValidSFIdFormatOrFailWith(
-                        Tuple.of(Bean::getSfIdFormatField, entityInfo, INVALID_UDD_ID))
+                        Tuple.of(Bean::getSfIdFormatField1, entityInfo, INVALID_UDD_ID))
                     .prepare())
             .prepare();
     final var result = Vader.validateAndFailFast(new Bean(null, new ID("invalidId"), null), config);
     assertThat(result).contains(INVALID_UDD_ID);
+  }
+
+  @Test
+  void idConfigForBatch() {
+    final var entityInfo = new EntityInfo();
+    final var config =
+        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+            .withIdConfig(
+                IDConfig.<Bean, ValidationFailure, EntityInfo>toValidate()
+                    .withIdValidator(BaseValidationConfigTest::uddUtil)
+                    .shouldHaveValidSFIdFormatOrFailWith(
+                        Tuple.of(Bean::getSfIdFormatField1, entityInfo, INVALID_UDD_ID))
+                    .absentOrHaveValidSFIdFormatOrFailWith(
+                        Tuple.of(Bean::getOptionalSfIdFormatField, entityInfo, INVALID_OPTIONAL_UDD_ID)
+                    )
+                    .prepare())
+            .prepare();
+    final var validBean = new Bean(null, new ID("validId"), null);
+    final var validatables = List.of(
+        validBean,
+        new Bean(null, new ID("invalidId"), null),
+        new Bean(null, new ID("validId"), new ID("invalidId")));
+    final var results = VaderBatch.validateAndFailFastForEach(
+        validatables, config);
+    assertThat(results).containsExactly(right(validBean), left(INVALID_UDD_ID), left(INVALID_OPTIONAL_UDD_ID));
   }
 
   private static boolean uddUtil(ID idToValidate, EntityInfo entityInfo) {
@@ -79,7 +107,7 @@ class BaseValidationConfigTest {
   // tag::flat-bean[]
   public static class Bean {
     String requiredField;
-    ID sfIdFormatField;
+    ID sfIdFormatField1;
     ID optionalSfIdFormatField;
   }
   // end::flat-bean[]

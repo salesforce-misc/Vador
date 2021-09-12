@@ -31,11 +31,11 @@ allprojects {
     kotlin {
       target("src/main/java/**/*.kt", "src/test/java/**/*.kt")
       targetExclude("$buildDir/generated/**/*.*")
-      ktlint("0.42.0").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
+      ktlint("0.42.1").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
     }
     kotlinGradle {
       target("*.gradle.kts")
-      ktlint("0.42.0").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
+      ktlint("0.42.1").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
     }
     java {
       target("src/main/java/**/*.java", "src/test/java/**/*.java")
@@ -52,7 +52,7 @@ allprojects {
       target("*.xml")
       eclipseWtp(XML)
     }
-    format("markdown") {
+    format("documentation") {
       target("*.md", "*.adoc")
       trimTrailingWhitespace()
       indentWithSpaces(2)
