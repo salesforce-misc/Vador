@@ -68,6 +68,7 @@ void failFastWithRequiredFieldsMissings() {
               Map.of(
                   Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION,
                   Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION))
+          .withValidatorEtr(beanEtr -> beanEtr.filterOrElse(bean -> bean!=null, ignore -> NOTHING_TO_VALIDATE))
           .prepare();
 
   final var validatableWithBlankReqField = new Bean(0, "", null, null, List.of("1"));

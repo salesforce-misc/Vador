@@ -17,6 +17,7 @@ import consumer.failure.ValidationFailureMessage;
 import io.vavr.Tuple;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -43,6 +44,8 @@ class ValidationConfigTest {
                 Map.of(
                     Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION,
                     Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION))
+            .withValidatorEtr(
+                beanEtr -> beanEtr.filterOrElse(Objects::nonNull, ignore -> NOTHING_TO_VALIDATE))
             .prepare();
 
     final var validatableWithBlankReqField = new Bean(0, "", null, null, List.of("1"));
