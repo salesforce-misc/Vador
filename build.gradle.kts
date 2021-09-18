@@ -247,7 +247,7 @@ tasks {
     autoCorrect = false
     buildUponDefaultConfig = true
     basePath = projectDir.toString()
-    setSource(subprojects.map { File("${it.name}/src/main") })
+    setSource(subprojects.map { it.the<SourceSetContainer>()["main"].allSource.srcDirs })
     include("**/*.kt")
     include("**/*.kts")
     exclude("**/resources/**")

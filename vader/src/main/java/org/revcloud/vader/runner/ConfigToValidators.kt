@@ -50,9 +50,9 @@ private fun <ValidatableT, FailureT, FieldT> toValidatorEtrs3(
   }
 
 @JvmSynthetic
-private inline fun <ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
+private fun <ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
   config: IDConfig<ValidatableT, FailureT, EntityInfoT>?,
-  crossinline idValidatorFallback: (ID?) -> Boolean
+  idValidatorFallback: (ID?) -> Boolean
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   toValidators11(
     config?.shouldHaveValidSFIdFormatForAllOrFailWith,
@@ -92,10 +92,10 @@ private inline fun <ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs
     )
 
 @JvmSynthetic
-private inline fun <EntityInfoT, FailureT, ValidatableT> toValidators11(
+private fun <EntityInfoT, FailureT, ValidatableT> toValidators11(
   config: Collection<Tuple3<TypedPropertyGetter<ValidatableT, ID?>, out EntityInfoT, FailureT?>>?,
   idValidator: Function2<ID, EntityInfoT, Boolean>?,
-  crossinline idValidatorFallback: (ID?) -> Boolean,
+  idValidatorFallback: (ID?) -> Boolean,
   optionalId: Boolean
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   config?.map { (idFieldMapper, entityInfo, failure) ->
@@ -108,10 +108,10 @@ private inline fun <EntityInfoT, FailureT, ValidatableT> toValidators11(
   } ?: emptyList()
 
 @JvmSynthetic
-private inline fun <EntityInfoT, FailureT, ValidatableT> toValidators12(
+private fun <EntityInfoT, FailureT, ValidatableT> toValidators12(
   config: Tuple3<Collection<TypedPropertyGetter<ValidatableT, ID?>>, out EntityInfoT, Function2<String, ID?, FailureT?>>?,
   idValidator: Function2<ID, EntityInfoT, Boolean>?,
-  crossinline idValidatorFallback: (ID?) -> Boolean,
+  idValidatorFallback: (ID?) -> Boolean,
   optionalId: Boolean
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   config?.let { (idFieldMappers, entityInfo, failureFn) ->
@@ -127,10 +127,10 @@ private inline fun <EntityInfoT, FailureT, ValidatableT> toValidators12(
   } ?: emptyList()
 
 @JvmSynthetic
-private inline fun <EntityInfoT, FailureT, ValidatableT> toValidators13(
+private fun <EntityInfoT, FailureT, ValidatableT> toValidators13(
   config: Collection<Tuple3<TypedPropertyGetter<ValidatableT, ID?>, out EntityInfoT, Function2<String, ID?, FailureT?>>>?,
   idValidator: Function2<ID, EntityInfoT, Boolean>?,
-  crossinline idValidatorFallback: (ID?) -> Boolean,
+  idValidatorFallback: (ID?) -> Boolean,
   optionalId: Boolean
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   config?.map { (idFieldMapper, entityInfo, failureFn) ->
@@ -144,10 +144,10 @@ private inline fun <EntityInfoT, FailureT, ValidatableT> toValidators13(
   } ?: emptyList()
 
 @JvmSynthetic
-private inline fun <EntityInfoT> validateId(
+private fun <EntityInfoT> validateId(
   idValidator: Function2<ID, EntityInfoT, Boolean>?,
   entityInfo: EntityInfoT,
-  crossinline idValidatorFallback: (ID?) -> Boolean,
+  idValidatorFallback: (ID?) -> Boolean,
   optionalId: Boolean
 ) = { id: ID? ->
   when {
