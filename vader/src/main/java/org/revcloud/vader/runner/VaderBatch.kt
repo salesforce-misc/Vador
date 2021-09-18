@@ -19,24 +19,24 @@ import java.util.Optional
 fun <FailureT, ValidatableT> validateAndFailFastForEach(
   validatables: List<ValidatableT?>,
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
-  nullValidatable: FailureT? = null,
+  failureForNullValidatable: FailureT? = null,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): List<Either<FailureT?, ValidatableT?>> =
-  failFastForEach(batchValidationConfig, nullValidatable, throwableMapper)(validatables)
+  failFastForEach(batchValidationConfig, failureForNullValidatable, throwableMapper)(validatables)
 
 @JvmOverloads
 fun <FailureT, ValidatableT, PairT> validateAndFailFastForEach(
   validatables: List<ValidatableT?>,
   pairForInvalidMapper: (ValidatableT?) -> PairT?,
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
-  nullValidatable: FailureT? = null,
+  failureForNullValidatable: FailureT? = null,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): List<Either<Tuple2<PairT?, FailureT?>, ValidatableT?>> {
   val orderedValidationResults: List<Either<FailureT?, ValidatableT?>> =
     validateAndFailFastForEach(
       validatables,
       batchValidationConfig,
-      nullValidatable,
+      failureForNullValidatable,
       throwableMapper
     )
   return pairInvalidsWithIdentifier(
@@ -61,14 +61,14 @@ fun <FailureT, ContainerValidatableT, MemberValidatableT, ContainerPairT, Member
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
   containerPairForInvalidMapper: (ContainerValidatableT?) -> ContainerPairT?,
   memberPairForInvalidMapper: (MemberValidatableT?) -> MemberPairT?,
-  nullValidatable: FailureT? = null,
+  failureForNullValidatable: FailureT? = null,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): List<Either<FFEBatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>, ContainerValidatableT?>> {
   val orderedValidationResults: List<Either<FFEBatchOfBatchFailure<FailureT?>, ContainerValidatableT?>> =
     validateAndFailFastForEach(
       validatables,
       batchOfBatch1ValidationConfig,
-      nullValidatable,
+      failureForNullValidatable,
       throwableMapper
     )
   return pairInvalidsWithIdentifier(
@@ -110,10 +110,10 @@ private fun <FailureT, ContainerValidatableT, MemberValidatableT, ContainerPairT
 fun <FailureT, ContainerValidatableT, MemberValidatableT> validateAndFailFastForEach(
   validatables: List<ContainerValidatableT?>,
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
-  nullValidatable: FailureT? = null,
+  failureForNullValidatable: FailureT? = null,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): List<Either<FFEBatchOfBatchFailure<FailureT?>, ContainerValidatableT?>> =
-  failFastForEachBatchOfBatch1(batchOfBatch1ValidationConfig, nullValidatable, throwableMapper)(validatables)
+  failFastForEachBatchOfBatch1(batchOfBatch1ValidationConfig, failureForNullValidatable, throwableMapper)(validatables)
 
 /** == FOR ANY == */
 
@@ -121,12 +121,12 @@ fun <FailureT, ContainerValidatableT, MemberValidatableT> validateAndFailFastFor
 fun <FailureT, ContainerValidatableT, MemberValidatableT> validateAndFailFastForAny(
   validatables: List<ContainerValidatableT?>,
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
-  nullValidatable: FailureT? = null,
+  failureForNullValidatable: FailureT? = null,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> =
   failFastForAnyNested(
     batchOfBatch1ValidationConfig,
-    nullValidatable,
+    failureForNullValidatable,
     throwableMapper
   )(validatables)
 
@@ -136,12 +136,12 @@ fun <FailureT, ContainerValidatableT, MemberValidatableT, ContainerPairT, Member
   containerPairForInvalidMapper: (ContainerValidatableT?) -> ContainerPairT?,
   memberPairForInvalidMapper: (MemberValidatableT?) -> MemberPairT?,
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
-  nullValidatable: FailureT? = null,
+  failureForNullValidatable: FailureT? = null,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FFABatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>> =
   failFastForAnyNested(
     batchOfBatch1ValidationConfig,
-    nullValidatable,
+    failureForNullValidatable,
     throwableMapper,
     containerPairForInvalidMapper,
     memberPairForInvalidMapper
@@ -151,10 +151,10 @@ fun <FailureT, ContainerValidatableT, MemberValidatableT, ContainerPairT, Member
 fun <FailureT, ValidatableT> validateAndFailFastForAny(
   validatables: List<ValidatableT?>,
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
-  nullValidatable: FailureT? = null,
+  failureForNullValidatable: FailureT? = null,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> =
-  failFastForAny(batchValidationConfig, nullValidatable, throwableMapper)(validatables)
+  failFastForAny(batchValidationConfig, failureForNullValidatable, throwableMapper)(validatables)
 
 /**
  * This returns the first failures of first invalid item in a batch and pairs it with an identifier using the `pairForInvalidMapper`
@@ -165,10 +165,10 @@ fun <FailureT, ValidatableT, PairT> validateAndFailFastForAny(
   validatables: List<ValidatableT?>,
   pairForInvalidMapper: (ValidatableT?) -> PairT?,
   batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
-  nullValidatable: FailureT? = null,
+  failureForNullValidatable: FailureT? = null,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<Tuple2<PairT?, FailureT?>> =
-  failFastForAny(batchValidationConfig, nullValidatable, throwableMapper, pairForInvalidMapper)(validatables)
+  failFastForAny(batchValidationConfig, failureForNullValidatable, throwableMapper, pairForInvalidMapper)(validatables)
 
 // --- ERROR ACCUMULATION ---
 // TODO 20/05/21 gopala.akshintala: Implement parity with Fail Fast

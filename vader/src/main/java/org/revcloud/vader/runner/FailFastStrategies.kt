@@ -142,12 +142,12 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT, ContainerPair
 @JvmSynthetic
 internal fun <ValidatableT, FailureT> failFastForAny(
   batchValidationConfig: BaseBatchValidationConfig<ValidatableT, FailureT?>,
-  nullValidatable: FailureT?,
+  failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForAny<ValidatableT, FailureT> = { validatables ->
   failFastForAny<ValidatableT, FailureT, Nothing>(
     batchValidationConfig,
-    nullValidatable,
+    failureForNullValidatable,
     throwableMapper
   )(validatables).map { it._2 }
 }
