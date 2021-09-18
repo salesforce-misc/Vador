@@ -12,7 +12,7 @@ endif::[]
 :toc-placement: preamble
 :sourcedir: ../../vader/src/main/java
 :testdir: ../../vader/src/test/java
-:imagesdir: ../../images
+:imagesdir: ../images
 
 Vader has a powerful and declarative Configuration DSL.
 A config object is 1-1 mapped with a Data Structure, and holds all the information/requirements/specifications required to validate that Data-structure.
@@ -51,8 +51,15 @@ As usual, file a git.soma issue if you have any new and unique use-cases.
 === link:ContainerValidationConfigWith2Levels.adoc[ContainerValidationConfigWith2Levels]
 
 [#_containervalidationconfig_vs_validationconfig]
-== ContainerValidationConfig++*++ Vs ++*++ValidationConfig
-These can be confusing in scenarios like this:
+== `ContainerValidationConfig++*++` Vs `++*++ValidationConfig`
+
+[.lead]
+`ContainerValidationConfig++*++` talks about _what-it-contains_ and `++*++ValidationConfig` talks about _itself_.
+
+Configuration fields like `shouldHaveMinBatchSizeOrFailWith, shouldHaveMaxBatchSizeOrFailWith` won't make sense when a `++*++ValidationConfig` is describing a Bean (or BeanBatch). 
+So these config parameters are separated-out into a different config under the umbrella of `ContainerValidationConfig++*++`
+
+However, these can be confusing in scenarios like this:
 
 [source,java,indent=0,options="nowrap"]
 ----
@@ -79,5 +86,6 @@ ValidationConfig.<ContainerWithMultiBatch, ValidationFailure>toValidate()
   .shouldHaveFieldOrFailWith(ContainerWithMultiBatch::getBatch1, FIELD_MISSING).prepare();
 ----
 
-This similarity may cause confusion as to which one to use. The answer is - "it depends on your intent".
-If you look at the list being empty/`null` as `INVALID_BATCH_SIZE`, go with link:ContainerValidationConfig.adoc[ContainerValidationConfig]. If you look at it as any other mandatory field, go with link:BatchValidationConfig.adoc[BatchValidationConfig]. These configs are separated out to keep this intent clear.
+This similarity may cause confusion as to which one to use. The answer is - *"It depends on your Intent"*.
+If you look at the list being empty/`null` as `INVALID_BATCH_SIZE`, go with link:ContainerValidationConfig.adoc[ContainerValidationConfig]. 
+If you look at it as any other mandatory field, go with link:BatchValidationConfig.adoc[BatchValidationConfig].

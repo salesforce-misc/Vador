@@ -10,7 +10,7 @@ ifdef::env-github[]
 endif::[]
 :toc:
 :toc-placement: preamble
-:imagesdir: ../images
+:imagesdir: images
 
 Vader provides few matchers out of the box to help write Specs.
 These matchers address generic use-cases common among consumers.

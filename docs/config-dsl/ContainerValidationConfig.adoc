@@ -12,7 +12,7 @@ endif::[]
 :toc-placement: preamble
 :sourcedir: ../../vader/src/main/java
 :testdir: ../../vader/src/test/java
-:imagesdir: ../../images/config-dsl
+:imagesdir: ../images/config-dsl
 
 This is handy when validation on a _Batch_ member beans need to run from the context of its container, say `ContainerT`.
 As container has the visibility over all its batch members, currently, the major use-case is declarative configuration of min and max size of _Batch_ members.

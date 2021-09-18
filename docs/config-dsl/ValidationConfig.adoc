@@ -11,7 +11,7 @@ endif::[]
 :toc:
 :sourcedir: ../../vader/src/main/java
 :testdir: ../../vader/src/test/java
-:imagesdir: ../../images/config-dsl
+:imagesdir: ../images/config-dsl
 
 == Flat
 

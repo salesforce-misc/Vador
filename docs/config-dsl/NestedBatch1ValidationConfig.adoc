@@ -12,6 +12,6 @@ endif::[]
 :toc-placement: preamble
 :sourcedir: ../../vader/src/main/java
 :testdir: ../../vader/src/test/java
-:imagesdir: ../../images/config-dsl
+:imagesdir: ../images/config-dsl
 
 If each of your _Batch_ bean, say `List<ContainerT>` HAS-A nested bean say `MemberT`, then their validity is inter-dependent 1:1. Each `ContainerT` in the batch is valid only if the `MemberT` it holds is valid. 

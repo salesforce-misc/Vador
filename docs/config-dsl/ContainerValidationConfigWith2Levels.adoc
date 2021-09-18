@@ -12,7 +12,7 @@ endif::[]
 :toc-placement: preamble
 :sourcedir: ../../vader/src/main/java
 :testdir: ../../vader/src/test/java
-:imagesdir: ../../images/config-dsl
+:imagesdir: ../images/config-dsl
 
 You need this when your container needs to peek 2 levels deep for validations related to one of its batch Container. 
 Think of it as extending/zooming the scope/depth of validation root container, a level more.

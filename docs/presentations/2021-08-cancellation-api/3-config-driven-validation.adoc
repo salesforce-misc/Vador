@@ -10,7 +10,7 @@ ifdef::env-github[]
 endif::[]
 :hide-uri-scheme:
 
-image:../../images/config-spectrum.png[]
+image:../images/config-spectrum.png[]
 
 == Translate your Spike doc to Type-safe code (line-to-line)!
  

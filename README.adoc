@@ -12,7 +12,7 @@ endif::[]
 :toc:
 :toc-placement!:
 :vader-version: 2.5.0
-:imagesdir: images
+:imagesdir: docs/images
 
 image:vader.png[role=center]
 
