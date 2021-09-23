@@ -13,7 +13,7 @@ internal typealias FailFast<ValidatableT, FailureT> = (ValidatableT) -> Optional
 
 internal typealias FailFastForEach<ValidatableT, FailureT> = (Collection<ValidatableT?>) -> List<Either<FailureT?, ValidatableT?>>
 
-internal typealias FailFastForEachNestedBatch1<ValidatableT, FailureT> = (Collection<ValidatableT?>) -> List<Either<FFEBatchOfBatchFailure<FailureT?>, ValidatableT?>>
+internal typealias FailFastForEachBatchOfBatch1<ValidatableT, FailureT> = (Collection<ValidatableT?>) -> List<Either<FFEBatchOfBatchFailure<FailureT?>, ValidatableT?>>
 
 internal typealias FailFastForAny<ValidatableT, FailureT> = (Collection<ValidatableT?>) -> Optional<FailureT>
 
@@ -60,7 +60,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEa
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
-): FailFastForEachNestedBatch1<ContainerValidatableT, FailureT> =
+): FailFastForEachBatchOfBatch1<ContainerValidatableT, FailureT> =
   { containerValidatables: Collection<ContainerValidatableT?> ->
     failFastForEach(
       batchOfBatch1ValidationConfig,
@@ -76,7 +76,8 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEa
             )(members)
           }
           .map { memberResults: List<Either<FailureT?, MemberValidatableT?>> -> memberResults.map { it.flatMap { validContainer } } }
-      }.map { result: Either<FailureT?, List<Either<FailureT?, ContainerValidatableT?>>> ->
+      }
+      .map { result: Either<FailureT?, List<Either<FailureT?, ContainerValidatableT?>>> ->
         result.fold<Either<Either<FailureT?, List<FailureT?>>, ContainerValidatableT?>?>(
           { containerFailure -> left(left(containerFailure)) },
           { memberResults ->
@@ -89,13 +90,13 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEa
   }
 
 @JvmSynthetic
-internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForAnyNested(
+internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForAnyBatchOfBatch1(
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForAny<ContainerValidatableT, FailureT> =
   { containerValidatables: Collection<ContainerValidatableT?> ->
-    failFastForAnyNested<ContainerValidatableT, MemberValidatableT, FailureT, Nothing, Nothing>(
+    failFastForAnyBatchOfBatch1<ContainerValidatableT, MemberValidatableT, FailureT, Nothing, Nothing>(
       batchOfBatch1ValidationConfig,
       failureForNullValidatable,
       throwableMapper
@@ -104,7 +105,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForAn
   }
 
 @JvmSynthetic
-internal fun <ContainerValidatableT, MemberValidatableT, FailureT, ContainerPairT, MemberPairT> failFastForAnyNested(
+internal fun <ContainerValidatableT, MemberValidatableT, FailureT, ContainerPairT, MemberPairT> failFastForAnyBatchOfBatch1(
   batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?,
@@ -191,13 +192,11 @@ internal fun <ContainerValidatableT, NestedContainerValidatableT, FailureT> fail
   containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForContainer<ContainerValidatableT, FailureT> = { container: ContainerValidatableT ->
-  validateBatchSize(container, containerValidationConfig)
-    .or {
-      findFirstFailure(
-        right(container),
-        containerValidationConfig.containerValidators,
-        throwableMapper
-      )
-        .toFailureOptional()
-    }
+  validateBatchSize(container, containerValidationConfig).or {
+    findFirstFailure(
+      right(container),
+      containerValidationConfig.containerValidators,
+      throwableMapper
+    ).toFailureOptional()
+  }
 }

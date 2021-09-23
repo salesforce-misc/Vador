@@ -124,7 +124,7 @@ fun <FailureT, ContainerValidatableT, MemberValidatableT> validateAndFailFastFor
   failureForNullValidatable: FailureT? = null,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> =
-  failFastForAnyNested(
+  failFastForAnyBatchOfBatch1(
     batchOfBatch1ValidationConfig,
     failureForNullValidatable,
     throwableMapper
@@ -139,7 +139,7 @@ fun <FailureT, ContainerValidatableT, MemberValidatableT, ContainerPairT, Member
   failureForNullValidatable: FailureT? = null,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FFABatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>> =
-  failFastForAnyNested(
+  failFastForAnyBatchOfBatch1(
     batchOfBatch1ValidationConfig,
     failureForNullValidatable,
     throwableMapper,

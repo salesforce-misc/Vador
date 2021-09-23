@@ -12,7 +12,7 @@ import io.vavr.kotlin.right
 import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
-// TODO 29/07/21 gopala.akshintala: Split this class into individual utils 
+// TODO 29/07/21 gopala.akshintala: Split this class into individual utils
 
 @JvmSynthetic
 internal fun <FailureT, ValidatableT> findFirstFailure(
@@ -89,6 +89,9 @@ private fun <FailureT> validateBatchSize(
   } else Optional.empty()
 }
 
+@JvmInline
+internal value class Index(internal val index: Int)
+
 internal fun <FailureT, ValidatableT> findAndFilterInvalids(
   validatables: Collection<ValidatableT>,
   failureForNullValidatable: FailureT?,
@@ -100,16 +103,16 @@ internal fun <FailureT, ValidatableT> findAndFilterInvalids(
     mapNullValidatables.map { it.second }
   } else {
     findAndFilterInvalids(
-      mapNullValidatables.withIndex().map { Triple(it.index, it.value.first, it.value.second) },
+      mapNullValidatables.withIndex().map { Triple(Index(it.index), it.value.first, it.value.second) },
       filterConfigs.iterator()
-    ).sortedBy { it.first }.map { it.third }
+    ).sortedBy { it.first.index }.map { it.third }
   }
 }
 
 private tailrec fun <ValidatableT, FailureT> findAndFilterInvalids(
-  validatables: Collection<Triple<Int, ValidatableT?, Either<FailureT?, ValidatableT?>>>,
+  validatables: List<Triple<Index, ValidatableT?, Either<FailureT?, ValidatableT?>>>,
   filterConfigs: Iterator<FilterDuplicatesConfig<ValidatableT, FailureT?>>,
-): Collection<Triple<Int, ValidatableT?, Either<FailureT?, ValidatableT?>>> =
+): List<Triple<Index, ValidatableT?, Either<FailureT?, ValidatableT?>>> =
   if (!filterConfigs.hasNext()) {
     validatables
   } else {
@@ -118,14 +121,13 @@ private tailrec fun <ValidatableT, FailureT> findAndFilterInvalids(
   }
 
 private fun <ValidatableT, FailureT> segregateNullAndDuplicateKeysInOrder(
-  validatables: Collection<Triple<Int, ValidatableT?, Either<FailureT?, ValidatableT?>>>,
+  validatables: List<Triple<Index, ValidatableT?, Either<FailureT?, ValidatableT?>>>,
   filterDuplicatesConfig: FilterDuplicatesConfig<ValidatableT, FailureT?>
-): Collection<Triple<Int, ValidatableT?, Either<FailureT?, ValidatableT?>>> {
+): List<Triple<Index, ValidatableT?, Either<FailureT?, ValidatableT?>>> {
   val duplicateFinder = filterDuplicatesConfig.findAndFilterDuplicatesWith
   val keyMapperForDuplicates = duplicateFinder ?: identity()
 
-  val groups =
-    validatables.groupBy { (_, validatable, _) -> Optional.ofNullable(validatable?.let { keyMapperForDuplicates.apply(it) }) }
+  val groups = validatables.groupBy { (_, validatable, _) -> Optional.ofNullable(validatable?.let { keyMapperForDuplicates.apply(it) }) }
   val withNullKeys = mapValidatablesWithNullKeys(filterDuplicatesConfig.andFailNullKeysWith, groups)
 
   val partition = groups.filterKeys { it.isPresent }.values.partition { it.size > 1 }
@@ -137,22 +139,22 @@ private fun <ValidatableT, FailureT> segregateNullAndDuplicateKeysInOrder(
 
 private fun <FailureT, ValidatableT> mapValidatablesWithNullKeys(
   failureForNullKeys: FailureT?,
-  groups: Map<Optional<Any>, Collection<Triple<Int, ValidatableT, Either<FailureT?, ValidatableT>>>>
-): Collection<Triple<Int, ValidatableT, Either<FailureT?, ValidatableT>>> =
+  groups: Map<Optional<Any>, List<Triple<Index, ValidatableT?, Either<FailureT?, ValidatableT?>>>>
+): List<Triple<Index, ValidatableT?, Either<FailureT?, ValidatableT?>>> =
   failureForNullKeys?.let {
     groups[Optional.empty()]?.map(mapWithFailure(it))
   } ?: groups[Optional.empty()] ?: emptyList()
 
 private fun <FailureT, ValidatableT> mapValidatablesWithDuplicateKeys(
   failureForDuplicates: FailureT?,
-  duplicates: List<List<Triple<Int, ValidatableT, Either<FailureT?, ValidatableT>>>>,
-): List<Triple<Int, ValidatableT, Either<FailureT?, ValidatableT>>> =
+  duplicates: List<List<Triple<Index, ValidatableT, Either<FailureT?, ValidatableT>>>>,
+): List<Triple<Index, ValidatableT, Either<FailureT?, ValidatableT>>> =
   failureForDuplicates?.let {
     duplicates.flatten().map(mapWithFailure(it))
   } ?: emptyList()
 
 private fun <FailureT, ValidatableT> mapWithFailure(failure: FailureT?) =
-  { (index, validatable, validatableEtr): Triple<Int, ValidatableT, Either<FailureT?, ValidatableT>> ->
+  { (index, validatable, validatableEtr): Triple<Index, ValidatableT, Either<FailureT?, ValidatableT>> ->
     when {
       validatableEtr.isLeft -> Triple(index, validatable, validatableEtr)
       else -> Triple(index, validatable, left(failure))
