@@ -33,7 +33,7 @@ class BaseValidationConfigTest {
                     spec._1().nameForTest(duplicateSpecName).given(Bean::getRequiredField),
                     spec._1()
                         .nameForTest(duplicateSpecName)
-                        .given(Bean::getOptionalSfIdFormatField));
+                        .given(Bean::getOptionalSfIdFormatField2));
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate().specify(specsForConfig).prepare();
     Assertions.assertThrows(
@@ -47,44 +47,48 @@ class BaseValidationConfigTest {
         ValidationConfig.<Bean, ValidationFailure>toValidate()
             .shouldHaveFieldOrFailWith(Bean::getRequiredField, NONE)
             .shouldHaveValidSFIdFormatOrFailWith(Bean::getSfIdFormatField1, NONE)
-            .absentOrHaveValidSFIdFormatOrFailWith(Bean::getOptionalSfIdFormatField, NONE)
+            .absentOrHaveValidSFIdFormatOrFailWith(Bean::getOptionalSfIdFormatField2, NONE)
             .prepare();
     assertThat(validationConfig.getRequiredFieldNames(Bean.class)).contains(Fields.requiredField);
     assertThat(validationConfig.getRequiredFieldNamesForSFIdFormat(Bean.class))
         .contains(Fields.sfIdFormatField1);
     assertThat(validationConfig.getNonRequiredFieldNamesForSFIdFormat(Bean.class))
-        .contains(Fields.optionalSfIdFormatField);
+        .contains(Fields.optionalSfIdFormatField2);
   }
 
   @Test
   void idConfig() {
-    final var entityInfo = new EntityInfo();
+    final var field1EntityInfo = new Field1EntityInfo();
     final var config =
         ValidationConfig.<Bean, ValidationFailure>toValidate()
             .withIdConfig(
-                IDConfig.<Bean, ValidationFailure, EntityInfo>toValidate()
+                IDConfig.<Bean, ValidationFailure, Field1EntityInfo>toValidate()
                     .withIdValidator(BaseValidationConfigTest::uddUtil)
                     .shouldHaveValidSFIdFormatOrFailWith(
-                        Tuple.of(Bean::getSfIdFormatField1, entityInfo, INVALID_UDD_ID))
+                        Tuple.of(Bean::getSfIdFormatField1, field1EntityInfo, INVALID_UDD_ID))
                     .prepare())
             .prepare();
     final var result = Vader.validateAndFailFast(new Bean(null, new ID("invalidId"), null), config);
     assertThat(result).contains(INVALID_UDD_ID);
   }
 
+  // tag::bean-strict-id-validation[]
   @Test
   void idConfigForBatch() {
-    final var entityInfo = new EntityInfo();
+    final var field1EntityInfo = new Field1EntityInfo();
+    final var field2EntityInfo = new Field2EntityInfo();
     final var config =
         BatchValidationConfig.<Bean, ValidationFailure>toValidate()
             .withIdConfig(
                 IDConfig.<Bean, ValidationFailure, EntityInfo>toValidate()
                     .withIdValidator(BaseValidationConfigTest::uddUtil)
                     .shouldHaveValidSFIdFormatOrFailWith(
-                        Tuple.of(Bean::getSfIdFormatField1, entityInfo, INVALID_UDD_ID))
+                        Tuple.of(Bean::getSfIdFormatField1, field1EntityInfo, INVALID_UDD_ID))
                     .absentOrHaveValidSFIdFormatOrFailWith(
                         Tuple.of(
-                            Bean::getOptionalSfIdFormatField, entityInfo, INVALID_OPTIONAL_UDD_ID))
+                            Bean::getOptionalSfIdFormatField2,
+                            field2EntityInfo,
+                            INVALID_OPTIONAL_UDD_ID))
                     .prepare())
             .prepare();
     final var validBean = new Bean(null, new ID("validId"), null);
@@ -98,21 +102,33 @@ class BaseValidationConfigTest {
         .containsExactly(right(validBean), left(INVALID_UDD_ID), left(INVALID_OPTIONAL_UDD_ID));
   }
 
+  /** This should be implemented by the client and passed through `withIdValidator` config. */
   private static boolean uddUtil(ID idToValidate, EntityInfo entityInfo) {
-    return !idToValidate.toString().equalsIgnoreCase("invalidId");
+    // A core client may use `common.udd.ValidIdUtil.isThisEntity(String, EntityIdInfo)`
+    return !idToValidate.toString().equalsIgnoreCase("invalidId"); // fake implementation
   }
+  // end::bean-strict-id-validation[]
 
   @Data
   @AllArgsConstructor
   @FieldNameConstants
-  // tag::flat-bean[]
+  // tag::bean-with-id-fields[]
   public static class Bean {
     String requiredField;
     ID sfIdFormatField1;
-    ID optionalSfIdFormatField;
+    ID optionalSfIdFormatField2;
   }
-  // end::flat-bean[]
+
+  /**
+   * This represents `common.udd.EntityInfo` interface from core which is implemented by all
+   * Entities.
+   */
+  private interface EntityInfo {}
 
   @Value
-  private static class EntityInfo {}
+  private static class Field1EntityInfo implements EntityInfo {}
+
+  @Value
+  private static class Field2EntityInfo implements EntityInfo {}
+  // end::bean-with-id-fields[]
 }

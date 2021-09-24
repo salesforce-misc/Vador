@@ -25,10 +25,12 @@ ifdef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-class Bean {
-  String requiredField;
-  ID sfIdFormatField;
-  ID optionalSfIdFormatField;
+public static class Bean {
+  private final Integer requiredField1;
+  private final String requiredField2;
+  private final ID sfId1;
+  private final ID sfId2;
+  private final List<String> requiredList;
 }
 ----
 
@@ -37,7 +39,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/runner/BaseValidationConfigTest.java[tag=flat-bean]
+include::{testdir}/org/revcloud/vader/runner/ValidationConfigTest.java[tag=flat-bean]
 ----
 
 endif::[]
@@ -56,7 +58,7 @@ ifdef::env-github[]
 ----
 @DisplayName("Cases covered - Missing Field, String Field, List Field")
 @Test
-void failFastWithRequiredFieldsMissings() {
+void failFastWithRequiredFieldsMissing() {
   final var validationConfig =
       ValidationConfig.<Bean, ValidationFailure>toValidate()
           .shouldHaveFieldsOrFailWith(

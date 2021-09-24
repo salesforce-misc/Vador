@@ -15,7 +15,9 @@ endif::[]
 :imagesdir: ../images/config-dsl
 
 As the name indicates, use this to configure validation requirements for a data-structure that exists in a _Collection_ or a _Batch_, say `List<ValidatableT>`.
-But why a new DSL, can't we just use `ValidationConfig` DSL and loop through each item and validate? `BatchValidationConfig` is a superset of `ValidationConfig`. We can configure more than just validations and required fields/Ids. You can configure specifications that need context of the entire Batch. For example, *Finding and Filtering/Failing Duplicates* based on a bean property. Let's see through an example:
+But why a new DSL, can't we just use `ValidationConfig` DSL and loop through each item and validate? `BatchValidationConfig` is a superset of `ValidationConfig`. 
+We can configure more than just validations and required fields/Ids. You can configure specifications that need context of the entire Batch. 
+For example, *Finding and Filtering/Failing Duplicates* based on a bean property. Let's see through an example:
 
 image:bean-batch.png[]
 

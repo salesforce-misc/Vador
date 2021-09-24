@@ -32,7 +32,7 @@ class ValidationConfigTest {
   // tag::validationConfig-for-flat-bean-demo[]
   @DisplayName("Cases covered - Missing Field, String Field, List Field")
   @Test
-  void failFastWithRequiredFieldsMissings() {
+  void failFastWithRequiredFieldsMissing() {
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate()
             .shouldHaveFieldsOrFailWith(
@@ -209,6 +209,7 @@ class ValidationConfigTest {
   @FieldNameConstants
   @AllArgsConstructor
   // tag::nested-bean[]
+  // tag::flat-bean[]
   public static class Bean {
     private final Integer requiredField1;
     private final String requiredField2;
@@ -216,6 +217,7 @@ class ValidationConfigTest {
     private final ID sfId2;
     private final List<String> requiredList;
   }
+  // end::flat-bean[]
   // end::nested-bean[]
 
   @Value

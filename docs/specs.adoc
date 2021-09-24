@@ -10,14 +10,14 @@ ifdef::env-github[]
 endif::[]
 :toc:
 :toc-placement: preamble
-:imagesdir: ../images
+:imagesdir: images
 
 [.lead]
 *A Spec is a Configuration, which lets you reuse a well-tested algorithmic pattern/template for a validation, by specifying the placeholders to fill.*
 
 == 🌈 Spec-Spectrum
 
-image:spec-spectrum.png[inline]
+image:spec-spectrum.png[]
 
 On a shared codebase, same algorithms get written in different styles. This leads to increase of entropy, maintenance and coverage overhead in a codebase.
 Can these common algorithmic patters be abstracted out into templates, with a way to _Specify_ the missing pieces and reuse these generic validation algorithms?
@@ -120,7 +120,7 @@ void invalidBillingMethodBillingTermComboFails() {
 [.lead]
 Instead of this ☝🏼, is there a way to just specify my validation, without writing any code?
 
-=== Checkout Specs:
+== Checkout Specs:
 
 *The above validation using a spec*
 
@@ -154,7 +154,7 @@ var results = validateAndFailFast(..., validationConfig);
 * You get to reuse a well-tested algorithm behind the scene, specs-do-not-need-tests-,so you needn't write extra tests.
 '''
 
-== 🚨 Specs do NOT need Tests!!? 😱
+=== 🚨 Specs do NOT need Tests!!? 😱
 
 Wait! Before you scream! Hear out the rationale behind this *Recommendation*.
 There are mainly two parts in this feature:
@@ -162,21 +162,23 @@ There are mainly two parts in this feature:
 * *What-to-do:* Specs
 * *How-to-do:* How Vader checks your Specs, against your Bean/POJO
 
-=== 🧪Specs are just Configuration
+==== 🧪Specs are just Configuration
 
 Why do we cover validations code with tests?
 
-* _I need Test all branches of my code_
-* But, a Spec has no logic.
-It’s only a configuration you provide to vader to execute the corresponding well-tested validation algorithm.
-* _Tests act as a live documentation_
+===== _I need Test all branches of my code_
+* But, a Spec has no logic. It’s only a configuration you provide to vader to execute the corresponding well-tested validation algorithm.
+
+===== _Tests act as a live documentation_
 * Specs are low-code and should be seen as plain sentences.
 So, they themselves serve as documentation.
-* _Tests give us the confidence to refactor/change without breaking_
+
+===== _Tests give us the confidence to refactor/change without breaking_
 * Specs work as they are written (unless you have a typo or a _Ctrl+C-Ctrl+V_ issue 😉).
 So, the action “refactor” doesn’t apply to Specs.
-* _Hey, but what if I really had a typo or I changed something unintentionally.
-I need tests to fail and alert me._
+
+===== _Hey! But what if I really had a typo, or I changed something unintentionally, I need tests to fail and alert me._
+
 * Agreed! tests in these scenarios give us one extra layer of protection.
 But, test your Spec not the implementation behind it.
 For example:
@@ -195,7 +197,7 @@ What’s the probability that this unfortunate typo slipped through all those la
 
 * As they are written in Java, you can even leverage Compiler for Correctness.
 It does all the job to make sure your data types align together.
-*So, if a Spec compiles it works as written.*
+*So, if a Spec compiles it works as written!*
 * _I am still not convinced, I need tests!_
 
 * First! please help us understand your concerns/use-cases by raising a git.soma issue.

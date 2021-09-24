@@ -9,7 +9,7 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 :toc:
-:imagesdir: ../images
+:imagesdir: images
 
 == Why a new Framework for Bean validation?
 

@@ -83,11 +83,12 @@ ____
 
 === Demo pls!
 
-Watch this Tech-talk as a prerequisite to understanding, why `if-else-try-catch` is easy to start but difficult to manage and how Vader disciplines your code-base:
+Watch this Tech-talk as a prerequisite to understand the problem Vader solves.
+It explains why `if-else-try-catch` is easy to start but difficult to manage and how Vader takes all that complexity away:
 
 ifdef::env-github[]
 
-.(*Click on the image*) ▶️ Fight Complexity with Functional Programming
+.▶️ (*Click on the talk-poster*)
 image:fcwfp-poster.jpeg[link=https://www.youtube.com/watch?v=Dvr6gx4XaD8&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or&index=2]
 
 endif::[]
@@ -113,24 +114,23 @@ https://drive.google.com/open?id=1Syi3smlcyFAL0ZoDuq5dWR1IALZNmNUm[An Internal P
 
 === https://codesearch.data.sfdc.net/source/xref/app_main_core/app/main/core/billing-services/java/src/core/billing/service/billingschedule/config/BillingScheduleConfig.java#261[billing-services]
 
-== New in v2.0
+== Highlights
 
-=== 🍭 link:docs/config-dsl/configDSLs.adoc[Config DSLs]
+=== 🍭 link:docs/config-dsl/config-driven-validation.adoc[Config Driven Validation]
 
 === 🤩 link:docs/specs.adoc[Specs]
 
 == What's Vader?
 
 [.lead]
-Vader is an independent Bean validation framework, not tied to any REST framework.
+Vader is an independent Bean validation framework, not tied to any consumer implementation details.
 
-It's agnostic of its consumer's Rest framework, Request data-type or failure representation.
 Although it's written with the context explained above, its implementation is generic and can cater to anyone looking for a declarative way to validate their Beans/POJOs.
 
 Vader follows *Functional Programming* philosophy to segregate _What-to-do_ from _How-to-do_.
 
 [.lead]
-The framework asks your validations to be broken into 3 *_decoupled_* parts:
+The framework asks your validation strategy to be broken into 3 *_decoupled_* parts:
 
 * Validations _(What-to-do)_ - Write your validations as First-Class Functions.
 * Configuration _(How-to-do)_ - Stitch your validations together into a Chain.
@@ -255,7 +255,7 @@ If the inter-dependencies between Container-Member happens to be more complex, w
 
 == How to combine Validators & ValidatorEtrs?
 
-TIP: If you are using link:docs/config-dsl/configDSLs.adoc[Config DSL] from 2.0, you don't need to worry about this, unless you are particular about the order of validators.
+TIP: If you are using link:docs/config-dsl/config-driven-validation.adoc[Config DSL] from 2.0, you don't need to worry about this, unless you are particular about the order of validators.
 
 Similarly, Vader has utils to lift `Validator` to `ValidatorEtr`.
 This is handy, when you have a mix of validations, and they all need to be of the same type to stitch them together.
