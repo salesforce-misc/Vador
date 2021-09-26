@@ -1,0 +1,41 @@
+= Nested Config
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:toc:
+:toc-placement: preamble
+:prewrap!:
+:sourcedir: ../../../vader/src/main/java
+:testdir: ../../../vader/src/test/java
+:imagesdir: ../../images/config-dsl
+
+== Level Order Validation
+
+[cols="1a,1a,2"]
+|===
+|Container |Member |Strategy
+
+|
+[cols="1"]
+!===
+! Non-Batch ! `Optional<FailureT>`
+
+!===
+
+|
+
+[cols="1"]
+!===
+! Non-Batch ! `Optional<FailureT>`
+
+!===
+
+|Compose `Optional` results with link:../ValidationConfig.adoc#_nested-non-batch-non-batch-level-order[ValidationConfig]
+
+|===

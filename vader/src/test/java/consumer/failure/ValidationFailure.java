@@ -28,6 +28,8 @@ public class ValidationFailure {
       new ValidationFailure(ValidationFailureMessage.DUPLICATE_ITEM_2);
   public static final ValidationFailure NULL_KEY =
       new ValidationFailure(ValidationFailureMessage.NULL_KEY);
+  public static final ValidationFailure INVALID_BEAN =
+      new ValidationFailure(ValidationFailureMessage.INVALID_BEAN);
   public static final ValidationFailure INVALID_CONTAINER =
       new ValidationFailure(ValidationFailureMessage.INVALID_PARENT);
   public static final ValidationFailure INVALID_ITEM =

@@ -50,7 +50,7 @@ final var refItemBatchValidationConfig = BatchValidationConfig.<ReferenceItemInp
           ReferenceItemInputRepresentation::getReferenceId,
           ReferenceItemInputRepresentation::getReferenceItemId,
           ReferenceItemInputRepresentation::getOffsetReferenceItemId), invalidSfIdFormatFailureMapper))
-  .withSpec(spec -> spec._1() <1>
+  .withSpec(spec -> spec._1() // <1>
           .given(ReferenceItemInputRepresentation::getcancellationEffectiveDate)
           .shouldMatch(ISO8601DateFormat())
           .orFailWith(ofInvalidAPIInput(INVALID_CANCELLATION_DATE_FORMAT))).prepare();
@@ -69,4 +69,4 @@ final Optional<Tuple2<ID, BillingScheduleFailure>> refItemValidationResult =
         ReferenceItemInputRepresentation::getReferenceItemId,
         refItemBatchValidationConfig);
 ----
-<1> 🤓 link:../../docs/specs.adoc[Specs]
+<1> 🤓 link:../../../docs/specs.adoc[Specs]

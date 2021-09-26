@@ -26,7 +26,7 @@ import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.ValidatorEtr;
 
 /** gakshintala created on 7/22/20. */
-class BatchVaderKtTest {
+class VaderBatchTest {
 
   @Test
   void failFastPartialFailures() {

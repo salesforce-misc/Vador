@@ -17,9 +17,9 @@ endif::[]
 * It’s our responsibility to address all the edge cases and automate them thoroughly, for various types of POJOs.
 * We take code-quality & security seriously!
 ** This code base has integration with https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader[*SonarQube*].
-** We openly display our link:../../README.adoc#shields[Code-Quality Shields] at the top.
+** We openly display our link:../../../README.adoc#shields[Code-Quality Shields] at the top.
 ** ~80 unit tests currently guarding this, with a test coverage of `81.9%`
-* 0 bugs and no perf impact reported by any of the consumer teams till now.
+* *0 bugs* and *no perf impact* reported by any of the consumer teams till now.
 
 == Long Term Support
 

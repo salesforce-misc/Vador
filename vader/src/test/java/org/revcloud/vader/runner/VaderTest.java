@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.ValidatorEtr;
 
-class vaderTest {
+class VaderTest {
 
   @Test
   void failFastWithFirstFailure() {
@@ -56,11 +56,17 @@ class vaderTest {
 
   @Test
   void failFastWithFirstFailureForSimpleValidators() {
+    // tag::withValidators[]
+    final Validator<Bean, ValidationFailure> validator1 = bean -> NONE;
+    final Validator<Bean, ValidationFailure> validator2 = bean -> NONE;
+    final Validator<Bean, ValidationFailure> validator3 = bean -> UNKNOWN_EXCEPTION;
+    final List<Validator<Bean, ValidationFailure>> validatorChain = 
+        List.of(validator1, validator2, validator3);
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate()
-            .withValidators(
-                Tuple.of(List.of(bean -> NONE, bean -> NONE, bean -> UNKNOWN_EXCEPTION), NONE))
+            .withValidators(Tuple.of(validatorChain, NONE))
             .prepare();
+    // end::withValidators[]
     final var result = Vader.validateAndFailFast(new Bean(0), validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }

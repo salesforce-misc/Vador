@@ -1,0 +1,135 @@
+= Validation Configuration
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:toc:
+:toc-placement: preamble
+:imagesdir: images
+:testdir: ../vader/src/test/java
+:prewrap!:
+
+== What' Configuration?
+
+A config object is 1-1 mapped with a Data Structure, and holds all the information/requirements/specifications required to validate that Data-structure.
+
+== How to construct a Config Object 🔮?
+
+Dont' worry, different flavors of link:config-dsl/dsl-driven-validation.adoc[Config DSLs] are here to co-pilot with you, to prepare the config instance as per your validation requirements.
+These DSL methods follow the https://blogs.oracle.com/javamagazine/post/exploring-joshua-blochs-builder-design-pattern-in-java[Builder Pattern], where you instantiate the Builder like this:
+
+[source,java,indent=0,options="nowrap"]
+.++*++ValidationConfig
+----
+*ValidationConfig.<ValidatableT, FailureT>toValidate() // <1><2>
+----
+<1> ValidatableT - Represents the data-type under validation.
+<2> FailureT - Represents the consumer data-type that represents a failure.
+
+As you notice, these API methods are generic and Vader is agnostic of the consumer's `ValidatableT` or `FailureT`.
+
+Let's talk about some of these DSL (or builder) methods:
+
+=== `withValidator(s)`
+
+This accepts a Tuple (Pair) of:
+* `java.util.Collection<Validator>` - Collections of Validators. 
+* `Failure` - Consumer defined value representing no-failure (or success). Vader recognizes that a validation passed, only if a validator returns this value.
+
+TIP: If you need an order of execution (say, ascending order of validation cost), 
+all you need is _chain_ your validators in an Ordered List (like `java.util.List`) to maintain the sequence of validations.
+
+ifdef::env-github[]
+
+[source,java,indent=0,options="nowrap"]
+.link:{testdir}/org/revcloud/vader/runner/VaderTest.java[VaderTest.java, tag=withValidators]
+----
+final Validator<Bean, ValidationFailure> validator1 = bean -> NONE;
+final Validator<Bean, ValidationFailure> validator2 = bean -> NONE;
+final Validator<Bean, ValidationFailure> validator3 = bean -> UNKNOWN_EXCEPTION;
+final List<Validator<Bean, ValidationFailure>> validatorChain =
+    List.of(validator1, validator2, validator3);
+final var validationConfig =
+    ValidationConfig.<Bean, ValidationFailure>toValidate()
+        .withValidators(Tuple.of(validatorChain, NONE))
+        .prepare();
+----
+
+endif::[]
+ifndef::env-github[]
+
+[source,java,indent=0,options="nowrap"]
+.link:{testdir}/org/revcloud/vader/runner/VaderTest.java[VaderTest.java, tag=withValidators]
+----
+include::{testdir}/org/revcloud/vader/runner/VaderTest.java[tag=withValidators]
+----
+
+endif::[]
+
+=== How to combine Container & Member validators?
+
+But, there's a catch!
+A List of Validators for a container node consists of a mix of all container validators and all its nested member validators.
+But they can't be put under one `List`, as they are functions on different Data Types.
+
+[source,java,indent=0,options="nowrap"]
+----
+ValidatorEtr<Container, ValidationFailure> containerValidator =...; // Apply same analogy for Validator
+ValidatorEtr<Member, ValidationFailure> memberValidator =...;
+List.of(containerValidator, memberValidator); // ^^^ Compile Error
+----
+
+So all nested member validators need to be lifted to the container type, essentially changing their type matching with the Container's, like: `ValidatorEtr<Container, ValidationFailure>`.
+
+We can achieve this with `org.revcloud.vader.lift.++*++Util` functions.
+These are *Higher-Order Functions* which *lift* member validator to the container type.
+This takes a `containerToMemberMapper` which is the function to extract member-bean from container-bean.
+
+[source,java,indent=0,options="nowrap"]
+----
+ValidatorEtr<Member, ValidationFailure> memberValidator =...;
+ValidatorEtr<Container, ValidationFailure> liftedMemberValidator =...;
+List.of(containerValidator, liftToContainerValidatorType(memberValidator, containerToMemberMapper)); // Happy Compiler :)
+----
+
+image:lift.jpg[lift]
+
+This way, we can configure a *Chain* of validators in-order, sorting out all the container-member dependencies.
+This is nothing but, the most popular *Chain of Responsibility* Design pattern, with a functional touch-up.
+
+If the inter-dependencies between Container-Member happens to be more complex, we may end-up with _Graph_ relationship, but we can easily _flatten_ it into a Chain with a simple _Topological Sort_.
+
+=== How to combine Validators & ValidatorEtrs?
+
+TIP: If you are using link:config-dsl/dsl-driven-validation.adoc[Config DSL], you don't need to worry about this, unless you are particular about the order of validators and validatorEtrs.
+
+Similarly, Vader has utils to lift `Validator` to `ValidatorEtr`.
+This is handy, when you have a mix of validations, and they all need to be of the same type to stitch them together.
+
+=== Lift Util
+
+Below are the utils currently available, with self-explanatory names.
+There are multiple overloads suitable for simple/non-simple.
+The Java Docs should guide you to use proper overload:
+
+==== Aggregation Util: To lift Member validator to Container validator type
+
+These are available for both `Validator` and `ValidatorEtr`.
+
+[cols="<,<"]
+|===
+|liftToContainerValidatorType |liftAllToContainerValidatorType
+|liftToContainerValidatorType |liftAllToContainerValidatorType
+|===
+
+==== Validator Util: To lift Simple validator to ValidatorEtr type
+
+[cols="<,<"]
+|===
+|lift |liftAll
+|===

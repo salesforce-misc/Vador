@@ -1,0 +1,81 @@
+= ƛ Data-types for Validators
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:toc:
+:toc-placement: preamble
+:imagesdir: images
+
+The job of validator is simple, just to convey if a POJO is valid or why it's invalid (in the form of a Validation Failure).
+
+Vader provides various *Validator Data-Types*, to get this done.
+These are https://www.baeldung.com/java-8-functional-interfaces[Functional Interfaces] to which a lambda can be assigned. 
+Such lambdas are called *https://dzone.com/articles/java-lambda-expressions-functions-as-first-class-citizens[First-Class functions aka Functions as values]*
+
+== Validator `(ValidatableT) -> FailureT`
+
+The Data type for simple first-class functions.
+It takes in a bean to be validated, represented by `ValidatableT`, and returns a failure `FailureT`.
+
+[source,java,indent=0,options="nowrap"]
+----
+public static final Validator<Container, ValidationFailure> validation1 =
+  containerInputRepresentation -> {
+    if (containerInputRepresentation._isSetPaymentAuthorizationId()) {
+      return ValidationFailure.NONE;
+    } else {
+      return new ValidationFailure(...);
+    }
+  };
+----
+
+== If you need more ⚡️Power⚡️
+
+image:more-power.gif[inline]
+
+== ValidatorEtr (`(Either<FailureT, ValidatableT>) -> Either<FailureT, ?>`)
+
+=== https://docs.vavr.io/#_either[The Either type]
+
+Unlike `Validator` type (which works with Simple input/output types), `ValidatorEtr` lambda type works with `Either` type as input/output.
+The `Either` type is borrowed from https://docs.vavr.io/#_either[Vavr].
+
+=== What's so powerful about `Either`?
+
+With `Either`, You get all the functional programming powers.
+You can write linear programs with a lot less *Cyclomatic Complexity* & *Cognitive Complexity*.
+
+Please refer to this tech talk discussing these concepts: https://www.youtube.com/watch?v=Dvr6gx4XaD8&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or["Fight Complexity with Functional Programming - Gopal S. Akshintala - All Things Open, USA, 2020"]
+
+Lambdas assigned to `ValidatorEtr` take `Either<FailureT, ValidatableT>` as input and should return `Either<FailureT, ?>`.
+Since the bean is pre-wrapped in an `Either`, you can perform all the `Either` operations on the input like `map` , `flatMap`, `fold`, `filterOrElse` ( Refer https://www.javadoc.io/doc/io.vavr/vavr/0.10.2/io/vavr/control/Either.html[API] for more info).
+
+If there is a Validation Failure, keep the result in the _left_ state.
+If the `Either` in the result is in the _right_ state, it is considered that the bean **Passed** the validation.
+The wildcard `?` signifies it doesn't matter what's the value in the right state.
+
+[source,java,indent=0,options="nowrap"]
+----
+public static final ValidatorEtr<Container, ValidationFailure> batchValidation1 =
+  containerInputRepresentation -> containerInputRepresentation
+    .filterOrElse(Container::_isSetAccountId, ignore -> new ValidationFailure(..);
+----
+
+TIP: Of-course, pre-wrapping bean into `Either` is just to avoid boiler-plate.
+You can very well use `Validator` and wrap/unwrap the bean in and out of `Either` type, yourself.
+
+== Why are there different Validator types?
+
+[.lead]
+These types only differ syntactically
+
+They are there to help developers focus only on their validation logic, not worry about boiler-plate and use a programming style (imperative or functional) that they are comfortable in.
+You can essentially use any Data type for your validators and in-fact you can even have a mix, based on your needs.
+
+NOTE: Vader leaves the choice to the developer!

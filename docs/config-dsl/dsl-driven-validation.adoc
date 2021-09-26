@@ -1,4 +1,4 @@
-= Config Driven Validation
+= DSL Driven Validation
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
 ifdef::env-github[]
@@ -13,14 +13,14 @@ endif::[]
 :sourcedir: ../../vader/src/main/java
 :testdir: ../../vader/src/test/java
 :imagesdir: ../images
+:prewrap!:
 
-Vader has a powerful and declarative Configuration DSL.
-A config object is 1-1 mapped with a Data Structure, and holds all the information/requirements/specifications required to validate that Data-structure.
+Vader has a powerful and declarative Configuration https://blog.jetbrains.com/kotlin/2011/10/dsls-in-kotlin-part-1-whats-in-the-toolbox-builders/[DSL].
 This is a powerful coz it lets you validate any Bean with any level or nesting, be it _Single_ or _Batch_.
 It's easy to fit this model in our heads, as validation configuration aligns with Bean hierarchical-structure.
 
 [.text-center]
-image:hierarchical-validation.png[]
+image:hierarchical-validation.png[hierarchical-validation]
 
 == What's a config DSL?
 
@@ -38,16 +38,17 @@ Let's walk through each of these flavors with an example bean, validation requir
 
 NOTE: These examples don't exhaustively cover all the use-cases.
 You may refer the Javadoc of each validation config to find-out more.
+
 Also, the unit tests should help with the usage of these fields.
-As usual, file a git.soma issue if you have any new and unique use-cases.
+As usual, file a git.soma issue if you have any new or unique use-cases.
 
 === link:ValidationConfig.adoc[ValidationConfig]
 
 === link:BatchValidationConfig.adoc[BatchValidationConfig]
 
-=== link:NestedBatch1ValidationConfig.adoc[NestedBatch1ValidationConfig(TBD)]
+=== link:nested/NestedBatch1ValidationConfig.adoc[NestedBatch1ValidationConfig(TBD)]
 
-=== link:BatchOfBatch1ValidationConfig.adoc[BatchOfBatch1ValidationConfig]
+=== link:nested/BatchOfBatch1ValidationConfig.adoc[BatchOfBatch1ValidationConfig]
 
 {empty} +
 

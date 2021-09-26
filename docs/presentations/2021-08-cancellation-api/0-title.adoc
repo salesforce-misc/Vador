@@ -9,7 +9,6 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 :hide-uri-scheme:
-:imagesdir: images
 :!sectnums:
 
-image:../../images/vader.png[]
+image:../../images/vader.png[Vader]

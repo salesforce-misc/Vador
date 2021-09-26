@@ -10,6 +10,7 @@ ifdef::env-github[]
 endif::[]
 :toc:
 :toc-placement: preamble
+:testdir: ../vader/src/test/java
 :imagesdir: images
 
 [.lead]
@@ -19,7 +20,8 @@ endif::[]
 
 image:spec-spectrum.png[]
 
-On a shared codebase, same algorithms get written in different styles. This leads to increase of entropy, maintenance and coverage overhead in a codebase.
+On a shared codebase, same algorithms get written in different styles.
+This leads to increase of entropy, maintenance and coverage overhead in a codebase.
 Can these common algorithmic patters be abstracted out into templates, with a way to _Specify_ the missing pieces and reuse these generic validation algorithms?
 
 Let’s understand this with an example:
@@ -122,6 +124,7 @@ Instead of this ☝🏼, is there a way to just specify my validation, without w
 
 == Checkout Specs:
 
+[.lead]
 *The above validation using a spec*
 
 [source,java,indent=0,options="nowrap"]
@@ -133,7 +136,7 @@ spec._2().nameForTest(BILLING_TERM_BILLING_METHOD_COMBO_SPEC)
   .orFailWithFn((bt, bm) -> ofFieldIntegrity(getErrorMessageWithParams(INVALID_BILLING_TERM_BILLING_METHOD_COMBO, bt, bm)))
 ----
 
-TIP: No Ftests/unit tests required for these specs !! 🤫
+TIP: No FTests/Unit tests required for these Specs 🤫!!
 
 These Specs go into your DI config (Typically Spring Config on a Core module) and are handed over to Vader for execution like below:
 
@@ -147,16 +150,20 @@ var results = validateAndFailFast(..., validationConfig);
 ----
 
 [.lead]
-🤩 *Wow!! The Spec speaks for itself* 🤩
+🤩 *Wow!!
+The Spec speaks for itself* 🤩
 
 * No Code/Low code
 * Uniform style in a shared code-base with *0 Cognitive complexity.*
 * You get to reuse a well-tested algorithm behind the scene, specs-do-not-need-tests-,so you needn't write extra tests.
 '''
 
+[#_specs_do_not_need_tests]
 === 🚨 Specs do NOT need Tests!!? 😱
 
-Wait! Before you scream! Hear out the rationale behind this *Recommendation*.
+Wait!
+Before you scream!
+Hear out the rationale behind this *Recommendation*.
 There are mainly two parts in this feature:
 
 * *What-to-do:* Specs
@@ -167,13 +174,17 @@ There are mainly two parts in this feature:
 Why do we cover validations code with tests?
 
 ===== _I need Test all branches of my code_
-* But, a Spec has no logic. It’s only a configuration you provide to vader to execute the corresponding well-tested validation algorithm.
+
+* But, a Spec has no logic.
+It’s only a configuration you provide to vader to execute the corresponding well-tested validation algorithm.
 
 ===== _Tests act as a live documentation_
+
 * Specs are low-code and should be seen as plain sentences.
 So, they themselves serve as documentation.
 
 ===== _Tests give us the confidence to refactor/change without breaking_
+
 * Specs work as they are written (unless you have a typo or a _Ctrl+C-Ctrl+V_ issue 😉).
 So, the action “refactor” doesn’t apply to Specs.
 
@@ -197,8 +208,10 @@ What’s the probability that this unfortunate typo slipped through all those la
 
 * As they are written in Java, you can even leverage Compiler for Correctness.
 It does all the job to make sure your data types align together.
-*So, if a Spec compiles it works as written!*
-* _I am still not convinced, I need tests!_
+
+TIP: So, if a Spec compiles, it works as written!
+
+===== _I am still not convinced, I need tests!_
 
 * First! please help us understand your concerns/use-cases by raising a git.soma issue.
 If possible, we shall cover your case and help you from the pain of writing tests.
@@ -218,11 +231,12 @@ public void invalidBillingTermFails() {
 
 * For the specs that you want to test, you can name them with a DSL method `nameForTest` and use that name as above to call `getSpecWithName`.
 But think about it, *your tests are testing the vader's validation algorithm (which is already well-tested) and not your logic*, because there is no logic in Specs!
-🤔 
+🤔
 
 == What Spec do I need?
 
-Currently Vader provides 3 types of Specs and their names reflect the arity of fields they deal with. The declarative DSL with intuitive method names should guide the developer to construct a Spec.
+Currently Vader provides 3 types of Specs and their names reflect the arity of fields they deal with.
+The declarative DSL with intuitive method names should guide the developer to construct a Spec.
 
 === Spec1
 

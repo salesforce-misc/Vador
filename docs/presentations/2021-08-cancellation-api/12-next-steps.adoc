@@ -18,5 +18,5 @@ endif::[]
 ====
 
 == Incremental adaption
-* If you feel this is suitable and helpful for current Cancellation API and future services your team writes, we can come up with an incremental adaption plan.
+* If you feel this is suitable and helpful for current Cancellation API and future services your team develops, we can come up with an incremental adaption plan.
 * Kick-start and pick the same piece used in the POC and turn it prod ready.

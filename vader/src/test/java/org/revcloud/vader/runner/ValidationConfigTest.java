@@ -190,14 +190,12 @@ class ValidationConfigTest {
     final var result =
         validateAndFailFast(
                 validContainer,
-                containerValidationConfig,
-                ValidationFailure::getValidationFailureForException)
+                containerValidationConfig)
             .or(
                 () ->
                     validateAndFailFast(
                         memberWithInvalidSfId,
-                        memberValidationConfig,
-                        ValidationFailure::getValidationFailureForException));
+                        memberValidationConfig));
 
     assertThat(result).isPresent();
     assertThat(result.get().getValidationFailureMessage().getParams())

@@ -9,6 +9,8 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 :toc:
+
+:prewrap!:
 :sourcedir: ../../vader/src/main/java
 :testdir: ../../vader/src/test/java
 :imagesdir: ../images/config-dsl
@@ -97,6 +99,7 @@ include::{testdir}/org/revcloud/vader/runner/ValidationConfigTest.java[tag=valid
 
 endif::[]
 
+[#_nested-non-batch-non-batch-level-order]
 == Nested
 
 image:bean-nested.png[]
@@ -171,14 +174,12 @@ void nestedBeanValidationWithInvalidMember() {
   final var result =
       validateAndFailFast(
               validContainer,
-              containerValidationConfig,
-              ValidationFailure::getValidationFailureForException)
+              containerValidationConfig)
           .or(
               () ->
                   validateAndFailFast(
                       memberWithInvalidSfId,
-                      memberValidationConfig,
-                      ValidationFailure::getValidationFailureForException));
+                      memberValidationConfig));
 
   assertThat(result).isPresent();
   assertThat(result.get().getValidationFailureMessage().getParams())

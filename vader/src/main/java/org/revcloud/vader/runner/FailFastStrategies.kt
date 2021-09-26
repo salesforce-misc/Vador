@@ -9,6 +9,8 @@ import org.revcloud.vader.types.failures.FFABatchOfBatchFailureWithPair
 import org.revcloud.vader.types.failures.FFEBatchOfBatchFailure
 import java.util.Optional
 
+internal typealias FailFastForContainer<ValidatableT, FailureT> = (ValidatableT) -> Optional<FailureT>
+
 internal typealias FailFast<ValidatableT, FailureT> = (ValidatableT) -> Optional<FailureT>
 
 internal typealias FailFastForEach<ValidatableT, FailureT> = (Collection<ValidatableT?>) -> List<Either<FailureT?, ValidatableT?>>
@@ -19,9 +21,7 @@ internal typealias FailFastForAny<ValidatableT, FailureT> = (Collection<Validata
 
 internal typealias FailFastForAnyWithPair<ValidatableT, FailureT, PairT> = (Collection<ValidatableT?>) -> Optional<Tuple2<PairT?, FailureT?>>
 
-internal typealias FailFastForAnyNestedWithPair<ValidatableT, FailureT, ContainerPairT, MemberPairT> = (Collection<ValidatableT?>) -> Optional<FFABatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>>
-
-internal typealias FailFastForContainer<ValidatableT, FailureT> = (ValidatableT) -> Optional<FailureT>
+internal typealias FailFastForAnyBatchOfBatch1WithPair<ValidatableT, FailureT, ContainerPairT, MemberPairT> = (Collection<ValidatableT?>) -> Optional<FFABatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>>
 
 @JvmSynthetic
 internal fun <ValidatableT, FailureT> failFast(
@@ -111,7 +111,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT, ContainerPair
   throwableMapper: (Throwable) -> FailureT?,
   containerPairForInvalidMapper: (ContainerValidatableT?) -> ContainerPairT? = { null },
   memberPairForInvalidMapper: (MemberValidatableT?) -> MemberPairT? = { null }
-): FailFastForAnyNestedWithPair<ContainerValidatableT, FailureT, ContainerPairT, MemberPairT> =
+): FailFastForAnyBatchOfBatch1WithPair<ContainerValidatableT, FailureT, ContainerPairT, MemberPairT> =
   { containerValidatables: Collection<ContainerValidatableT?> ->
     failFastForAny(
       batchOfBatch1ValidationConfig,

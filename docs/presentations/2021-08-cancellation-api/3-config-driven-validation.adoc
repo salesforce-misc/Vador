@@ -10,7 +10,7 @@ ifdef::env-github[]
 endif::[]
 :hide-uri-scheme:
 
-image:../images/config-spectrum.png[]
+image:../../images/config-spectrum.png[]
 
 == Translate your Spike doc to Type-safe code (line-to-line)!
  
@@ -24,6 +24,6 @@ We do something similar here, just that we use Java instead of XML for more data
 
 == Config Types we use for this flow
 
-=== link:../../docs/config-dsl/ContainerValidationConfig.adoc[ContainerValidationConfig] 
-=== link:../../docs/config-dsl/ContainerValidationConfigWith2Levels.adoc[ContainerValidationConfigWith2Levels]
-=== link:../../docs/config-dsl/BatchValidationConfig.adoc[BatchValidationConfig]
+=== link:../../../docs/config-dsl/ContainerValidationConfig.adoc[ContainerValidationConfig] 
+=== link:../../../docs/config-dsl/ContainerValidationConfigWith2Levels.adoc[ContainerValidationConfigWith2Levels]
+=== link:../../../docs/config-dsl/BatchValidationConfig.adoc[BatchValidationConfig]

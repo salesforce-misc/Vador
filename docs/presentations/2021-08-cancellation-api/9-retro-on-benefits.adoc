@@ -21,9 +21,12 @@ Strips out a lot of the code/logic to maintain.
 
 == Complexity 
 
-* No branching => No Cyclomatic complexity. 
+* No branching => No Cyclomatic complexity.
 * It abstracts away all the implementation complexity.
-* Saves a lot of Man hours while writing and 10X more while reading. An *8-pointer Story for Free* 🤑
+* Saves a lot of Man hours while writing and _10X_ more while reading.
+* Eliminates the need to spike on your validation strategy/design.
+
+TIP: An *8-pointer* Story for Free 🤑
 
 == Testability 
 
@@ -31,20 +34,26 @@ Think of writing config as fill in the blanks for well-tested algorithm template
 
 NOTE: You can always test your config (to double-check if right values are provided), but no need to re-test the already well-tested implementation.
 
+link:../../specs.adoc#_specs_do_not_need_tests[Read more here]
+
 == Flexibility 
 
-* This is decoupled from the API orchestration method. For example, currently it's *Fail-Fast for Any*.
+* This is decoupled from the API orchestration method.For example, currently it's *Fail-Fast for Any*.
 But if you want to migrate to Fail-Fast for each item (to handle partial failures) or if you have another route like SObject where you need to accumulate all errors, that's as simple as calling a different API method without changing anything else.
 * If you wish to skip some validations or add new validations depending on the route, you can have different configs instances for different routes.
 
 == Extensibility
 
-Config can easily be changed or extended or reused.
+* Config can easily be modified or extended if your Bean's data-structure changes, with new fields being added or removed.
+* Config can easily catch up, even when your service migrates from non-batch to batch mode.
 
 == Re-usability
 
-Config is mapped to a data structure. Which means, if the validation requirements are same, you can *reuse* the config everywhere the data-structure is used, say in a different API. 
+Config is mapped to a data structure.
+Which means, if the validation requirements are same, you can *reuse* the config everywhere the data-structure is used, say in a different API. 
+Even if the data-structure (member) is nested inside another bean (container), the container bean can reuse all the validations of its member without rewriting.
 
 == Learning Curve
 
-We use the same Config pattern through-out, with self-explaining DSL methods to drive your development. This keeps the scope and slope of your learning curve required, low.
+Use of same Config pattern through-out, with self-explaining DSL methods to drive your development.
+This keeps the scope and slope of your learning curve required, low.
