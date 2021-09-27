@@ -233,7 +233,7 @@ public void invalidBillingTermFails() {
 But think about it, *your tests are testing the vader's validation algorithm (which is already well-tested) and not your logic*, because there is no logic in Specs!
 🤔
 
-== What Spec do I need?
+== What Spec should I use?
 
 Currently Vader provides 3 types of Specs and their names reflect the arity of fields they deal with.
 The declarative DSL with intuitive method names should guide the developer to construct a Spec.

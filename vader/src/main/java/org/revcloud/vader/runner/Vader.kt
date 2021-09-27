@@ -14,36 +14,12 @@ fun <FailureT, ContainerValidatableT> validateAndFailFastForContainer(
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> = failFastForContainer(containerValidationConfig, throwableMapper)(container)
 
-/**
- * This deals with Batch of Containers.
- * This is placed in this class instead of BatchRunner, so that consumers can fluently use both these overloads.
- */
-@JvmOverloads
-fun <FailureT, ContainerValidatableT> validateAndFailFastForContainer(
-  batchValidatable: Collection<ContainerValidatableT>,
-  containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
-  throwableMapper: (Throwable) -> FailureT? = { throw it }
-): Optional<FailureT> = batchValidatable.asSequence()
-  .map { validatable: ContainerValidatableT ->
-    validateAndFailFastForContainer(validatable, containerValidationConfig, throwableMapper)
-  }.firstOrNull { it.isPresent } ?: Optional.empty()
-
 @JvmOverloads
 fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
   container: ContainerValidatableT,
   containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> = failFastForContainer(containerValidationConfig, throwableMapper)(container)
-
-@JvmOverloads
-fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
-  batchValidatable: Collection<ContainerValidatableT>,
-  containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
-  throwableMapper: (Throwable) -> FailureT? = { throw it }
-): Optional<FailureT> = batchValidatable.asSequence()
-  .map { validatable: ContainerValidatableT ->
-    validateAndFailFastForContainer(validatable, containerValidationConfig, throwableMapper)
-  }.firstOrNull { it.isPresent } ?: Optional.empty()
 
 @JvmOverloads
 fun <FailureT, ValidatableT> validateAndFailFast(

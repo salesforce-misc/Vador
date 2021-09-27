@@ -60,7 +60,7 @@ class VaderTest {
     final Validator<Bean, ValidationFailure> validator1 = bean -> NONE;
     final Validator<Bean, ValidationFailure> validator2 = bean -> NONE;
     final Validator<Bean, ValidationFailure> validator3 = bean -> UNKNOWN_EXCEPTION;
-    final List<Validator<Bean, ValidationFailure>> validatorChain = 
+    final List<Validator<Bean, ValidationFailure>> validatorChain =
         List.of(validator1, validator2, validator3);
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate()

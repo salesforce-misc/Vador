@@ -10,7 +10,6 @@ import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest
 import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest.ContainerLevel1WithMultiBatch.Fields.containerLevel2Batch;
 import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest.ContainerRootWithMultiContainerBatch.Fields.containerLevel1Batch1;
 import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest.ContainerRootWithMultiContainerBatch.Fields.containerLevel1Batch2;
-import static org.revcloud.vader.runner.Vader.validateAndFailFastForContainer;
 
 import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
@@ -26,10 +25,10 @@ class ContainerValidationConfigWith2LevelsTest {
 
   // tag::container-config-level-2-demo[]
   @DisplayName(
-      "Container with 2 levels: (ContainerRoot -> Container1 -> Container2) + Container with next 1 level: (Container1 -> Container2)")
+      "Container with 2 levels: (ContainerRoot -> ContainerLevel1 -> ContainerLevel2) + Container with next 1 level: (ContainerLevel1 -> ContainerLevel2)")
   @Test
   void containerValidationConfigWith2Levels1() {
-    final var container1RootValidationConfig =
+    final var containerRootValidationConfigFor2Levels =
         ContainerValidationConfigWith2Levels
             .<ContainerRoot, ContainerLevel1, ValidationFailure>toValidate()
             .withBatchMapper(ContainerRoot::getContainerLevel1Batch)
@@ -40,7 +39,7 @@ class ContainerValidationConfigWith2LevelsTest {
                     .shouldHaveMinBatchSizeOrFailWith(Tuple.of(5, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
                     .prepare())
             .prepare();
-    final var container2ValidationConfig =
+    final var containerLevel1ValidationConfig =
         ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
             .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
             .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_2))
@@ -65,21 +64,22 @@ class ContainerValidationConfigWith2LevelsTest {
     final var containerRoot = new ContainerRoot(containerLevel1Batch);
 
     final var result =
-        Vader.validateAndFailFastForContainer(containerRoot, container1RootValidationConfig)
+        Vader.validateAndFailFastForContainer(
+                containerRoot, containerRootValidationConfigFor2Levels)
             .or(
                 () ->
-                    Vader.validateAndFailFastForContainer(
-                        containerLevel1Batch, container2ValidationConfig));
+                    VaderBatch.validateAndFailFastForContainer(
+                        containerLevel1Batch, containerLevel1ValidationConfig));
 
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_1);
   }
   // end::container-config-level-2-demo[]
 
   @DisplayName(
-      "Container with 2 levels: (ContainerRoot -> Container2 -> Container3) + Container with next 2 levels: (Container2 -> Container3 -> Bean)")
+      "Container with 2 levels: (ContainerRoot -> ContainerLevel1 -> ContainerLevel2) + Container with next 2 levels: (ContainerLevel1 -> ContainerLevel2 -> Bean)")
   @Test
   void containerValidationConfigWith2Levels2() {
-    final var containerRootValidationConfig =
+    final var containerRootValidationConfigFor2Levels =
         ContainerValidationConfigWith2Levels
             .<ContainerRoot, ContainerLevel1, ValidationFailure>toValidate()
             .withBatchMapper(ContainerRoot::getContainerLevel1Batch)
@@ -90,7 +90,7 @@ class ContainerValidationConfigWith2LevelsTest {
                     .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
                     .prepare())
             .prepare();
-    final var container1ValidationConfig =
+    final var containerLevel1ValidationConfigFor2Levels =
         ContainerValidationConfigWith2Levels
             .<ContainerLevel1, ContainerLevel2, ValidationFailure>toValidate()
             .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
@@ -120,11 +120,11 @@ class ContainerValidationConfigWith2LevelsTest {
     final var header1Root = new ContainerRoot(containerLevel1Batch);
 
     final var result =
-        Vader.validateAndFailFastForContainer(header1Root, containerRootValidationConfig)
+        Vader.validateAndFailFastForContainer(header1Root, containerRootValidationConfigFor2Levels)
             .or(
                 () ->
-                    validateAndFailFastForContainer(
-                        containerLevel1Batch, container1ValidationConfig));
+                    VaderBatch.validateAndFailFastForContainer(
+                        containerLevel1Batch, containerLevel1ValidationConfigFor2Levels));
 
     assertThat(result).contains(MAX_BATCH_SIZE_EXCEEDED_LEVEL_2);
   }

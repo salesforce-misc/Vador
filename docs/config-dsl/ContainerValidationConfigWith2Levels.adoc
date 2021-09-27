@@ -66,21 +66,22 @@ ifdef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-@DisplayName("Container with 2 levels: (ContainerRoot -> Container1 -> Container2) + Container with next 1 level: (Container1 -> Container2)")
+@DisplayName(
+    "Container with 2 levels: (ContainerRoot -> ContainerLevel1 -> ContainerLevel2) + Container with next 1 level: (ContainerLevel1 -> ContainerLevel2)")
 @Test
 void containerValidationConfigWith2Levels1() {
-  final var container1RootValidationConfig =
+  final var containerRootValidationConfigFor2Levels =
       ContainerValidationConfigWith2Levels
           .<ContainerRoot, ContainerLevel1, ValidationFailure>toValidate()
           .withBatchMapper(ContainerRoot::getContainerLevel1Batch)
-          .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
+          .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
           .withScopeOf1LevelDeep(
               ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
                   .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
                   .shouldHaveMinBatchSizeOrFailWith(Tuple.of(5, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
                   .prepare())
           .prepare();
-  final var container2ValidationConfig =
+  final var containerLevel1ValidationConfig =
       ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
           .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
           .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_2))
@@ -103,14 +104,13 @@ void containerValidationConfigWith2Levels1() {
           new ContainerLevel1(containerLevel2Batch1), new ContainerLevel1(containerLevel2Batch2));
   // root-level
   final var containerRoot = new ContainerRoot(containerLevel1Batch);
-  
+
   final var result =
-      Runner.validateAndFailFastForContainer(
-              containerRoot, container1RootValidationConfig)
+      Vader.validateAndFailFastForContainer(containerRoot, containerRootValidationConfigFor2Levels)
           .or(
               () ->
-                  Runner.validateAndFailFastForContainer(
-                      containerLevel1Batch, container2ValidationConfig));
+                  VaderBatch.validateAndFailFastForContainer(
+                      containerLevel1Batch, containerLevel1ValidationConfig));
 
   assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_1);
 }

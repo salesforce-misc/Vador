@@ -153,7 +153,7 @@ class ContainerValidationConfigTest {
         Vader.validateAndFailFastForContainer(container1, containerRootValidationConfig)
             .or(
                 () ->
-                    Vader.validateAndFailFastForContainer(
+                    VaderBatch.validateAndFailFastForContainer(
                         container2Batch, containerValidationConfig));
 
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_1);

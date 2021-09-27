@@ -188,14 +188,8 @@ class ValidationConfigTest {
         new Bean(null, null, new ID("1ttxx00000000hZAAQ"), invalidSfId, emptyList());
     final var validContainer = new ContainerBean("requiredField", memberWithInvalidSfId);
     final var result =
-        validateAndFailFast(
-                validContainer,
-                containerValidationConfig)
-            .or(
-                () ->
-                    validateAndFailFast(
-                        memberWithInvalidSfId,
-                        memberValidationConfig));
+        validateAndFailFast(validContainer, containerValidationConfig)
+            .or(() -> validateAndFailFast(memberWithInvalidSfId, memberValidationConfig));
 
     assertThat(result).isPresent();
     assertThat(result.get().getValidationFailureMessage().getParams())

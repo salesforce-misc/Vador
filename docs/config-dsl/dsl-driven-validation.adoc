@@ -24,48 +24,56 @@ image:hierarchical-validation.png[hierarchical-validation]
 
 == What's a config DSL?
 
-Config provides DSL methods (builder pattern) which guides you to prepare your Validation definition.
+Config provides DSL methods (builder pattern) which guide you to prepare your Validation definition.
 Depending on the context and your intent, there are different flavors of configs depending on these factors:
-
-* Is the Data-structure under validation _Single (Non-Batch)_ or _Collection (Batch)_.
-* Does the Data-structure HAS-A Nested-Data-structure which needs to be validated too.
-** Is the Nested Data-structure _Single (Non-Batch)_ or _Collection (Batch)_.
-* Does validations need to run from Container Context.
-
-== Config DSL Flavors
 
 Let's walk through each of these flavors with an example bean, validation requirements for its Data-structure and a demo for such requirements using a runnable JUnit test.
 
 NOTE: These examples don't exhaustively cover all the use-cases.
-You may refer the Javadoc of each validation config to find-out more.
-
-Also, the unit tests should help with the usage of these fields.
+You may refer the Javadoc (TBD) of each validation config to find-out more. Also, the existing unit tests should help with the use-cases.
 As usual, file a git.soma issue if you have any new or unique use-cases.
 
-=== link:ValidationConfig.adoc[ValidationConfig]
+[#_validation-config]
+== Data-structure under validation 
 
-=== link:BatchValidationConfig.adoc[BatchValidationConfig]
+[cols="1h,1"]
+|===
+|Single (Non-Batch)
+|link:ValidationConfig.adoc[ValidationConfig]
 
-=== link:nested/NestedBatch1ValidationConfig.adoc[NestedBatch1ValidationConfig(TBD)]
+|Collection (Batch)
+|link:BatchValidationConfig.adoc[BatchValidationConfig]
+|===
 
-=== link:nested/BatchOfBatch1ValidationConfig.adoc[BatchOfBatch1ValidationConfig]
+=== Data-structure (Container) HAS-A Nested-Data-structure (Member)
 
-{empty} +
+You may have a requirement to validate a Data-structure which HAS-A Nested-Data-structure that needs to be validated too.
+Such scenarios are complex as they involve various combinations Container-Member state(Batch or Non-Batch) + Execution Strategy (Fail Fast for Each or Fail Fast for Any).
+There is no one-solution-fits all. 
 
-=== link:ContainerValidationConfig.adoc[ContainerValidationConfig]
+link:nested/nested-config.adoc[This table] should help you make the right choice. 
 
-=== link:ContainerValidationConfigWith2Levels.adoc[ContainerValidationConfigWith2Levels]
+[#_container-scope]
+== Container Scope
 
-[#_containervalidationconfig_vs_validationconfig]
-== `ContainerValidationConfig++*++` Vs `++*++ValidationConfig`
-
-[.lead]
-`ContainerValidationConfig++*++` talks about _what-it-contains_ and `++*++ValidationConfig` talks about _itself_.
+`++*++ValidationConfig` talks about the Data structure _itself_, whereas `ContainerValidationConfig++*++` talks about _what-it-contains_.
 
 Configuration fields like `shouldHaveMinBatchSizeOrFailWith, shouldHaveMaxBatchSizeOrFailWith` won't make sense when a `++*++ValidationConfig` is describing a Bean (or BeanBatch).
-So these config parameters are separated-out into a different config under the umbrella of `ContainerValidationConfig++*++`
+So these config parameters are separated-out into a different config under the umbrella of `ContainerValidationConfig++*++`.
 
-However, these can be confusing in scenarios like this:
+[cols="1h,1"]
+|===
+|Container with 1 level deep scope
+|link:ContainerValidationConfig.adoc[ContainerValidationConfig]
+
+|Container with 2 levels deep scope
+|link:ContainerValidationConfigWith2Levels.adoc[ContainerValidationConfigWith2Levels]
+|=== 
+
+[#_containervalidationconfig_vs_validationconfig]
+=== link:#_container-scope[ContainerValidationConfig++*++] Vs link:#_validation-config[++*++ValidationConfig]
+
+However, there can be confusing in scenarios like this:
 
 [source,java,indent=0,options="nowrap"]
 ----
@@ -98,7 +106,7 @@ The answer is - *"It depends on your Intent"*.
 If you look at the list being empty/`null` as `INVALID_BATCH_SIZE`, go with link:ContainerValidationConfig.adoc[ContainerValidationConfig].
 If you look at it as any other mandatory field, go with link:BatchValidationConfig.adoc[BatchValidationConfig].
 
-== `++*++ValidationConfig` DSL highlights
+== link:#_validation-config[++*++ValidationConfig] DSL highlights
 
 === Stricter Salesforce `ID` Validation for Core consumers
 

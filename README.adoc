@@ -114,7 +114,7 @@ https://drive.google.com/open?id=1Syi3smlcyFAL0ZoDuq5dWR1IALZNmNUm[An Internal P
 
 == Highlights
 
-=== 🍭 link:{docsdir}/config-dsl/config-driven-validation.adoc[Config Driven Validation]
+=== 🍭 link:{docsdir}/config-dsl/dsl-driven-validation.adoc[DSL Driven Validation]
 
 === 🤩 link:{docsdir}/specs.adoc[Specs]
 

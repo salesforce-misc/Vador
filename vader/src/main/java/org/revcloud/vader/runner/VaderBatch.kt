@@ -14,6 +14,26 @@ import org.revcloud.vader.types.validators.Validator
 import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
+@JvmOverloads
+fun <FailureT, ContainerValidatableT> validateAndFailFastForContainer(
+  batchValidatable: Collection<ContainerValidatableT>,
+  containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
+): Optional<FailureT> = batchValidatable.asSequence()
+  .map { validatable: ContainerValidatableT ->
+    validateAndFailFastForContainer(validatable, containerValidationConfig, throwableMapper)
+  }.firstOrNull { it.isPresent } ?: Optional.empty()
+
+@JvmOverloads
+fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
+  batchValidatable: Collection<ContainerValidatableT>,
+  containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
+): Optional<FailureT> = batchValidatable.asSequence()
+  .map { validatable: ContainerValidatableT ->
+    validateAndFailFastForContainer(validatable, containerValidationConfig, throwableMapper)
+  }.firstOrNull { it.isPresent } ?: Optional.empty()
+
 /** == FOR EACH == */
 @JvmOverloads
 fun <FailureT, ValidatableT> validateAndFailFastForEach(
