@@ -11,7 +11,7 @@ endif::[]
 :hide-uri-scheme:
 :toc:
 :toc-placement!:
-:vader-version: 2.6.1
+:vader-version: 2.6.2
 :docsdir: docs
 :imagesdir: {docsdir}/images
 
@@ -36,7 +36,7 @@ image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=c
 image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=sqale_rating[Maintainability Rating,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
 image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=security_rating[Security Rating,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
 image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=coverage[Coverage,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
-image:https://img.shields.io/badge/QTC-Centaurus-eng.svg?logo=slack[Slack,link=https://sfdc-salescloud.slack.com/messages/TFBAFAVPH/team/]
+image:https://img.shields.io/badge/Rev-Delphinus.svg?logo=slack[Slack,link=https://salesforce-internal.slack.com/archives/C0228BHJCQP]
 
 == Artifact Coordinates
 
@@ -59,10 +59,10 @@ On core, there is no de-facto standard to write bean validations
 link:{docsdir}/requirements.adoc[Requirements that lead to the birth of Vader]
 
 Validation orchestration is predominantly done with `if-else-try-catch` pyramids, similar to https://github.com/overfullstack/railway-oriented-validation/blob/master/src/main/java/app/imperative/ImperativeValidation.java[this].
-A domain may have more than 60 validations across its batch & non-batch services.
-Having validations as loose functions for the above requirements, can create a mess of function calls:
+A domain may have many validations across its batch & non-batch services.
+Having validations as loose functions and using exceptions to halt the validation flow for the above requirements, can create a mess of function calls and execution flow:
 
-image:function-call-mess.png[inline]
+image:function-call-mess.png[function-call-mess]
 
 This approach can spike the https://www.ibm.com/developerworks/java/library/j-cq03316/[*Cyclomatic Complexity*]
 and https://www.sonarsource.com/{docsdir}/CognitiveComplexity.pdf[*Cognitive Complexity*] metrics and renders a code-base which is difficult to test, extend and maintain.
@@ -132,9 +132,13 @@ The framework asks your validation strategy to be broken into *_3 decoupled_* pa
 
 * Write your Validations _(What-to-do)_ - The functions used for validations should abide to one of the link:{docdir}/validator-types.adoc[Validator types] provided by Vader.
 * Configuration _(How-to-do)_ - Stitch your validations together into a Chain.
-* Orchestration _(How-to-do)_ - Call the Vader's API as per the execution strategy (Fail-Fast or Error-Accumulation)
+* Execution _(How-to-do)_ - Call the Vader's API as per the execution strategy (Fail-Fast or Error-Accumulation)
 
-Let's dive into how Vader can help you in each of these steps:
+Let's dive into them bottoms-up:
+
+This is how your final API call looks like:
+
+image:api.png[API]
 
 === link:{docsdir}/validator-types.adoc[ƛ Data-types for Validators]
 
@@ -148,16 +152,12 @@ _The complexity of how these validators are orchestrated per strategy is abstrac
 
 *There are various orchestration flavors (Overloads) from `Vader` and `VaderBatch` APIs (Please refer to Java Docs)*.
 
-[discrete]
 == `validateAndFailFastForEach(...)`
 
-[discrete]
 == `validateAndFailFastForAny(...)`
 
-[discrete]
 == `validateAndAccumulateErrors(...)`
 
-[discrete]
 == 💣 What if Validators threw Exceptions 💥?
 
 These API methods accept an optional parameter called `throwableMapper: (Throwable) -> FailureT`, which needs to be implemented and supplied by the consumer.

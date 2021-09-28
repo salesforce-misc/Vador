@@ -111,12 +111,7 @@ private fun <FailureT, ContainerValidatableT, MemberValidatableT, ContainerPairT
     .map { (result, validatable) ->
       result.mapLeft {
         it.failure.bimap(
-          { containerFailure ->
-            Tuple.of(
-              containerPairForInvalidMapper(validatable),
-              containerFailure
-            )
-          },
+          { containerFailure -> Tuple.of(containerPairForInvalidMapper(validatable), containerFailure) },
           { memberFailures ->
             val members = memberBatchMapper.apply(validatable)
             members.zip(memberFailures)
@@ -197,7 +192,7 @@ fun <FailureT, ValidatableT, PairT> validateAndFailFastForAny(
  *
  * @param validatables
  * @param validators
- * @param invalidValidatable FailureT if the validatable is null.
+ * @param none Failure if the validatable is null.
  * @param <FailureT>
  * @param <ValidatableT>
  * @return List of Validation failures.
@@ -205,7 +200,7 @@ fun <FailureT, ValidatableT, PairT> validateAndFailFastForAny(
 fun <FailureT, ValidatableT> validateAndAccumulateErrors(
   validatables: List<ValidatableT>,
   validators: List<Validator<ValidatableT?, FailureT?>>,
-  none: FailureT, // TODO 20/05/21 gopala.akshintala: Check on adding InvalidatableT
+  none: FailureT, // ! TODO 27/09/21 gopala.akshintala: Remove this, like it's FF counterpart 
   throwableMapper: (Throwable) -> FailureT?,
 ): List<List<Either<FailureT?, ValidatableT?>>> =
   validateAndAccumulateErrors(validatables, liftAllToEtr(validators, none), throwableMapper)
@@ -215,7 +210,6 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
  *
  * @param validatables
  * @param validatorEtrs
- * @param invalidValidatable FailureT if the validatable is null.
  * @param <FailureT>
  * @param <ValidatableT>
  * @return List of Validation failures.
