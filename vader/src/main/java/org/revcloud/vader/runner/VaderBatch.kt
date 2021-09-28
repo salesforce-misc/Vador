@@ -131,6 +131,28 @@ fun <FailureT, ContainerValidatableT, MemberValidatableT> validateAndFailFastFor
   failFastForEachBatchOfBatch1(batchOfBatch1ValidationConfig, failureForNullValidatable, throwableMapper)(validatables)
 
 /** == FOR ANY == */
+@JvmOverloads
+fun <FailureT, ValidatableT> validateAndFailFastForAny(
+  validatables: List<ValidatableT?>,
+  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
+  failureForNullValidatable: FailureT? = null,
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
+): Optional<FailureT> =
+  failFastForAny(batchValidationConfig, failureForNullValidatable, throwableMapper)(validatables)
+
+/**
+ * This returns the first failure of first invalid item in a batch and pairs it with an identifier using the `pairForInvalidMapper`
+ * This can be used for `AllOrNone` scenarios in batch
+ */
+@JvmOverloads
+fun <FailureT, ValidatableT, PairT> validateAndFailFastForAny(
+  validatables: List<ValidatableT?>,
+  pairForInvalidMapper: (ValidatableT?) -> PairT?,
+  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
+  failureForNullValidatable: FailureT? = null,
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
+): Optional<Tuple2<PairT?, FailureT?>> =
+  failFastForAny(batchValidationConfig, failureForNullValidatable, throwableMapper, pairForInvalidMapper)(validatables)
 
 @JvmOverloads
 fun <FailureT, ContainerValidatableT, MemberValidatableT> validateAndFailFastForAny(
@@ -161,29 +183,6 @@ fun <FailureT, ContainerValidatableT, MemberValidatableT, ContainerPairT, Member
     containerPairForInvalidMapper,
     memberPairForInvalidMapper
   )(validatables)
-
-@JvmOverloads
-fun <FailureT, ValidatableT> validateAndFailFastForAny(
-  validatables: List<ValidatableT?>,
-  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
-  failureForNullValidatable: FailureT? = null,
-  throwableMapper: (Throwable) -> FailureT? = { throw it }
-): Optional<FailureT> =
-  failFastForAny(batchValidationConfig, failureForNullValidatable, throwableMapper)(validatables)
-
-/**
- * This returns the first failures of first invalid item in a batch and pairs it with an identifier using the `pairForInvalidMapper`
- * This can be used for `AllOrNone` scenarios in batch
- */
-@JvmOverloads
-fun <FailureT, ValidatableT, PairT> validateAndFailFastForAny(
-  validatables: List<ValidatableT?>,
-  pairForInvalidMapper: (ValidatableT?) -> PairT?,
-  batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
-  failureForNullValidatable: FailureT? = null,
-  throwableMapper: (Throwable) -> FailureT? = { throw it }
-): Optional<Tuple2<PairT?, FailureT?>> =
-  failFastForAny(batchValidationConfig, failureForNullValidatable, throwableMapper, pairForInvalidMapper)(validatables)
 
 // --- ERROR ACCUMULATION ---
 // TODO 20/05/21 gopala.akshintala: Implement parity with Fail Fast

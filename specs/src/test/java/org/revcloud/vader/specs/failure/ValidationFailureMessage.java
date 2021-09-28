@@ -22,46 +22,15 @@ import lombok.ToString;
 @ToString
 public enum ValidationFailureMessage {
   NONE(Section.COMMON_VALIDATION_FAILURE, "Success"),
-  FIELD_NULL_OR_EMPTY("", ""),
-  NOTHING_TO_VALIDATE(Section.COMMON_VALIDATION_FAILURE, "Nothing"),
-  DUPLICATE_ITEM(Section.COMMON_VALIDATION_FAILURE, "DuplicateItem"),
-  DUPLICATE_ITEM_1(Section.COMMON_VALIDATION_FAILURE, "DuplicateItem1"),
-  DUPLICATE_ITEM_2(Section.COMMON_VALIDATION_FAILURE, "DuplicateItem2"),
-  NULL_KEY(Section.COMMON_VALIDATION_FAILURE, "NullKey"),
-  INVALID_PARENT(Section.COMMON_VALIDATION_FAILURE, "invalidParent"),
-  INVALID_ITEM(Section.COMMON_VALIDATION_FAILURE, "invalidItem"),
-  INVALID_CONTAINER(Section.COMMON_VALIDATION_FAILURE, "invalidContainer"),
-  INVALID_CHILD(Section.COMMON_VALIDATION_FAILURE, "invalidChild"),
-  INVALID_MEMBER(Section.COMMON_VALIDATION_FAILURE, "invalidMember"),
-  UNKNOWN_EXCEPTION("", ""),
-  VALIDATION_FAILURE_1("", ""),
-  VALIDATION_FAILURE_2("", ""),
-  VALIDATION_FAILURE_3("", ""),
-  REQUIRED_FIELD_MISSING("", ""),
-  REQUIRED_LIST_MISSING("", ""),
-  REQUIRED_FIELD_MISSING_1("", ""),
-  REQUIRED_FIELD_MISSING_2("", ""),
-  INVALID_COMBO_1("", ""),
-  INVALID_COMBO_2("", ""),
-  INVALID_VALUE("", ""),
-  FIELD_INTEGRITY_EXCEPTION("", ""),
-  MIN_BATCH_SIZE_EXCEEDED("", ""),
-  MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL("", ""),
-  MAX_NESTED_BATCH_SIZE_EXCEEDED_2("", ""),
-  MIN_BATCH_SIZE_NOT_MET_LEVEL_1("", ""),
-  MAX_BATCH_SIZE_EXCEEDED("", ""),
-  MIN_BATCH_SIZE_NOT_MET_LEVEL_2("", ""),
-  MAX_BATCH_SIZE_EXCEEDED_LEVEL_2("", ""),
-  MAX_BATCH_SIZE_EXCEEDED_LEVEL_3("", ""),
-  MSG_WITH_PARAMS("", ""),
+  INVALID_VALUE("", "InvalidValue"),
   ;
 
   private final String section;
   private final String name;
-  @Setter private Object[] params;
+  @Setter
+  private Object[] params;
 
   private static final class Section {
-
     static final String COMMON_VALIDATION_FAILURE = "CommonValidationFailure";
   }
 }

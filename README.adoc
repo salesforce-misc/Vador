@@ -26,7 +26,7 @@ ____
 == Mission Statement
 
 [.lead]
-*Abstract away the Validation Orchestration complexity with a Reusable Design, that sets a framework to Write & Wire validations that are easy to Test, Extend and Share*
+*Abstract away the Validation Orchestration complexity with a Reusable Design, that sets a dev-friendly framework to Write & Wire validations that are easy to Test, Extend and Share*
 
 '''
 
@@ -54,34 +54,22 @@ toc::[]
 == Why Vader?
 
 [.lead]
-On core, there is no de-facto standard to write bean validations
+On core, there is no de-facto standard to write bean validations.
 
 link:{docsdir}/requirements.adoc[Requirements that lead to the birth of Vader]
 
-Validation orchestration is predominantly done with `if-else-try-catch` pyramids, similar to https://github.com/overfullstack/railway-oriented-validation/blob/master/src/main/java/app/imperative/ImperativeValidation.java[this].
+Validations are predominantly done with `if-else-try-catch` pyramids, similar to https://github.com/overfullstack/railway-oriented-validation/blob/master/src/main/java/app/imperative/ImperativeValidation.java[this].
 A domain may have many validations across its batch & non-batch services.
-Having validations as loose functions and using exceptions to halt the validation flow for the above requirements, can create a mess of function calls and execution flow:
+Having validations as loose functions and using exceptions to halt the validation flow for the above requirements, can create a mess of function calls and execution flow.
 
 image:function-call-mess.png[function-call-mess]
 
 This approach can spike the https://www.ibm.com/developerworks/java/library/j-cq03316/[*Cyclomatic Complexity*]
 and https://www.sonarsource.com/{docsdir}/CognitiveComplexity.pdf[*Cognitive Complexity*] metrics and renders a code-base which is difficult to test, extend and maintain.
 
-=== The 3D design problem
-
-This problem is a 3-dimensional design problem stretching among - Sub-requests, Service routes (that share common fields & data structures), and Validation count.
-In the above imperative approach, we entangled all 3, which lead to chaos.
-We need a design, which treats all of these separately, let them be extended independently, and abstracts out validation orchestration.
-
-____
-
-We need to separate *What-to-do* from *How-to-do.*
-
-____
-
 === Demo pls!
 
-Watch this Tech-talk as a prerequisite to understand the problem Vader solves.
+Watch this Tech-talk as a prerequisite to understand the problem Vader solves and its design philosophy.
 It explains why `if-else-try-catch` is easy to start but difficult to manage and how Vader takes all that complexity away:
 
 ifdef::env-github[]
@@ -99,9 +87,11 @@ And the corresponding https://overfullstack.ga/posts/fight-complexity-with-fp/[B
 
 === More videos
 
-These recordings are initial presentations for Vader within the team.
+https://drive.google.com/file/d/1H_LhlYAqQKK4UjYrQ8GG9Bo3NpW2dsZL/view?usp=sharing[Presentation done for Rev Pegasus team for Cancellation API]
 
-CAUTION: The Design has evolved after these recordings, but Vader's philosophy remains the same.
+The below recordings are initial presentations for Vader within the team.
+
+CAUTION: Vader's Design has evolved after these recordings, but Vader's philosophy remains the same.
 Follow the rest of this doc to know more
 
 https://drive.google.com/open?id=1AciJ3xU5HFgeTwJxL0RME0mQVO08BMQ9[Brown Bag Session]
@@ -112,58 +102,84 @@ https://drive.google.com/open?id=1Syi3smlcyFAL0ZoDuq5dWR1IALZNmNUm[An Internal P
 
 === https://codesearch.data.sfdc.net/source/xref/app_main_core/app/main/core/billing-services/java/src/core/billing/service/billingschedule/config/BillingScheduleConfig.java#261[billing-services]
 
+== What's Vader?
+
+[.lead]
+Vader is an independent *Bean validation framework*, not tied to any consumer implementation details.
+
+Its implementation is generic and can cater to anyone looking for a declarative way to validate their Beans/POJOs.
+
+The framework asks your validation strategy to be broken into *_3 decoupled_* parts:
+
+* Write your Validators _(What-to-do)_ - The lambdas/functions used for validations should abide to one of the link:{docdir}/validator-types.adoc[Validator types] provided by Vader.
+* Configuration _(How-to-do)_ - Stitch your validations together into a Chain.
+* Execution _(How-to-do)_ - Call the Vader's API as per the execution strategy (Fail-Fast or Error-Accumulation)
+
+Vader follows *Functional Programming* philosophy to segregate _What-to-do_ from _How-to-do_.
+
+Let's start bottoms-up 🥂! We're zealous about keeping the user experience simple and the patterns uniform. So, all you need is a simple API call:
+
+image:api.png[API]
+
+== 👓 A glance at the API
+
+=== Vader (For Non-Batch)
+
+[cols="1,1"]
+|===
+|Strategy |Result type
+
+|===
+
+[cols="1h,1"]
+|===
+|validateAndFailFast
+|`Optional<FailureT>`
+
+|validateAndAccumulateErrors
+|`List<FailureT>`
+|===
+
+=== VaderBatch
+
+[cols="1,1"]
+|===
+|Strategy |Result type
+
+|===
+
+[cols="1h,1"]
+|===
+|validateAndFailFastForEach
+|`List<Either<FailureT, ValidatableT>>`
+
+|validateAndFailFastForEach (With Pair for Failure)
+|`List<Either<Tuple2<PairT, FailureT>, ValidatableT>>`
+
+|validateAndFailFastForAny
+|`Optional<FailureT>`
+
+|validateAndFailFastForAny (With Pair for Failure)
+|`Optional<Tuple2<PairT, FailureT>>`
+|===
+
+== link:{docsdir}/validator-types.adoc[How to write Validators?]
+
+== link:{docsdir}/validation-configuration[Config For Validation]
+
+== 💣 What if there is an Exception during execution 💥?
+
+All these API methods accept an optional parameter called `throwableMapper: (Throwable) -> FailureT`, which needs to be implemented and supplied by the consumer.
+If any of consumer's validations throws a checked or unchecked exception, it shall be mapped into a `FailureT` using this function.
+
+TIP: You can place a logger or a debug point (during development) in this method you supply, to capture and analyze the exception info like stacktrace, cause etc.
+We have plans to add Logger support in the future too.
+
 == Highlights
 
 === 🍭 link:{docsdir}/config-dsl/dsl-driven-validation.adoc[DSL Driven Validation]
 
 === 🤩 link:{docsdir}/specs.adoc[Specs]
-
-== What's Vader?
-
-[.lead]
-Vader is an independent Bean validation framework, not tied to any consumer implementation details.
-
-Although it's written with the context explained above, its implementation is generic and can cater to anyone looking for a declarative way to validate their Beans/POJOs.
-
-Vader follows *Functional Programming* philosophy to segregate _What-to-do_ from _How-to-do_.
-
-[.lead]
-The framework asks your validation strategy to be broken into *_3 decoupled_* parts:
-
-* Write your Validations _(What-to-do)_ - The functions used for validations should abide to one of the link:{docdir}/validator-types.adoc[Validator types] provided by Vader.
-* Configuration _(How-to-do)_ - Stitch your validations together into a Chain.
-* Execution _(How-to-do)_ - Call the Vader's API as per the execution strategy (Fail-Fast or Error-Accumulation)
-
-Let's dive into them bottoms-up:
-
-This is how your final API call looks like:
-
-image:api.png[API]
-
-=== link:{docsdir}/validator-types.adoc[ƛ Data-types for Validators]
-
-== Validation Execution Strategies
-
-Now that we know how to write & wire validations, the last step to execute these validations is to *Call an API execution method, passing this config as a parameter*.
-
-[.lead]
-This can be seen as the *Edge* for validation bounded context, where the actual execution of validations happen, and you get back the final results.
-_The complexity of how these validators are orchestrated per strategy is abstracted away from the consumer._
-
-*There are various orchestration flavors (Overloads) from `Vader` and `VaderBatch` APIs (Please refer to Java Docs)*.
-
-== `validateAndFailFastForEach(...)`
-
-== `validateAndFailFastForAny(...)`
-
-== `validateAndAccumulateErrors(...)`
-
-== 💣 What if Validators threw Exceptions 💥?
-
-These API methods accept an optional parameter called `throwableMapper: (Throwable) -> FailureT`, which needs to be implemented and supplied by the consumer.
-If any of consumer's validations throws a checked or unchecked exception, it shall be mapped into a `FailureT` using this function.
-
-TIP: You can place a logger or a debug point (during development) in this method you supply, to capture and analyze the exception info like stacktrace, cause etc.
 
 == How can I trust Vader?
 
@@ -187,10 +203,8 @@ Well, coz that’s the *bread-&-jam* of what we promise!
 
 That said, just like us, Vader matures day-by-day, and if any of your special use-cases don’t work, we shall love to fix them ASAP (TBD - Will publish SLA for P0, P1 etc).
 
-[.lead]
-👋🏼 If you are facing any trouble or have any feature requests, please log a git.soma issue 👋🏼
+NOTE: 👋🏼 If you are facing any trouble or have any feature requests, please log a git.soma issue 👋🏼
 
 image:vader.gif[]
 
 == link:CONTRIBUTING.adoc[Wanna Collab & Contribute?]
-:!sectnums:

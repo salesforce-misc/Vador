@@ -261,6 +261,7 @@ spec._1().nameForTest(BDOM_RANGE_SPEC)
   .orFailWith(ofFieldIntegrity(INVALID_BILL_DAY_OF_MONTH))
 ----
 
+[#_spec2]
 === Spec2
 
 This deals with two inter-dependent fields.
@@ -302,7 +303,7 @@ spec._2().nameForTest(START_DATE_END_DATE_SPEC)
 === Spec 3
 
 This deals with 3 inter-dependent fields.
-Based on the value of 1 field, the other 2 fields can be compared similar to Spec 2.
+Based on the value of 1 field, the other 2 fields can be compared similar to link:#_spec2[`Spec 2`].
 
 [source,java,indent=0,options="nowrap"]
 ----
@@ -327,10 +328,12 @@ spec._3().nameForTest(BDOM_FOR_ORDER_AMOUNT_SPEC)
   .orFailWith(ofFieldIntegrity(INVALID_BILL_DAY_OF_MONTH_FOR_ORDER_AMOUNT)))
 ----
 
+NOTE: TBD - to extend this pattern to support more combinations.
+
 == Spec Orchestration
 
 Constraints in each spec abide logical `OR`.
-Mutiple Specs can be composed for Fail-Fast by using `specify`
+Multiple Specs can be composed for Fail-Fast by using `specify`
 or `withSpecs` DSL function of `ValidationConfig`.
 
 [source,java,indent=0,options="nowrap"]
@@ -358,14 +361,13 @@ public static final Specs<ReferenceItemBaseInputRepresentation, BillingScheduleF
 
 // Hook these to validation config
 BatchValidationConfig.<ReferenceItemBaseInputRepresentation, BillingScheduleFailure>toValidate()
-  .specify(bsSpecs);
+  .specify(bsSpecs)
+  ...;
 ----
-
-'''
 
 === `@Annotation` vs `Spec`
 
-Annotations are reflection based and they create a lot of _runtime magic_.
+Annotations are reflection based, and they create a lot of _runtime magic_.
 They are not bad in-general, but using them for validations has these cons:
 
 * It's difficult to debug as you wouldn't know which `AnnotationProcessor` handles which `@Annotation` unless the Javadoc writer of that Annotation is gracious to provide those details.
@@ -391,9 +393,3 @@ As long as that is possible, you can translate them to Specs.
 
 When writing tests for validations using this awesome library *AssertJ*, the tests felt more declarative than the actual validation code.
 This gave rise to the idea, why not make the actual validations declarative, so they don’t need tests.
-
-==== Notes:
-
-Specs feature is under active development.
-If you are an early-adopter and wish to migrate your validations to Specs, although the end-goal is “No Tests for Specs”, we advise you to keep your tests, point them to these specs and kindly report us any bugs or missing use-cases.
-We keep covering them as we mature.
