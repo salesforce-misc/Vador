@@ -2,13 +2,13 @@ package org.revcloud.vader.lift;
 
 import static org.revcloud.vader.lift.AggregationLiftEtrUtil.liftToContainerValidatorType;
 
-import consumer.bean.Container;
-import consumer.bean.Member;
-import consumer.failure.ValidationFailure;
 import io.vavr.control.Either;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.types.validators.ValidatorEtr;
+import sample.consumer.bean.Container;
+import sample.consumer.bean.Member;
+import sample.consumer.failure.ValidationFailure;
 
 class AggregationLiftEtrUtilTest {
 

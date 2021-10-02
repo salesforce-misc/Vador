@@ -41,7 +41,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/runner/ValidationConfigTest.java[tag=flat-bean]
+include::{testdir}/org/revcloud/vader/runner/config/BaseValidationConfigTest.java[tag=flat-bean]
 ----
 
 endif::[]
@@ -94,7 +94,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/runner/ValidationConfigTest.java[tag=validationConfig-for-flat-bean-demo]
+include::{testdir}/org/revcloud/vader/runner/config/BaseValidationConfigTest.java[tag=validationConfig-for-flat-bean-demo]
 ----
 
 endif::[]
@@ -132,7 +132,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/runner/ValidationConfigTest.java[tag=nested-bean]
+include::{testdir}/org/revcloud/vader/runner/config/BaseValidationConfigTest.java[tag=nested-bean]
 ----
 
 endif::[]
@@ -192,7 +192,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/runner/ValidationConfigTest.java[tag=validationConfig-for-nested-bean-demo]
+include::{testdir}/org/revcloud/vader/runner/config/BaseValidationConfigTest.java[tag=validationConfig-for-nested-bean-demo]
 ----
 
 endif::[]

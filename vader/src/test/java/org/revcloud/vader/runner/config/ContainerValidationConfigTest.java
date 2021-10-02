@@ -1,14 +1,13 @@
-package org.revcloud.vader.runner;
+package org.revcloud.vader.runner.config;
 
-import static consumer.failure.ValidationFailure.MAX_BATCH_SIZE_EXCEEDED;
-import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_LEVEL_1;
-import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL;
-import static consumer.failure.ValidationFailure.NONE;
-import static consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static sample.consumer.failure.ValidationFailure.MAX_BATCH_SIZE_EXCEEDED;
+import static sample.consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_LEVEL_1;
+import static sample.consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL;
+import static sample.consumer.failure.ValidationFailure.NONE;
+import static sample.consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 
-import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
 import io.vavr.control.Either;
 import java.util.List;
@@ -18,7 +17,11 @@ import lombok.Value;
 import lombok.experimental.FieldNameConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.runner.ContainerValidationConfigTest.ContainerWithMultiBatch.Fields;
+import org.revcloud.vader.runner.ContainerValidationConfig;
+import org.revcloud.vader.runner.Vader;
+import org.revcloud.vader.runner.VaderBatch;
+import org.revcloud.vader.runner.config.ContainerValidationConfigTest.ContainerWithMultiBatch.Fields;
+import sample.consumer.failure.ValidationFailure;
 
 class ContainerValidationConfigTest {
 

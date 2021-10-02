@@ -1,23 +1,23 @@
 package org.revcloud.vader.runner;
 
-import static consumer.failure.ValidationFailure.DUPLICATE_ITEM;
-import static consumer.failure.ValidationFailure.DUPLICATE_ITEM_1;
-import static consumer.failure.ValidationFailure.DUPLICATE_ITEM_2;
-import static consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
-import static consumer.failure.ValidationFailure.NULL_KEY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.revcloud.vader.runner.Utils.findAndFilterInvalids;
 import static org.revcloud.vader.runner.Utils.findFirstInvalid;
+import static sample.consumer.failure.ValidationFailure.DUPLICATE_ITEM;
+import static sample.consumer.failure.ValidationFailure.DUPLICATE_ITEM_1;
+import static sample.consumer.failure.ValidationFailure.DUPLICATE_ITEM_2;
+import static sample.consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
+import static sample.consumer.failure.ValidationFailure.NULL_KEY;
 
 import com.force.swag.id.ID;
-import consumer.failure.ValidationFailure;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.Value;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import sample.consumer.failure.ValidationFailure;
 
 class UtilsTest {
 

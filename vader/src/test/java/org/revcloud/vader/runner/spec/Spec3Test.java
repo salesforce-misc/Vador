@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import consumer.failure.ValidationFailure;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -13,6 +12,7 @@ import lombok.Value;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.matchers.DateMatchers;
 import org.revcloud.vader.runner.ValidationConfig;
+import sample.consumer.failure.ValidationFailure;
 
 class Spec3Test {
 

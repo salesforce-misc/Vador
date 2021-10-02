@@ -1,11 +1,11 @@
 package org.revcloud.vader.lift;
 
-import consumer.bean.Parent;
-import consumer.failure.ValidationFailure;
 import io.vavr.control.Either;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.types.validators.Validator;
+import sample.consumer.bean.Parent;
+import sample.consumer.failure.ValidationFailure;
 
 class ValidatorLiftUtilTest {
 

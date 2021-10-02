@@ -4,27 +4,25 @@
  * Company Confidential
  */
 
-package consumer.config;
+package sample.consumer.config;
 
-import consumer.bean.Container;
-import consumer.bean.Parent;
-import consumer.failure.ValidationFailure;
-import consumer.validators.batch.BaseParentBatchRequestValidator;
-import consumer.validators.simple.BaseParentRequestValidator;
-import consumer.validators.simple.ContainerRequestValidator;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
 import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.ValidatorEtr;
+import sample.consumer.bean.Container;
+import sample.consumer.bean.Parent;
+import sample.consumer.failure.ValidationFailure;
+import sample.consumer.validators.etr.BaseParentValidatorEtr;
+import sample.consumer.validators.simple.BaseParentValidator;
+import sample.consumer.validators.simple.ContainerValidator;
 
 /** gakshintala created on 4/13/20. */
 @UtilityClass
 public class ConfigForValidators {
 
   public static List<ValidatorEtr<Parent, ValidationFailure>> getServiceValidations() {
-    return List.of(
-        BaseParentBatchRequestValidator.batchValidation1,
-        BaseParentBatchRequestValidator.batchValidation2);
+    return List.of(BaseParentValidatorEtr.validatorEtr1, BaseParentValidatorEtr.validatorEtr2);
   }
 
   public static List<ValidatorEtr<Container, ValidationFailure>> getParentValidations() {
@@ -32,10 +30,10 @@ public class ConfigForValidators {
   }
 
   public static List<Validator<Container, ValidationFailure>> getParentSimpleValidations() {
-    return List.of(ContainerRequestValidator.validation1, ContainerRequestValidator.validation2);
+    return List.of(ContainerValidator.validator1, ContainerValidator.validator2);
   }
 
   public static List<Validator<? extends Parent, ValidationFailure>> getSimpleServiceValidations() {
-    return List.of(BaseParentRequestValidator.validation1, ContainerRequestValidator.validation1);
+    return List.of(BaseParentValidator.validator1, ContainerValidator.validator1);
   }
 }

@@ -32,7 +32,7 @@ abstract class BaseContainerValidationConfig<ContainerValidatableT, FailureT> {
   protected Map<Validator<? super ContainerValidatableT, @Nullable FailureT>, @Nullable FailureT>
       withContainerValidator;
 
-  List<ValidatorEtr<ContainerValidatableT, @Nullable FailureT>> getContainerValidators() {
+  public List<ValidatorEtr<ContainerValidatableT, @Nullable FailureT>> getContainerValidators() {
     return ContainerValidationConfigEx.getContainerValidatorsEx(this);
   }
 }

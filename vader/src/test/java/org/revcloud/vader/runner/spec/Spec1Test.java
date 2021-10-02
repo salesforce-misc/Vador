@@ -1,18 +1,18 @@
 package org.revcloud.vader.runner.spec;
 
-import static consumer.failure.ValidationFailure.INVALID_COMBO_1;
-import static consumer.failure.ValidationFailure.INVALID_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.revcloud.vader.matchers.AnyMatchers.anyOf;
 import static org.revcloud.vader.matchers.IntMatchers.inRangeInclusive;
 import static org.revcloud.vader.runner.Vader.validateAndFailFast;
+import static sample.consumer.failure.ValidationFailure.INVALID_COMBO_1;
+import static sample.consumer.failure.ValidationFailure.INVALID_VALUE;
 
-import consumer.failure.ValidationFailure;
 import java.util.List;
 import lombok.Value;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.runner.ValidationConfig;
+import sample.consumer.failure.ValidationFailure;
 
 class Spec1Test {
 

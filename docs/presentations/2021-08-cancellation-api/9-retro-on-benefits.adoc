@@ -38,7 +38,7 @@ link:../../specs.adoc#_specs_do_not_need_tests[Read more here]
 
 == Flexibility 
 
-* This is decoupled from the API orchestration method.For example, currently it's *Fail-Fast for Any*.
+* This is decoupled from the API orchestration method. For example, currently it's *Fail-Fast for Any*.
 But if you want to migrate to Fail-Fast for each item (to handle partial failures) or if you have another route like SObject where you need to accumulate all errors, that's as simple as calling a different API method without changing anything else.
 * If you wish to skip some validations or add new validations depending on the route, you can have different configs instances for different routes.
 

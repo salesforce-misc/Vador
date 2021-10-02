@@ -4,7 +4,7 @@
  * Company Confidential
  */
 
-package consumer.failure;
+package sample.consumer.failure;
 
 import lombok.Data;
 

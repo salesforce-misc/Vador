@@ -1,17 +1,15 @@
 package org.revcloud.vader.runner;
 
-import static consumer.failure.ValidationFailure.NONE;
-import static consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
-import static consumer.failure.ValidationFailure.VALIDATION_FAILURE_1;
-import static consumer.failure.ValidationFailure.VALIDATION_FAILURE_2;
-import static consumer.failure.ValidationFailure.VALIDATION_FAILURE_3;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.vavr.api.VavrAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.revcloud.vader.runner.VaderBatch.validateAndFailFastForEach;
+import static sample.consumer.failure.ValidationFailure.NONE;
+import static sample.consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
+import static sample.consumer.failure.ValidationFailure.VALIDATION_FAILURE_1;
+import static sample.consumer.failure.ValidationFailure.VALIDATION_FAILURE_2;
+import static sample.consumer.failure.ValidationFailure.VALIDATION_FAILURE_3;
 
-import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.control.Either;
@@ -24,99 +22,36 @@ import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.ValidatorEtr;
+import sample.consumer.failure.ValidationFailure;
 
 /** gakshintala created on 7/22/20. */
 class VaderBatchTest {
 
-  @Test
-  void failFastPartialFailures() {
-    final var validatables =
-        List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
-    List<ValidatorEtr<Bean, ValidationFailure>> validators =
-        List.of(
-            bean -> Either.right(true),
-            bean ->
-                bean.map(Bean::getId).filterOrElse(id -> id >= 2, ignore -> VALIDATION_FAILURE_1),
-            bean ->
-                bean.map(Bean::getId).filterOrElse(id -> id <= 2, ignore -> VALIDATION_FAILURE_2));
-    final var batchValidationConfig =
-        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
-            .withValidatorEtrs(validators)
-            .prepare();
-    final var resultsWithIds =
-        validateAndFailFastForEach(validatables, Bean::getId, batchValidationConfig);
+  private static final List<Bean> VALIDATABLE_BATCH =
+      List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
 
-    final var ids =
-        resultsWithIds.stream()
-            .map(etr -> etr.fold(Tuple2::_1, Bean::getId))
-            .collect(Collectors.toList());
-    assertThat(ids).containsAll(IntStream.rangeClosed(0, 4).boxed().collect(Collectors.toList()));
+  private static final List<Validator<Bean, ValidationFailure>> VALIDATORS =
+      List.of(
+          bean -> NONE,
+          bean -> bean.getId() >= 2 ? NONE : VALIDATION_FAILURE_1,
+          bean -> bean.getId() <= 2 ? NONE : VALIDATION_FAILURE_2);
 
-    final var results =
-        resultsWithIds.stream().map(etr -> etr.mapLeft(Tuple2::_2)).collect(Collectors.toList());
-    assertEquals(validatables.size(), results.size());
-    assertThat(results.get(2)).containsOnRight(new Bean(2));
-    assertThat(results.stream().limit(2)).containsOnly(Either.left(VALIDATION_FAILURE_1));
-    assertThat(results.stream().skip(results.size() - 2))
-        .containsOnly(Either.left(VALIDATION_FAILURE_2));
-  }
-
-  @Test
-  void failFastForAny() {
-    final var validatables =
-        List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
-    List<ValidatorEtr<Bean, ValidationFailure>> validators =
-        List.of(
-            bean -> Either.right(true),
-            bean -> // Fail if id < 2
-            bean.map(Bean::getId).filterOrElse(id -> id >= 2, ignore -> VALIDATION_FAILURE_1),
-            bean ->
-                bean.map(Bean::getId).filterOrElse(id -> id <= 2, ignore -> VALIDATION_FAILURE_2));
-    final var batchValidationConfig =
-        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
-            .withValidatorEtrs(validators)
-            .prepare();
-    final var result = VaderBatch.validateAndFailFastForAny(validatables, batchValidationConfig);
-    assertThat(result).contains(VALIDATION_FAILURE_1);
-  }
-
-  @Test
-  void failFastForAnyWithIdMapper() {
-    final var validatables =
-        List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
-    List<ValidatorEtr<Bean, ValidationFailure>> validators =
-        List.of(
-            bean -> Either.right(true),
-            bean ->
-                bean.map(Bean::getId).filterOrElse(id -> id >= 0, ignore -> VALIDATION_FAILURE_1),
-            bean ->
-                bean.map(Bean::getId).filterOrElse(id -> id != 2, ignore -> VALIDATION_FAILURE_2));
-    final var batchValidationConfig =
-        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
-            .withValidatorEtrs(validators)
-            .prepare();
-    final var result =
-        VaderBatch.validateAndFailFastForAny(validatables, Bean::getId, batchValidationConfig);
-    assertThat(result).contains(Tuple.of(2, VALIDATION_FAILURE_2));
-  }
+  private static final List<ValidatorEtr<Bean, ValidationFailure>> VALIDATOR_ETRS =
+      List.of(
+          bean -> Either.right(true),
+          bean -> bean.map(Bean::getId).filterOrElse(id -> id >= 2, ignore -> VALIDATION_FAILURE_1),
+          bean ->
+              bean.map(Bean::getId).filterOrElse(id -> id <= 2, ignore -> VALIDATION_FAILURE_2));
 
   @Test
   void failFastPartialFailuresForValidators() {
-    final var validatables =
-        List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
-    var predicateForValidId1 = (Predicate<Integer>) id -> id >= 2;
-    var predicateForValidId2 = (Predicate<Integer>) id -> id <= 2;
-    List<Validator<Bean, ValidationFailure>> validators =
-        List.of(
-            bean -> NONE,
-            bean -> predicateForValidId1.test(bean.getId()) ? NONE : VALIDATION_FAILURE_1,
-            bean -> predicateForValidId2.test(bean.getId()) ? NONE : VALIDATION_FAILURE_2);
     final var batchValidationConfig =
         BatchValidationConfig.<Bean, ValidationFailure>toValidate()
-            .withValidators(Tuple.of(validators, NONE))
+            .withValidators(Tuple.of(VALIDATORS, NONE))
             .prepare();
-    final var results = validateAndFailFastForEach(validatables, batchValidationConfig);
-    assertEquals(results.size(), validatables.size());
+    final var results =
+        VaderBatch.validateAndFailFastForEach(VALIDATABLE_BATCH, batchValidationConfig);
+    assertEquals(results.size(), VALIDATABLE_BATCH.size());
     assertTrue(results.get(2).isRight());
     assertEquals(results.get(2), Either.right(new Bean(2)));
     assertTrue(
@@ -130,13 +65,69 @@ class VaderBatchTest {
   }
 
   @Test
+  void failFastPartialFailures() {
+    final var batchValidationConfig =
+        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+            .withValidatorEtrs(VALIDATOR_ETRS)
+            .prepare();
+    final var results =
+        VaderBatch.validateAndFailFastForEach(VALIDATABLE_BATCH, batchValidationConfig);
+
+    assertEquals(VALIDATABLE_BATCH.size(), results.size());
+    assertThat(results.get(2)).containsOnRight(new Bean(2));
+    assertThat(results.stream().limit(2)).containsOnly(Either.left(VALIDATION_FAILURE_1));
+    assertThat(results.stream().skip(results.size() - 2))
+        .containsOnly(Either.left(VALIDATION_FAILURE_2));
+  }
+
+  @Test
+  void failFastPartialFailuresWithPair() {
+    final var batchValidationConfig =
+        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+            .withValidatorEtrs(VALIDATOR_ETRS)
+            .prepare();
+    final var resultsWithIds =
+        VaderBatch.validateAndFailFastForEach(
+            VALIDATABLE_BATCH, Bean::getId, batchValidationConfig);
+
+    final var ids =
+        resultsWithIds.stream()
+            .map(etr -> etr.fold(Tuple2::_1, Bean::getId))
+            .collect(Collectors.toList());
+    assertThat(ids).containsAll(IntStream.rangeClosed(0, 4).boxed().collect(Collectors.toList()));
+  }
+
+  @Test
+  void failFastForAny() {
+    final var batchValidationConfig =
+        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+            .withValidatorEtrs(VALIDATOR_ETRS)
+            .prepare();
+    final var result =
+        VaderBatch.validateAndFailFastForAny(VALIDATABLE_BATCH, batchValidationConfig);
+    assertThat(result).contains(VALIDATION_FAILURE_1);
+  }
+
+  @Test
+  void failFastForAnyWithPair() {
+    final var batchValidationConfig =
+        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+            .withValidatorEtrs(VALIDATOR_ETRS)
+            .prepare();
+    final var result =
+        VaderBatch.validateAndFailFastForAny(VALIDATABLE_BATCH, Bean::getId, batchValidationConfig);
+    assertThat(result).contains(Tuple.of(2, VALIDATION_FAILURE_2));
+  }
+
+  @Test
   void handleNullValidatablesByDefault() {
+    // * NOTE 01/10/21 gopala.akshintala: Using vavr list as `java.util.List.of()` doesn't allow
+    // `null`
     final var validatables =
         io.vavr.collection.List.of(new Bean(0), new Bean(1), null, new Bean(3), null).toJavaList();
-    final var batchValidationConfig =
-        BatchValidationConfig.<Bean, ValidationFailure>toValidate().prepare();
-    final var results = validateAndFailFastForEach(validatables, batchValidationConfig);
-    assertEquals(results.size(), validatables.size());
+    final var noOpConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate().prepare();
+    final var results = VaderBatch.validateAndFailFastForEach(validatables, noOpConfig);
+    assertEquals(results.size(), VALIDATABLE_BATCH.size());
 
     VavrAssertions.assertThat(results.get(0)).isRight().containsOnRight(new Bean(0));
     VavrAssertions.assertThat(results.get(1)).isRight().containsOnRight(new Bean(1));
@@ -146,14 +137,13 @@ class VaderBatchTest {
   }
 
   @Test
-  void handleNullValidatablesWithFailure() {
+  void handleNullValidatablesWithFailureForNullValidatable() {
     final var validatables =
         io.vavr.collection.List.of(new Bean(0), new Bean(1), null, new Bean(3), null).toJavaList();
-    final var batchValidationConfig =
-        BatchValidationConfig.<Bean, ValidationFailure>toValidate().prepare();
+    final var noOpConfig = BatchValidationConfig.<Bean, ValidationFailure>toValidate().prepare();
     final var results =
-        validateAndFailFastForEach(validatables, batchValidationConfig, NOTHING_TO_VALIDATE);
-    assertEquals(results.size(), validatables.size());
+        VaderBatch.validateAndFailFastForEach(validatables, noOpConfig, NOTHING_TO_VALIDATE);
+    assertEquals(results.size(), VALIDATABLE_BATCH.size());
 
     VavrAssertions.assertThat(results.get(0)).isRight().containsOnRight(new Bean(0));
     VavrAssertions.assertThat(results.get(1)).isRight().containsOnRight(new Bean(1));
@@ -164,22 +154,21 @@ class VaderBatchTest {
 
   @Test
   void errorAccumulateForValidators() {
-    final var validatables =
-        List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
     var predicateForValidId1 = (Predicate<Integer>) id -> id >= 2;
     var predicateForValidId2 = (Predicate<Integer>) id -> id <= 2;
     var predicateForValidId3 = (Predicate<Integer>) id -> id >= 1;
-    List<Validator<Bean, ValidationFailure>> validators =
+    List<Validator<Bean, ValidationFailure>> VALIDATORS =
         List.of(
             bean -> NONE,
             bean -> predicateForValidId1.test(bean.getId()) ? NONE : VALIDATION_FAILURE_1,
             bean -> predicateForValidId2.test(bean.getId()) ? NONE : VALIDATION_FAILURE_2,
             bean -> predicateForValidId3.test(bean.getId()) ? NONE : VALIDATION_FAILURE_3);
     final var result =
-        VaderBatch.validateAndAccumulateErrors(validatables, validators, NONE, throwable -> null);
+        VaderBatch.validateAndAccumulateErrors(
+            VALIDATABLE_BATCH, VALIDATORS, NONE, throwable -> null);
 
-    assertEquals(result.size(), validatables.size());
-    assertTrue(result.stream().allMatch(r -> r.size() == validators.size()));
+    assertEquals(result.size(), VALIDATABLE_BATCH.size());
+    assertTrue(result.stream().allMatch(r -> r.size() == VALIDATORS.size()));
 
     assertTrue(result.get(2).stream().allMatch(Either::isRight));
     assertTrue(
@@ -208,7 +197,7 @@ class VaderBatchTest {
             (vf, index) ->
                 assertTrue(
                     vf.get(1).isRight()
-                        && Either.right(new Bean(validatables.size() - 2 + index))
+                        && Either.right(new Bean(VALIDATABLE_BATCH.size() - 2 + index))
                             .equals(vf.get(1))));
 
     assertEquals(result.get(0).get(3), Either.left(VALIDATION_FAILURE_3));

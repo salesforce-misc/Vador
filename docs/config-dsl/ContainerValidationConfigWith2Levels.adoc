@@ -51,7 +51,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/runner/ContainerValidationConfigWith2LevelsTest.java[tag=container-config-level-2]
+include::{testdir}/org/revcloud/vader/runner/config/nested/ContainerValidationConfigWith2LevelsTest.java[tag=container-config-level-2]
 ----
 
 endif::[]
@@ -121,7 +121,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/runner/ContainerValidationConfigWith2LevelsTest.java[tag=container-config-level-2-demo]
+include::{testdir}/org/revcloud/vader/runner/config/nested/ContainerValidationConfigWith2LevelsTest.java[tag=container-config-level-2-demo]
 ----
 
 endif::[]

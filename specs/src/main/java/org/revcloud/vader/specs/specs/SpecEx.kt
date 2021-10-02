@@ -17,13 +17,15 @@ internal fun <ValidatableT, FailureT, WhenT, ThenT> Spec2<ValidatableT, FailureT
       throw IllegalArgumentException("`when-matches/matchesAnyOf + then-shouldMatch/shouldMatchAnyOf` cannot be given along with `shouldRelateWith` or `shouldRelateWithFn`")
     }
     val whenValue = `when`.apply(validatable)
-    if (shouldRelateWith.isEmpty() && shouldRelateWithFn == null &&
+    if (shouldRelateWith.isEmpty() &&
+      shouldRelateWithFn == null &&
       matchesAnyOf.none { it.matches(whenValue) }
     ) {
       return@Predicate true
     }
     val thenValue = then.apply(validatable)
-    if (shouldRelateWith.isEmpty() && shouldRelateWithFn == null &&
+    if (shouldRelateWith.isEmpty() &&
+      shouldRelateWithFn == null &&
       shouldMatchAnyOf.any { it.matches(thenValue) }
     ) {
       return@Predicate true

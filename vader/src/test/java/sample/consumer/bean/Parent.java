@@ -4,7 +4,7 @@
  * Company Confidential
  */
 
-package consumer.bean;
+package sample.consumer.bean;
 
 import com.force.swag.id.ID;
 import lombok.AllArgsConstructor;
@@ -13,19 +13,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-/**
- * Connect API input bean.
- *
- * @author gakshintala
- * @since 228
- */
 @AllArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode
 @ToString
 @Getter
 public class Parent {
-
   final int id;
   final ID sfId;
   final Member member;

@@ -4,9 +4,9 @@
  * Company Confidential
  */
 
-package consumer;
+package sample.consumer;
 
-import consumer.bean.Parent;
+import sample.consumer.bean.Parent;
 
 /** gakshintala created on 4/13/20. */
 public class Service extends BaseService<Parent> {}

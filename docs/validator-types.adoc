@@ -19,28 +19,28 @@ These are https://www.baeldung.com/java-8-functional-interfaces[Functional Inter
 Such lambdas are called *https://dzone.com/articles/java-lambda-expressions-functions-as-first-class-citizens[First-Class functions aka Functions as values]*
 
 [#_validator]
-== Validator `(ValidatableT) -> FailureT`
+== Validator: `(ValidatableT) -> FailureT`
 
 The Data type for simple first-class functions.
 It takes in a bean to be validated, represented by `ValidatableT`, and returns a failure `FailureT`.
 
 [source,java,indent=0,options="nowrap"]
 ----
-public static final Validator<Container, ValidationFailure> validation1 =
-  containerInputRepresentation -> {
-    if (containerInputRepresentation._isSetPaymentAuthorizationId()) {
-      return ValidationFailure.NONE;
-    } else {
-      return new ValidationFailure(...);
-    }
-  };
+public static final Validator<Bean, ValidationFailure> validator =
+    bean -> {
+      if (bean == null) {
+        return new ValidationFailure(FIELD_NULL_OR_EMPTY);
+      } else {
+        return ValidationFailure.NONE;
+      }
+    };
 ----
 
 == If you need more ⚡️Power⚡️
 
 image:more-power.gif[inline]
 
-== ValidatorEtr (`(Either<FailureT, ValidatableT>) -> Either<FailureT, ?>`)
+== ValidatorEtr: `(Either<FailureT, ValidatableT>) -> Either<FailureT, ?>`
 
 === https://docs.vavr.io/#_either[The Either type]
 
@@ -49,23 +49,27 @@ The `Either` type is borrowed from https://docs.vavr.io/#_either[Vavr].
 
 === What's so powerful about `Either`?
 
+IMPORTANT: You may need some Functional Programming experience to use this Validator type.
+
 With `Either`, You get all the functional programming powers.
 You can write linear programs with a lot less *Cyclomatic Complexity* & *Cognitive Complexity*.
 
 Please refer to this tech talk discussing these concepts: https://www.youtube.com/watch?v=Dvr6gx4XaD8&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or["Fight Complexity with Functional Programming - Gopal S. Akshintala - All Things Open, USA, 2020"]
 
 Lambdas assigned to `ValidatorEtr` take `Either<FailureT, ValidatableT>` as input and should return `Either<FailureT, ?>`.
-Since the bean is pre-wrapped in an `Either`, you can perform all the `Either` operations on the input like `map` , `flatMap`, `fold`, `filterOrElse` ( Refer https://www.javadoc.io/doc/io.vavr/vavr/0.10.2/io/vavr/control/Either.html[API] for more info).
+Since the bean is pre-wrapped in an `Either`, you can perform all the `Either` operations on the input like `map` , `flatMap`, `fold`, `filterOrElse`, etc.
+Refer https://www.javadoc.io/doc/io.vavr/vavr/0.10.2/io/vavr/control/Either.html[Either API].
 
 If there is a Validation Failure, keep the result in the _left_ state.
 If the `Either` in the result is in the _right_ state, it is considered that the bean **Passed** the validation.
-The wildcard `?` signifies it doesn't matter what's the value in the right state.
+The wildcard `?` in the return type `Either<FailureT, ?>` signifies that it doesn't matter what's the value in the right state. 
+As long as it's on right the validation is considered to be passed ✅
 
 [source,java,indent=0,options="nowrap"]
 ----
-public static final ValidatorEtr<Container, ValidationFailure> batchValidation1 =
-  containerInputRepresentation -> containerInputRepresentation
-    .filterOrElse(Container::_isSetAccountId, ignore -> new ValidationFailure(..);
+public static final ValidatorEtr<Bean, ValidationFailure> validatorEtr =
+      beanEtr -> beanEtr.filterOrElse(
+          bean -> bean.id != null, badBean -> new ValidationFailure(FIELD_NULL_OR_EMPTY));
 ----
 
 TIP: Of-course, pre-wrapping bean into `Either` is just to avoid boiler-plate.

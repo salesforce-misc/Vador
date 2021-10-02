@@ -4,14 +4,14 @@
  * Company Confidential
  */
 
-package consumer.config;
+package sample.consumer.config;
 
-import consumer.BaseService;
-import consumer.Service;
-import consumer.bean.Parent;
-import consumer.failure.ValidationFailure;
 import io.vavr.collection.List;
 import org.revcloud.vader.types.validators.ValidatorEtr;
+import sample.consumer.BaseService;
+import sample.consumer.Service;
+import sample.consumer.bean.Parent;
+import sample.consumer.failure.ValidationFailure;
 
 /** gakshintala created on 4/13/20. */
 public class ServiceConfig {

@@ -27,7 +27,7 @@ image:container.png[]
 The batches can be `Collection` of same or different data type. 
 As long as the batch member is a `Collection`, this config is agnostic of Data types within the collection.
 
-TIP: Before diving into the examples, you may find this comparison useful: link:dsl-driven-validation.adoc#_containervalidationconfig_vs_validationconfig[ContainerValidationConfig++*++ Vs ++*++ValidationConfig].
+TIP: Before diving into the examples, you may find this comparison useful: link:dsl-driven-configuration.adoc#_containervalidationconfig_vs_validationconfig[ContainerValidationConfig++*++ Vs ++*++ValidationConfig].
 
 [#_example_container_with_multi_batch]
 == Example: Container with Multi-Batch
@@ -47,7 +47,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/runner/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-multi-batch]
+include::{testdir}/org/revcloud/vader/runner/config/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-multi-batch]
 ----
 
 endif::[]
@@ -88,7 +88,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/runner/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-multi-batch-demo]
+include::{testdir}/org/revcloud/vader/runner/config/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-multi-batch-demo]
 ----
 
 endif::[]
@@ -115,7 +115,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/runner/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-container-batch]
+include::{testdir}/org/revcloud/vader/runner/config/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-container-batch]
 ----
 
 endif::[]
@@ -169,7 +169,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/runner/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-container-batch-demo]
+include::{testdir}/org/revcloud/vader/runner/config/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-container-batch-demo]
 ----
 
 endif::[]

@@ -1,11 +1,10 @@
 package org.revcloud.vader.lift;
 
-import static consumer.failure.ValidationFailure.NONE;
-import static consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.revcloud.vader.lift.InheritanceLiftEtrUtil.liftAllToChildValidatorType;
+import static sample.consumer.failure.ValidationFailure.NONE;
+import static sample.consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 
-import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
 import io.vavr.control.Either;
 import java.util.List;
@@ -16,11 +15,12 @@ import org.revcloud.vader.runner.Vader;
 import org.revcloud.vader.runner.ValidationConfig;
 import org.revcloud.vader.types.validators.Validator;
 import org.revcloud.vader.types.validators.ValidatorEtr;
+import sample.consumer.failure.ValidationFailure;
 
 class InheritanceLiftEtrUtilKtTest {
 
   @Test
-  void liftSimpleParentToChildValidatorTypeTest() {
+  void liftParentToChildValidatorTypeTest() {
     final Validator<Parent, ValidationFailure> v1 = ignore -> NONE;
     final Validator<Child, ValidationFailure> v2 = ignore -> UNKNOWN_EXCEPTION;
     final var validationConfig =
@@ -32,7 +32,7 @@ class InheritanceLiftEtrUtilKtTest {
   }
 
   @Test
-  void liftParentToChildValidatorTypeTest() {
+  void liftParentToChildValidatorEtrTypeTest() {
     final ValidatorEtr<Parent, ValidationFailure> v1 = ignore -> Either.right(NONE);
     final ValidatorEtr<Parent, ValidationFailure> v2 = ignore -> Either.right(NONE);
     final ValidatorEtr<Child, ValidationFailure> v3 = ignore -> Either.left(UNKNOWN_EXCEPTION);

@@ -18,9 +18,11 @@ endif::[]
 
 A config object is 1-1 mapped with a Data Structure, and holds all the information/requirements/specifications required to validate that Data-structure.
 
+image:config-1-1-validatable.png[config-1-1-validatable]
+
 == How to construct a Config Object 🔮?
 
-Dont' worry, different flavors of link:config-dsl/dsl-driven-validation.adoc[Config DSLs] are here to co-pilot with you, to prepare the config instance as per your validation requirements.
+Dont' worry, different flavors of link:config-dsl/dsl-driven-configuration.adoc[Config DSLs] are here to co-pilot with you, to prepare the config instance as per your validation requirements.
 These DSL methods follow the https://blogs.oracle.com/javamagazine/post/exploring-joshua-blochs-builder-design-pattern-in-java[Builder Pattern], where you instantiate the Builder like this:
 
 [source,java,indent=0,options="nowrap"]

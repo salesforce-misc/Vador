@@ -1,11 +1,11 @@
 package org.revcloud.vader.lift
 
-import consumer.failure.ValidationFailure
-import consumer.failure.ValidationFailure.NONE
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.vavr.kotlin.right
 import org.revcloud.vader.types.validators.ValidatorEtr
+import sample.consumer.failure.ValidationFailure
+import sample.consumer.failure.ValidationFailure.NONE
 
 class AggregationLiftUtilKtTest : FunSpec({
 

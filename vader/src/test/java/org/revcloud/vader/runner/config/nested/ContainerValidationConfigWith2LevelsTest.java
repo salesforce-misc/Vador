@@ -1,17 +1,16 @@
-package org.revcloud.vader.runner;
+package org.revcloud.vader.runner.config.nested;
 
-import static consumer.failure.ValidationFailure.MAX_BATCH_SIZE_EXCEEDED_LEVEL_2;
-import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_LEVEL_1;
-import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_LEVEL_2;
-import static consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL;
-import static consumer.failure.ValidationFailure.NONE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest.ContainerLevel1WithMultiBatch.Fields.beanBatch;
-import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest.ContainerLevel1WithMultiBatch.Fields.containerLevel2Batch;
-import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest.ContainerRootWithMultiContainerBatch.Fields.containerLevel1Batch1;
-import static org.revcloud.vader.runner.ContainerValidationConfigWith2LevelsTest.ContainerRootWithMultiContainerBatch.Fields.containerLevel1Batch2;
+import static org.revcloud.vader.runner.config.nested.ContainerValidationConfigWith2LevelsTest.ContainerLevel1WithMultiBatch.Fields.beanBatch;
+import static org.revcloud.vader.runner.config.nested.ContainerValidationConfigWith2LevelsTest.ContainerLevel1WithMultiBatch.Fields.containerLevel2Batch;
+import static org.revcloud.vader.runner.config.nested.ContainerValidationConfigWith2LevelsTest.ContainerRootWithMultiContainerBatch.Fields.containerLevel1Batch1;
+import static org.revcloud.vader.runner.config.nested.ContainerValidationConfigWith2LevelsTest.ContainerRootWithMultiContainerBatch.Fields.containerLevel1Batch2;
+import static sample.consumer.failure.ValidationFailure.MAX_BATCH_SIZE_EXCEEDED_LEVEL_2;
+import static sample.consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_LEVEL_1;
+import static sample.consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_LEVEL_2;
+import static sample.consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL;
+import static sample.consumer.failure.ValidationFailure.NONE;
 
-import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -20,6 +19,11 @@ import lombok.Value;
 import lombok.experimental.FieldNameConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.revcloud.vader.runner.ContainerValidationConfig;
+import org.revcloud.vader.runner.ContainerValidationConfigWith2Levels;
+import org.revcloud.vader.runner.Vader;
+import org.revcloud.vader.runner.VaderBatch;
+import sample.consumer.failure.ValidationFailure;
 
 class ContainerValidationConfigWith2LevelsTest {
 

@@ -4,11 +4,11 @@
  * Company Confidential
  */
 
-package consumer;
+package sample.consumer;
 
-import consumer.failure.ValidationFailure;
 import io.vavr.collection.List;
 import org.revcloud.vader.types.validators.ValidatorEtr;
+import sample.consumer.failure.ValidationFailure;
 
 /** gakshintala created on 4/13/20. */
 public abstract class BaseService<InputRepresentationT> {

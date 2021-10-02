@@ -4,18 +4,11 @@
  * Company Confidential
  */
 
-package consumer.bean;
+package sample.consumer.bean;
 
 import lombok.Value;
 
-/**
- * Connect API input bean.
- *
- * @author gakshintala
- * @since 228
- */
 @Value
 public class Member {
-
   int id;
 }

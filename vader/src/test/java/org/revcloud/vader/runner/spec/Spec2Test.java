@@ -1,17 +1,16 @@
 package org.revcloud.vader.runner.spec;
 
-import static consumer.failure.ValidationFailure.INVALID_COMBO_1;
-import static consumer.failure.ValidationFailure.INVALID_COMBO_2;
-import static consumer.failure.ValidationFailure.getFailureWithParams;
-import static consumer.failure.ValidationFailureMessage.MSG_WITH_PARAMS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.either;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.revcloud.vader.matchers.AnyMatchers.anyOf;
+import static sample.consumer.failure.ValidationFailure.INVALID_COMBO_1;
+import static sample.consumer.failure.ValidationFailure.INVALID_COMBO_2;
+import static sample.consumer.failure.ValidationFailure.getFailureWithParams;
+import static sample.consumer.failure.ValidationFailureMessage.MSG_WITH_PARAMS;
 
-import consumer.failure.ValidationFailure;
 import io.vavr.collection.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,7 @@ import org.revcloud.vader.runner.Vader;
 import org.revcloud.vader.runner.ValidationConfig;
 import org.revcloud.vader.specs.types.Spec;
 import org.revcloud.vader.specs.types.Specs;
+import sample.consumer.failure.ValidationFailure;
 
 class Spec2Test {
 
@@ -40,13 +40,12 @@ class Spec2Test {
                 spec ->
                     spec._2()
                         .nameForTest(invalidComboSpec)
-                        .orFailWith(INVALID_COMBO_1)
                         .when(Bean::getValue)
                         .then(Bean::getValueStr)
                         .shouldRelateWith(validComboMap)
                         .orFailWithFn(
-                            (value, valueStr) ->
-                                getFailureWithParams(MSG_WITH_PARAMS, value, valueStr)))
+                            (fieldName, fieldValue) ->
+                                getFailureWithParams(MSG_WITH_PARAMS, fieldName, fieldValue)))
             .prepare();
 
     final var invalidBean1 = new Bean(1, "a", null, null);
@@ -93,7 +92,8 @@ class Spec2Test {
                 .then(Bean2::getValueStr)
                 .shouldRelateWith(validComboMap)
                 .orFailWithFn(
-                    (value, valueStr) -> getFailureWithParams(MSG_WITH_PARAMS, value, valueStr));
+                    (fieldName, fieldValue) ->
+                        getFailureWithParams(MSG_WITH_PARAMS, fieldName, fieldValue));
     final var validationConfig =
         ValidationConfig.<Bean2, ValidationFailure>toValidate().withSpec(bean2Spec).prepare();
     final var validBean = new Bean2(BillingTerm.OneTime, null);
@@ -149,26 +149,23 @@ class Spec2Test {
     assertThat(noneResult2).isEmpty();
   }
 
-  @DisplayName("Provide both ShouldMatchAnyOf and ShouldRelateWith")
+  @DisplayName("shouldRelateWith OR ShouldRelateWithFn")
   @Test
   void spec2Test2() {
     final var relateWith =
         Map.of(
             1, Set.of("1", "one"),
             2, Set.of("2", "two"));
+    final Spec<Bean, ValidationFailure> beanSpec =
+        spec ->
+            spec.<Integer, String>_2()
+                .when(Bean::getValue)
+                .then(Bean::getValueStr)
+                .shouldRelateWith(relateWith)
+                .shouldRelateWithFn((when, then) -> String.valueOf(when).equalsIgnoreCase(then))
+                .orFailWith(INVALID_COMBO_1);
     final var validationConfig =
-        ValidationConfig.<Bean, ValidationFailure>toValidate()
-            .specify(
-                spec ->
-                    List.of(
-                        spec.<Integer, String>_2()
-                            .when(Bean::getValue)
-                            .then(Bean::getValueStr)
-                            .shouldRelateWith(relateWith)
-                            .shouldRelateWithFn(
-                                (when, then) -> String.valueOf(when).equalsIgnoreCase(then))
-                            .orFailWith(INVALID_COMBO_1)))
-            .prepare();
+        ValidationConfig.<Bean, ValidationFailure>toValidate().withSpec(beanSpec).prepare();
     final var invalidBean1 = new Bean(1, "a", null, null);
     final var failureResult1 = Vader.validateAndFailFast(invalidBean1, validationConfig);
     assertThat(failureResult1).contains(INVALID_COMBO_1);

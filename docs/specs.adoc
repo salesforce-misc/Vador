@@ -155,8 +155,7 @@ The Spec speaks for itself* 🤩
 
 * No Code/Low code
 * Uniform style in a shared code-base with *0 Cognitive complexity.*
-* You get to reuse a well-tested algorithm behind the scene, specs-do-not-need-tests-,so you needn't write extra tests.
-'''
+* You get to reuse a well-tested algorithm behind the scene, so you needn't write extra tests.
 
 [#_specs_do_not_need_tests]
 === 🚨 Specs do NOT need Tests!!? 😱

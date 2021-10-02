@@ -1,21 +1,23 @@
-package org.revcloud.vader.runner;
+package org.revcloud.vader.runner.config.nested;
 
-import static consumer.failure.ValidationFailure.INVALID_COMBO_1;
-import static consumer.failure.ValidationFailure.INVALID_ITEM;
-import static consumer.failure.ValidationFailure.NONE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.revcloud.vader.matchers.AnyMatchers.anyOf;
 import static org.revcloud.vader.runner.VaderBatch.validateAndFailFastForAny;
 import static org.revcloud.vader.runner.VaderBatch.validateAndFailFastForEach;
+import static sample.consumer.failure.ValidationFailure.INVALID_COMBO_1;
+import static sample.consumer.failure.ValidationFailure.INVALID_ITEM;
+import static sample.consumer.failure.ValidationFailure.NONE;
 
-import consumer.failure.ValidationFailure;
 import io.vavr.Tuple;
 import java.util.List;
 import lombok.Value;
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.revcloud.vader.runner.BatchOfBatch1ValidationConfig;
+import org.revcloud.vader.runner.BatchValidationConfig;
+import sample.consumer.failure.ValidationFailure;
 
 class BatchOfBatch1ValidationConfigTest {
 
