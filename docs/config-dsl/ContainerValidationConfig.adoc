@@ -67,19 +67,17 @@ ifdef::env-github[]
 [source,java,indent=0,options="nowrap"]
 ----
 @Test
-void failFastForHeaderConfigMinBatchSizeForMultiBatch() {
+void failFastForHeaderConfigBatchSizeForMultiBatch() {
   final var containerValidationConfig =
       ContainerValidationConfig.<ContainerWithMultiBatch, ValidationFailure>toValidate()
           .withBatchMappers(
               List.of(ContainerWithMultiBatch::getBatch1, ContainerWithMultiBatch::getBatch2))
-          .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
-          .withContainerValidator(ignore -> NONE, NONE)
+          .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET))
+          .shouldHaveMaxBatchSizeOrFailWith(Tuple.of(3, MAX_BATCH_SIZE_EXCEEDED))
           .prepare();
   final var headerBean = new ContainerWithMultiBatch(emptyList(), List.of(new Bean2()));
-  final var result =
-      Runner.validateAndFailFastForContainer(
-          headerBean, containerValidationConfig, ValidationFailure::getValidationFailureForException);
-  assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_0);
+  final var result = Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+  assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
 }
 ----
 

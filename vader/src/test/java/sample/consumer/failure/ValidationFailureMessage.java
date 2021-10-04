@@ -50,6 +50,7 @@ public enum ValidationFailureMessage {
   INVALID_VALUE("", ""),
   FIELD_INTEGRITY_EXCEPTION("", ""),
   MIN_BATCH_SIZE_EXCEEDED("", ""),
+  MIN_BATCH_SIZE_NOT_MET("", "MinBatchSizeNotMet"),
   MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL("", ""),
   MAX_NESTED_BATCH_SIZE_EXCEEDED_2("", ""),
   MIN_BATCH_SIZE_NOT_MET_LEVEL_1("", ""),

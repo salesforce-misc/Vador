@@ -3,6 +3,7 @@ package org.revcloud.vader.runner.config;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static sample.consumer.failure.ValidationFailure.MAX_BATCH_SIZE_EXCEEDED;
+import static sample.consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET;
 import static sample.consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_LEVEL_1;
 import static sample.consumer.failure.ValidationFailure.MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL;
 import static sample.consumer.failure.ValidationFailure.NONE;
@@ -68,27 +69,27 @@ class ContainerValidationConfigTest {
     final var containerValidationConfig =
         ContainerValidationConfig.<Container1, ValidationFailure>toValidate()
             .withBatchMapper(Container1::getBeanBatch)
-            .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
+            .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET))
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
     final var headerBean = new Container1(emptyList());
     final var result = Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
-    assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL);
+    assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
   }
 
   // tag::container-config-level-1-container-with-multi-batch-demo[]
   @Test
-  void failFastForHeaderConfigMinBatchSizeForMultiBatch() {
+  void failFastForHeaderConfigBatchSizeForMultiBatch() {
     final var containerValidationConfig =
         ContainerValidationConfig.<ContainerWithMultiBatch, ValidationFailure>toValidate()
             .withBatchMappers(
                 List.of(ContainerWithMultiBatch::getBatch1, ContainerWithMultiBatch::getBatch2))
-            .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
-            .withContainerValidator(ignore -> NONE, NONE)
+            .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET))
+            .shouldHaveMaxBatchSizeOrFailWith(Tuple.of(3, MAX_BATCH_SIZE_EXCEEDED))
             .prepare();
     final var headerBean = new ContainerWithMultiBatch(emptyList(), List.of(new Bean2()));
     final var result = Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
-    assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL);
+    assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
   }
   // end::container-config-level-1-container-with-multi-batch-demo[]
 
