@@ -21,7 +21,7 @@ Strips out a lot of the code/logic to maintain.
 
 == Complexity 
 
-* No branching => No Cyclomatic complexity.
+* No branching => No Cyclomatic complexity/Cognitive complexity.
 * It abstracts away all the implementation complexity.
 * Saves a lot of Man hours while writing and _10X_ more while reading.
 * Eliminates the need to spike on your validation strategy/design.

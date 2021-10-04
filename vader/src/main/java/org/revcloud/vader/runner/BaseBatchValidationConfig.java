@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.Nullable;
+import org.revcloud.vader.runner.FilterDuplicatesConfig.FilterDuplicatesConfigBuilder;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
@@ -14,6 +15,6 @@ abstract class BaseBatchValidationConfig<ValidatableT, FailureT>
     extends BaseValidationConfig<ValidatableT, FailureT> {
 
   @Singular
-  protected Collection<FilterDuplicatesConfig<ValidatableT, @Nullable FailureT>>
+  protected Collection<FilterDuplicatesConfigBuilder<ValidatableT, @Nullable FailureT>>
       findAndFilterDuplicatesConfigs;
 }

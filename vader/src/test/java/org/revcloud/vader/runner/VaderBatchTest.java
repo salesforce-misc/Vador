@@ -30,18 +30,22 @@ class VaderBatchTest {
   private static final List<Bean> VALIDATABLE_BATCH =
       List.of(new Bean(0), new Bean(1), new Bean(2), new Bean(3), new Bean(4));
 
+  public static final Validator<Bean, ValidationFailure> validator1 = bean -> NONE;
+  public static final Validator<Bean, ValidationFailure> validator2 =
+      bean -> bean.getId() >= 2 ? NONE : VALIDATION_FAILURE_1;
+  public static final Validator<Bean, ValidationFailure> validator3 =
+      bean -> bean.getId() <= 2 ? NONE : VALIDATION_FAILURE_2;
   private static final List<Validator<Bean, ValidationFailure>> VALIDATORS =
-      List.of(
-          bean -> NONE,
-          bean -> bean.getId() >= 2 ? NONE : VALIDATION_FAILURE_1,
-          bean -> bean.getId() <= 2 ? NONE : VALIDATION_FAILURE_2);
+      List.of(validator1, validator2, validator3);
 
+  public static final ValidatorEtr<Bean, ValidationFailure> validatorEtr1 =
+      bean -> Either.right(true);
+  public static final ValidatorEtr<Bean, ValidationFailure> validatorEtr2 =
+      bean -> bean.map(Bean::getId).filterOrElse(id -> id >= 2, ignore -> VALIDATION_FAILURE_1);
+  public static final ValidatorEtr<Bean, ValidationFailure> validatorEtr3 =
+      bean -> bean.map(Bean::getId).filterOrElse(id -> id <= 2, ignore -> VALIDATION_FAILURE_2);
   private static final List<ValidatorEtr<Bean, ValidationFailure>> VALIDATOR_ETRS =
-      List.of(
-          bean -> Either.right(true),
-          bean -> bean.map(Bean::getId).filterOrElse(id -> id >= 2, ignore -> VALIDATION_FAILURE_1),
-          bean ->
-              bean.map(Bean::getId).filterOrElse(id -> id <= 2, ignore -> VALIDATION_FAILURE_2));
+      List.of(validatorEtr1, validatorEtr2, validatorEtr3);
 
   @Test
   void failFastPartialFailuresForValidators() {
@@ -116,7 +120,7 @@ class VaderBatchTest {
             .prepare();
     final var result =
         VaderBatch.validateAndFailFastForAny(VALIDATABLE_BATCH, Bean::getId, batchValidationConfig);
-    assertThat(result).contains(Tuple.of(2, VALIDATION_FAILURE_2));
+    assertThat(result).contains(Tuple.of(0, VALIDATION_FAILURE_1));
   }
 
   @Test

@@ -51,6 +51,7 @@ There is an https://youtrack.jetbrains.com/issue/KT-46959[Active Issue] filed fo
 * For source code navigation you need to have https://projectlombok.org/[*Lombok*] plugin, which is used to generate boilerplate code.
 There are plugins available for all popular IDEs, which you need to install.
 The latest version of the plugin should work.
+* You can run/debug the existing unit tests or write your own to play with Vader.
 
 == SonarQube
 

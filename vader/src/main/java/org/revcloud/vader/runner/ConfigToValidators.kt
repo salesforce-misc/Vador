@@ -6,7 +6,6 @@ import de.cronn.reflection.util.PropertyUtils
 import de.cronn.reflection.util.TypedPropertyGetter
 import io.vavr.Function2
 import io.vavr.Tuple2
-import io.vavr.Tuple3
 import io.vavr.control.Either
 import org.revcloud.vader.specs.specs.BaseSpec
 import org.revcloud.vader.types.validators.ValidatorEtr
@@ -93,12 +92,13 @@ private fun <ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
 
 @JvmSynthetic
 private fun <EntityInfoT, FailureT, ValidatableT> toValidators11(
-  config: Collection<Tuple3<TypedPropertyGetter<ValidatableT, ID?>, out EntityInfoT, FailureT?>>?,
+  config: Map<Tuple2<TypedPropertyGetter<ValidatableT, ID?>, out EntityInfoT>, FailureT?>?,
   idValidator: Function2<ID, EntityInfoT, Boolean>?,
   idValidatorFallback: (ID?) -> Boolean,
   optionalId: Boolean
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
-  config?.map { (idFieldMapper, entityInfo, failure) ->
+  config?.map { (tuple2, failure) ->
+    val (idFieldMapper, entityInfo) = tuple2
     ValidatorEtr { validatable ->
       validatable.map(idFieldMapper::get)
         .filterOrElse(
@@ -109,13 +109,13 @@ private fun <EntityInfoT, FailureT, ValidatableT> toValidators11(
 
 @JvmSynthetic
 private fun <EntityInfoT, FailureT, ValidatableT> toValidators12(
-  config: Tuple3<Collection<TypedPropertyGetter<ValidatableT, ID?>>, out EntityInfoT, Function2<String, ID?, FailureT?>>?,
+  config: Tuple2<Map<TypedPropertyGetter<ValidatableT, ID?>, EntityInfoT>, Function2<String, ID?, FailureT?>>?,
   idValidator: Function2<ID, EntityInfoT, Boolean>?,
   idValidatorFallback: (ID?) -> Boolean,
   optionalId: Boolean
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
-  config?.let { (idFieldMappers, entityInfo, failureFn) ->
-    idFieldMappers.map { idFieldMapper ->
+  config?.let { (idFieldMapperToEntityInfo, failureFn) ->
+    idFieldMapperToEntityInfo.map { (idFieldMapper, entityInfo) ->
       ValidatorEtr { validatable ->
         validatable.map(idFieldMapper::get)
           .filterOrElse(
@@ -128,12 +128,13 @@ private fun <EntityInfoT, FailureT, ValidatableT> toValidators12(
 
 @JvmSynthetic
 private fun <EntityInfoT, FailureT, ValidatableT> toValidators13(
-  config: Collection<Tuple3<TypedPropertyGetter<ValidatableT, ID?>, out EntityInfoT, Function2<String, ID?, FailureT?>>>?,
+  config: Map<Tuple2<TypedPropertyGetter<ValidatableT, ID?>, out EntityInfoT>, Function2<String, ID?, FailureT?>>?,
   idValidator: Function2<ID, EntityInfoT, Boolean>?,
   idValidatorFallback: (ID?) -> Boolean,
   optionalId: Boolean
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
-  config?.map { (idFieldMapper, entityInfo, failureFn) ->
+  config?.map { (tuple2, failureFn) ->
+    val (idFieldMapper, entityInfo) = tuple2
     ValidatorEtr { validatable ->
       validatable.map(idFieldMapper::get)
         .filterOrElse(

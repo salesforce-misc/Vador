@@ -162,17 +162,13 @@ void idConfigForBatch() {
       BatchValidationConfig.<BeanWithIdFields, ValidationFailure>toValidate()
           .withIdConfig(
               IDConfig.<BeanWithIdFields, ValidationFailure, EntityId>toValidate()
-                  .withIdValidator(BaseValidationConfigTest::isThisEntity)
+                  .withIdValidator(ValidIdUtil::isThisEntity)
                   .shouldHaveValidSFIdFormatOrFailWith(
-                      Tuple.of(
-                          BeanWithIdFields::getAccountId,
-                          AccountUddConstants.EntityId,
-                          INVALID_UDD_ID))
+                      Tuple.of(BeanWithIdFields::getAccountId, AccountUddConstants.EntityId),
+                      INVALID_UDD_ID)
                   .absentOrHaveValidSFIdFormatOrFailWith(
-                      Tuple.of(
-                          BeanWithIdFields::getOptionalContactId,
-                          ContactUddConstants.EntityId,
-                          INVALID_OPTIONAL_UDD_ID))
+                      Tuple.of(BeanWithIdFields::getContactId, ContactUddConstants.EntityId),
+                      INVALID_OPTIONAL_UDD_ID)
                   .prepare())
           .prepare();
   final var validBean = new BeanWithIdFields(null, new ID("validId"), null);
@@ -186,10 +182,12 @@ void idConfigForBatch() {
       .containsExactly(right(validBean), left(INVALID_UDD_ID), left(INVALID_OPTIONAL_UDD_ID));
 }
 
-/** This should be implemented by the client and passed through `withIdValidator` config. */
-private static boolean isThisEntity(ID idToValidate, EntityId entityId) {
-  // A core client may use `common.udd.ValidIdUtil.isThisEntity(String, EntityId)`
-  return !idToValidate.toString().equalsIgnoreCase("invalidId"); // fake implementation
+/** Dummy. A core client may use `common.udd.ValidIdUtil.isThisEntity(String, EntityId)` */
+private static class ValidIdUtil {
+  /** This should be implemented by the client and passed through `withIdValidator` config. */
+  private static boolean isThisEntity(ID idToValidate, EntityId entityId) {
+    return !idToValidate.toString().equalsIgnoreCase("invalidId"); // fake implementation
+  }
 }
 ----
 

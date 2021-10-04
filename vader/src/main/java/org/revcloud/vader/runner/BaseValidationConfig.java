@@ -80,7 +80,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
   @Nullable protected Specs<ValidatableT, FailureT> specify;
 
   @Singular("withSpec")
-  protected Collection<? extends Spec<ValidatableT, @Nullable FailureT>> withSpecs;
+  protected Collection<Spec<ValidatableT, @Nullable FailureT>> withSpecs;
 
   @Singular Collection<ValidatorEtr<ValidatableT, @Nullable FailureT>> withValidatorEtrs;
 

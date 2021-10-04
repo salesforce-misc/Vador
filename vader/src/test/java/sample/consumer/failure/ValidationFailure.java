@@ -102,4 +102,9 @@ public class ValidationFailure {
     validationFailureMessage.setParams(params);
     return new ValidationFailure(validationFailureMessage);
   }
+
+  public static ValidationFailure getFailureWithParams(
+      ValidationFailure validationFailure, Object... params) {
+    return getFailureWithParams(validationFailure.validationFailureMessage, params);
+  }
 }

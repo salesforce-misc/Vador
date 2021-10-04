@@ -190,18 +190,17 @@ class Spec2Test {
     final var invalidSpec2Config = "invalidSpec2Config";
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate()
-            .specify(
+            .withSpec(
                 spec ->
-                    List.of(
-                        spec.<Integer, String>_2()
-                            .nameForTest(invalidSpec2Config)
-                            .when(Bean::getValue)
-                            .matches(is(1))
-                            .then(Bean::getValueStr)
-                            .shouldRelateWith(relateWith)
-                            .shouldRelateWithFn(
-                                (when, then) -> String.valueOf(when).equalsIgnoreCase(then))
-                            .orFailWith(INVALID_COMBO_1)))
+                    spec.<Integer, String>_2()
+                        .nameForTest(invalidSpec2Config)
+                        .when(Bean::getValue)
+                        .matches(is(1))
+                        .then(Bean::getValueStr)
+                        .shouldRelateWith(relateWith)
+                        .shouldRelateWithFn(
+                            (when, then) -> String.valueOf(when).equalsIgnoreCase(then))
+                        .orFailWith(INVALID_COMBO_1))
             .prepare();
     final var specWithName = validationConfig.getPredicateOfSpecForTest(invalidSpec2Config);
     assertThrows(IllegalArgumentException.class, () -> specWithName.map(p -> p.test(null)));

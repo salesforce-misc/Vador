@@ -12,6 +12,7 @@ import static sample.consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
 import static sample.consumer.failure.ValidationFailure.NULL_KEY;
 
 import com.force.swag.id.ID;
+import io.vavr.Function1;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import lombok.Value;
@@ -22,10 +23,10 @@ import sample.consumer.failure.ValidationFailure;
 class UtilsTest {
 
   // tag::batch-bean-demo[]
-  @DisplayName("FailForDuplicates configured. FAIL: NullValidatbles, FAIL: Duplicates")
+  @DisplayName("FailForDuplicates configured. FAIL: Null Validatables, FAIL: Duplicates")
   @Test
   void filterNullValidatablesAndFailDuplicates() {
-    final List<Bean> nullValidatables = List.of(null, null);
+    final List<Bean> nullValidatables = io.vavr.collection.List.of(null, null);
     final var duplicateValidatables =
         List.of(
             new Bean(new ID("802xx000001ni4xAAA")),
@@ -43,11 +44,10 @@ class UtilsTest {
                 FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
                     .findAndFilterDuplicatesWith(
                         container -> container.getId().get18CharIdIfValid())
-                    .andFailDuplicatesWith(DUPLICATE_ITEM)
-                    .prepare())
+                    .andFailDuplicatesWith(DUPLICATE_ITEM))
             .prepare();
     final var results =
-        List.ofAll(
+        io.vavr.collection.List.ofAll(
             findAndFilterInvalids(
                 validatables.toJavaList(),
                 NOTHING_TO_VALIDATE,
@@ -85,26 +85,20 @@ class UtilsTest {
                     new MultiKeyBean(new ID("2"), new ID("2")),
                     new MultiKeyBean(new ID("3"), new ID("3"))));
 
+    final Function1<MultiKeyBean, Object> id1Mapper =
+        container -> container.getId1() == null ? null : container.getId1().get18CharIdIfValid();
+    final Function1<MultiKeyBean, Object> id2Mapper =
+        container -> container.getId2() == null ? null : container.getId2().get18CharIdIfValid();
     final var batchValidationConfig =
         BatchValidationConfig.<MultiKeyBean, ValidationFailure>toValidate()
-            .findAndFilterDuplicatesConfig(
-                FilterDuplicatesConfig.<MultiKeyBean, ValidationFailure>toValidate()
-                    .findAndFilterDuplicatesWith(
-                        container ->
-                            container.getId1() == null
-                                ? null
-                                : container.getId1().get18CharIdIfValid())
-                    .andFailDuplicatesWith(DUPLICATE_ITEM_1)
-                    .prepare())
-            .findAndFilterDuplicatesConfig(
-                FilterDuplicatesConfig.<MultiKeyBean, ValidationFailure>toValidate()
-                    .findAndFilterDuplicatesWith(
-                        container ->
-                            container.getId2() == null
-                                ? null
-                                : container.getId2().get18CharIdIfValid())
-                    .andFailDuplicatesWith(DUPLICATE_ITEM_2)
-                    .prepare())
+            .findAndFilterDuplicatesConfigs(
+                java.util.List.of(
+                    FilterDuplicatesConfig.<MultiKeyBean, ValidationFailure>toValidate()
+                        .findAndFilterDuplicatesWith(id1Mapper)
+                        .andFailDuplicatesWith(DUPLICATE_ITEM_1),
+                    FilterDuplicatesConfig.<MultiKeyBean, ValidationFailure>toValidate()
+                        .findAndFilterDuplicatesWith(id2Mapper)
+                        .andFailDuplicatesWith(DUPLICATE_ITEM_2)))
             .prepare();
     final var results =
         List.ofAll(
@@ -151,8 +145,7 @@ class UtilsTest {
                         container ->
                             container.getId() == null
                                 ? null
-                                : container.getId().get18CharIdIfValid())
-                    .prepare())
+                                : container.getId().get18CharIdIfValid()))
             .prepare();
     final var results =
         List.ofAll(
@@ -198,8 +191,7 @@ class UtilsTest {
                             container.getId() == null
                                 ? null
                                 : container.getId().get18CharIdIfValid())
-                    .andFailNullKeysWith(NULL_KEY)
-                    .prepare())
+                    .andFailNullKeysWith(NULL_KEY))
             .prepare();
     final var results =
         List.ofAll(
@@ -247,8 +239,7 @@ class UtilsTest {
                         container ->
                             container.getId() == null
                                 ? null
-                                : container.getId().get18CharIdIfValid())
-                    .prepare())
+                                : container.getId().get18CharIdIfValid()))
             .prepare();
     final var results =
         List.ofAll(
@@ -290,8 +281,7 @@ class UtilsTest {
             .findAndFilterDuplicatesConfig(
                 FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
                     .findAndFilterDuplicatesWith(container -> container.getId().toString())
-                    .andFailDuplicatesWith(DUPLICATE_ITEM)
-                    .prepare())
+                    .andFailDuplicatesWith(DUPLICATE_ITEM))
             .prepare();
     final var result =
         findFirstInvalid(
@@ -312,8 +302,7 @@ class UtilsTest {
         BatchValidationConfig.<Bean, ValidationFailure>toValidate()
             .findAndFilterDuplicatesConfig(
                 FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
-                    .findAndFilterDuplicatesWith(container -> container.getId().toString())
-                    .prepare())
+                    .findAndFilterDuplicatesWith(container -> container.getId().toString()))
             .prepare();
     final var result =
         findFirstInvalid(
@@ -340,8 +329,7 @@ class UtilsTest {
                     .findAndFilterDuplicatesWith(
                         container ->
                             container.getId() == null ? null : container.getId().toString())
-                    .andFailNullKeysWith(NULL_KEY)
-                    .prepare())
+                    .andFailNullKeysWith(NULL_KEY))
             .prepare();
     final var result =
         findFirstInvalid(
@@ -364,8 +352,7 @@ class UtilsTest {
             .findAndFilterDuplicatesConfig(
                 FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
                     .findAndFilterDuplicatesWith(container -> container.getId().toString())
-                    .andFailDuplicatesWith(DUPLICATE_ITEM)
-                    .prepare())
+                    .andFailDuplicatesWith(DUPLICATE_ITEM))
             .prepare();
     final var result =
         findFirstInvalid(
@@ -384,8 +371,7 @@ class UtilsTest {
             .findAndFilterDuplicatesConfig(
                 FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
                     .findAndFilterDuplicatesWith(container -> container.getId().toString())
-                    .andFailDuplicatesWith(DUPLICATE_ITEM)
-                    .prepare())
+                    .andFailDuplicatesWith(DUPLICATE_ITEM))
             .prepare();
     final var result =
         findFirstInvalid(

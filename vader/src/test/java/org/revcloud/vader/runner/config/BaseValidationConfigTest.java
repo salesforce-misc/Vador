@@ -86,7 +86,7 @@ class BaseValidationConfigTest {
                         Bean::getRequiredField1, Bean::getRequiredField2, Bean::getRequiredList),
                     (missingFieldName, missingFieldValue) ->
                         getFailureWithParams(
-                            ValidationFailureMessage.MSG_WITH_PARAMS,
+                            REQUIRED_FIELD_MISSING,
                             missingFieldName,
                             missingFieldValue + "missing")))
             .prepare();
@@ -170,9 +170,7 @@ class BaseValidationConfigTest {
                     spec._1()
                         .nameForTest(duplicateSpecName)
                         .given(BeanWithIdFields::getRequiredField),
-                    spec._1()
-                        .nameForTest(duplicateSpecName)
-                        .given(BeanWithIdFields::getOptionalContactId));
+                    spec._1().nameForTest(duplicateSpecName).given(BeanWithIdFields::getContactId));
     final var validationConfig =
         ValidationConfig.<BeanWithIdFields, ValidationFailure>toValidate()
             .specify(specsForConfig)
@@ -188,14 +186,14 @@ class BaseValidationConfigTest {
         ValidationConfig.<BeanWithIdFields, ValidationFailure>toValidate()
             .shouldHaveFieldOrFailWith(BeanWithIdFields::getRequiredField, NONE)
             .shouldHaveValidSFIdFormatOrFailWith(BeanWithIdFields::getAccountId, NONE)
-            .absentOrHaveValidSFIdFormatOrFailWith(BeanWithIdFields::getOptionalContactId, NONE)
+            .absentOrHaveValidSFIdFormatOrFailWith(BeanWithIdFields::getContactId, NONE)
             .prepare();
     assertThat(validationConfig.getRequiredFieldNames(BeanWithIdFields.class))
         .contains(BeanWithIdFields.Fields.requiredField);
     assertThat(validationConfig.getRequiredFieldNamesForSFIdFormat(BeanWithIdFields.class))
         .contains(BeanWithIdFields.Fields.accountId);
     assertThat(validationConfig.getNonRequiredFieldNamesForSFIdFormat(BeanWithIdFields.class))
-        .contains(BeanWithIdFields.Fields.optionalContactId);
+        .contains(BeanWithIdFields.Fields.contactId);
   }
 
   // tag::validationConfig-for-nested-bean-demo[]
@@ -238,12 +236,15 @@ class BaseValidationConfigTest {
         ValidationConfig.<BeanWithIdFields, ValidationFailure>toValidate()
             .withIdConfig(
                 IDConfig.<BeanWithIdFields, ValidationFailure, EntityId>toValidate()
-                    .withIdValidator(BaseValidationConfigTest::isThisEntity)
-                    .shouldHaveValidSFIdFormatOrFailWith(
+                    .withIdValidator(ValidIdUtil::isThisEntity)
+                    .shouldHaveValidSFIdFormatForAllOrFailWithFn(
                         Tuple.of(
-                            BeanWithIdFields::getAccountId,
-                            AccountUddConstants.EntityId,
-                            INVALID_UDD_ID))
+                            Map.of(
+                                BeanWithIdFields::getAccountId, AccountUddConstants.EntityId,
+                                BeanWithIdFields::getContactId, ContactUddConstants.EntityId),
+                            (invalidIdFieldName, invalidIdFieldValue) ->
+                                getFailureWithParams(
+                                    INVALID_UDD_ID, invalidIdFieldName, invalidIdFieldValue)))
                     .prepare())
             .prepare();
     final var result =
@@ -258,17 +259,13 @@ class BaseValidationConfigTest {
         BatchValidationConfig.<BeanWithIdFields, ValidationFailure>toValidate()
             .withIdConfig(
                 IDConfig.<BeanWithIdFields, ValidationFailure, EntityId>toValidate()
-                    .withIdValidator(BaseValidationConfigTest::isThisEntity)
+                    .withIdValidator(ValidIdUtil::isThisEntity)
                     .shouldHaveValidSFIdFormatOrFailWith(
-                        Tuple.of(
-                            BeanWithIdFields::getAccountId,
-                            AccountUddConstants.EntityId,
-                            INVALID_UDD_ID))
+                        Tuple.of(BeanWithIdFields::getAccountId, AccountUddConstants.EntityId),
+                        INVALID_UDD_ID)
                     .absentOrHaveValidSFIdFormatOrFailWith(
-                        Tuple.of(
-                            BeanWithIdFields::getOptionalContactId,
-                            ContactUddConstants.EntityId,
-                            INVALID_OPTIONAL_UDD_ID))
+                        Tuple.of(BeanWithIdFields::getContactId, ContactUddConstants.EntityId),
+                        INVALID_OPTIONAL_UDD_ID)
                     .prepare())
             .prepare();
     final var validBean = new BeanWithIdFields(null, new ID("validId"), null);
@@ -282,10 +279,12 @@ class BaseValidationConfigTest {
         .containsExactly(right(validBean), left(INVALID_UDD_ID), left(INVALID_OPTIONAL_UDD_ID));
   }
 
-  /** This should be implemented by the client and passed through `withIdValidator` config. */
-  private static boolean isThisEntity(ID idToValidate, EntityId entityId) {
-    // A core client may use `common.udd.ValidIdUtil.isThisEntity(String, EntityId)`
-    return !idToValidate.toString().equalsIgnoreCase("invalidId"); // fake implementation
+  /** Dummy. A core client may use `common.udd.ValidIdUtil.isThisEntity(String, EntityId)` */
+  private static class ValidIdUtil {
+    /** This should be implemented by the client and passed through `withIdValidator` config. */
+    private static boolean isThisEntity(ID idToValidate, EntityId entityId) {
+      return !idToValidate.toString().equalsIgnoreCase("invalidId"); // fake implementation
+    }
   }
   // end::bean-strict-id-validation[]
 
@@ -296,7 +295,7 @@ class BaseValidationConfigTest {
   public static class BeanWithIdFields {
     String requiredField;
     ID accountId;
-    ID optionalContactId;
+    ID contactId;
   }
 
   /**

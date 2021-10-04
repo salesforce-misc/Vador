@@ -65,7 +65,9 @@ Having validations as loose functions and using exceptions to halt the validatio
 image:function-call-mess.png[function-call-mess]
 
 This approach can spike the https://www.ibm.com/developerworks/java/library/j-cq03316/[*Cyclomatic Complexity*]
-and https://www.sonarsource.com/{docsdir}/CognitiveComplexity.pdf[*Cognitive Complexity*] metrics and renders a code-base which is difficult to test, extend and maintain.
+and https://www.sonarsource.com/docs/CognitiveComplexity.pdf[*Cognitive Complexity*] metrics and renders a code-base which is difficult to test, extend and maintain.
+
+TIP: Good read about https://blog.sonarsource.com/cognitive-complexity-because-testability-understandability[Cyclomatic Complexity vs Cognitive Complexity]
 
 === Demo pls!
 
@@ -87,20 +89,21 @@ And the corresponding https://overfullstack.ga/posts/fight-complexity-with-fp/[B
 
 === More videos
 
-https://drive.google.com/file/d/1H_LhlYAqQKK4UjYrQ8GG9Bo3NpW2dsZL/view?usp=sharing[Presentation done for Rev Pegasus team for Cancellation API]
+* https://drive.google.com/file/d/1H_LhlYAqQKK4UjYrQ8GG9Bo3NpW2dsZL/view?usp=sharing[Presentation done for Rev Pegasus team for Cancellation API]
+* These are early presentations for Vader's design within the team.
 
-The below recordings are initial presentations for Vader within the team.
-
-CAUTION: Vader's Design has evolved after these recordings, but Vader's philosophy remains the same.
+====
+CAUTION: Vader's Design has evolved after the below recordings, but Vader's philosophy remains the same.
 Follow the rest of this doc to know more
 
-https://drive.google.com/open?id=1AciJ3xU5HFgeTwJxL0RME0mQVO08BMQ9[Brown Bag Session]
-
-https://drive.google.com/open?id=1Syi3smlcyFAL0ZoDuq5dWR1IALZNmNUm[An Internal Presentation] (This is partially recorded)
+* https://drive.google.com/open?id=1AciJ3xU5HFgeTwJxL0RME0mQVO08BMQ9[Brown Bag Session]
+* https://drive.google.com/open?id=1Syi3smlcyFAL0ZoDuq5dWR1IALZNmNUm[An Internal Presentation] (This is partially recorded)
+====
 
 == TL;DR Show me the code
 
-=== https://codesearch.data.sfdc.net/source/xref/app_main_core/app/main/core/billing-services/java/src/core/billing/service/billingschedule/config/BillingScheduleConfig.java#261[billing-services]
+[.lead]
+https://codesearch.data.sfdc.net/source/xref/app_main_core/app/main/core/billing-services/java/src/core/billing/service/billingschedule/config/BillingScheduleConfig.java#261[billing-services]
 
 == What's Vader?
 
@@ -183,6 +186,11 @@ We have plans to add Logger support in the future too.
 
 == 🍫 Perks of Config based Validation
 
+=== Low Learning Curve
+
+Use of same Config pattern through-out, with self-explaining DSL methods to drive your development.
+This keeps the scope and slope of your learning curve required, low.
+
 === Readability
 
 We don't need analogies to stress on how important readability is and how Config is more readable than code with nested `if/else/for`.
@@ -193,7 +201,7 @@ Strips out a lot of the code/logic to maintain.
 
 === Reduce Complexity
 
-* No branching => No Cyclomatic complexity.
+* No branching => No Cyclomatic complexity/Cognitive complexity.
 * It abstracts away all the implementation complexity.
 * Saves a lot of Man hours while writing and _10X_ more while reading.
 * Eliminates the need to spike on your validation strategy/design.
@@ -210,7 +218,8 @@ It improves testability in 3 ways:
 
 NOTE: You can always test your config (to double-check if right values are provided), but no need to re-test the already well-tested implementation.
 
-link:{docsdir}/specs.adoc#_specs_do_not_need_tests[Read about no-tests argument here]. The same argument applies to config as well.
+link:{docsdir}/specs.adoc#_specs_do_not_need_tests[Read about no-tests argument here].
+The same argument applies to config as well.
 
 === Flexibility
 
@@ -224,16 +233,11 @@ But if you want to migrate to Fail-Fast for each item (to handle partial failure
 * Config can easily be modified or extended if your Bean's data-structure changes, with new fields being added or removed.
 * Config can easily catch up, even when your service migrates from non-batch to batch mode.
 
-=== Re-usability
+=== Re-usability/Sharing
 
 Config is mapped to a data structure.
 Which means, if the validation requirements are same, you can *reuse* the config everywhere the data-structure is used, say with a different API execution strategy.
 Even if the data-structure (member) is nested inside another bean (container), the container bean can reuse member validation config and all it's validations without rewriting.
-
-=== Low Learning Curve
-
-Use of same Config pattern through-out, with self-explaining DSL methods to drive your development.
-This keeps the scope and slope of your learning curve required, low.
 
 == How can I trust Vader?
 
@@ -250,14 +254,21 @@ Well, coz that’s the *bread-&-jam* of what we promise!
 
 This is currently being consumed in *Production*
 
-* By 3 Teams:
-** Rev-Hydra
-** Rev-Delphinus
-** Rev-Centaurus
-* In 3 different domains
-** Payments
-** Tax
-** Billing
+By 3 Teams:
+
+|===
+|Rev-Hydra
+|Rev-Delphinus
+|Rev-Centaurus
+|===
+
+In 3 different domains:
+
+|===
+|Payments
+|Tax
+|Billing
+|===
 
 This idea was presented as a Tech-talk at many https://overfullstack.ga/posts/fight-complexity-with-fp/#My-Talk-on-this[International Conferences & Meetups]
 

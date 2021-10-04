@@ -56,7 +56,7 @@ ifdef::env-github[]
 @DisplayName("FailForDuplicates configured. FAIL: NullValidatbles, FAIL: Duplicates")
 @Test
 void filterNullValidatablesAndFailDuplicates() {
-  final List<Bean> nullValidatables = List.of(null, null);
+  final List<Bean> nullValidatables = io.vavr.collection.List.of(null, null);
   final var duplicateValidatables =
       List.of(
           new Bean(new ID("802xx000001ni4xAAA")),
@@ -78,7 +78,7 @@ void filterNullValidatablesAndFailDuplicates() {
                   .prepare())
           .prepare();
   final var results =
-      List.ofAll(
+      io.vavr.collection.List.ofAll(
           findAndFilterInvalids(
               validatables.toJavaList(),
               NOTHING_TO_VALIDATE,
@@ -143,7 +143,7 @@ ifdef::env-github[]
 [source,java,indent=0,options="nowrap"]
 ----
 @DisplayName(
-  "Multiple Filters - FailForDuplicates configured. FAIL: NullValidatbles, FAIL: Duplicates")
+    "Multiple Filters - FailForDuplicates configured. FAIL: NullValidatbles, FAIL: Duplicates")
 @Test
 void filterNullValidatablesAndFailDuplicatesForMultipleFilters() {
   final List<MultiKeyBean> nullValidatables = List.of(null, null);
@@ -161,26 +161,20 @@ void filterNullValidatablesAndFailDuplicatesForMultipleFilters() {
                   new MultiKeyBean(new ID("2"), new ID("2")),
                   new MultiKeyBean(new ID("3"), new ID("3"))));
 
+  final Function1<MultiKeyBean, Object> id1Mapper =
+      container -> container.getId1() == null ? null : container.getId1().get18CharIdIfValid();
+  final Function1<MultiKeyBean, Object> id2Mapper =
+      container -> container.getId2() == null ? null : container.getId2().get18CharIdIfValid();
   final var batchValidationConfig =
       BatchValidationConfig.<MultiKeyBean, ValidationFailure>toValidate()
-          .findAndFilterDuplicatesConfig(
-              FilterDuplicatesConfig.<MultiKeyBean, ValidationFailure>toValidate()
-                  .findAndFilterDuplicatesWith(
-                      container ->
-                          container.getId1() == null
-                              ? null
-                              : container.getId1().get18CharIdIfValid())
-                  .andFailDuplicatesWith(DUPLICATE_ITEM_1)
-                  .prepare())
-          .findAndFilterDuplicatesConfig(
-              FilterDuplicatesConfig.<MultiKeyBean, ValidationFailure>toValidate()
-                  .findAndFilterDuplicatesWith(
-                      container ->
-                          container.getId2() == null
-                              ? null
-                              : container.getId2().get18CharIdIfValid())
-                  .andFailDuplicatesWith(DUPLICATE_ITEM_2)
-                  .prepare())
+          .findAndFilterDuplicatesConfigs(
+              java.util.List.of(
+                  FilterDuplicatesConfig.<MultiKeyBean, ValidationFailure>toValidate()
+                      .findAndFilterDuplicatesWith(id1Mapper)
+                      .andFailDuplicatesWith(DUPLICATE_ITEM_1),
+                  FilterDuplicatesConfig.<MultiKeyBean, ValidationFailure>toValidate()
+                      .findAndFilterDuplicatesWith(id2Mapper)
+                      .andFailDuplicatesWith(DUPLICATE_ITEM_2)))
           .prepare();
   final var results =
       List.ofAll(
