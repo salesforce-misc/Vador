@@ -132,7 +132,10 @@ endif::[]
 
 === Validation Requirements
 
-* Filter and Fail duplicates on more than one filter.
+* Filter and Fail duplicates with multiple filter.
+
+.Filter beans with same `id1` or `id2`
+image:multi-filter.png[Multi Filter]
 
 === Demo
 

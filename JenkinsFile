@@ -9,7 +9,7 @@ def complianceFlags = [
 ]
 
 env.RELEASE_BRANCHES = ['master']
-env.GUS_TEAM_NAME = 'Rev Centaurus'
+env.GUS_TEAM_NAME = 'Rev Delphinus'
 env.CI=true
 
 def envDef = [

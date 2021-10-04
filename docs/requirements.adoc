@@ -92,13 +92,3 @@ execute these validations).
 ** Accommodate a century of validations across a domain
 ** Unit testability for Validations
 ** No compromise on Performance
-
-____
-
-And so, *Vader* is born!!
-
-🔊 https://www.youtube.com/watch?v=49WFdDIFlAs[The birth of Lord Vader] playing in the background
-
-____
-
-image:birth-of-vader.gif[inline]

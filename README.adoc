@@ -56,7 +56,15 @@ toc::[]
 [.lead]
 On core, there is no de-facto standard to write bean validations.
 
+====
+
 link:{docsdir}/requirements.adoc[Requirements that lead to the birth of Vader]
+
+🔊 https://www.youtube.com/watch?v=49WFdDIFlAs[The birth of Lord Vader] playing in the background
+
+image:birth-of-vader.gif[inline]
+
+====
 
 Validations are predominantly done with `if-else-try-catch` pyramids, similar to https://github.com/overfullstack/railway-oriented-validation/blob/master/src/main/java/app/imperative/ImperativeValidation.java[this].
 A domain may have many validations across its batch & non-batch services.
