@@ -79,12 +79,20 @@ TIP: Good read about https://blog.sonarsource.com/cognitive-complexity-because-t
 
 === Demo pls!
 
+====
+.▶️ (*Click on the talk-poster*) Salesforce Season of Innovation, Oct 2021
+image:vav-poster.jpg[link=https://drive.google.com/file/d/1yarDI36uA5RydrVdvHyg821bQM6crVzO/view?usp=sharing]
+
+https://drive.google.com/file/d/1e9ZHnHmijscX9d9Ip97DoWpiIdXIHJjz/view?usp=sharing[Slide-deck]
+====
+
+====
 Watch this Tech-talk as a prerequisite to understand the problem Vader solves and its design philosophy.
 It explains why `if-else-try-catch` is easy to start but difficult to manage and how Vader takes all that complexity away:
 
 ifdef::env-github[]
 
-.▶️ (*Click on the talk-poster*)
+.▶️ (*Click on the talk-poster*) https://2020.allthingsopen.org/speakers/gopal-s-akshintala/[**All Things Open**], 2020, Raleigh, USA
 image:fcwfp-poster.jpeg[link=https://www.youtube.com/watch?v=Dvr6gx4XaD8&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or&index=2]
 
 endif::[]
@@ -93,14 +101,21 @@ ifndef::env-github[]
 video::Dvr6gx4XaD8[youtube]
 endif::[]
 
-And the corresponding https://overfullstack.ga/posts/fight-complexity-with-fp/[Blog Post]
+* https://speakerdeck.com/gopalakshintala/fight-complexity-with-functional-programming-in-kotlin[Slide-deck]
+*The corresponding https://overfullstack.ga/posts/fight-complexity-with-fp/[Blog Post]
+====
 
 === More videos
 
-* https://drive.google.com/file/d/1H_LhlYAqQKK4UjYrQ8GG9Bo3NpW2dsZL/view?usp=sharing[Presentation done for Rev Pegasus team for Cancellation API]
-* These are early presentations for Vader's design within the team.
+====
+https://drive.google.com/file/d/1H_LhlYAqQKK4UjYrQ8GG9Bo3NpW2dsZL/view?usp=sharing[Presentation done for Rev Pegasus team for Cancellation API]
+
+link:{docsdir}/presentations/2021-08-cancellation-api/0-title.adoc[Slide-deck]
+====
 
 ====
+These are early presentations for Vader's design within the team.
+
 CAUTION: Vader's Design has evolved after the below recordings, but Vader's philosophy remains the same.
 Follow the rest of this doc to know more
 
@@ -190,7 +205,7 @@ We have plans to add Logger support in the future too.
 
 == link:{docsdir}/validator-types.adoc[How to write Validators?]
 
-== link:{docsdir}/validation-configuration[Config For Validation]
+== link:{docsdir}/validation-configuration.adoc[Config For Validation]
 
 == 🍫 Perks of Config based Validation
 

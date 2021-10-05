@@ -58,10 +58,10 @@ final var refItemBatchValidationConfig = BatchValidationConfig.<ReferenceItemInp
 final var refItemFilterDuplicatesConfig = List.of(
   FilterDuplicatesConfig.<ReferenceItemInputRepresentation, BillingScheduleFailure>toValidate()
           .findAndFilterDuplicatesWith(ReferenceItemInputRepresentation::getReferenceItemIdAsString)
-          .andFailDuplicatesWith(ofInvalidAPIInput(DUPLICATE_REFERENCE_ITEM_IDS_IN_REQUEST)).prepare(),
+          .andFailDuplicatesWith(ofInvalidAPIInput(DUPLICATE_REFERENCE_ITEM_IDS_IN_REQUEST)),
   FilterDuplicatesConfig.<ReferenceItemInputRepresentation, BillingScheduleFailure>toValidate()
           .findAndFilterDuplicatesWith(ReferenceItemInputRepresentation::getOffsetReferenceItemIdAsString)
-          .andFailDuplicatesWith(ofInvalidAPIInput(DUPLICATE_OFFSET_REFERENCE_ITEM_IDS_IN_REQUEST)).prepare());
+          .andFailDuplicatesWith(ofInvalidAPIInput(DUPLICATE_OFFSET_REFERENCE_ITEM_IDS_IN_REQUEST)));
 
 final Optional<Tuple2<ID, BillingScheduleFailure>> refItemValidationResult = 
   VaderBatch.validateAndFailFastForAny(
@@ -69,4 +69,4 @@ final Optional<Tuple2<ID, BillingScheduleFailure>> refItemValidationResult =
         ReferenceItemInputRepresentation::getReferenceItemId,
         refItemBatchValidationConfig);
 ----
-<1> 🤓 link:../../../docs/specs.adoc[Specs]
+<1> 🤓 link:../../specs.adoc[Specs]

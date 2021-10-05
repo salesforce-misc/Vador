@@ -38,7 +38,7 @@ image:bsg-batch.png[]
 final var bsgBatchValidationConfig = BatchValidationConfig.<BillingScheduleGroupInputRepresentation, BillingScheduleFailure>toValidate()
   .findAndFilterDuplicatesConfig(FilterDuplicatesConfig.<BillingScheduleGroupInputRepresentation, BillingScheduleFailure>toValidate()
       .findAndFilterDuplicatesWith(BillingScheduleGroupInputRepresentation::getBillingScheduleGroupId)
-      .andFailDuplicatesWith(ofInvalidAPIInput(DUPLICATE_BILLING_SCHEDULE_GROUP_NOT_ALLOWED)).prepare())
+      .andFailDuplicatesWith(ofInvalidAPIInput(DUPLICATE_BILLING_SCHEDULE_GROUP_NOT_ALLOWED)))
   .shouldHaveFieldOrFailWithFn(BillingScheduleGroupInputRepresentation::getReferenceItems, requiredFieldMissingMapper)
   .shouldHaveValidSFIdFormatOrFailWithFn(BillingScheduleGroupInputRepresentation::getBillingScheduleGroupId, invalidSfIdFormatFailureMapper).prepare();
 
