@@ -244,8 +244,7 @@ class BaseValidationConfigTest {
                                 BeanWithIdFields::getContactId, ContactUddConstants.EntityId),
                             (invalidIdFieldName, invalidIdFieldValue) ->
                                 getFailureWithParams(
-                                    INVALID_UDD_ID, invalidIdFieldName, invalidIdFieldValue)))
-                    .prepare())
+                                    INVALID_UDD_ID, invalidIdFieldName, invalidIdFieldValue))))
             .prepare();
     final var result =
         Vader.validateAndFailFast(new BeanWithIdFields(null, new ID("invalidId"), null), config);
@@ -265,8 +264,7 @@ class BaseValidationConfigTest {
                         INVALID_UDD_ID)
                     .absentOrHaveValidSFIdFormatOrFailWith(
                         Tuple.of(BeanWithIdFields::getContactId, ContactUddConstants.EntityId),
-                        INVALID_OPTIONAL_UDD_ID)
-                    .prepare())
+                        INVALID_OPTIONAL_UDD_ID))
             .prepare();
     final var validBean = new BeanWithIdFields(null, new ID("validId"), null);
     final var validatables =

@@ -168,8 +168,7 @@ void idConfigForBatch() {
                       INVALID_UDD_ID)
                   .absentOrHaveValidSFIdFormatOrFailWith(
                       Tuple.of(BeanWithIdFields::getContactId, ContactUddConstants.EntityId),
-                      INVALID_OPTIONAL_UDD_ID)
-                  .prepare())
+                      INVALID_OPTIONAL_UDD_ID))
           .prepare();
   final var validBean = new BeanWithIdFields(null, new ID("validId"), null);
   final var validatables =
