@@ -7,6 +7,7 @@ import de.cronn.reflection.util.TypedPropertyGetter
 import io.vavr.Function2
 import io.vavr.Tuple2
 import io.vavr.control.Either
+import org.revcloud.vader.runner.IDConfig.IDConfigBuilder
 import org.revcloud.vader.specs.specs.BaseSpec
 import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
@@ -174,10 +175,19 @@ internal fun <ValidatableT, FailureT> toValidators(
     toValidatorEtrs1(config.absentOrHaveValidSFIdFormatForAllOrFailWith, isSFIdAbsentOrValidFormat) +
     toValidatorEtrs2(config.absentOrHaveValidSFIdFormatForAllOrFailWithFn, isSFIdAbsentOrValidFormat) +
     toValidatorEtrs3(config.absentOrHaveValidSFIdFormatOrFailWithFn, isSFIdAbsentOrValidFormat) +
-    idConfigToValidatorEtrs(config.withIdConfig?.prepare(), fallBackValidator(isSFIdPresentAndValidFormat), fallBackValidator(isSFIdAbsentOrValidFormat)) +
+    toValidatorEtrs4(config.withIdConfigs) +
     config.specs.map { it.toValidator() } +
     config.getValidators()
   )
+
+private fun <FailureT, ValidatableT> toValidatorEtrs4(configs: Collection<IDConfigBuilder<*, ValidatableT, FailureT, *>>?): List<ValidatorEtr<ValidatableT, FailureT>> =
+  configs?.flatMap {
+    idConfigToValidatorEtrs(
+      it.prepare(),
+      fallBackValidator(isSFIdPresentAndValidFormat),
+      fallBackValidator(isSFIdAbsentOrValidFormat)
+    )
+  } ?: emptyList()
 
 private fun <ValidatableT, FailureT, FieldT> applyFailureFn(
   failureFn: Function2<String, FieldT, FailureT>?,

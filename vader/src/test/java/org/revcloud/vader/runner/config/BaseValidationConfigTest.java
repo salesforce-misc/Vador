@@ -272,6 +272,28 @@ class BaseValidationConfigTest {
     assertThat(result).contains(INVALID_UDD_ID);
   }
 
+  @Test
+  void idConfigWithMixOfIdsAndStrIds() {
+    final var config =
+        ValidationConfig.<BeanWithMixIdFields, ValidationFailure>toValidate()
+            .withIdConfig(
+                IDConfig.<ID, BeanWithMixIdFields, ValidationFailure, EntityId>toValidate()
+                    .withIdValidator(ValidIdUtil::isThisEntity)
+                    .shouldHaveValidSFIdFormatOrFailWith(
+                        Tuple.of(BeanWithMixIdFields::getAccountId, AccountUddConstants.EntityId),
+                        INVALID_UDD_ID))
+            .withIdConfig(
+                IDConfig.<String, BeanWithMixIdFields, ValidationFailure, EntityId>toValidate()
+                    .withIdValidator(ValidIdUtil::isThisEntity)
+                    .absentOrHaveValidSFIdFormatOrFailWith(
+                        Tuple.of(BeanWithMixIdFields::getContactId, AccountUddConstants.EntityId),
+                        INVALID_OPTIONAL_UDD_ID))
+            .prepare();
+    final var result =
+        Vader.validateAndFailFast(new BeanWithMixIdFields(null, new ID("invalidId"), null), config);
+    assertThat(result).contains(INVALID_UDD_ID);
+  }
+
   // tag::bean-strict-id-validation[]
   @Test
   void idConfigForBatch() {
@@ -301,7 +323,6 @@ class BaseValidationConfigTest {
   /** Dummy. A core client may use `common.udd.ValidIdUtil.isThisEntity(String, EntityId)` */
   private static class ValidIdUtil {
     // ! NOTE: These should be implemented by the client and passed through `withIdValidator`
-    // config.
 
     private static boolean isThisEntity(ID idToValidate, EntityId entityId) {
       return !idToValidate.toString().equalsIgnoreCase("invalidId"); // fake implementation
@@ -341,6 +362,15 @@ class BaseValidationConfigTest {
   public static class BeanWithIdStrFields {
     String requiredField;
     String accountId;
+    String contactId;
+  }
+
+  @Data
+  @AllArgsConstructor
+  @FieldNameConstants
+  public static class BeanWithMixIdFields {
+    String requiredField;
+    ID accountId;
     String contactId;
   }
 
