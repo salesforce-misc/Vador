@@ -235,7 +235,7 @@ class BaseValidationConfigTest {
     final var config =
         ValidationConfig.<BeanWithIdFields, ValidationFailure>toValidate()
             .withIdConfig(
-                IDConfig.<BeanWithIdFields, ValidationFailure, EntityId>toValidate()
+                IDConfig.<ID, BeanWithIdFields, ValidationFailure, EntityId>toValidate()
                     .withIdValidator(ValidIdUtil::isThisEntity)
                     .shouldHaveValidSFIdFormatForAllOrFailWithFn(
                         Tuple.of(
@@ -251,13 +251,34 @@ class BaseValidationConfigTest {
     assertThat(result).contains(INVALID_UDD_ID);
   }
 
+  @Test
+  void idConfigWithStrIds() {
+    final var config =
+        ValidationConfig.<BeanWithIdStrFields, ValidationFailure>toValidate()
+            .withIdConfig(
+                IDConfig.<String, BeanWithIdStrFields, ValidationFailure, EntityId>toValidate()
+                    .withIdValidator(ValidIdUtil::isThisEntity)
+                    .shouldHaveValidSFIdFormatForAllOrFailWithFn(
+                        Tuple.of(
+                            Map.of(
+                                BeanWithIdStrFields::getAccountId, AccountUddConstants.EntityId,
+                                BeanWithIdStrFields::getContactId, ContactUddConstants.EntityId),
+                            (invalidIdFieldName, invalidIdFieldValue) ->
+                                getFailureWithParams(
+                                    INVALID_UDD_ID, invalidIdFieldName, invalidIdFieldValue))))
+            .prepare();
+    final var result =
+        Vader.validateAndFailFast(new BeanWithIdStrFields(null, "invalidId", null), config);
+    assertThat(result).contains(INVALID_UDD_ID);
+  }
+
   // tag::bean-strict-id-validation[]
   @Test
   void idConfigForBatch() {
     final var config =
         BatchValidationConfig.<BeanWithIdFields, ValidationFailure>toValidate()
             .withIdConfig(
-                IDConfig.<BeanWithIdFields, ValidationFailure, EntityId>toValidate()
+                IDConfig.<ID, BeanWithIdFields, ValidationFailure, EntityId>toValidate()
                     .withIdValidator(ValidIdUtil::isThisEntity)
                     .shouldHaveValidSFIdFormatOrFailWith(
                         Tuple.of(BeanWithIdFields::getAccountId, AccountUddConstants.EntityId),
@@ -279,9 +300,15 @@ class BaseValidationConfigTest {
 
   /** Dummy. A core client may use `common.udd.ValidIdUtil.isThisEntity(String, EntityId)` */
   private static class ValidIdUtil {
-    /** This should be implemented by the client and passed through `withIdValidator` config. */
+    // ! NOTE: These should be implemented by the client and passed through `withIdValidator`
+    // config.
+
     private static boolean isThisEntity(ID idToValidate, EntityId entityId) {
       return !idToValidate.toString().equalsIgnoreCase("invalidId"); // fake implementation
+    }
+
+    private static boolean isThisEntity(String idToValidate, EntityId entityId) {
+      return !idToValidate.equalsIgnoreCase("invalidId"); // fake implementation
     }
   }
   // end::bean-strict-id-validation[]
@@ -307,6 +334,15 @@ class BaseValidationConfigTest {
   @Value
   private static class ContactEntityId implements EntityId {}
   // end::bean-with-id-fields[]
+
+  @Data
+  @AllArgsConstructor
+  @FieldNameConstants
+  public static class BeanWithIdStrFields {
+    String requiredField;
+    String accountId;
+    String contactId;
+  }
 
   @Data
   @FieldNameConstants

@@ -76,7 +76,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
       absentOrHaveValidSFIdFormatOrFailWithFn;
 
   /** --- ID ---> */
-  @Nullable protected IDConfigBuilder<ValidatableT, FailureT, ?> withIdConfig;
+  @Nullable protected IDConfigBuilder<?, ValidatableT, FailureT, ?> withIdConfig;
 
   @Nullable protected Specs<ValidatableT, FailureT> specify;
 

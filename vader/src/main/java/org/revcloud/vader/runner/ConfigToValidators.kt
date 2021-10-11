@@ -49,9 +49,10 @@ private fun <ValidatableT, FailureT, FieldT> toValidatorEtrs3(
   }
 
 @JvmSynthetic
-private fun <ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
-  config: IDConfig<ValidatableT, FailureT, EntityInfoT>?,
-  idValidatorFallback: (ID?) -> Boolean
+private fun <IDT, ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
+  config: IDConfig<IDT, ValidatableT, FailureT, EntityInfoT>?,
+  idValidatorFallback: (IDT?) -> Boolean,
+  optionalIdValidatorFallBack: (IDT?) -> Boolean
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   toValidators11(
     config?.shouldHaveValidSFIdFormatForAllOrFailWith,
@@ -74,27 +75,27 @@ private fun <ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
     toValidators11(
       config?.absentOrHaveValidSFIdFormatForAllOrFailWith,
       config?.withIdValidator,
-      idValidatorFallback,
+      optionalIdValidatorFallBack,
       false
     ) +
     toValidators12(
       config?.absentOrHaveValidSFIdFormatForAllOrFailWithFn,
       config?.withIdValidator,
-      idValidatorFallback,
+      optionalIdValidatorFallBack,
       false
     ) +
     toValidators13(
       config?.absentOrHaveValidSFIdFormatOrFailWithFn,
       config?.withIdValidator,
-      idValidatorFallback,
+      optionalIdValidatorFallBack,
       false
     )
 
 @JvmSynthetic
-private fun <EntityInfoT, FailureT, ValidatableT> toValidators11(
-  config: Map<Tuple2<TypedPropertyGetter<ValidatableT, ID?>, out EntityInfoT>, FailureT?>?,
-  idValidator: Function2<ID, EntityInfoT, Boolean>?,
-  idValidatorFallback: (ID?) -> Boolean,
+private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators11(
+  config: Map<Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out EntityInfoT>, FailureT?>?,
+  idValidator: Function2<IDT, EntityInfoT, Boolean>?,
+  idValidatorFallback: (IDT?) -> Boolean,
   optionalId: Boolean
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   config?.map { (tuple2, failure) ->
@@ -108,10 +109,10 @@ private fun <EntityInfoT, FailureT, ValidatableT> toValidators11(
   } ?: emptyList()
 
 @JvmSynthetic
-private fun <EntityInfoT, FailureT, ValidatableT> toValidators12(
-  config: Tuple2<Map<TypedPropertyGetter<ValidatableT, ID?>, EntityInfoT>, Function2<String, ID?, FailureT?>>?,
-  idValidator: Function2<ID, EntityInfoT, Boolean>?,
-  idValidatorFallback: (ID?) -> Boolean,
+private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators12(
+  config: Tuple2<Map<TypedPropertyGetter<ValidatableT, IDT?>, EntityInfoT>, Function2<String, IDT?, FailureT?>>?,
+  idValidator: Function2<IDT, EntityInfoT, Boolean>?,
+  idValidatorFallback: (IDT?) -> Boolean,
   optionalId: Boolean
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   config?.let { (idFieldMapperToEntityInfo, failureFn) ->
@@ -127,10 +128,10 @@ private fun <EntityInfoT, FailureT, ValidatableT> toValidators12(
   } ?: emptyList()
 
 @JvmSynthetic
-private fun <EntityInfoT, FailureT, ValidatableT> toValidators13(
-  config: Map<Tuple2<TypedPropertyGetter<ValidatableT, ID?>, out EntityInfoT>, Function2<String, ID?, FailureT?>>?,
-  idValidator: Function2<ID, EntityInfoT, Boolean>?,
-  idValidatorFallback: (ID?) -> Boolean,
+private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators13(
+  config: Map<Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out EntityInfoT>, Function2<String, IDT?, FailureT?>>?,
+  idValidator: Function2<IDT, EntityInfoT, Boolean>?,
+  idValidatorFallback: (IDT?) -> Boolean,
   optionalId: Boolean
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   config?.map { (tuple2, failureFn) ->
@@ -145,12 +146,12 @@ private fun <EntityInfoT, FailureT, ValidatableT> toValidators13(
   } ?: emptyList()
 
 @JvmSynthetic
-private fun <EntityInfoT> validateId(
-  idValidator: Function2<ID, EntityInfoT, Boolean>?,
+private fun <IDT, EntityInfoT> validateId(
+  idValidator: Function2<IDT, EntityInfoT, Boolean>?,
   entityInfo: EntityInfoT,
-  idValidatorFallback: (ID?) -> Boolean,
+  idValidatorFallback: (IDT?) -> Boolean,
   optionalId: Boolean
-) = { id: ID? ->
+) = { id: IDT? ->
   when {
     idValidator != null -> when {
       optionalId -> id != null && idValidator.apply(id, entityInfo)
@@ -173,18 +174,23 @@ internal fun <ValidatableT, FailureT> toValidators(
     toValidatorEtrs1(config.absentOrHaveValidSFIdFormatForAllOrFailWith, isSFIdAbsentOrValidFormat) +
     toValidatorEtrs2(config.absentOrHaveValidSFIdFormatForAllOrFailWithFn, isSFIdAbsentOrValidFormat) +
     toValidatorEtrs3(config.absentOrHaveValidSFIdFormatOrFailWithFn, isSFIdAbsentOrValidFormat) +
-    idConfigToValidatorEtrs(config.withIdConfig, isSFIdPresentAndValidFormat) +
+    idConfigToValidatorEtrs(config.withIdConfig?.prepare(), fallBackValidator(isSFIdPresentAndValidFormat), fallBackValidator(isSFIdAbsentOrValidFormat)) +
     config.specs.map { it.toValidator() } +
     config.getValidators()
   )
 
-private fun <FailureT, FieldT, ValidatableT> applyFailureFn(
+private fun <ValidatableT, FailureT, FieldT> applyFailureFn(
   failureFn: Function2<String, FieldT, FailureT>?,
   validatable: Either<FailureT?, ValidatableT?>,
   fieldMapper: TypedPropertyGetter<in ValidatableT, out FieldT>
 ): (FieldT) -> FailureT? = { fieldValue: FieldT ->
-  failureFn?.apply(PropertyUtils.getPropertyName(validatable.get(), fieldMapper), fieldValue)
+  failureFn?.apply(getFieldName(validatable, fieldMapper), fieldValue)
 }
+
+private fun <ValidatableT, FailureT, FieldT> getFieldName(
+  validatable: Either<FailureT?, ValidatableT?>,
+  fieldMapper: TypedPropertyGetter<in ValidatableT, out FieldT>
+): String = validatable.map { PropertyUtils.getPropertyName(validatable.get(), fieldMapper) }.getOrElse("Validatable is on Left")
 
 @JvmSynthetic
 private fun <ValidatableT, FailureT> BaseSpec<ValidatableT, FailureT>.toValidator(): ValidatorEtr<ValidatableT?, FailureT?> =
@@ -208,3 +214,13 @@ private val isSFIdPresentAndValidFormat: (ID?) -> Boolean =
 @JvmSynthetic
 private val isSFIdAbsentOrValidFormat: (ID?) -> Boolean =
   { it == null || IdTraits.isValidIdStrictChecking(it.toString(), true) }
+
+private val fallBackValidator: ((ID?) -> Boolean) -> ((Any?) -> Boolean) = { fallBackValidator ->
+  {
+    when (it) {
+      is String -> fallBackValidator(ID(it))
+      is ID -> fallBackValidator(it)
+      else -> throw IllegalArgumentException("Unknown Data-type for required ID: ${it?.javaClass?.name}")
+    }
+  }
+}
