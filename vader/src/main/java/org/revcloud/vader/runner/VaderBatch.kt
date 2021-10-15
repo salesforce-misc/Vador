@@ -14,24 +14,47 @@ import org.revcloud.vader.types.validators.Validator
 import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
+/** == CONTAINER == */
 @JvmOverloads
 fun <FailureT, ContainerValidatableT> validateAndFailFastForContainer(
   batchValidatable: Collection<ContainerValidatableT>,
   containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> = batchValidatable.asSequence()
-  .map { validatable: ContainerValidatableT ->
-    validateAndFailFastForContainer(validatable, containerValidationConfig, throwableMapper)
+  .map { container: ContainerValidatableT ->
+    validateAndFailFastForContainer(container, containerValidationConfig, throwableMapper)
+  }.firstOrNull { it.isPresent } ?: Optional.empty()
+
+@JvmOverloads
+fun <FailureT, ContainerValidatableT, PairT> validateAndFailFastForContainer(
+  batchValidatable: Collection<ContainerValidatableT>,
+  pairForInvalidMapper: (ContainerValidatableT?) -> PairT?,
+  containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
+): Optional<Tuple2<PairT?, FailureT?>> = batchValidatable.asSequence()
+  .map { container: ContainerValidatableT ->
+    validateAndFailFastForContainer(container, containerValidationConfig, throwableMapper).map { Tuple.of(pairForInvalidMapper(container), it) }
   }.firstOrNull { it.isPresent } ?: Optional.empty()
 
 @JvmOverloads
 fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
   batchValidatable: Collection<ContainerValidatableT>,
-  containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
+  containerValidationConfigWith2Levels: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> = batchValidatable.asSequence()
-  .map { validatable: ContainerValidatableT ->
-    validateAndFailFastForContainer(validatable, containerValidationConfig, throwableMapper)
+  .map { container: ContainerValidatableT ->
+    validateAndFailFastForContainer(container, containerValidationConfigWith2Levels, throwableMapper)
+  }.firstOrNull { it.isPresent } ?: Optional.empty()
+
+@JvmOverloads
+fun <FailureT, ContainerValidatableT, NestedContainerValidatableT, PairT> validateAndFailFastForContainer(
+  batchValidatable: Collection<ContainerValidatableT>,
+  pairForInvalidMapper: (ContainerValidatableT?) -> PairT?,
+  containerValidationConfigWith2Levels: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
+): Optional<Tuple2<PairT?, FailureT?>> = batchValidatable.asSequence()
+  .map { container: ContainerValidatableT ->
+    validateAndFailFastForContainer(container, containerValidationConfigWith2Levels, throwableMapper).map { Tuple.of(pairForInvalidMapper(container), it) }
   }.firstOrNull { it.isPresent } ?: Optional.empty()
 
 /** == FOR EACH == */

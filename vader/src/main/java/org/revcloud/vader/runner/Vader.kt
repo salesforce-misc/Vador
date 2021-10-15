@@ -17,9 +17,9 @@ fun <FailureT, ContainerValidatableT> validateAndFailFastForContainer(
 @JvmOverloads
 fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
   container: ContainerValidatableT,
-  containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
+  containerValidationConfigWith2Levels: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
-): Optional<FailureT> = failFastForContainer(containerValidationConfig, throwableMapper)(container)
+): Optional<FailureT> = failFastForContainer(containerValidationConfigWith2Levels, throwableMapper)(container)
 
 @JvmOverloads
 fun <FailureT, ValidatableT> validateAndFailFast(

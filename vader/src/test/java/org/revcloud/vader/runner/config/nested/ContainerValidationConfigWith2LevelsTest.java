@@ -35,17 +35,17 @@ class ContainerValidationConfigWith2LevelsTest {
     final var containerRootValidationConfigFor2Levels =
         ContainerValidationConfigWith2Levels
             .<ContainerRoot, ContainerLevel1, ValidationFailure>toValidate()
-            .withBatchMapper(ContainerRoot::getContainerLevel1Batch)
+            .withBatchMember(ContainerRoot::getContainerLevel1Batch)
             .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
             .withScopeOf1LevelDeep(
                 ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
-                    .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
+                    .withBatchMember(ContainerLevel1::getContainerLevel2Batch)
                     .shouldHaveMinBatchSizeOrFailWith(Tuple.of(5, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
                     .prepare())
             .prepare();
     final var containerLevel1ValidationConfig =
         ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
-            .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
+            .withBatchMember(ContainerLevel1::getContainerLevel2Batch)
             .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_2))
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
@@ -86,22 +86,22 @@ class ContainerValidationConfigWith2LevelsTest {
     final var containerRootValidationConfigFor2Levels =
         ContainerValidationConfigWith2Levels
             .<ContainerRoot, ContainerLevel1, ValidationFailure>toValidate()
-            .withBatchMapper(ContainerRoot::getContainerLevel1Batch)
+            .withBatchMember(ContainerRoot::getContainerLevel1Batch)
             .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
             .withScopeOf1LevelDeep(
                 ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
-                    .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
+                    .withBatchMember(ContainerLevel1::getContainerLevel2Batch)
                     .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
                     .prepare())
             .prepare();
     final var containerLevel1ValidationConfigFor2Levels =
         ContainerValidationConfigWith2Levels
             .<ContainerLevel1, ContainerLevel2, ValidationFailure>toValidate()
-            .withBatchMapper(ContainerLevel1::getContainerLevel2Batch)
+            .withBatchMember(ContainerLevel1::getContainerLevel2Batch)
             .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET_LEVEL_2))
             .withScopeOf1LevelDeep(
                 ContainerValidationConfig.<ContainerLevel2, ValidationFailure>toValidate()
-                    .withBatchMapper(ContainerLevel2::getBeanBatch)
+                    .withBatchMember(ContainerLevel2::getBeanBatch)
                     .shouldHaveMaxBatchSizeOrFailWith(Tuple.of(3, MAX_BATCH_SIZE_EXCEEDED_LEVEL_2))
                     .prepare())
             .prepare();
@@ -140,14 +140,14 @@ class ContainerValidationConfigWith2LevelsTest {
             .<ContainerRootWithMultiContainerBatch, ContainerLevel1WithMultiBatch,
                 ValidationFailure>
                 toValidate()
-            .withBatchMappers(
+            .withBatchMembers(
                 List.of(
                     ContainerRootWithMultiContainerBatch::getContainerLevel1Batch1,
                     ContainerRootWithMultiContainerBatch::getContainerLevel1Batch2))
             .withScopeOf1LevelDeep(
                 ContainerValidationConfig
                     .<ContainerLevel1WithMultiBatch, ValidationFailure>toValidate()
-                    .withBatchMappers(
+                    .withBatchMembers(
                         List.of(
                             ContainerLevel1WithMultiBatch::getContainerLevel2Batch,
                             ContainerLevel1WithMultiBatch::getBeanBatch))

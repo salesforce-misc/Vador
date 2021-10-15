@@ -32,7 +32,7 @@ image:bsg-container.png[]
 [source,java,indent=0,options="nowrap"]
 ----
 final var bsgHeaderValidationConfig = ContainerValidationConfig.<BillingScheduleGroupInputRepresentation, BillingScheduleFailure>toValidate()
-  .withBatchMapper(BillingScheduleGroupInputRepresentation::getReferenceItems)
+  .withBatchMember(BillingScheduleGroupInputRepresentation::getReferenceItems)
   .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, ofInvalidBatchSize(INPUT_DATA_MISSING_REFERENCE_IDS))).prepare();
 
 final Optional<BillingScheduleFailure> result =

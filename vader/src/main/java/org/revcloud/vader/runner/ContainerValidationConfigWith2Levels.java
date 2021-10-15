@@ -23,7 +23,7 @@ public class ContainerValidationConfigWith2Levels<
   Collection<
           TypedPropertyGetter<
               ContainerRootLevelValidatableT, @Nullable Collection<ContainerLevel1ValidatableT>>>
-      withBatchMappers;
+      withBatchMembers;
 
   ContainerValidationConfig<ContainerLevel1ValidatableT, FailureT> withScopeOf1LevelDeep;
 

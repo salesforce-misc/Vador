@@ -90,7 +90,7 @@ You can achieve this using both link:ContainerValidationConfig.adoc[ContainerVal
 [source,java,indent=0,options="nowrap"]
 ----
 ContainerValidationConfig.<ContainerWithMultiBatch, ValidationFailure>toValidate()
-  .withBatchMapper(ContainerWithMultiBatch::getBatch1)
+  .withBatchMember(ContainerWithMultiBatch::getBatch1)
   .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, INVALID_BATCH_SIZE)).prepare();
 ----
 

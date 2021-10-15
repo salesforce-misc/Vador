@@ -70,7 +70,7 @@ ifdef::env-github[]
 void failFastForHeaderConfigBatchSizeForMultiBatch() {
   final var containerValidationConfig =
       ContainerValidationConfig.<ContainerWithMultiBatch, ValidationFailure>toValidate()
-          .withBatchMappers(
+          .withBatchMembers(
               List.of(ContainerWithMultiBatch::getBatch1, ContainerWithMultiBatch::getBatch2))
           .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET))
           .shouldHaveMaxBatchSizeOrFailWith(Tuple.of(3, MAX_BATCH_SIZE_EXCEEDED))
@@ -99,12 +99,12 @@ ifdef::env-github[]
 ----
 class Bean {}
 
-class Container1 {
+class ContainerLevel1 {
   List<Bean> beanBatch;
 }
 
 class ContainerRoot {
-  List<Container1> container1Batch;
+  List<ContainerLevel1> containerLevel1Batch;
 }
 ----
 
@@ -137,17 +137,17 @@ ifdef::env-github[]
 void composeContainerValidationResults() {
   final var containerRootValidationConfig =
       ContainerValidationConfig.<ContainerRoot, ValidationFailure>toValidate()
-          .withBatchMapper(ContainerRoot::getContainer1Batch)
+          .withBatchMember(ContainerRoot::getContainerLevel1Batch)
           .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_0))
           .prepare();
   final var containerValidationConfig =
-      ContainerValidationConfig.<Container1, ValidationFailure>toValidate()
-          .withBatchMapper(Container1::getBeanBatch)
+      ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
+          .withBatchMember(ContainerLevel1::getBeanBatch)
           .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
           .prepare();
 
   final var beanBatch = List.of(new Bean());
-  final var container2Batch = List.of(new Container1(beanBatch), new Container1(emptyList()));
+  final var container2Batch = List.of(new ContainerLevel1(beanBatch), new ContainerLevel1(emptyList()));
   final var container1 = new ContainerRoot(container2Batch);
 
   final var result =

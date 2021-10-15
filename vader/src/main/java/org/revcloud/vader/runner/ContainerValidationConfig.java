@@ -19,7 +19,7 @@ public class ContainerValidationConfig<ContainerValidatableT, FailureT>
     extends BaseContainerValidationConfig<ContainerValidatableT, FailureT> {
 
   @Singular
-  Collection<TypedPropertyGetter<ContainerValidatableT, @Nullable Collection<?>>> withBatchMappers;
+  Collection<TypedPropertyGetter<ContainerValidatableT, @Nullable Collection<?>>> withBatchMembers;
 
   public Set<String> getFieldNamesForBatch(Class<ContainerValidatableT> validatableClazz) {
     return ContainerValidationConfigEx.getFieldNamesForBatchEx(this, validatableClazz);
