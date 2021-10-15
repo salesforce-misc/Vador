@@ -86,8 +86,13 @@ class ContainerValidationConfigTest {
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
     final var containerWithInvalidMember = new ContainerWithPair(2, emptyList());
-    final var headerBeanBatch = List.of(new ContainerWithPair(1, List.of(new Bean())), containerWithInvalidMember, new ContainerWithPair(3, List.of(new Bean())));
-    final var result = VaderBatch.validateAndFailFastForContainer(headerBeanBatch, containerValidationConfig);
+    final var headerBeanBatch =
+        List.of(
+            new ContainerWithPair(1, List.of(new Bean())),
+            containerWithInvalidMember,
+            new ContainerWithPair(3, List.of(new Bean())));
+    final var result =
+        VaderBatch.validateAndFailFastForContainer(headerBeanBatch, containerValidationConfig);
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
   }
 
@@ -100,8 +105,14 @@ class ContainerValidationConfigTest {
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
     final var containerWithInvalidMember = new ContainerWithPair(2, emptyList());
-    final var headerBeanBatch = List.of(new ContainerWithPair(1, List.of(new Bean())), containerWithInvalidMember, new ContainerWithPair(3, List.of(new Bean())));
-    final var result = VaderBatch.validateAndFailFastForContainer(headerBeanBatch, ContainerWithPair::getId, containerValidationConfig);
+    final var headerBeanBatch =
+        List.of(
+            new ContainerWithPair(1, List.of(new Bean())),
+            containerWithInvalidMember,
+            new ContainerWithPair(3, List.of(new Bean())));
+    final var result =
+        VaderBatch.validateAndFailFastForContainer(
+            headerBeanBatch, ContainerWithPair::getId, containerValidationConfig);
     assertThat(result).contains(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET));
   }
 
@@ -178,7 +189,8 @@ class ContainerValidationConfigTest {
             .prepare();
 
     final var beanBatch = List.of(new Bean());
-    final var container2Batch = List.of(new ContainerLevel1(beanBatch), new ContainerLevel1(emptyList()));
+    final var container2Batch =
+        List.of(new ContainerLevel1(beanBatch), new ContainerLevel1(emptyList()));
     final var container1 = new ContainerRoot(container2Batch);
 
     final var result =

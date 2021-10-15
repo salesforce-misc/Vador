@@ -2,6 +2,8 @@
 
 package org.revcloud.vader.specs.specs
 
+import org.revcloud.vader.specs.component1
+import org.revcloud.vader.specs.component2
 import java.util.function.Predicate
 
 internal fun <ValidatableT, FailureT, GivenT> Spec1<ValidatableT, FailureT, GivenT>.toPredicateEx(): Predicate<ValidatableT?> =
@@ -71,5 +73,15 @@ internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> Spec3<ValidatableT,
       thenField1.apply(validatable),
       thenField2.apply(validatable)
     )
+  }
+}
+
+internal fun <ValidatableT, FailureT> Spec4<ValidatableT, FailureT>.toPredicateEx(): Predicate<ValidatableT?> {
+  return Predicate { validatable ->
+    val whenAllFieldsMatch = whenFieldsMatch.all { (mapper, matcher) -> matcher?.matches(mapper?.apply(validatable)) ?: true }
+    if (!whenAllFieldsMatch) {
+      return@Predicate true
+    }
+    thenFieldsShouldMatch.all { (mapper, matcher) -> matcher?.matches(mapper?.apply(validatable)) ?: true }
   }
 }

@@ -180,7 +180,7 @@ class Spec2Test {
   }
 
   @DisplayName(
-      "Invalid Config: Provide both `when-matches/matchesAnyOf + then-shouldMatch/shouldMatchAnyOf` and `shouldRelateWith` or `shouldRelateWith")
+      "Invalid Config: Provide both `when-matches/matchesAnyOf + then-shouldMatch/shouldMatchAnyOf` and `shouldRelateWith` or `shouldRelateWithFn")
   @Test
   void invalidSpec2Config() {
     final var relateWith =

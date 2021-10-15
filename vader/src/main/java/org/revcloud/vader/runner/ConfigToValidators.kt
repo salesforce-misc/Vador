@@ -8,6 +8,8 @@ import io.vavr.Function2
 import io.vavr.Tuple2
 import io.vavr.control.Either
 import org.revcloud.vader.runner.IDConfig.IDConfigBuilder
+import org.revcloud.vader.specs.component1
+import org.revcloud.vader.specs.component2
 import org.revcloud.vader.specs.specs.BaseSpec
 import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
