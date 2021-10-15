@@ -52,15 +52,6 @@ public class Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T>
 
   @Override
   public FailureT getFailure(@Nullable ValidatableT validatable) {
-    if ((orFailWith == null) == (orFailWithFn == null)) {
-      throw new IllegalArgumentException(String.format(INVALID_FAILURE_CONFIG, nameForTest));
-    }
-    if (orFailWith != null) {
-      return orFailWith;
-    }
-    return orFailWithFn.apply(
-        getWhen().apply(validatable),
-        getThenField1().apply(validatable),
-        getThenField2().apply(validatable));
+    return SpecEx.getFailureEx(this, validatable);
   }
 }

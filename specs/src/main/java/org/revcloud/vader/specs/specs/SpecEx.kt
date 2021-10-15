@@ -31,7 +31,7 @@ internal fun <ValidatableT, FailureT, WhenT, ThenT> Spec2<ValidatableT, FailureT
       return@Predicate true
     }
     val validThenValues = shouldRelateWith[whenValue]
-    // TODO 06/05/21 gopala.akshintala: This is a hack, as ImmutableCollections.$Set12.contains(null) throws NPE 
+    // TODO 06/05/21 gopala.akshintala: This is a hack, as `ImmutableCollections.$Set12.contains(thenValue)` throws NPE if `thenValue` is null.
     if (validThenValues?.any { thenValue == it } == true) {
       return@Predicate true
     }
@@ -58,3 +58,18 @@ internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> Spec3<ValidatableT,
     orField1ShouldMatchAnyOf.any { it.matches(thenValue1) } ||
       orField2ShouldMatchAnyOf.any { it.matches(thenValue2) }
   }
+
+internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T>.getFailureEx(validatable: ValidatableT?): FailureT? {
+  require((orFailWith == null) != (orFailWithFn == null)) {
+    String.format(BaseSpec.INVALID_FAILURE_CONFIG, nameForTest)
+  }
+  return if (orFailWith != null) {
+    orFailWith
+  } else {
+    orFailWithFn?.apply(
+      `when`.apply(validatable),
+      thenField1.apply(validatable),
+      thenField2.apply(validatable)
+    )
+  }
+}
