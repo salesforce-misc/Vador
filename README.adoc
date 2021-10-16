@@ -102,7 +102,7 @@ video::Dvr6gx4XaD8[youtube]
 endif::[]
 
 * https://speakerdeck.com/gopalakshintala/fight-complexity-with-functional-programming-in-kotlin[Slide-deck]
-*The corresponding https://overfullstack.ga/posts/fight-complexity-with-fp/[Blog Post]
+* The corresponding https://overfullstack.ga/posts/fight-complexity-with-fp/[Blog Post]
 ====
 
 === More videos
@@ -110,7 +110,7 @@ endif::[]
 ====
 https://drive.google.com/file/d/1H_LhlYAqQKK4UjYrQ8GG9Bo3NpW2dsZL/view?usp=sharing[Presentation done for Rev Pegasus team for Cancellation API]
 
-link:{docsdir}/presentations/2021-08-cancellation-api/0-title.adoc[Slide-deck]
+link:{docsdir}/presentations/2021-08-cancellation-api/1-index.adoc[Slide-deck]
 ====
 
 ====

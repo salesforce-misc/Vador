@@ -1,4 +1,4 @@
-= 🦾 Problem to Solve 🦾
+= 🦾 Vader for Cancellation API 🦾
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
 ifdef::env-github[]
@@ -9,23 +9,28 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 :hide-uri-scheme:
-:imagesdir: images
 :!sectnums:
 
+image:../../images/vader.png[Vader]
+
+{empty} +
+{empty} +
 
 == But! this is not about [.line-through]#Vader#!
 
-=== We have a *Problem to Solve* and how can we solve it easily and elegantly.
-
-{empty} +
-{empty} +
+=== We have a Problem to solve and how can we solve it easily and elegantly
 
 ****
-* Define the problem to solve
-* Config driven validation
-** Convert validations to Config
-** Retro on the benefits.
-* Vader's Track record 
-* Stability & Support
-* Next Steps
+* link:2-validatable.adoc[Data structure to Validate]
+* link:3-config-driven-validation.adoc[Config driven validation]
+* Migrate validations using Config-driven approach:
+** link:4-bsg-container.adoc[Container Validation Config]
+** link:5-root-container-with-2-levels.adoc[Container Validation Config with 2 levels]
+** link:6-bsg-container-compose.adoc[Nested Container validation]
+** link:7-bsg-batch.adoc[Batch validation with Filter config]
+** link:8-refItem-batch.adoc[Batch Validation with more built-in validators]
+* link:9-retro-on-benefits.adoc[Retro on the benefits]
+* link:10-track-record.adoc[Vader's Track record] 
+* link:11-stability-and-support.adoc[Stability & Support]
+* link:12-next-steps.adoc[Next Steps]
 ****
