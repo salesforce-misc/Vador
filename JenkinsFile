@@ -24,7 +24,7 @@ executePipeline(envDef) {
   }
 
   stage('Build') {
-    sh './gradlew check'
+    sh './gradlew build'
   }
   
   if (BuildUtils.isReleaseBuild(env)) {

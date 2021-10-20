@@ -71,9 +71,9 @@ It may be slow for the first run, but later runs should be faster.
 == CI/CD
 
 * SFCI is used for CI/CD.
-A jenkins job runs for every commit pushed on any branch.
-* However, to publish a jar to nexus, only commits on *master* branch are considered.
-You can get more information from link:JenkinsFile[JenkinsFile].
+* A jenkins job runs for every commit pushed on any branch.
+However, to publish a jar to nexus, only commits on *master* branch are considered.
+* link:JenkinsFile[JenkinsFile] has the configuration script.
 * The job status can be monitored from the https://ccspaymentsci.dop.sfdc.net/job/validation/job/Vader/job/master/[SFCI Portal].
 
 == Manual publishing

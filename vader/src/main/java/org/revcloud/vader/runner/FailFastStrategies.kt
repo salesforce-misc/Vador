@@ -139,7 +139,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT, ContainerPair
       }
   }
 
-// TODO 13/05/21 gopala.akshintala: Reconsider any advantage of having this as a HOF 
+// TODO 13/05/21 gopala.akshintala: Reconsider any advantage of having this as a HOF
 @JvmSynthetic
 internal fun <ValidatableT, FailureT> failFastForAny(
   batchValidationConfig: BaseBatchValidationConfig<ValidatableT, FailureT?>,

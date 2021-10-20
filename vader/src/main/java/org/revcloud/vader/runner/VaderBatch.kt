@@ -222,7 +222,7 @@ fun <FailureT, ContainerValidatableT, MemberValidatableT, ContainerPairT, Member
 fun <FailureT, ValidatableT> validateAndAccumulateErrors(
   validatables: List<ValidatableT>,
   validators: List<Validator<ValidatableT?, FailureT?>>,
-  none: FailureT, // ! TODO 27/09/21 gopala.akshintala: Remove this, like it's FF counterpart 
+  none: FailureT, // ! TODO 27/09/21 gopala.akshintala: Remove this, like it's FF counterpart
   throwableMapper: (Throwable) -> FailureT?,
 ): List<List<Either<FailureT?, ValidatableT?>>> =
   validateAndAccumulateErrors(validatables, liftAllToEtr(validators, none), throwableMapper)

@@ -21,7 +21,7 @@ internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, Failure
 internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.getPredicateOfSpecForTestEx(
   nameForTest: String
 ): Optional<Predicate<ValidatableT?>> {
-  // TODO 29/04/21 gopala.akshintala: Move this duplicate-check to ValidationConfig `prepare` 
+  // TODO 29/04/21 gopala.akshintala: Move this duplicate-check to ValidationConfig `prepare`
   val specNameToSpecs =
     specs.groupingBy { it.nameForTest }.eachCount().filter { it.value > 1 }.keys.filterNotNull()
   if (specNameToSpecs.isNotEmpty()) {
