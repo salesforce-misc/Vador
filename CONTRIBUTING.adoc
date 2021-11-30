@@ -24,22 +24,22 @@ endif::[]
 
 == Source-code Setup
 
-* This is a simple Gradle project and has its own Gradle wrapper.
-So nothing to install.
-* Follow these simple instructions from https://git.soma.salesforce.com/MoBE/gradle-init-scripts/blob/master/README.md[this repo] to setup your Gradle to connect with Salesforce Nexus.
-* You need to add your nexus credentials in `~/.gradle/gradle.properties` file (create file if not present), which are used by your local gradle to connect to nexus for downloading artifacts.
+* This is a simple Gradle project and has its own Gradle wrapper. So nothing to install.
 * Follow these simple instructions from https://git.soma.salesforce.com/MoBE/gradle-init-scripts/[here] to setup gradle to point to https://nexus.soma.salesforce.com/nexus/[nexus.soma repository] for downloading dependency jars.
+* You need to add your nexus credentials in `~/.gradle/gradle.properties` file (create the file if not present), which are used by your local gradle to connect to nexus for downloading artifacts.
+You can find your nexus userName and password from https://nexus.soma.salesforce.com/nexus/#profile;User%20Token[here] under the *User Token* section in the dropdown.
+You can also get them from `blt/app/main/core/workspace-user.xml` file.
 
 [source,properties]
 ----
-  nexusUsername=...
-  nexusPassword=...
+  nexusUsername=...your..nexus..username...
+  nexusPassword=...your..nexus..password...
 ----
 
 * Then run this from project's root to build Vader:
 
 CAUTION: You may see some build errors related to delombok task.
-They should not fail your build and you may ignore them.
+They should not fail your build, and you may ignore them.
 They should be addressed once Kotlin Lombok compiler supports Lombok `@Builders`.
 There is an https://youtrack.jetbrains.com/issue/KT-46959[Active Issue] filed for this as well.
 
@@ -53,6 +53,14 @@ There are plugins available for all popular IDEs, which you need to install.
 The latest version of the plugin should work.
 * You can run/debug the existing unit tests or write your own to play with Vader.
 
+=== Kotlin
+
+* The code-base is a mix of Java and Kotlin. If you are a Java developer and new to Kotlin, don't worry, Kotlin is a JVM language and can be used anywhere Java is used.
+In-fact, it has got the reputation of "Better Java!".
+* A typical Java developer can ramp-up on Kotlin in less than a week.
+This https://www.coursera.org/learn/kotlin-for-java-developers[*free course*] can help catalyse your ramp-up.
+* If you use Intellij, Kotlin plugin comes bundled. Similar developments aids should be present for other code editors too.
+
 == SonarQube
 
 * The codebase is hooked to SonarQube and all the quality analysis and code-coverage can be checked https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader[in this portal]
@@ -62,7 +70,7 @@ For admin access on this profile, you may approach existing admins of this QP or
 == Code Formatting
 
 * This repo uses https://github.com/diffplug/spotless[*Spotless*] for formatting files, as this repo has code from more than one programming-language.
-* The SFCI build (even your local `gradle build`) fails if the check-in (or code) has any are formatting errors.
+* The SFCI build (even your local `gradle build`) fails if the check-in (or code) has any formatting issues.
 * Please run `./gradlew spotlessApply` before check-in to fix any formatting errors.
 
 TIP: If you are on Intellij, replace your kbd[Cmd+Shift+L] habit with kbd[Ctrl]-kbd[Ctrl] and run `gradle spotlessApply` (Or the respective action if you are on Eclipse).

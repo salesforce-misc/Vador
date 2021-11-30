@@ -204,6 +204,7 @@ kover {
 }
 // <-- PROJECT TASKS --
 tasks {
+  // Using Jacoco to aggregate until Kover support inter-module test coverage.
   jacocoTestReport {
     dependsOn(subprojects.map { it.tasks.withType<Test>() })
     dependsOn(subprojects.map { it.tasks.withType<KoverXmlReportTask>() })
