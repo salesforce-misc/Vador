@@ -1,6 +1,5 @@
 plugins {
   id("io.freefair.lombok")
-  id("com.github.spotbugs")
 }
 
 dependencies {

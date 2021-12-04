@@ -12,11 +12,11 @@ plugins {
   `maven-publish`
   idea
   jacoco
-  id("org.jetbrains.kotlinx.kover") version "0.4.1"
+  id("org.jetbrains.kotlinx.kover") version "0.4.4"
   id("io.freefair.lombok")
-  id("io.gitlab.arturbosch.detekt") version "1.18.0"
-  id("com.adarshr.test-logger") version "3.0.0"
-  id("com.diffplug.spotless") version "6.0.0"
+  id("io.gitlab.arturbosch.detekt") version "1.19.0"
+  id("com.adarshr.test-logger") version "3.1.0"
+  id("com.diffplug.spotless") version "6.0.1"
   id("org.sonarqube") version "3.3"
   id("org.asciidoctor.jvm.gems") version "3.3.2"
   id("org.asciidoctor.jvm.revealjs") version "3.3.2"
@@ -70,7 +70,6 @@ allprojects {
 // <-- SUB PROJECTS --
 subprojects {
   apply(plugin = "org.jetbrains.kotlin.jvm")
-  apply(plugin = "java-library")
   apply(plugin = "maven-publish")
   apply(plugin = "com.adarshr.test-logger")
   apply(plugin = "com.github.spotbugs")
@@ -83,10 +82,10 @@ subprojects {
     lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
 
     val testImplementation by configurations
-    testImplementation(platform("org.junit:junit-bom:5.8.0"))
+    testImplementation(platform("org.junit:junit-bom:5.8.1"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    val kotestVersion = "4.6.1"
+    val kotestVersion = "5.0.1"
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
   }
@@ -124,10 +123,11 @@ subprojects {
     withType<KotlinCompile> {
       kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
-        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+        freeCompilerArgs = listOf("-Xjsr305=strict", "-Xopt-in=kotlin.RequiresOptIn")
       }
     }
     test.get().useJUnitPlatform()
+    testlogger.theme = MOCHA
     withType<PublishToMavenRepository>().configureEach {
       doLast {
         logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to ${repository.name}")
@@ -138,7 +138,6 @@ subprojects {
         logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to MavenLocal.")
       }
     }
-    testlogger.theme = MOCHA
     spotbugs.ignoreFailures.set(true)
     spotbugsTest.get().enabled = false
   }
@@ -202,7 +201,7 @@ kover {
   coverageEngine.set(CoverageEngine.JACOCO)
   generateReportOnCheck.set(true)
 }
-// <-- PROJECT TASKS --
+// <-- ROOT-PROJECT TASKS --
 tasks {
   // Using Jacoco to aggregate until Kover support inter-module test coverage.
   jacocoTestReport {
@@ -252,14 +251,14 @@ tasks {
     exclude("**/build/**")
     config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
     baseline.set(File("$rootDir/config/baseline.xml"))
+  }
+  withType<Detekt>().configureEach {
     reports {
-      xml.enabled = true
-      html.enabled = false
-      txt.enabled = false
+      xml.required.set(true)
     }
   }
 }
-// -- PROJECT TASKS -->
+// -- ROOT-PROJECT TASKS -->
 afterEvaluate {
   tasks {
     check.configure {
