@@ -16,7 +16,7 @@ plugins {
   id("io.freefair.lombok")
   id("io.gitlab.arturbosch.detekt") version "1.19.0"
   id("com.adarshr.test-logger") version "3.1.0"
-  id("com.diffplug.spotless") version "6.0.1"
+  id("com.diffplug.spotless") version "6.0.5"
   id("org.sonarqube") version "3.3"
   id("org.asciidoctor.jvm.gems") version "3.3.2"
   id("org.asciidoctor.jvm.revealjs") version "3.3.2"
@@ -82,10 +82,10 @@ subprojects {
     lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
 
     val testImplementation by configurations
-    testImplementation(platform("org.junit:junit-bom:5.8.1"))
+    testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    val kotestVersion = "5.0.1"
+    val kotestVersion = "5.0.2"
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
   }
