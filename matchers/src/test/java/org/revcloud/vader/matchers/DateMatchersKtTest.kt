@@ -26,11 +26,16 @@ class DateMatchersKtTest : StringSpec({
   }
 
   "Is On Or Before If Both Are Present" {
-    isOnOrBeforeIfBothArePresent.apply(null, null) shouldBe true
-    isOnOrBeforeIfBothArePresent.apply(null, "") shouldBe true
-    isOnOrBeforeIfBothArePresent.apply(GregorianCalendar(2021, Calendar.FEBRUARY, 1).time, "") shouldBe false
-    isOnOrBeforeIfBothArePresent.apply(GregorianCalendar(2021, Calendar.FEBRUARY, 2).time, GregorianCalendar(2021, Calendar.FEBRUARY, 1).time) shouldBe false
-    isOnOrBeforeIfBothArePresent.apply(GregorianCalendar(2021, Calendar.FEBRUARY, 1).time, GregorianCalendar(2021, Calendar.FEBRUARY, 1).time) shouldBe true
-    isOnOrBeforeIfBothArePresent.apply(GregorianCalendar(2021, Calendar.JANUARY, 31).time, GregorianCalendar(2021, Calendar.FEBRUARY, 1).time) shouldBe true
+    forAll(
+      row(null, null, true),
+      row(null, "", true),
+      row("2021-12-28", "2021-12-28", false),
+      row(GregorianCalendar(2021, Calendar.FEBRUARY, 1).time, "", false),
+      row(GregorianCalendar(2021, Calendar.FEBRUARY, 2).time, GregorianCalendar(2021, Calendar.FEBRUARY, 1).time, false),
+      row(GregorianCalendar(2021, Calendar.FEBRUARY, 1).time, GregorianCalendar(2021, Calendar.FEBRUARY, 1).time, true),
+      row(GregorianCalendar(2021, Calendar.JANUARY, 31).time, GregorianCalendar(2021, Calendar.FEBRUARY, 1).time, true)
+    ) { date1, date2, result ->
+      isOnOrBeforeIfBothArePresent.apply(date1, date2) shouldBe result
+    }
   }
 })

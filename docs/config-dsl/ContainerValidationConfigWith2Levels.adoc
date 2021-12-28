@@ -34,10 +34,12 @@ ifdef::env-github[]
 class Bean {}
 
 class ContainerLevel2 {
+  int id;
   List<Bean> beanBatch;
 }
 
 class ContainerLevel1 {
+  int id;
   List<ContainerLevel2> containerLevel2Batch;
 }
 

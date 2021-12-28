@@ -36,7 +36,7 @@ image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=c
 image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=sqale_rating[Maintainability Rating,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
 image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=security_rating[Security Rating,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
 image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=coverage[Coverage,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
-image:https://img.shields.io/badge/Rev%20Delphinus.svg?logo=slack[Slack,link=https://salesforce-internal.slack.com/archives/C0228BHJCQP]
+image:https://img.shields.io/badge/Rev%20Delphinus%20-blue?logo=slack[Slack,link=https://salesforce-internal.slack.com/archives/C0228BHJCQP]
 
 == Artifact Coordinates
 
@@ -114,9 +114,7 @@ link:{docsdir}/presentations/2021-08-cancellation-api/1-index.adoc[Slide-deck]
 ====
 
 ====
-These are early presentations for Vader's design within the team.
-
-CAUTION: Vader's Design has evolved after the below recordings, but Vader's philosophy remains the same.
+CAUTION: The below are the early presentations for Vader's design within the team.Vader's Design has evolved after the below recordings, but Vader's philosophy remains the same.
 Follow the rest of this doc to know more
 
 * https://drive.google.com/open?id=1AciJ3xU5HFgeTwJxL0RME0mQVO08BMQ9[Brown Bag Session]

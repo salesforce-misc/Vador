@@ -97,7 +97,7 @@ class ContainerValidationConfigTest {
   }
 
   @Test
-  void failFastForHeaderConfigMinBatchSizeForBatchWithPair() {
+  void failFastForContainerConfigMinBatchSizeForBatchWithPair() {
     final var containerValidationConfig =
         ContainerValidationConfig.<ContainerWithPair, ValidationFailure>toValidate()
             .withBatchMember(ContainerWithPair::getBeanBatch)
@@ -105,14 +105,14 @@ class ContainerValidationConfigTest {
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
     final var containerWithInvalidMember = new ContainerWithPair(2, emptyList());
-    final var headerBeanBatch =
+    final var containerBatch =
         List.of(
             new ContainerWithPair(1, List.of(new Bean())),
             containerWithInvalidMember,
             new ContainerWithPair(3, List.of(new Bean())));
     final var result =
         VaderBatch.validateAndFailFastForContainer(
-            headerBeanBatch, ContainerWithPair::getId, containerValidationConfig);
+            containerBatch, ContainerWithPair::getId, containerValidationConfig);
     assertThat(result).contains(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET));
   }
 

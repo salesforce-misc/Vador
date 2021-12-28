@@ -8,6 +8,7 @@ import static org.revcloud.vader.runner.Vader.validateAndFailFast;
 import static sample.consumer.failure.ValidationFailure.FIELD_INTEGRITY_EXCEPTION;
 import static sample.consumer.failure.ValidationFailure.INVALID_OPTIONAL_UDD_ID;
 import static sample.consumer.failure.ValidationFailure.INVALID_UDD_ID;
+import static sample.consumer.failure.ValidationFailure.INVALID_UDD_ID_2;
 import static sample.consumer.failure.ValidationFailure.NONE;
 import static sample.consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
 import static sample.consumer.failure.ValidationFailure.REQUIRED_FIELD_MISSING;
@@ -249,6 +250,27 @@ class BaseValidationConfigTest {
     final var result =
         Vader.validateAndFailFast(new BeanWithIdFields(null, new ID("invalidId"), null), config);
     assertThat(result).contains(INVALID_UDD_ID);
+  }
+
+  @Test
+  @DisplayName("Not providing withValidator leads to the usage of Fallback validator")
+  void idConfigWithFallBackValidator() {
+    final var config =
+        ValidationConfig.<BeanWithIdFields, ValidationFailure>toValidate()
+            .withIdConfig(
+                IDConfig.<ID, BeanWithIdFields, ValidationFailure, EntityId>toValidate()
+                    .shouldHaveValidSFIdFormatForAllOrFailWith(
+                        Map.of(
+                            Tuple.of(BeanWithIdFields::getAccountId, AccountUddConstants.EntityId),
+                                INVALID_UDD_ID,
+                            Tuple.of(BeanWithIdFields::getContactId, ContactUddConstants.EntityId),
+                                INVALID_UDD_ID_2)))
+            .prepare();
+    final var validSFId = "001xx000003GYQxAAO";
+    final var result =
+        Vader.validateAndFailFast(
+            new BeanWithIdFields(null, new ID(validSFId), new ID("InvalidSFId")), config);
+    assertThat(result).contains(INVALID_UDD_ID_2);
   }
 
   @Test
