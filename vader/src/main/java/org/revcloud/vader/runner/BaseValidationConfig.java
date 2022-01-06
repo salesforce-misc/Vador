@@ -92,6 +92,15 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
           @NonNull FailureT>
       withValidators;
 
+  /**
+   * spotless:off
+   * `withValidators` is used for the above combination. 
+   * This is meant to be used when passing individual parameters like:
+   * ValidationConfig.<Bean, ValidationFailure>toValidate()
+   *             .withValidator(validator1, failure1)
+   *             .withValidator(validator2, failure2)
+   * spotless:on
+   */
   @Singular("withValidator")
   Map<? extends Validator<? super ValidatableT, FailureT>, @Nullable FailureT> withValidator;
 

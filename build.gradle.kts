@@ -44,6 +44,7 @@ allprojects {
       ktlint().userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
     }
     java {
+      toggleOffOn()
       target("src/main/java/**/*.java", "src/test/java/**/*.java")
       targetExclude("$buildDir/generated/**/*.*")
       importOrder()
