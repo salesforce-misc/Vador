@@ -24,7 +24,7 @@ public final class SpecFactory<ValidatableT, FailureT> {
   }
 
   @SuppressWarnings({"java:S100", "java:S1452"})
-  public <WhenT, ThenT> Spec4.Spec4Builder<ValidatableT, FailureT, ?, ?> _4() {
+  public Spec4.Spec4Builder<ValidatableT, FailureT, ?, ?> _4() {
     return Spec4.check();
   }
 }

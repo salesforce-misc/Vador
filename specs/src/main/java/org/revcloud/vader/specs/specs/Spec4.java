@@ -2,8 +2,8 @@ package org.revcloud.vader.specs.specs;
 
 import io.vavr.Function1;
 import io.vavr.Function2;
-import io.vavr.Tuple2;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Predicate;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -23,12 +23,11 @@ public class Spec4<ValidatableT, FailureT> extends BaseSpec<ValidatableT, Failur
 
   @Singular("whenFieldMatches")
   @NonNull
-  Collection<Tuple2<@Nullable Function1<ValidatableT, ?>, @Nullable Matcher<?>>> whenFieldsMatch;
+  Map<@Nullable Function1<ValidatableT, ?>, @Nullable Matcher<?>> whenFieldsMatch;
 
   @Singular("thenFieldShouldMatch")
   @NonNull
-  Collection<Tuple2<@Nullable Function1<ValidatableT, ?>, @Nullable Matcher<?>>>
-      thenFieldsShouldMatch;
+  Map<@Nullable Function1<ValidatableT, ?>, @Nullable Matcher<?>> thenFieldsShouldMatch;
 
   @Nullable Function2<Collection<?>, Collection<?>, ? extends FailureT> orFailWithFn;
 
