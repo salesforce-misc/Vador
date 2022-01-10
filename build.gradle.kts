@@ -28,7 +28,7 @@ description = "Vader - An FP framework for Bean validation"
 // <-- ALL PROJECTS --
 allprojects {
   group = "com.salesforce.ccspayments"
-  version = "2.7.2-SNAPSHOT"
+  version = "2.7.2"
   repositories {
     mavenCentral()
   }

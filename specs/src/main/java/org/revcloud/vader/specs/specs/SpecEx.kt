@@ -85,3 +85,15 @@ internal fun <ValidatableT, FailureT> Spec4<ValidatableT, FailureT>.toPredicateE
     thenFieldsShouldMatch.all { (mapper, matcher) -> matcher?.matches(mapper?.apply(validatable)) ?: true }
   }
 }
+
+internal fun <ValidatableT, FailureT> Spec5<ValidatableT, FailureT>.toPredicateEx(): Predicate<ValidatableT?> {
+  return Predicate { validatable ->
+    val (whenFieldMappers, whenMatcher) = whenAllFieldsMatch
+    val doesAllFieldsMatch = whenFieldMappers?.all { whenMapper -> whenMatcher?.matches(whenMapper?.apply(validatable)) ?: true } ?: false
+    if (!doesAllFieldsMatch) {
+      return@Predicate true
+    }
+    val (thenFieldMappers, thenMatcher) = thenAllFieldsShouldMatch
+    thenFieldMappers?.all { thenMapper -> thenMatcher?.matches(thenMapper?.apply(validatable)) ?: true } ?: false
+  }
+}

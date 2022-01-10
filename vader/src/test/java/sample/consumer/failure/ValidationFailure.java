@@ -30,6 +30,10 @@ public class ValidationFailure {
       new ValidationFailure(ValidationFailureMessage.NULL_KEY);
   public static final ValidationFailure INVALID_BEAN =
       new ValidationFailure(ValidationFailureMessage.INVALID_BEAN);
+  public static final ValidationFailure INVALID_BEAN_1 =
+      new ValidationFailure(ValidationFailureMessage.INVALID_BEAN_1);
+  public static final ValidationFailure INVALID_BEAN_2 =
+      new ValidationFailure(ValidationFailureMessage.INVALID_BEAN_2);
   public static final ValidationFailure INVALID_CONTAINER =
       new ValidationFailure(ValidationFailureMessage.INVALID_PARENT);
   public static final ValidationFailure INVALID_ITEM =

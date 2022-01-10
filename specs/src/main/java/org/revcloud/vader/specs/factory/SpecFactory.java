@@ -4,6 +4,7 @@ import org.revcloud.vader.specs.specs.Spec1;
 import org.revcloud.vader.specs.specs.Spec2;
 import org.revcloud.vader.specs.specs.Spec3;
 import org.revcloud.vader.specs.specs.Spec4;
+import org.revcloud.vader.specs.specs.Spec5;
 
 public final class SpecFactory<ValidatableT, FailureT> {
 
@@ -26,5 +27,9 @@ public final class SpecFactory<ValidatableT, FailureT> {
   @SuppressWarnings({"java:S100", "java:S1452"})
   public Spec4.Spec4Builder<ValidatableT, FailureT, ?, ?> _4() {
     return Spec4.check();
+  }
+
+  public Spec5.Spec5Builder<ValidatableT, FailureT, ?, ?> _5() {
+    return Spec5.check();
   }
 }

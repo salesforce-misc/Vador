@@ -3,6 +3,8 @@ package org.revcloud.vader.runner.spec;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static sample.consumer.failure.ValidationFailure.INVALID_BEAN;
+import static sample.consumer.failure.ValidationFailure.INVALID_BEAN_1;
+import static sample.consumer.failure.ValidationFailure.INVALID_BEAN_2;
 
 import java.util.List;
 import java.util.Map;
@@ -102,12 +104,24 @@ class Spec4Test {
                                 Map.of(
                                     Bean::getThenField1, is(2),
                                     Bean::getThenField2, is("3"),
+                                    Bean::getThenField3, is(new Field(1))))
+                            .orFailWith(INVALID_BEAN_1),
+                        spec._4()
+                            .whenFieldsMatch(
+                                Map.of(
+                                    Bean::getWhenField1, is(1),
+                                    Bean::getWhenField2, is("2"),
+                                    Bean::getWhenField3, is(new Field(3))))
+                            .thenFieldsShouldMatch(
+                                Map.of(
+                                    Bean::getThenField1, is(2),
+                                    Bean::getThenField2, is("3"),
                                     Bean::getThenField3, is(new Field(4))))
-                            .orFailWith(INVALID_BEAN)))
+                            .orFailWith(INVALID_BEAN_2)))
             .prepare();
-    final var invalidBean = new Bean(1, "4", new Field(3), 2, "3", new Field(1));
+    final var invalidBean = new Bean(1, "2", new Field(3), 2, "3", new Field(1));
     final var result = Vader.validateAndFailFast(invalidBean, config);
-    assertThat(result).isEmpty();
+    assertThat(result).contains(INVALID_BEAN_2);
   }
 
   @Value
