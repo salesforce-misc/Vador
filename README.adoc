@@ -80,10 +80,10 @@ TIP: Good read about https://blog.sonarsource.com/cognitive-complexity-because-t
 === Demo pls!
 
 ====
-.▶️ (*Click on the talk-poster*) Salesforce Season of Innovation, Oct 2021
-image:vav-poster.jpg[link=https://drive.google.com/file/d/1yarDI36uA5RydrVdvHyg821bQM6crVzO/view?usp=sharing]
+.Salesforce Season of Innovation, Oct 2021 + Rev Cloud Brown-Bag
+image:vav-play-poster.png[link=https://sfdc.co/vader-bb-rec]
 
-https://drive.google.com/file/d/1e9ZHnHmijscX9d9Ip97DoWpiIdXIHJjz/view?usp=sharing[Slide-deck]
+https://sfdc.co/vader-bb-slides[Slide-deck]
 ====
 
 ====
@@ -92,8 +92,8 @@ It explains why `if-else-try-catch` is easy to start but difficult to manage and
 
 ifdef::env-github[]
 
-.▶️ (*Click on the talk-poster*) https://2020.allthingsopen.org/speakers/gopal-s-akshintala/[**All Things Open**], 2020, Raleigh, USA
-image:fcwfp-poster.jpeg[link=https://www.youtube.com/watch?v=Dvr6gx4XaD8&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or&index=2]
+https://2020.allthingsopen.org/speakers/gopal-s-akshintala/[**All Things Open**], 2020, Raleigh, USA
+image:fcwfp-play-poster.jpeg[link=https://www.youtube.com/watch?v=Dvr6gx4XaD8&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or&index=2]
 
 endif::[]
 
@@ -129,7 +129,7 @@ https://codesearch.data.sfdc.net/source/xref/app_main_core/app/main/core/billing
 == What's Vader?
 
 [.lead]
-Vader is an independent *Bean validation framework*, not tied to any consumer implementation details.
+Vader is an independent *POJO/Bean validation framework*, not tied to any consumer implementation details.
 
 Its implementation is generic and can cater to anyone looking for a declarative way to validate their Beans/POJOs.
 
