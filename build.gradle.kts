@@ -4,15 +4,13 @@ import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
 import io.gitlab.arturbosch.detekt.Detekt
 import kotlinx.kover.api.CoverageEngine
 import kotlinx.kover.api.KoverTaskExtension
-import kotlinx.kover.tasks.KoverXmlReportTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm")
   `maven-publish`
   idea
-  jacoco
-  id("org.jetbrains.kotlinx.kover") version "0.4.4"
+  id("org.jetbrains.kotlinx.kover") version "0.5.0-RC2"
   id("io.freefair.lombok")
   id("io.gitlab.arturbosch.detekt") version "1.19.0"
   id("com.adarshr.test-logger") version "3.1.0"
@@ -28,7 +26,7 @@ description = "Vader - An FP framework for Bean validation"
 // <-- ALL PROJECTS --
 allprojects {
   group = "com.salesforce.ccspayments"
-  version = "2.7.2"
+  version = "2.7.3-SNAPSHOT"
   repositories {
     mavenCentral()
   }
@@ -198,25 +196,12 @@ sonarqube {
   }
 }
 kover {
-  isEnabled = true
   coverageEngine.set(CoverageEngine.JACOCO)
-  generateReportOnCheck.set(true)
+  generateReportOnCheck = true
+  runAllTestsForProjectTask = true
 }
 // <-- ROOT-PROJECT TASKS --
 tasks {
-  // Using Jacoco to aggregate until Kover support inter-module test coverage.
-  jacocoTestReport {
-    dependsOn(subprojects.map { it.tasks.withType<Test>() })
-    dependsOn(subprojects.map { it.tasks.withType<KoverXmlReportTask>() })
-    sourceDirectories.setFrom(subprojects.map { it.the<SourceSetContainer>()["main"].allSource.srcDirs })
-    classDirectories.setFrom(subprojects.map { it.the<SourceSetContainer>()["main"].output })
-    executionData.setFrom(subprojects.map { "${it.buildDir}/kover/${it.name}/test.exec" })
-    reports {
-      xml.required.set(true)
-      csv.required.set(false)
-      html.required.set(false)
-    }
-  }
   test {
     extensions.configure(KoverTaskExtension::class) {
       isEnabled = true
@@ -231,7 +216,7 @@ tasks {
       // If that property is not provided, sonar finds it in default path.
       property(
         "sonar.coverage.jacoco.xmlReportPaths",
-        "$rootDir/build/reports/jacoco/test/jacocoTestReport.xml"
+        "$rootDir/build/reports/kover/report.xml"
       )
       property(
         "sonar.kotlin.detekt.reportPaths",
@@ -263,8 +248,7 @@ tasks {
 afterEvaluate {
   tasks {
     check.configure {
-      dependsOn(jacocoTestReport)
-      dependsOn(koverCollectReports)
+      dependsOn(koverMergedXmlReport)
       dependsOn(named("detektAll"))
     }
     sonarqube.configure { dependsOn(check) }

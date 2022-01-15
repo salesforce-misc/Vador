@@ -11,7 +11,7 @@ endif::[]
 :hide-uri-scheme:
 :toc:
 :toc-placement!:
-:vader-version: 2.7.1
+:vader-version: 2.7.2
 :docsdir: docs
 :imagesdir: {docsdir}/images
 
