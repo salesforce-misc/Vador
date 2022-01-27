@@ -58,7 +58,7 @@ On core, there is no de-facto standard to write bean validations.
 
 ====
 
-link:{docsdir}/requirements.adoc[Requirements that lead to the birth of Vader]
+link:{docsdir}/requirements.adoc[Requirements that led to the birth of Vader]
 
 🔊 https://www.youtube.com/watch?v=49WFdDIFlAs[The birth of Lord Vader] playing in the background
 
@@ -163,7 +163,7 @@ image:api.png[API]
 
 [cols="1h,1"]
 |===
-|validateAndFailFast
+|link:{docsdir}/api/vader/validate-and-fail-fast.adoc[validateAndFailFast]
 |`Optional<FailureT>`
 
 |validateAndAccumulateErrors
@@ -180,19 +180,20 @@ image:api.png[API]
 
 [cols="1h,1"]
 |===
-|validateAndFailFastForEach
+|link:{docsdir}/api/vader-batch/validate-and-fail-fast-for-each.adoc[validateAndFailFastForEach]
 |`List<Either<FailureT, ValidatableT>>`
 
-|validateAndFailFastForEach (With Pair for Failure)
+|link:{docsdir}/api/vader-batch/validate-and-fail-fast-for-each-with-pair.adoc[validateAndFailFastForEach (with Pair for Failure)]
 |`List<Either<Tuple2<PairT, FailureT>, ValidatableT>>`
 
-|validateAndFailFastForAny
+|link:{docsdir}/api/vader-batch/validate-and-fail-fast-for-any.adoc[validateAndFailFastForAny]
 |`Optional<FailureT>`
 
-|validateAndFailFastForAny (With Pair for Failure)
+|link:{docsdir}/api/vader-batch/validate-and-fail-fast-for-any-with-pair.adoc[validateAndFailFastForAny (with Pair for Failure)]
 |`Optional<Tuple2<PairT, FailureT>>`
 |===
 
+[#_what_if_there_is_an_exception_during_execution]
 === 💣 What if there is an Exception during execution 💥?
 
 All these API methods accept an optional parameter called `throwableMapper: (Throwable) -> FailureT`, which needs to be implemented and supplied by the consumer.
@@ -267,20 +268,21 @@ Well, coz that’s the *bread-&-jam* of what we promise!
 
 * It’s our responsibility to address all the edge cases and automate them thoroughly, for various types of POJOs.
 * We take code-quality & security seriously!
-** This code base has integration with https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader[*SonarQube*].
+** This code base has integration with https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader[*SonarQube*], where you can verify code-coverage, security of libraries used etc.
 ** We openly display our <<shields, Code-Quality Shields>> at the top.
 
 [#_impact]
 == Impact ☄️
 
-This is currently being consumed in *Production*
+Vader has Consumer in *Production*:
 
-By 3 Teams:
+4 Teams:
 
 |===
 |Rev-Hydra
 |Rev-Delphinus
 |Rev-Centaurus
+|Rev-Pegasus
 |===
 
 In 3 different domains:

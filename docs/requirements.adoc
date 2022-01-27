@@ -81,8 +81,8 @@ execute these validations).
 
 * *Share Validations:* Instead of rewriting, Share Common and Nested Validations among services that share payload
  structure.
-* *2 Routes - 2 execution Strategies:* Our database entities can be CRUD through two routes i.e., *Connect* and **
- SObject**. They both need to be guarded with Validations. But the tricky part is - the Connect route needs to _fail-fast_, while the SObject needs _error-accumulation_.
+* *2 Routes - 2 execution Strategies:* Our database entities can be CRUD through two routes i.e., *Connect* and **SObject**. 
+They both need to be guarded with Validations. But the tricky part is - the Connect-route needs to _fail-fast_, while the SObject needs _error-accumulation_.
 * *Configure Validation Order for Fail-fast:* A way to configure Cheaper validations first and Costlier later. Costlier
  validations can include Effectful validations, so we need to fail-fast and avoid unnecessary DB calls.
 * *Partial failures for Batch APIs:* An aggregated error response for failed sub-requests can only be sent after

@@ -10,7 +10,7 @@ plugins {
   kotlin("jvm")
   `maven-publish`
   idea
-  id("org.jetbrains.kotlinx.kover") version "0.5.0-RC2"
+  id("org.jetbrains.kotlinx.kover") version "0.5.0"
   id("io.freefair.lombok")
   id("io.gitlab.arturbosch.detekt") version "1.19.0"
   id("com.adarshr.test-logger") version "3.1.0"
@@ -196,7 +196,7 @@ sonarqube {
   }
 }
 kover {
-  coverageEngine.set(CoverageEngine.JACOCO)
+  coverageEngine.set(CoverageEngine.INTELLIJ)
   generateReportOnCheck = true
   runAllTestsForProjectTask = true
 }

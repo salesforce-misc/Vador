@@ -36,6 +36,19 @@ public static final Validator<Bean, ValidationFailure> validator =
     };
 ----
 
+If you are not comfortable with lambda syntax, you can even write it as a normal function and use the `::` operator to refer the function as a value.
+
+[source,java,indent=0,options="nowrap"]
+----
+public static ValidationFailure validator(Bean bean) {
+  if (bean == null) {
+    return new ValidationFailure(FIELD_NULL_OR_EMPTY);
+  } else {
+    return ValidationFailure.NONE;
+  }
+}
+----
+
 == If you need more ⚡️Power⚡️
 
 image:more-power.gif[inline]
@@ -72,7 +85,7 @@ public static final ValidatorEtr<Bean, ValidationFailure> validatorEtr =
           bean -> bean.id != null, badBean -> new ValidationFailure(FIELD_NULL_OR_EMPTY));
 ----
 
-TIP: Of-course, pre-wrapping bean into `Either` is just to avoid boiler-plate.
+TIP: Of-course, pre-wrapping bean into `Either` is just to avoid boilerplate.
 You can very well use `Validator` and wrap/unwrap the bean in and out of `Either` type, yourself.
 
 == Why are there different Validator types?
@@ -80,7 +93,5 @@ You can very well use `Validator` and wrap/unwrap the bean in and out of `Either
 [.lead]
 These types only differ syntactically
 
-They are there to help developers focus only on their validation logic, not worry about boiler-plate and use a programming style (imperative or functional) that they are comfortable in.
+NOTE: They are there to help developers focus only on their validation logic, not worry about boilerplate and use a programming style (imperative or functional) of their choice.
 You can essentially use any Data type for your validators and in-fact you can even have a mix, based on your needs.
-
-NOTE: Vader leaves the choice to the developer!
