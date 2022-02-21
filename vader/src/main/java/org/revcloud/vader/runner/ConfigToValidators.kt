@@ -7,12 +7,14 @@ import de.cronn.reflection.util.TypedPropertyGetter
 import io.vavr.Function2
 import io.vavr.Tuple2
 import io.vavr.control.Either
+import org.revcloud.vader.runner.FieldConfig.FieldConfigBuilder
 import org.revcloud.vader.runner.IDConfig.IDConfigBuilder
 import org.revcloud.vader.specs.component1
 import org.revcloud.vader.specs.component2
 import org.revcloud.vader.specs.specs.BaseSpec
 import org.revcloud.vader.types.ValidatorEtr
 import java.util.Optional
+import java.util.function.Predicate
 
 @JvmSynthetic
 private fun <ValidatableT, FailureT, FieldT> toValidatorEtrs1(
@@ -91,6 +93,16 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
       optionalIdValidatorFallBack
     )
 
+
+@JvmSynthetic
+private fun <FieldT, ValidatableT, FailureT> fieldConfigToValidatorEtrs(
+  config: FieldConfig<FieldT, ValidatableT, FailureT>?
+): List<ValidatorEtr<ValidatableT, FailureT>> =
+  toFieldValidatorEtrs1(
+    config?.shouldHaveValidFormatForAllOrFailWith,
+    config?.withFieldValidator
+  )
+
 @JvmSynthetic
 private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators11(
   config: Map<Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out EntityInfoT>, FailureT?>?,
@@ -161,6 +173,20 @@ private fun <IDT, EntityInfoT> validateId(
   }
 }
 
+
+@JvmSynthetic
+private fun <ValidatableT, FailureT, FieldT> toFieldValidatorEtrs1(
+  fieldMapperToFailure: Map<out TypedPropertyGetter<in ValidatableT, out FieldT>, FailureT?>?,
+  fieldValidator: Predicate<FieldT>?
+): List<ValidatorEtr<ValidatableT, FailureT>> =
+  fieldMapperToFailure?.entries?.map { (fieldMapper, failure) ->
+    ValidatorEtr {
+      it.map(fieldMapper::get).filterOrElse(fieldValidator) { failure }
+    }
+  } ?: emptyList()
+
+
+
 @JvmSynthetic
 internal fun <ValidatableT, FailureT> toValidators(
   config: BaseValidationConfig<ValidatableT, FailureT>
@@ -175,6 +201,7 @@ internal fun <ValidatableT, FailureT> toValidators(
     toValidatorEtrs2(config.absentOrHaveValidSFIdFormatForAllOrFailWithFn, isSFIdAbsentOrValidFormat) +
     toValidatorEtrs3(config.absentOrHaveValidSFIdFormatOrFailWithFn, isSFIdAbsentOrValidFormat) +
     toValidatorEtrs4(config.withIdConfigs) +
+    toValidatorEtrs5(config.withFieldConfigs) +
     config.specs.map { it.toValidator() } +
     config.getValidators()
   )
@@ -185,6 +212,13 @@ private fun <FailureT, ValidatableT> toValidatorEtrs4(configs: Collection<IDConf
       it.prepare(),
       fallBackValidator(isSFIdPresentAndValidFormat),
       fallBackValidator(isSFIdAbsentOrValidFormat)
+    )
+  } ?: emptyList()
+
+private fun <FailureT, ValidatableT> toValidatorEtrs5(configs: Collection<FieldConfigBuilder<*, ValidatableT, FailureT>>?): List<ValidatorEtr<ValidatableT, FailureT>> =
+  configs?.flatMap {
+    fieldConfigToValidatorEtrs(
+      it.prepare()
     )
   } ?: emptyList()
 

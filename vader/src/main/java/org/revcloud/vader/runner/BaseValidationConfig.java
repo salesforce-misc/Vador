@@ -15,6 +15,7 @@ import lombok.NonNull;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.Nullable;
+import org.revcloud.vader.runner.FieldConfig.FieldConfigBuilder;
 import org.revcloud.vader.runner.IDConfig.IDConfigBuilder;
 import org.revcloud.vader.specs.Spec;
 import org.revcloud.vader.specs.Specs;
@@ -78,6 +79,9 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
   /** --- ID ---> */
   @Singular @Nullable
   protected Collection<IDConfigBuilder<?, ValidatableT, FailureT, ?>> withIdConfigs;
+
+  @Singular @Nullable
+  protected Collection<FieldConfigBuilder<?, ValidatableT, FailureT>> withFieldConfigs;
 
   @Nullable protected Specs<ValidatableT, FailureT> specify;
 
