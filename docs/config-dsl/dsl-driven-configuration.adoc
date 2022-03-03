@@ -119,21 +119,30 @@ ifdef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-class Bean {
-  String requiredField;
-  ID sfIdFormatField1;
-  ID optionalSfIdFormatField2;
+private static class BeanWithIdFields {
+  ID accountId;
+  ID contactId;
 }
 
 /**
-* This represents `common.udd.EntityInfo` interface from core 
-* which is implemented by all Entities.
-*/
-private interface EntityInfo {}
+ * This imitates `common.udd.EntityId` interface from core which is implemented by all Entities.
+ */
+private interface EntityId {}
 
-private static class Field1EntityInfo implements EntityInfo {}
+@Value
+private static class AccountEntityId implements EntityId {}
 
-private static class Field2EntityInfo implements EntityInfo {}
+@Value
+private static class ContactEntityId implements EntityId {}
+
+/** This imitates entity UddConstants */
+private static class AccountUddConstants {
+  public static final EntityId EntityId = new AccountEntityId();
+}
+
+private static class ContactUddConstants {
+  public static final EntityId EntityId = new ContactEntityId();
+}
 ----
 
 endif::[]
@@ -141,7 +150,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/runner/config/BaseValidationConfigTest.java[tag=bean-with-id-fields]
+include::{testdir}/org/revcloud/vader/runner/config/IDConfigTest.java[tag=bean-with-id-fields]
 ----
 
 endif::[]
@@ -170,12 +179,12 @@ void idConfigForBatch() {
                       Tuple.of(BeanWithIdFields::getContactId, ContactUddConstants.EntityId),
                       INVALID_OPTIONAL_UDD_ID))
           .prepare();
-  final var validBean = new BeanWithIdFields(null, new ID("validId"), null);
+  final var validBean = new BeanWithIdFields(new ID("validId"), null);
   final var validatables =
       List.of(
           validBean,
-          new BeanWithIdFields(null, new ID("invalidId"), null),
-          new BeanWithIdFields(null, new ID("validId"), new ID("invalidId")));
+          new BeanWithIdFields(new ID("invalidId"), null),
+          new BeanWithIdFields(new ID("validId"), new ID("invalidId")));
   final var results = VaderBatch.validateAndFailFastForEach(validatables, config);
   assertThat(results)
       .containsExactly(right(validBean), left(INVALID_UDD_ID), left(INVALID_OPTIONAL_UDD_ID));
@@ -195,7 +204,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/runner/config/BaseValidationConfigTest.java[tag=bean-strict-id-validation]
+include::{testdir}/org/revcloud/vader/runner/config/IDConfigTest.java[tag=bean-strict-id-validation]
 ----
 
 endif::[]

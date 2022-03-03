@@ -44,6 +44,8 @@ public class ValidationFailure {
       new ValidationFailure(ValidationFailureMessage.INVALID_OPTIONAL_UDD_ID);
   public static final ValidationFailure INVALID_UDD_ID_2 =
       new ValidationFailure(ValidationFailureMessage.INVALID_UDD_ID_2);
+  public static final ValidationFailure INVALID_UDD_ID_3 =
+      new ValidationFailure(ValidationFailureMessage.INVALID_UDD_ID_3);
   public static final ValidationFailure INVALID_MEMBER =
       new ValidationFailure(ValidationFailureMessage.INVALID_CHILD);
   public static final ValidationFailure UNKNOWN_EXCEPTION =
