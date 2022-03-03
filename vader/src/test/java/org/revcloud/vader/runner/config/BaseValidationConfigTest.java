@@ -231,8 +231,11 @@ class BaseValidationConfigTest {
   }
   // end::validationConfig-for-nested-bean-demo[]
 
+  private static final String VALID_SF_ACCOUNT_ID = "001xx000003GYQxAAO";
+
+  // ! TODO gopala.akshintala 03/03/22: Extract IDConfig tests to different file.
   @Test
-  void idConfig() {
+  void idConfigWithShouldHaveValidSFIdFormatForAllOrFailWithFn() {
     final var config =
         ValidationConfig.<BeanWithIdFields, ValidationFailure>toValidate()
             .withIdConfig(
@@ -247,9 +250,35 @@ class BaseValidationConfigTest {
                                 getFailureWithParams(
                                     INVALID_UDD_ID, invalidIdFieldName, invalidIdFieldValue))))
             .prepare();
+    final var invalidContactId = new ID("invalidSFId");
     final var result =
-        Vader.validateAndFailFast(new BeanWithIdFields(null, new ID("invalidId"), null), config);
-    assertThat(result).contains(INVALID_UDD_ID);
+        Vader.validateAndFailFast(
+            new BeanWithIdFields(null, new ID(VALID_SF_ACCOUNT_ID), invalidContactId), config);
+    assertThat(result).isPresent().contains(INVALID_UDD_ID);
+    assertThat(result.get().getValidationFailureMessage().getParams())
+        .containsExactly("contactId", invalidContactId);
+  }
+
+  @Test
+  void idConfigWithShouldHaveValidSFIdFormatForAllOrFailWith() {
+    final var config =
+        ValidationConfig.<BeanWithIdFields, ValidationFailure>toValidate()
+            .withIdConfig(
+                IDConfig.<ID, BeanWithIdFields, ValidationFailure, EntityId>toValidate()
+                    .withIdValidator(ValidIdUtil::isThisEntity)
+                    .shouldHaveValidSFIdFormatForAllOrFailWith(
+                        Map.of(
+                            Tuple.of(BeanWithIdFields::getAccountId, AccountUddConstants.EntityId),
+                                getFailureWithParams(INVALID_UDD_ID, "accountId"),
+                            Tuple.of(BeanWithIdFields::getContactId, ContactUddConstants.EntityId),
+                                getFailureWithParams(INVALID_UDD_ID_2, "contactId"))))
+            .prepare();
+    final var invalidContactId = new ID("invalidSFId");
+    final var result =
+        Vader.validateAndFailFast(
+            new BeanWithIdFields(null, new ID(VALID_SF_ACCOUNT_ID), invalidContactId), config);
+    assertThat(result).isPresent().contains(INVALID_UDD_ID_2);
+    assertThat(result.get().getValidationFailureMessage().getParams()).containsExactly("contactId");
   }
 
   @Test
@@ -266,10 +295,9 @@ class BaseValidationConfigTest {
                             Tuple.of(BeanWithIdFields::getContactId, ContactUddConstants.EntityId),
                                 INVALID_UDD_ID_2)))
             .prepare();
-    final var validSFId = "001xx000003GYQxAAO";
     final var result =
         Vader.validateAndFailFast(
-            new BeanWithIdFields(null, new ID(validSFId), new ID("InvalidSFId")), config);
+            new BeanWithIdFields(null, new ID(VALID_SF_ACCOUNT_ID), new ID("InvalidSFId")), config);
     assertThat(result).contains(INVALID_UDD_ID_2);
   }
 
@@ -290,7 +318,7 @@ class BaseValidationConfigTest {
                                     INVALID_UDD_ID, invalidIdFieldName, invalidIdFieldValue))))
             .prepare();
     final var result =
-        Vader.validateAndFailFast(new BeanWithIdStrFields(null, "invalidId", null), config);
+        Vader.validateAndFailFast(new BeanWithIdStrFields(null, "invalidSFId", null), config);
     assertThat(result).contains(INVALID_UDD_ID);
   }
 
@@ -308,11 +336,12 @@ class BaseValidationConfigTest {
                 IDConfig.<String, BeanWithMixIdFields, ValidationFailure, EntityId>toValidate()
                     .withIdValidator(ValidIdUtil::isThisEntity)
                     .absentOrHaveValidSFIdFormatOrFailWith(
-                        Tuple.of(BeanWithMixIdFields::getContactId, AccountUddConstants.EntityId),
+                        Tuple.of(BeanWithMixIdFields::getContactId, ContactUddConstants.EntityId),
                         INVALID_OPTIONAL_UDD_ID))
             .prepare();
     final var result =
-        Vader.validateAndFailFast(new BeanWithMixIdFields(null, new ID("invalidId"), null), config);
+        Vader.validateAndFailFast(
+            new BeanWithMixIdFields(null, new ID("invalidSFId"), null), config);
     assertThat(result).contains(INVALID_UDD_ID);
   }
 
@@ -335,8 +364,8 @@ class BaseValidationConfigTest {
     final var validatables =
         List.of(
             validBean,
-            new BeanWithIdFields(null, new ID("invalidId"), null),
-            new BeanWithIdFields(null, new ID("validId"), new ID("invalidId")));
+            new BeanWithIdFields(null, new ID("invalidSFId"), null),
+            new BeanWithIdFields(null, new ID("validId"), new ID("invalidSFId")));
     final var results = VaderBatch.validateAndFailFastForEach(validatables, config);
     assertThat(results)
         .containsExactly(right(validBean), left(INVALID_UDD_ID), left(INVALID_OPTIONAL_UDD_ID));
@@ -346,12 +375,14 @@ class BaseValidationConfigTest {
   private static class ValidIdUtil {
     // ! NOTE: These should be implemented by the client and passed through `withIdValidator`
 
+    // ! TODO gopala.akshintala 03/03/22: Enhance this dummy to check prefixes and update
+    // documentation
     private static boolean isThisEntity(ID idToValidate, EntityId entityId) {
-      return !idToValidate.toString().equalsIgnoreCase("invalidId"); // fake implementation
+      return !idToValidate.toString().equalsIgnoreCase("invalidSFId"); // dummy implementation
     }
 
     private static boolean isThisEntity(String idToValidate, EntityId entityId) {
-      return !idToValidate.equalsIgnoreCase("invalidId"); // fake implementation
+      return !idToValidate.equalsIgnoreCase("invalidSFId"); // dummy implementation
     }
   }
   // end::bean-strict-id-validation[]
@@ -367,7 +398,7 @@ class BaseValidationConfigTest {
   }
 
   /**
-   * This represents `common.udd.EntityId` interface from core which is implemented by all Entities.
+   * This imitates `common.udd.EntityId` interface from core which is implemented by all Entities.
    */
   private interface EntityId {}
 
