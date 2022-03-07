@@ -12,13 +12,13 @@ plugins {
   idea
   id("org.jetbrains.kotlinx.kover") version "0.5.0"
   id("io.freefair.lombok")
-  id("io.gitlab.arturbosch.detekt") version "1.19.0"
-  id("com.adarshr.test-logger") version "3.1.0"
-  id("com.diffplug.spotless") version "6.0.5"
+  id("io.gitlab.arturbosch.detekt") version "1.20.0-RC1"
+  id("com.adarshr.test-logger") version "3.2.0"
+  id("com.diffplug.spotless") version "6.3.0"
   id("org.sonarqube") version "3.3"
   id("org.asciidoctor.jvm.gems") version "3.3.2"
   id("org.asciidoctor.jvm.revealjs") version "3.3.2"
-  id("com.github.spotbugs") version "4.7.2"
+  id("com.github.spotbugs") version "5.0.6"
 }
 
 description = "Vader - An FP framework for Bean validation"

@@ -14,11 +14,11 @@ pluginManagement {
 dependencyResolutionManagement {
   versionCatalogs {
     create("libs") {
-      alias("hamcrest-core").to("org.hamcrest:hamcrest:2.2")
-      alias("hamcrest-date").to("org.exparity:hamcrest-date:2.0.8")
-      alias("java-vavr").to("io.vavr:vavr:0.10.4")
-      alias("kotlin-vavr").to("io.vavr:vavr-kotlin:0.10.2")
-      alias("jetbrains-annotations").to("org.jetbrains:annotations:22.0.0")
+      library("hamcrest-core", "org.hamcrest:hamcrest:2.2")
+      library("hamcrest-date", "org.exparity:hamcrest-date:2.0.8")
+      library("java-vavr", "io.vavr:vavr:0.10.4")
+      library("kotlin-vavr", "io.vavr:vavr-kotlin:0.10.2")
+      library("jetbrains-annotations", "org.jetbrains:annotations:23.0.0")
     }
   }
 }

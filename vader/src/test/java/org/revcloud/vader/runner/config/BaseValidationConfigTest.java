@@ -257,16 +257,16 @@ class BaseValidationConfigTest {
 
   @Value
   // tag::nested-bean[]
-  private static class ContainerBean {
+  public static class ContainerBean {
     String requiredField;
     Bean bean;
   }
   // end::nested-bean[]
 
   @Data
-  @AllArgsConstructor
   @FieldNameConstants
-  private static class BeanWithIdFields {
+  @AllArgsConstructor
+  public static class BeanWithIdFields {
     String requiredField;
     ID accountId;
     ID contactId;
