@@ -11,7 +11,7 @@ plugins {
   `maven-publish`
   idea
   id("org.jetbrains.kotlinx.kover") version "0.5.0"
-  id("io.freefair.lombok")
+  id("io.freefair.lombok") apply false
   id("io.gitlab.arturbosch.detekt") version "1.20.0-RC1"
   id("com.adarshr.test-logger") version "3.2.0"
   id("com.diffplug.spotless") version "6.3.0"

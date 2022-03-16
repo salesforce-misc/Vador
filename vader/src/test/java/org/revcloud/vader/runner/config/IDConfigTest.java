@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
 import lombok.experimental.FieldNameConstants;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.runner.BatchValidationConfig;
@@ -52,6 +53,7 @@ class IDConfigTest {
                                     INVALID_UDD_ID, invalidIdFieldName, invalidIdFieldValue))))
             .prepare();
     final var invalidContactId = new ID(INVALID_SF_ID);
+    final var valid18DigitSFId = RandomStringUtils.randomAlphanumeric(18);
     final var result =
         Vader.validateAndFailFast(
             new BeanWithIdFields2(new ID(VALID_SF_ID), invalidContactId), config);
@@ -124,9 +126,10 @@ class IDConfigTest {
                             Tuple.of(BeanWithIdFields2::getContactId, ContactUddConstants.EntityId),
                             INVALID_UDD_ID_2)))
             .prepare();
+    final var valid18DigitSFId = "001xx000003GYQxAAO";
     final var result =
         Vader.validateAndFailFast(
-            new BeanWithIdFields2(new ID(VALID_SF_ID), new ID(INVALID_SF_ID)), config);
+            new BeanWithIdFields2(new ID(valid18DigitSFId), new ID(INVALID_SF_ID)), config);
     assertThat(result).contains(INVALID_UDD_ID_2);
   }
 

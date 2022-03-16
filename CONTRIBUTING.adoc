@@ -19,7 +19,7 @@ endif::[]
 :hide-uri-scheme:
 :sourcedir: src/main/java
 :imagesdir: images
-:vader-version: 2.5.0
+:vader-version: 2.7.2
 :toc:
 
 == Source-code Setup
@@ -82,7 +82,7 @@ It may be slow for the first run, but later runs should be faster.
 * A jenkins job runs for every commit pushed on any branch.
 However, to publish a jar to nexus, only commits on *master* branch are considered.
 * link:JenkinsFile[JenkinsFile] has the configuration script.
-* The job status can be monitored from the https://ccspaymentsci.dop.sfdc.net/job/validation/job/Vader/job/master/[SFCI Portal].
+* The job status can be monitored from the https://sfciteam.sfci.buildndeliver-s.aws-esvc1-useast2.aws.sfdc.cl/ccspayments/job/validation/job/Vader/job/master/[SFCI Portal].
 
 == Manual publishing
 
@@ -91,7 +91,9 @@ This https://gus.my.salesforce.com/a07B0000007Qt0BIAS[Gus Item] was raised for N
 * Please reach out to this team for any Nexus related permissions, problems, or requirements.
 As of today, the permissions are maintained by providing a role `CCSPayments`.
 We are planning to create an AD group for this.
-* In link:build.gradle.kts[], increment the version property `version = "<Version-Number>"` and run this command:
+* In link:build.gradle.kts[], 
+** For release increment the version property `version = "{vader-version}"` and run this command:
+** For SNAPSHOT releases, you may not need to increment, as nexus lets you override SNAPSHOT versions.
 
 [source,bash]
 ----
