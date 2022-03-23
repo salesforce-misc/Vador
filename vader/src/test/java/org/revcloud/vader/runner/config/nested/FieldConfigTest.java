@@ -22,12 +22,17 @@ public class FieldConfigTest {
         .withFieldConfig(
           FieldConfig.<String,Bean,ValidationFailure>toValidate().
             withFieldValidator(FieldConfigTest::isThisValidString).
-            shouldHaveValidFormatOrFailWith(Bean::getRequiredField2,INVALID_UDD_ID)
-        ).prepare();
+            shouldHaveValidFormatOrFailWith(Bean::getRequiredField2,INVALID_UDD_ID))
+        .withFieldConfig(
+          FieldConfig.<Integer,Bean,ValidationFailure>toValidate().
+            withFieldValidator(FieldConfigTest::isThisValidInteger).
+            shouldHaveValidFormatOrFailWith(Bean::getRequiredField1,INVALID_UDD_ID))
+        .prepare();
     final var result =
-      Vader.validateAndFailFast(new Bean(null,"invalidId",null), config);
+      Vader.validateAndFailFast(new Bean(100,"invalidId",null), config);
     assertThat(result).contains(INVALID_UDD_ID);
   }
+  
 
 
   @Data
@@ -41,6 +46,10 @@ public class FieldConfigTest {
 
   private static boolean isThisValidString(String fieldToValidate) {
     return !fieldToValidate.equalsIgnoreCase("invalidId"); // fake implementation
+  }
+  
+  private static boolean isThisValidInteger(Integer fieldToValidate) {
+    return !(fieldToValidate == 100); // fake implementation
   }
   
 }

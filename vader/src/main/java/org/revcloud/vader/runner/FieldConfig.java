@@ -3,6 +3,7 @@ package org.revcloud.vader.runner;
 import de.cronn.reflection.util.TypedPropertyGetter;
 import io.vavr.Function2;
 import io.vavr.Tuple2;
+import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
 import lombok.AccessLevel; 
@@ -27,7 +28,7 @@ public class FieldConfig<FieldT, ValidatableT, FailureT> {
 
   @Nullable
   Tuple2<
-          @NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>,
+          @NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>>,
           @NonNull Function2<String, @Nullable FieldT, @Nullable FailureT>>
       shouldHaveValidFormatForAllOrFailWithFn;
 
