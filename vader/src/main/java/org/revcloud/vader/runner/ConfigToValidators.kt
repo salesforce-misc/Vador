@@ -93,16 +93,6 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
       optionalIdValidatorFallBack
     )
 
-
-@JvmSynthetic
-private fun <FieldT, ValidatableT, FailureT> fieldConfigToValidatorEtrs(
-  config: FieldConfig<FieldT, ValidatableT, FailureT>?
-): List<ValidatorEtr<ValidatableT, FailureT>> =
-  toFieldValidatorEtrs1(
-    config?.shouldHaveValidFormatForAllOrFailWith,
-    config?.withFieldValidator
-  )
-
 @JvmSynthetic
 private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators11(
   config: Map<Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out EntityInfoT>, FailureT?>?,
