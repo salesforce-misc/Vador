@@ -31,7 +31,7 @@ ____
 '''
 
 [#shields]
-image:https://ccspaymentsci.dop.sfdc.net/buildStatus/icon?job=validation%2FVader%2Fmaster[Build Status,link=https://ccspaymentsci.dop.sfdc.net/job/validation/job/Vader/job/master/]
+image:https://sfciteam.sfci.buildndeliver-s.aws-esvc1-useast2.aws.sfdc.cl/ccspayments/buildStatus/icon?job=validation%2FVader%2Fmaster[Build Status,link=https://sfciteam.sfci.buildndeliver-s.aws-esvc1-useast2.aws.sfdc.cl/ccspayments/job/validation/job/Vader/job/master/]
 image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=alert_status[Quality Gate Status,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
 image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=sqale_rating[Maintainability Rating,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
 image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=security_rating[Security Rating,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]

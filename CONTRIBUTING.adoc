@@ -91,7 +91,7 @@ This https://gus.my.salesforce.com/a07B0000007Qt0BIAS[Gus Item] was raised for N
 * Please reach out to this team for any Nexus related permissions, problems, or requirements.
 As of today, the permissions are maintained by providing a role `CCSPayments`.
 We are planning to create an AD group for this.
-* In link:build.gradle.kts[], 
+* In link:build.gradle.kts[],
 ** For release increment the version property `version = "{vader-version}"` and run this command:
 ** For SNAPSHOT releases, you may not need to increment, as nexus lets you override SNAPSHOT versions.
 
