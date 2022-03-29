@@ -15,7 +15,7 @@ dependencies {
   implementation("org.slf4j:slf4j-api:2.0.0-alpha1")
   implementation("com.force.api:swag:0.4.3")
 
-  runtimeOnly("org.apache.logging.log4j:log4j-slf4j18-impl:2.17.0")
+  runtimeOnly("org.apache.logging.log4j:log4j-slf4j18-impl:2.17.1")
 
   testImplementation(project(":matchers"))
   testImplementation("org.assertj:assertj-vavr:0.4.2")
@@ -25,9 +25,6 @@ dependencies {
 if (!System.getProperty("idea.sync.active").toBoolean()) {
   kotlin.sourceSets.main {
     kotlin.setSrcDirs(listOf(tasks.delombok))
-  }
-  sourceSets.main {
-    java.setSrcDirs(listOf(tasks.delombok))
   }
 }
 

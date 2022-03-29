@@ -12,9 +12,6 @@ if (!providers.systemProperty("idea.sync.active").forUseAtConfigurationTime().or
   kotlin.sourceSets.main {
     kotlin.setSrcDirs(listOf(tasks.delombok))
   }
-  sourceSets.main {
-    java.setSrcDirs(listOf(tasks.delombok))
-  }
 }
 
 tasks {

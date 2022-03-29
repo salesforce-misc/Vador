@@ -16,7 +16,7 @@ import java.util.Optional
 
 /** == CONTAINER == */
 @JvmOverloads
-fun <FailureT, ContainerValidatableT> validateAndFailFastForContainer(
+fun <FailureT : Any, ContainerValidatableT> validateAndFailFastForContainer(
   batchValidatable: Collection<ContainerValidatableT>,
   containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
@@ -40,7 +40,7 @@ fun <FailureT, ContainerValidatableT, PairT> validateAndFailFastForContainer(
  * For Container with 2 - Levels
  */
 @JvmOverloads
-fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
+fun <FailureT : Any, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
   batchValidatable: Collection<ContainerValidatableT>,
   containerValidationConfigWith2Levels: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
