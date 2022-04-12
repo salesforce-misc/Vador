@@ -38,7 +38,6 @@ public class FieldConfigTest {
       Vader.validateAndFailFast(new Bean(100,"invalidId",null), config);
     assertThat(result).contains(INVALID_UDD_ID);
   }
-  
 
 
 
