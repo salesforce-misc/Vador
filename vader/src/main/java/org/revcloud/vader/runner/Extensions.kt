@@ -1,5 +1,3 @@
-@file:JvmName("Extensions")
-
 package org.revcloud.vader.runner
 
 import io.vavr.Tuple2

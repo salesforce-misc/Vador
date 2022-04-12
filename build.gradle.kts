@@ -122,7 +122,7 @@ subprojects {
     withType<KotlinCompile> {
       kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
-        freeCompilerArgs = listOf("-Xjsr305=strict", "-Xopt-in=kotlin.RequiresOptIn")
+        freeCompilerArgs = listOf("-Xjsr305=strict", "-opt-in=kotlin.RequiresOptIn")
       }
     }
     test.get().useJUnitPlatform()

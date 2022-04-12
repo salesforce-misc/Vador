@@ -79,19 +79,16 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
       config?.absentOrHaveValidSFIdFormatForAllOrFailWith,
       config?.withIdValidator,
       optionalIdValidatorFallBack,
-      false
     ) +
     toValidators12(
       config?.absentOrHaveValidSFIdFormatForAllOrFailWithFn,
       config?.withIdValidator,
       optionalIdValidatorFallBack,
-      false
     ) +
     toValidators13(
       config?.absentOrHaveValidSFIdFormatOrFailWithFn,
       config?.withIdValidator,
-      optionalIdValidatorFallBack,
-      false
+      optionalIdValidatorFallBack
     )
 
 @JvmSynthetic
@@ -99,7 +96,7 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators11(
   config: Map<Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out EntityInfoT>, FailureT?>?,
   idValidator: Function2<IDT, EntityInfoT, Boolean>?,
   idValidatorFallback: (IDT?) -> Boolean,
-  optionalId: Boolean
+  optionalId: Boolean = false
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   config?.map { (tuple2, failure) ->
     val (idFieldMapper, entityInfo) = tuple2
@@ -116,7 +113,7 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators12(
   config: Tuple2<Map<TypedPropertyGetter<ValidatableT, IDT?>, EntityInfoT>, Function2<String, IDT?, FailureT?>>?,
   idValidator: Function2<IDT, EntityInfoT, Boolean>?,
   idValidatorFallback: (IDT?) -> Boolean,
-  optionalId: Boolean
+  optionalId: Boolean = false
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   config?.let { (idFieldMapperToEntityInfo, failureFn) ->
     idFieldMapperToEntityInfo.map { (idFieldMapper, entityInfo) ->
@@ -135,7 +132,7 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators13(
   config: Map<Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out EntityInfoT>, Function2<String, IDT?, FailureT?>>?,
   idValidator: Function2<IDT, EntityInfoT, Boolean>?,
   idValidatorFallback: (IDT?) -> Boolean,
-  optionalId: Boolean
+  optionalId: Boolean = false
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   config?.map { (tuple2, failureFn) ->
     val (idFieldMapper, entityInfo) = tuple2

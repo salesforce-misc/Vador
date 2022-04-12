@@ -13,7 +13,7 @@ dependencies {
   api("de.cronn:reflection-util:2.13.2")
 
   implementation("org.slf4j:slf4j-api:2.0.0-alpha1")
-  implementation("com.force.api:swag:0.4.3")
+  implementation("com.force.api:swag:0.4.4")
 
   runtimeOnly("org.apache.logging.log4j:log4j-slf4j18-impl:2.17.1")
 

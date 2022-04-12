@@ -17,7 +17,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
 import lombok.experimental.FieldNameConstants;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.runner.BatchValidationConfig;
@@ -53,7 +52,6 @@ class IDConfigTest {
                                     INVALID_UDD_ID, invalidIdFieldName, invalidIdFieldValue))))
             .prepare();
     final var invalidContactId = new ID(INVALID_SF_ID);
-    final var valid18DigitSFId = RandomStringUtils.randomAlphanumeric(18);
     final var result =
         Vader.validateAndFailFast(
             new BeanWithIdFields2(new ID(VALID_SF_ID), invalidContactId), config);
