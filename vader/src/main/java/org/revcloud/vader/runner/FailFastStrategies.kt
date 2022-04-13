@@ -24,7 +24,7 @@ internal typealias FailFastForAnyWithPair<ValidatableT, FailureT, PairT> = (Coll
 internal typealias FailFastForAnyBatchOfBatch1WithPair<ValidatableT, FailureT, ContainerPairT, MemberPairT> = (Collection<ValidatableT?>) -> Optional<FFABatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>>
 
 @JvmSynthetic
-internal fun <ValidatableT, FailureT> failFast(
+internal fun <ValidatableT, FailureT : Any> failFast(
   validationConfig: ValidationConfig<ValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFast<ValidatableT, FailureT> = { validatable: ValidatableT ->
@@ -174,7 +174,7 @@ internal fun <ValidatableT, FailureT, PairT> failFastForAny(
 }
 
 @JvmSynthetic
-internal fun <ContainerValidatableT, FailureT> failFastForContainer(
+internal fun <ContainerValidatableT, FailureT : Any> failFastForContainer(
   containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForContainer<ContainerValidatableT, FailureT> = { container: ContainerValidatableT ->
@@ -188,7 +188,7 @@ internal fun <ContainerValidatableT, FailureT> failFastForContainer(
 }
 
 @JvmSynthetic
-internal fun <ContainerValidatableT, NestedContainerValidatableT, FailureT> failFastForContainer(
+internal fun <ContainerValidatableT, NestedContainerValidatableT, FailureT : Any> failFastForContainer(
   containerValidationConfigWith2Levels: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForContainer<ContainerValidatableT, FailureT> = { container: ContainerValidatableT ->
@@ -199,4 +199,14 @@ internal fun <ContainerValidatableT, NestedContainerValidatableT, FailureT> fail
       throwableMapper
     ).toFailureOptional()
   }
+}
+
+private fun <FailureT : Any> Either<FailureT?, *>?.toFailureOptional(): Optional<FailureT> {
+  val swapped = this?.swap() ?: return Optional.empty()
+  return if (swapped.isEmpty) Optional.empty() else Optional.ofNullable(swapped.get())
+}
+
+private fun <FailureT, PairT> Either<Tuple2<PairT?, FailureT?>, *>?.toFailureWithPairOptional(): Optional<Tuple2<PairT?, FailureT?>> {
+  val swapped = this?.swap() ?: return Optional.empty()
+  return if (swapped.isEmpty) Optional.empty() else Optional.ofNullable(swapped.get())
 }

@@ -8,7 +8,7 @@ dependencies {
   compileOnly(libs.jetbrains.annotations)
 }
 
-if (!providers.systemProperty("idea.sync.active").forUseAtConfigurationTime().orNull.toBoolean()) {
+if (!System.getProperty("idea.sync.active").toBoolean()) {
   kotlin.sourceSets.main {
     kotlin.setSrcDirs(listOf(tasks.delombok))
   }
@@ -19,4 +19,5 @@ tasks {
     quiet.set(true)
     input.setFrom("src/main/java")
   }
+  withType<Jar> { duplicatesStrategy = DuplicatesStrategy.INCLUDE }
 }

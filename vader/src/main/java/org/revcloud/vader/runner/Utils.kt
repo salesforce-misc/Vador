@@ -9,7 +9,10 @@ import io.vavr.Tuple2
 import io.vavr.control.Either
 import io.vavr.kotlin.left
 import io.vavr.kotlin.right
+import org.revcloud.vader.lift.liftAllToEtr
+import org.revcloud.vader.lift.liftToEtr
 import org.revcloud.vader.runner.FilterDuplicatesConfig.FilterDuplicatesConfigBuilder
+import org.revcloud.vader.types.validators.Validator
 import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
@@ -231,3 +234,9 @@ private fun <ValidatableT, FailureT, PairT> findFirstInvalid(
   }
   return Optional.empty()
 }
+
+internal fun <ValidatableT, FailureT> fromValidators1(validators: Tuple2<out Collection<Validator<in ValidatableT?, FailureT?>>?, out FailureT?>?): List<ValidatorEtr<ValidatableT?, FailureT?>> =
+  validators?.let { (validators, none) -> validators?.let { liftAllToEtr(it, none) } } ?: emptyList()
+
+internal fun <ValidatableT, FailureT> fromValidators2(validators: Map<out Validator<in ValidatableT?, FailureT?>, FailureT?>): List<ValidatorEtr<ValidatableT?, FailureT?>> =
+  validators.mapNotNull { (validator, none) -> liftToEtr(validator, none) }

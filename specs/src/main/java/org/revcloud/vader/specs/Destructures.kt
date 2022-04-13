@@ -1,3 +1,5 @@
+@file:JvmName("Destructures")
+
 package org.revcloud.vader.specs
 
 import io.vavr.Tuple2
