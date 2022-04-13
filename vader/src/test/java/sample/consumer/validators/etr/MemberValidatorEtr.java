@@ -7,7 +7,7 @@
 package sample.consumer.validators.etr;
 
 import java.util.Objects;
-import org.revcloud.vader.types.validators.ValidatorEtr;
+import org.revcloud.vader.types.ValidatorEtr;
 import sample.consumer.bean.Member;
 import sample.consumer.failure.ValidationFailure;
 import sample.consumer.failure.ValidationFailureMessage;

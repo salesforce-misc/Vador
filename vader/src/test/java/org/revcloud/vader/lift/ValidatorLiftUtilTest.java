@@ -3,7 +3,7 @@ package org.revcloud.vader.lift;
 import io.vavr.control.Either;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.types.validators.Validator;
+import org.revcloud.vader.types.Validator;
 import sample.consumer.bean.Parent;
 import sample.consumer.failure.ValidationFailure;
 

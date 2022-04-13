@@ -19,5 +19,4 @@ tasks {
     quiet.set(true)
     input.setFrom("src/main/java")
   }
-  withType<Jar> { duplicatesStrategy = DuplicatesStrategy.INCLUDE }
 }

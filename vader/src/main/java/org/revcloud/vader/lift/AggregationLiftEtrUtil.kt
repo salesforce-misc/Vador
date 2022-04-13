@@ -2,7 +2,7 @@
 
 package org.revcloud.vader.lift
 
-import org.revcloud.vader.types.validators.ValidatorEtr
+import org.revcloud.vader.types.ValidatorEtr
 
 /**
  * Lifts a member validation to container type.

@@ -11,7 +11,7 @@ import java.util.List;
 import lombok.Value;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.types.validators.Validator;
+import org.revcloud.vader.types.Validator;
 import sample.consumer.failure.ValidationFailure;
 
 class AggregationLiftUtilTest {

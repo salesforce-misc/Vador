@@ -6,7 +6,7 @@
 
 package sample.consumer.validators.etr;
 
-import org.revcloud.vader.types.validators.ValidatorEtr;
+import org.revcloud.vader.types.ValidatorEtr;
 import sample.consumer.bean.Container;
 import sample.consumer.failure.ValidationFailure;
 import sample.consumer.failure.ValidationFailureMessage;

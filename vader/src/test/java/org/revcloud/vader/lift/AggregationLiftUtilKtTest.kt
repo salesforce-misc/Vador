@@ -3,7 +3,7 @@ package org.revcloud.vader.lift
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.vavr.kotlin.right
-import org.revcloud.vader.types.validators.ValidatorEtr
+import org.revcloud.vader.types.ValidatorEtr
 import sample.consumer.failure.ValidationFailure
 import sample.consumer.failure.ValidationFailure.NONE
 

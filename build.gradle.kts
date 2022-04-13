@@ -104,6 +104,9 @@ subprojects {
   }
   // <-- SUBPROJECT TASKS --
   tasks {
+    withType<Jar> { duplicatesStrategy = DuplicatesStrategy.INCLUDE }
+    spotbugsMain.get().enabled = false
+    spotbugsTest.get().enabled = false
     register("configureJavadoc") {
       doLast {
         javadoc {

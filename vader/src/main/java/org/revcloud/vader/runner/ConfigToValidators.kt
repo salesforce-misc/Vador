@@ -11,7 +11,7 @@ import org.revcloud.vader.runner.IDConfig.IDConfigBuilder
 import org.revcloud.vader.specs.component1
 import org.revcloud.vader.specs.component2
 import org.revcloud.vader.specs.specs.BaseSpec
-import org.revcloud.vader.types.validators.ValidatorEtr
+import org.revcloud.vader.types.ValidatorEtr
 import java.util.Optional
 
 @JvmSynthetic

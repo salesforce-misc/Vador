@@ -8,7 +8,7 @@ package sample.consumer.validators.simple;
 
 import static sample.consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
 
-import org.revcloud.vader.types.validators.Validator;
+import org.revcloud.vader.types.Validator;
 import sample.consumer.bean.Parent;
 import sample.consumer.failure.ValidationFailure;
 

@@ -7,11 +7,11 @@ import io.vavr.Tuple
 import io.vavr.Tuple2
 import io.vavr.control.Either
 import org.revcloud.vader.lift.liftAllToEtr
+import org.revcloud.vader.types.Validator
+import org.revcloud.vader.types.ValidatorEtr
 import org.revcloud.vader.types.failures.FFABatchOfBatchFailureWithPair
 import org.revcloud.vader.types.failures.FFEBatchOfBatchFailure
 import org.revcloud.vader.types.failures.FFEBatchOfBatchFailureWithPair
-import org.revcloud.vader.types.validators.Validator
-import org.revcloud.vader.types.validators.ValidatorEtr
 import java.util.Optional
 
 /** == CONTAINER == */
@@ -26,7 +26,7 @@ fun <FailureT : Any, ContainerValidatableT> validateAndFailFastForContainer(
   }.firstOrNull { it.isPresent } ?: Optional.empty()
 
 @JvmOverloads
-fun <FailureT, ContainerValidatableT, PairT> validateAndFailFastForContainer(
+fun <FailureT : Any, ContainerValidatableT, PairT> validateAndFailFastForContainer(
   batchValidatable: Collection<ContainerValidatableT>,
   pairForInvalidMapper: (ContainerValidatableT?) -> PairT?,
   containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
@@ -50,7 +50,7 @@ fun <FailureT : Any, ContainerValidatableT, NestedContainerValidatableT> validat
   }.firstOrNull { it.isPresent } ?: Optional.empty()
 
 @JvmOverloads
-fun <FailureT, ContainerValidatableT, NestedContainerValidatableT, PairT> validateAndFailFastForContainer(
+fun <FailureT : Any, ContainerValidatableT, NestedContainerValidatableT, PairT> validateAndFailFastForContainer(
   batchValidatable: Collection<ContainerValidatableT>,
   pairForInvalidMapper: (ContainerValidatableT?) -> PairT?,
   containerValidationConfigWith2Levels: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,

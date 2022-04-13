@@ -3,7 +3,7 @@
 package org.revcloud.vader.lift
 
 import io.vavr.control.Either.narrow
-import org.revcloud.vader.types.validators.ValidatorEtr
+import org.revcloud.vader.types.ValidatorEtr
 
 /**
  * Assume `ParentT` is parent by inheritance to `ValidatableT`.

@@ -7,7 +7,7 @@
 package sample.consumer.config;
 
 import io.vavr.collection.List;
-import org.revcloud.vader.types.validators.ValidatorEtr;
+import org.revcloud.vader.types.ValidatorEtr;
 import sample.consumer.BaseService;
 import sample.consumer.Service;
 import sample.consumer.bean.Parent;

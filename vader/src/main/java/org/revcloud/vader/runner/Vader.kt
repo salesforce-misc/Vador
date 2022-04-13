@@ -3,26 +3,26 @@
 package org.revcloud.vader.runner
 
 import org.revcloud.vader.lift.liftAllToEtr
-import org.revcloud.vader.types.validators.Validator
-import org.revcloud.vader.types.validators.ValidatorEtr
+import org.revcloud.vader.types.Validator
+import org.revcloud.vader.types.ValidatorEtr
 import java.util.Optional
 
 @JvmOverloads
-fun <FailureT, ContainerValidatableT> validateAndFailFastForContainer(
+fun <FailureT : Any, ContainerValidatableT> validateAndFailFastForContainer(
   container: ContainerValidatableT,
   containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> = failFastForContainer(containerValidationConfig, throwableMapper)(container)
 
 @JvmOverloads
-fun <FailureT, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
+fun <FailureT : Any, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
   container: ContainerValidatableT,
   containerValidationConfigWith2Levels: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): Optional<FailureT> = failFastForContainer(containerValidationConfigWith2Levels, throwableMapper)(container)
 
 @JvmOverloads
-fun <FailureT, ValidatableT> validateAndFailFast(
+fun <FailureT : Any, ValidatableT> validateAndFailFast(
   validatable: ValidatableT,
   validationConfig: ValidationConfig<ValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT? = { throw it }

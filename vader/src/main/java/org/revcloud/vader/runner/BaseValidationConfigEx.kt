@@ -5,7 +5,7 @@ package org.revcloud.vader.runner
 import de.cronn.reflection.util.PropertyUtils
 import org.revcloud.vader.specs.factory.SpecFactory
 import org.revcloud.vader.specs.specs.BaseSpec
-import org.revcloud.vader.types.validators.ValidatorEtr
+import org.revcloud.vader.types.ValidatorEtr
 import java.util.Optional
 import java.util.function.Predicate
 

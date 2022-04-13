@@ -8,8 +8,8 @@ package sample.consumer.config;
 
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
-import org.revcloud.vader.types.validators.Validator;
-import org.revcloud.vader.types.validators.ValidatorEtr;
+import org.revcloud.vader.types.Validator;
+import org.revcloud.vader.types.ValidatorEtr;
 import sample.consumer.bean.Container;
 import sample.consumer.bean.Parent;
 import sample.consumer.failure.ValidationFailure;

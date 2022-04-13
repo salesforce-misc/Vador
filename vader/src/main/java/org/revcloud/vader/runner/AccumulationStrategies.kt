@@ -2,7 +2,7 @@ package org.revcloud.vader.runner
 
 import io.vavr.control.Either
 import io.vavr.kotlin.right
-import org.revcloud.vader.types.validators.ValidatorEtr
+import org.revcloud.vader.types.ValidatorEtr
 
 /**
  * Higher-order function to compose list of validators into Accumulation Strategy.

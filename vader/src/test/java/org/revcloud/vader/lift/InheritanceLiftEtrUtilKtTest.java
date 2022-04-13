@@ -13,8 +13,8 @@ import lombok.EqualsAndHashCode;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.runner.Vader;
 import org.revcloud.vader.runner.ValidationConfig;
-import org.revcloud.vader.types.validators.Validator;
-import org.revcloud.vader.types.validators.ValidatorEtr;
+import org.revcloud.vader.types.Validator;
+import org.revcloud.vader.types.ValidatorEtr;
 import sample.consumer.failure.ValidationFailure;
 
 class InheritanceLiftEtrUtilKtTest {

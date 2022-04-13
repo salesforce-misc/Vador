@@ -5,7 +5,7 @@ import static org.revcloud.vader.lift.AggregationLiftEtrUtil.liftToContainerVali
 import io.vavr.control.Either;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.types.validators.ValidatorEtr;
+import org.revcloud.vader.types.ValidatorEtr;
 import sample.consumer.bean.Container;
 import sample.consumer.bean.Member;
 import sample.consumer.failure.ValidationFailure;

@@ -9,8 +9,8 @@ import lombok.NonNull;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.Nullable;
-import org.revcloud.vader.types.validators.Validator;
-import org.revcloud.vader.types.validators.ValidatorEtr;
+import org.revcloud.vader.types.Validator;
+import org.revcloud.vader.types.ValidatorEtr;
 
 @Getter
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)

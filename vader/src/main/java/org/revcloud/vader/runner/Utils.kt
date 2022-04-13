@@ -12,8 +12,10 @@ import io.vavr.kotlin.right
 import org.revcloud.vader.lift.liftAllToEtr
 import org.revcloud.vader.lift.liftToEtr
 import org.revcloud.vader.runner.FilterDuplicatesConfig.FilterDuplicatesConfigBuilder
-import org.revcloud.vader.types.validators.Validator
-import org.revcloud.vader.types.validators.ValidatorEtr
+import org.revcloud.vader.specs.component1
+import org.revcloud.vader.specs.component2
+import org.revcloud.vader.types.Validator
+import org.revcloud.vader.types.ValidatorEtr
 import java.util.Optional
 
 // TODO 29/07/21 gopala.akshintala: Split this class into individual utils
@@ -55,7 +57,7 @@ private fun <FailureT, ValidatableT> fireValidator(
     .flatMap { validatable } // Put the original Validatable in the right state
 
 @JvmSynthetic
-internal fun <ContainerRootValidatableT, ContainerLevel1ValidatableT, FailureT> validateBatchSize(
+internal fun <ContainerRootValidatableT, ContainerLevel1ValidatableT, FailureT : Any> validateBatchSize(
   container: ContainerRootValidatableT,
   containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerRootValidatableT, ContainerLevel1ValidatableT, FailureT?>
 ): Optional<FailureT> {
@@ -70,7 +72,7 @@ internal fun <ContainerRootValidatableT, ContainerLevel1ValidatableT, FailureT> 
 }
 
 @JvmSynthetic
-internal fun <ContainerT, FailureT> validateBatchSize(
+internal fun <ContainerT, FailureT : Any> validateBatchSize(
   container: ContainerT,
   containerValidationConfig: ContainerValidationConfig<ContainerT, FailureT?>
 ): Optional<FailureT> {
@@ -79,7 +81,7 @@ internal fun <ContainerT, FailureT> validateBatchSize(
 }
 
 @JvmSynthetic
-private fun <FailureT> validateBatchSize(
+private fun <FailureT : Any> validateBatchSize(
   memberBatch: Collection<*>,
   containerConfig: BaseContainerValidationConfig<*, FailureT?>
 ): Optional<FailureT> {
