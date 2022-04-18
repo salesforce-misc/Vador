@@ -12,6 +12,9 @@ import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.Nullable;
 
+// ! TODO 16/04/22: Extract common types to type aliases,
+//  like `shouldHaveValidSFIdFormatForAllOrFailWith` and
+// `absentOrHaveValidSFIdFormatForAllOrFailWith`
 @Value
 @FieldDefaults(level = AccessLevel.PACKAGE)
 @Builder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)

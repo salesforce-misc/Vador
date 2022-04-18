@@ -17,101 +17,89 @@ import org.revcloud.vader.runner.Vader;
 import org.revcloud.vader.runner.ValidationConfig;
 import sample.consumer.failure.ValidationFailure;
 
-
-
 public class FieldConfigTest {
-  
+
+  private static final int INVALID_INTEGER_FIELD_VALUE = -1;
+  private static final String INVALID_STRING_FIELD_VALUE = "invalidId";
+
   @Test
-  void fieldConfigWithshouldHaveValidFormatOrFailWith() {
+  void fieldConfigWithShouldHaveValidFormatOrFailWith() {
     final var config =
-      ValidationConfig.<Bean, ValidationFailure>toValidate()
-        .withFieldConfig(
-          FieldConfig.<String,Bean,ValidationFailure>toValidate().
-            withFieldValidator(FieldConfigTest::isThisValidString).
-            shouldHaveValidFormatOrFailWith(Bean::getRequiredField2,INVALID_UDD_ID))
-        .withFieldConfig(
-          FieldConfig.<Integer,Bean,ValidationFailure>toValidate().
-            withFieldValidator(FieldConfigTest::isThisValidInteger).
-            shouldHaveValidFormatOrFailWith(Bean::getRequiredField1,INVALID_UDD_ID))
-        .prepare();
+        ValidationConfig.<Bean, ValidationFailure>toValidate()
+            .withFieldConfig(
+                FieldConfig.<String, Bean, ValidationFailure>toValidate()
+                    .withFieldValidator(FieldConfigTest::isThisValidString)
+                    .shouldHaveValidFormatOrFailWith(Bean::getRequiredField2, INVALID_UDD_ID))
+            .withFieldConfig(
+                FieldConfig.<Integer, Bean, ValidationFailure>toValidate()
+                    .withFieldValidator(FieldConfigTest::isThisValidInteger)
+                    .shouldHaveValidFormatOrFailWith(Bean::getRequiredField1, INVALID_UDD_ID))
+            .prepare();
     final var result =
-      Vader.validateAndFailFast(new Bean(100,"invalidId",null), config);
+        Vader.validateAndFailFast(new Bean(INVALID_INTEGER_FIELD_VALUE, INVALID_STRING_FIELD_VALUE, null), config);
     assertThat(result).contains(INVALID_UDD_ID);
   }
-  
-
-
 
   @Test
   void fieldConfigWithShouldHaveValidFormatForAllOrFailWithFn() {
     final var config =
-      ValidationConfig.<Bean, ValidationFailure>toValidate()
-        .withFieldConfig(
-          FieldConfig.<String,Bean,ValidationFailure>toValidate()
-            .withFieldValidator(FieldConfigTest::isThisValidString)
-            .shouldHaveValidFormatForAllOrFailWithFn(
-              Tuple.of( 
-                List.of(Bean::getRequiredField2), 
-                (invalidIdFieldName, invalidIdFieldValue) ->
-                  getFailureWithParams(
-                    INVALID_UDD_ID, invalidIdFieldName, invalidIdFieldValue))))
-    .prepare();
-    
-    final var invalidString = "invalidId";
-    final var result =
-      Vader.validateAndFailFast(
-        new Bean(null,invalidString,null), config);
-    
+        ValidationConfig.<Bean, ValidationFailure>toValidate()
+            .withFieldConfig(
+                FieldConfig.<String, Bean, ValidationFailure>toValidate()
+                    .withFieldValidator(FieldConfigTest::isThisValidString)
+                    .shouldHaveValidFormatForAllOrFailWithFn(
+                        Tuple.of(
+                            List.of(Bean::getRequiredField2),
+                            (invalidIdFieldName, invalidIdFieldValue) ->
+                                getFailureWithParams(
+                                    INVALID_UDD_ID, invalidIdFieldName, invalidIdFieldValue))))
+            .prepare();
+
+    final var result = Vader.validateAndFailFast(new Bean(null, INVALID_STRING_FIELD_VALUE, null), config);
+
     assertThat(result).isPresent().contains(INVALID_UDD_ID);
     assertThat(result.get().getValidationFailureMessage().getParams())
-      .containsExactly("requiredField2", invalidString);
+        .containsExactly("requiredField2", INVALID_STRING_FIELD_VALUE);
   }
-
 
   @Test
   void fieldConfigWithShouldHaveValidFormatForAllOrFailWith() {
     final var config =
-      ValidationConfig.<Bean, ValidationFailure>toValidate()
-        .withFieldConfig(
-          FieldConfig.<String,Bean, ValidationFailure>toValidate()
-            .withFieldValidator(FieldConfigTest::isThisValidString)
-            .shouldHaveValidFormatForAllOrFailWith(
-              Map.of(
-                Bean::getRequiredField2,
-                getFailureWithParams(INVALID_UDD_ID, "requiredField2"))))
-        .prepare();
+        ValidationConfig.<Bean, ValidationFailure>toValidate()
+            .withFieldConfig(
+                FieldConfig.<String, Bean, ValidationFailure>toValidate()
+                    .withFieldValidator(FieldConfigTest::isThisValidString)
+                    .shouldHaveValidFormatForAllOrFailWith(
+                        Map.of(
+                            Bean::getRequiredField2,
+                            getFailureWithParams(INVALID_UDD_ID, "requiredField2"))))
+            .prepare();
 
-    final var invalidString = "invalidId";
-    final var result =
-      Vader.validateAndFailFast(
-        new Bean(null,invalidString,null), config);
-    
+    final var result = Vader.validateAndFailFast(new Bean(null, INVALID_STRING_FIELD_VALUE, null), config);
+
     assertThat(result).isPresent().contains(INVALID_UDD_ID);
-    assertThat(result.get().getValidationFailureMessage().getParams()).containsExactly("requiredField2");
+    assertThat(result.get().getValidationFailureMessage().getParams())
+        .containsExactly("requiredField2");
   }
-
 
   @Test
-  void
-  idConfigAbsentOrHaveValidFormatOrFailWith() {
+  void idConfigAbsentOrHaveValidFormatOrFailWith() {
     final var config =
-      ValidationConfig.<Bean, ValidationFailure>toValidate()
-        .withFieldConfig(
-          FieldConfig.<String, Bean, ValidationFailure>toValidate()
-            .withFieldValidator(FieldConfigTest::isThisValidString)
-            .absentOrHaveValidFormatOrFailWith(
-              Bean::getRequiredField2,
-              getFailureWithParams(INVALID_UDD_ID_3, "requiredField2")))
-        .prepare();
-    final var invalidString = "invalidId";
-    final var result =
-      Vader.validateAndFailFast(
-        new Bean(null,invalidString,null), config);
-    
+        ValidationConfig.<Bean, ValidationFailure>toValidate()
+            .withFieldConfig(
+                FieldConfig.<String, Bean, ValidationFailure>toValidate()
+                    .withFieldValidator(FieldConfigTest::isThisValidString)
+                    .absentOrHaveValidFormatOrFailWith(
+                        Bean::getRequiredField2,
+                        getFailureWithParams(INVALID_UDD_ID_3, "requiredField2")))
+            .prepare();
+    final var result = Vader.validateAndFailFast(new Bean(null, INVALID_STRING_FIELD_VALUE, null), config);
+
     assertThat(result).isPresent().contains(INVALID_UDD_ID_3);
-    assertThat(result.get().getValidationFailureMessage().getParams()).containsExactly("requiredField2");
+    assertThat(result.get().getValidationFailureMessage().getParams())
+        .containsExactly("requiredField2");
   }
-  
+
   @Data
   @FieldNameConstants
   @AllArgsConstructor
@@ -122,11 +110,10 @@ public class FieldConfigTest {
   }
 
   private static boolean isThisValidString(String fieldToValidate) {
-    return !fieldToValidate.equalsIgnoreCase("invalidId"); // fake implementation
+    return !fieldToValidate.equalsIgnoreCase(INVALID_STRING_FIELD_VALUE); // fake implementation
   }
-  
+
   private static boolean isThisValidInteger(Integer fieldToValidate) {
-    return !(fieldToValidate == 100); // fake implementation
+    return !(fieldToValidate == INVALID_INTEGER_FIELD_VALUE); // fake implementation
   }
-  
 }

@@ -6,7 +6,7 @@ import io.vavr.Tuple2;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
-import lombok.AccessLevel; 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Singular;
@@ -21,9 +21,7 @@ public class FieldConfig<FieldT, ValidatableT, FailureT> {
   @Nullable Predicate<FieldT> withFieldValidator;
 
   @Singular("shouldHaveValidFormatOrFailWith")
-  Map<
-      @NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>,
-          @Nullable FailureT>
+  Map<@NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>, @Nullable FailureT>
       shouldHaveValidFormatForAllOrFailWith;
 
   @Nullable
@@ -34,19 +32,17 @@ public class FieldConfig<FieldT, ValidatableT, FailureT> {
 
   @Singular("shouldHaveValidFormatOrFailWithFn")
   Map<
-              @NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>,
+          @NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>,
           @NonNull Function2<String, @Nullable FieldT, @Nullable FailureT>>
       shouldHaveValidFormatOrFailWithFn;
 
   @Singular("absentOrHaveValidFormatOrFailWith")
-  Map<
-              @NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>,
-          @Nullable FailureT>
+  Map<@NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>, @Nullable FailureT>
       absentOrHaveValidFormatForAllOrFailWith;
 
   @Nullable
   Tuple2<
-          @NonNull TypedPropertyGetter<ValidatableT, FieldT>,
+          @NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>>,
           @NonNull Function2<String, @Nullable FieldT, @Nullable FailureT>>
       absentOrHaveValidFormatForAllOrFailWithFn;
 
