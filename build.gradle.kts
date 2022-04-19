@@ -27,9 +27,6 @@ description = "Vader - An FP framework for Bean validation"
 allprojects {
   group = "com.salesforce.ccspayments"
   version = "2.7.3-SNAPSHOT"
-  repositories {
-    mavenCentral()
-  }
   apply(plugin = "com.diffplug.spotless")
   spotless {
     kotlin {
