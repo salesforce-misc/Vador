@@ -25,10 +25,9 @@ endif::[]
 == Source-code Setup
 
 * This is a simple Gradle project and has its own Gradle wrapper. So nothing to install.
-* Follow these simple instructions from https://git.soma.salesforce.com/MoBE/gradle-init-scripts/[here] to setup gradle to point to https://nexus.soma.salesforce.com/nexus/[nexus.soma repository] for downloading dependency jars.
 * You need to add your nexus credentials in `~/.gradle/gradle.properties` file (create the file if not present), which are used by your local gradle to connect to nexus for downloading artifacts.
 You can find your nexus userName and password from https://nexus.soma.salesforce.com/nexus/#profile;User%20Token[here] under the *User Token* section in the dropdown.
-You can also get them from `blt/app/main/core/workspace-user.xml` file.
+If you are working on `core`, you can also get them from `blt/app/main/core/workspace-user.xml` file.
 
 [source,properties]
 ----
@@ -40,7 +39,7 @@ You can also get them from `blt/app/main/core/workspace-user.xml` file.
 
 CAUTION: You may see some build errors related to delombok task.
 They should not fail your build, and you may ignore them.
-They should be addressed once Kotlin Lombok compiler supports Lombok `@Builders`.
+They will be addressed once Kotlin Lombok compiler supports Lombok `@Builders`.
 There is an https://youtrack.jetbrains.com/issue/KT-46959[Active Issue] filed for this as well.
 
 [source,bash]

@@ -42,3 +42,14 @@ rootProject.name = "vader-root"
 include("matchers")
 include("specs")
 include("vader")
+
+plugins {
+  id("com.gradle.enterprise") version ("3.9")
+}
+
+gradleEnterprise {
+  server = "https://gradleenterprise.eng.sfdc.net"
+  buildScan {
+    publishAlways()
+  }
+}
