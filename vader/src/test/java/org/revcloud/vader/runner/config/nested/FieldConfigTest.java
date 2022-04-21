@@ -36,7 +36,8 @@ public class FieldConfigTest {
                     .shouldHaveValidFormatOrFailWith(Bean::getRequiredField1, INVALID_UDD_ID))
             .prepare();
     final var result =
-        Vader.validateAndFailFast(new Bean(INVALID_INTEGER_FIELD_VALUE, INVALID_STRING_FIELD_VALUE, null), config);
+        Vader.validateAndFailFast(
+            new Bean(INVALID_INTEGER_FIELD_VALUE, INVALID_STRING_FIELD_VALUE, null), config);
     assertThat(result).contains(INVALID_UDD_ID);
   }
 
@@ -55,7 +56,8 @@ public class FieldConfigTest {
                                     INVALID_UDD_ID, invalidIdFieldName, invalidIdFieldValue))))
             .prepare();
 
-    final var result = Vader.validateAndFailFast(new Bean(null, INVALID_STRING_FIELD_VALUE, null), config);
+    final var result =
+        Vader.validateAndFailFast(new Bean(null, INVALID_STRING_FIELD_VALUE, null), config);
 
     assertThat(result).isPresent().contains(INVALID_UDD_ID);
     assertThat(result.get().getValidationFailureMessage().getParams())
@@ -75,7 +77,8 @@ public class FieldConfigTest {
                             getFailureWithParams(INVALID_UDD_ID, "requiredField2"))))
             .prepare();
 
-    final var result = Vader.validateAndFailFast(new Bean(null, INVALID_STRING_FIELD_VALUE, null), config);
+    final var result =
+        Vader.validateAndFailFast(new Bean(null, INVALID_STRING_FIELD_VALUE, null), config);
 
     assertThat(result).isPresent().contains(INVALID_UDD_ID);
     assertThat(result.get().getValidationFailureMessage().getParams())
@@ -93,7 +96,8 @@ public class FieldConfigTest {
                         Bean::getRequiredField2,
                         getFailureWithParams(INVALID_UDD_ID_3, "requiredField2")))
             .prepare();
-    final var result = Vader.validateAndFailFast(new Bean(null, INVALID_STRING_FIELD_VALUE, null), config);
+    final var result =
+        Vader.validateAndFailFast(new Bean(null, INVALID_STRING_FIELD_VALUE, null), config);
 
     assertThat(result).isPresent().contains(INVALID_UDD_ID_3);
     assertThat(result.get().getValidationFailureMessage().getParams())
