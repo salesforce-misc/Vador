@@ -101,7 +101,7 @@ subprojects {
   }
   // <-- SUBPROJECT TASKS --
   tasks {
-    withType<Jar> { duplicatesStrategy = DuplicatesStrategy.INCLUDE }
+    withType<Jar> { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
     spotbugsMain.get().enabled = false
     spotbugsTest.get().enabled = false
     register("configureJavadoc") {

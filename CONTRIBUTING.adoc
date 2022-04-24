@@ -22,6 +22,16 @@ endif::[]
 :vader-version: 2.7.2
 :toc:
 
+== Versioning Strategy
+
+====
+<A>.<B>.<C>
+====
+
+* A = We broke something on purpose. (Breaking API change)
+* B = Profit (Feature / Improvement)
+* C = We broke something by accident (Bug)
+
 == Source-code Setup
 
 * This is a simple Gradle project and has its own Gradle wrapper. So nothing to install.

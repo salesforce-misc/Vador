@@ -49,6 +49,10 @@ image:https://img.shields.io/badge/Rev%20Delphinus%20-blue?logo=slack[Slack,link
 </dependency>
 ----
 
+== Awards
+.238 Innvation Showcase, Revenue cloud, Feb 2022
+image:238-innovation-showcase-award.jpg[role=center]
+
 toc::[]
 
 == Why Vader?
