@@ -24,7 +24,7 @@ executePipeline(envDef) {
   }
 
   stage('Build') {
-    sh './gradlew build'
+    sh './gradlew build --no-build-cache'
   }
   
   if (BuildUtils.isReleaseBuild(env)) {
@@ -34,7 +34,7 @@ executePipeline(envDef) {
   }
   
   stage('Check') {
-    sh './gradlew check'
+    sh './gradlew check --no-build-cache'
   }
   
   stage('Sonarqube') {
