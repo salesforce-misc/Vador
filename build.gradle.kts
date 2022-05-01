@@ -196,7 +196,7 @@ sonarqube {
   }
 }
 kover {
-  coverageEngine.set(CoverageEngine.JACOCO)
+  coverageEngine.set(CoverageEngine.INTELLIJ)
   generateReportOnCheck = true
   runAllTestsForProjectTask = true
 }
@@ -207,8 +207,9 @@ tasks {
       isEnabled = true
     }
   }
-  koverXmlReport.get().isEnabled = true
-  koverHtmlReport.get().isEnabled = false
+  koverMergedXmlReport.get().isEnabled = true
+  koverMergedHtmlReport.get().isEnabled = false
+  koverMergedReport.get().isEnabled = false
   sonarqube {
     properties {
       // As of now this property is ignored until sonarqube is upgraded to 8.9
@@ -248,7 +249,6 @@ tasks {
 afterEvaluate {
   tasks {
     check.configure {
-      dependsOn(koverMergedXmlReport)
       dependsOn(named("detektAll"))
     }
     sonarqube.configure { dependsOn(check) }
