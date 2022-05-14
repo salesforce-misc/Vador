@@ -21,9 +21,9 @@ To easily wrap your head around such data structure, visualise it like a *Tree*:
 
 image:container-level-2.png[container-level-2]
 
-* Unlike link:ContainerValidationConfig.adoc[ContainerValidationConfig], this config can only zoom into batches of same data type (like `MemberT` above). But Level-2 batches can be of any type, just like link:ContainerValidationConfig.adoc[ContainerValidationConfig].
-* But the batches at level-2 can be batches of any data-type, as we use the same link:ContainerValidationConfig.adoc[ContainerValidationConfig] to declare this configuration.
-* Container at any level can be chosen as root for this validation config and doesn't necessarily have to be the top most root.
+* Unlike link:ContainerValidationConfig.adoc[ContainerValidationConfig], this config can only zoom into batches of same data type (like `MemberT` above).
+* But the batches at level-2 can be batches of any data-type, as we use the same link:ContainerValidationConfig.adoc[ContainerValidationConfig] to declare configuration for this level.
+* Container at any level can be chosen as root for this validation config and doesn't necessarily have to be the top most root of the Data structure.
 
 == Example
 

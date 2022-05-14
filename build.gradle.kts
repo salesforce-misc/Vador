@@ -10,18 +10,18 @@ plugins {
   kotlin("jvm")
   `maven-publish`
   idea
-  id("org.jetbrains.kotlinx.kover") version "0.5.0"
+  id("org.jetbrains.kotlinx.kover") version "0.5.1"
   id("io.freefair.lombok") apply false
-  id("io.gitlab.arturbosch.detekt") version "1.20.0"
-  id("com.adarshr.test-logger") version "3.2.0"
   id("com.diffplug.spotless") version "6.4.2"
   id("org.sonarqube") version "3.3"
+  id("io.gitlab.arturbosch.detekt") version "1.20.0"
+  id("com.adarshr.test-logger") version "3.2.0"
   id("org.asciidoctor.jvm.gems") version "3.3.2"
   id("org.asciidoctor.jvm.revealjs") version "3.3.2"
   id("com.github.spotbugs") version "5.0.6"
 }
 
-description = "Vader - An FP framework for Bean validation"
+description = "Vader - An FP framework for POJO/Bean validation"
 
 // <-- ALL PROJECTS --
 allprojects {

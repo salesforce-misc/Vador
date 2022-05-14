@@ -81,7 +81,12 @@ and https://www.sonarsource.com/docs/CognitiveComplexity.pdf[*Cognitive Complexi
 
 TIP: Good read about https://blog.sonarsource.com/cognitive-complexity-because-testability-understandability[Cyclomatic Complexity vs Cognitive Complexity]
 
-=== Demo pls!
+== Demo pls!
+
+=== TL;DR Show me the code
+
+[.lead]
+https://codesearch.data.sfdc.net/source/xref/app_main_core/app/main/core/billing-services/java/src/core/billing/service/billingschedule/config/BillingScheduleConfig.java#261[billing-services]
 
 ====
 .Salesforce Season of Innovation, Oct 2021 + Rev Cloud Brown-Bag
@@ -125,11 +130,6 @@ Follow the rest of this doc to know more
 * https://drive.google.com/open?id=1Syi3smlcyFAL0ZoDuq5dWR1IALZNmNUm[An Internal Presentation] (This is partially recorded)
 ====
 
-== TL;DR Show me the code
-
-[.lead]
-https://codesearch.data.sfdc.net/source/xref/app_main_core/app/main/core/billing-services/java/src/core/billing/service/billingschedule/config/BillingScheduleConfig.java#261[billing-services]
-
 == What's Vader?
 
 [.lead]
@@ -139,7 +139,7 @@ Its implementation is generic and can cater to anyone looking for a declarative 
 
 The framework asks your validation strategy to be broken into *_3 decoupled_* parts:
 
-* Write your Validators _(What-to-do)_ - The lambdas/functions used for validations should abide to one of the link:{docdir}/validator-types.adoc[Validator types] provided by Vader.
+* Write your Validators _(What-to-do)_ - The lambdas/functions used for validations should abide to one of the link:{docsdir}/validator-types.adoc[Validator types] provided by Vader.
 * Configuration _(How-to-do)_ - Stitch your validations together into a Chain.
 * Execution _(How-to-do)_ - Call the Vader's API as per the execution strategy (Fail-Fast or Error-Accumulation)
 
@@ -157,11 +157,13 @@ image:api.png[API]
 
 == 👓 A glance at the API
 
+Execution Strategy is how you want to Orchestrate your Validations against the Data-structure. Orchestration complexity can be directly proportional to the Data structure complexity. For example, a batch-of-batch data structure might need to a Tree-Traversal algorithm (Ref: link:{docsdir}/config-dsl/nested/BatchOfBatch1ValidationConfig.adoc[BatchOfBatch1ValidationConfig])
+
 === Vader (For Non-Batch)
 
 [cols="1,1"]
 |===
-|Strategy |Result type
+|Execution Strategy |Result type
 
 |===
 
@@ -178,7 +180,7 @@ image:api.png[API]
 
 [cols="1,1"]
 |===
-|Strategy |Result type
+|Execution Strategy |Result type
 
 |===
 
@@ -268,7 +270,7 @@ Even if the data-structure (member) is nested inside another bean (container), t
 == How can I trust Vader?
 
 [.lead]
-Well, coz that’s the *bread-&-jam* of what we promise!
+Well, coz that’s the *bread-&-jam* 🍞🥫 of what we promise!
 
 * It’s our responsibility to address all the edge cases and automate them thoroughly, for various types of POJOs.
 * We take code-quality & security seriously!
@@ -278,7 +280,7 @@ Well, coz that’s the *bread-&-jam* of what we promise!
 [#_impact]
 == Impact ☄️
 
-Vader has Consumer in *Production*:
+Vader has Consumers in *Production*:
 
 4 Teams:
 

@@ -22,7 +22,7 @@ To easily wrap your head around such data structure, visualise it like a *Tree*:
 
 image:batch-of-batch-1.png[]
 
-NOTE: Currently, the order of validation is *Level-Order*. All the `ContainerT`\s are validated first and for all the valid ones, their `MemberT`\s are validated. If a requirement/use-case arises, we can introduce a variant for *Depth-First* validation. 
+NOTE: Currently, it is only supported for `validateAndFailFast` execution strategy and the order of validation is *Level-Order*. All the ``ContainerT``s are validated first and for all the valid ones, their ``MemberT``s are validated. If a requirement/use-case arises, we can introduce a variant for *Depth-First* validation. 
 
 == Example
 
@@ -56,7 +56,7 @@ endif::[]
 
 === Validation Requirements
 
-* Validate N `List<Item>` (`ContainerT`\s), and for each `Item`, validate all its N `List<Bean>` (`MemberT`\s).
+* Validate N `List<Item>` (``ContainerT``s), and for each `Item`, validate all its N `List<Bean>` (``MemberT``s).
 
 === Demo
 
