@@ -23,11 +23,11 @@ public class Spec4<ValidatableT, FailureT> extends BaseSpec<ValidatableT, Failur
 
   @Singular("whenFieldMatches")
   @NonNull
-  Map<@Nullable Function1<ValidatableT, ?>, @Nullable Matcher<?>> whenFieldsMatch;
+  Map<Function1<ValidatableT, ?>, Matcher<?>> whenFieldsMatch;
 
   @Singular("thenFieldShouldMatch")
   @NonNull
-  Map<@Nullable Function1<ValidatableT, ?>, @Nullable Matcher<?>> thenFieldsShouldMatch;
+  Map<Function1<ValidatableT, ?>, Matcher<?>> thenFieldsShouldMatch;
 
   @Nullable Function2<Collection<?>, Collection<?>, ? extends FailureT> orFailWithFn;
 

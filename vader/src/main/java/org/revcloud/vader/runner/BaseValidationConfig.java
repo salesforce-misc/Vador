@@ -28,8 +28,7 @@ import org.revcloud.vader.types.ValidatorEtr;
 abstract class BaseValidationConfig<ValidatableT, FailureT> {
 
   @Singular("shouldHaveFieldOrFailWith")
-  protected Map<TypedPropertyGetter<ValidatableT, ?>, @Nullable FailureT>
-      shouldHaveFieldsOrFailWith;
+  protected Map<TypedPropertyGetter<ValidatableT, ?>, FailureT> shouldHaveFieldsOrFailWith;
 
   @Nullable
   protected Tuple2<
@@ -38,14 +37,12 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
       shouldHaveFieldsOrFailWithFn;
 
   @Singular("shouldHaveFieldOrFailWithFn")
-  protected Map<
-          TypedPropertyGetter<ValidatableT, ?>,
-          @NonNull Function2<String, Object, @Nullable FailureT>>
+  protected Map<TypedPropertyGetter<ValidatableT, ?>, Function2<String, Object, FailureT>>
       shouldHaveFieldOrFailWithFn;
 
   /** <--- ID --- */
   @Singular("shouldHaveValidSFIdFormatOrFailWith")
-  protected Map<TypedPropertyGetter<ValidatableT, @Nullable ID>, @Nullable FailureT>
+  protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT>
       shouldHaveValidSFIdFormatForAllOrFailWith;
 
   @Nullable
@@ -55,13 +52,11 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
       shouldHaveValidSFIdFormatForAllOrFailWithFn;
 
   @Singular("shouldHaveValidSFIdFormatOrFailWithFn")
-  protected Map<
-          TypedPropertyGetter<ValidatableT, ID>,
-          @NonNull Function2<String, @Nullable ID, @Nullable FailureT>>
+  protected Map<TypedPropertyGetter<ValidatableT, ID>, Function2<String, ID, FailureT>>
       shouldHaveValidSFIdFormatOrFailWithFn;
 
   @Singular("absentOrHaveValidSFIdFormatOrFailWith")
-  protected Map<TypedPropertyGetter<ValidatableT, @Nullable ID>, @Nullable FailureT>
+  protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT>
       absentOrHaveValidSFIdFormatForAllOrFailWith;
 
   @Nullable
@@ -71,9 +66,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
       absentOrHaveValidSFIdFormatForAllOrFailWithFn;
 
   @Singular("absentOrHaveValidSFIdFormatOrFailWithFn")
-  protected Map<
-          TypedPropertyGetter<ValidatableT, ID>,
-          @NonNull Function2<String, @Nullable ID, @Nullable FailureT>>
+  protected Map<TypedPropertyGetter<ValidatableT, ID>, Function2<String, ID, FailureT>>
       absentOrHaveValidSFIdFormatOrFailWithFn;
 
   /** --- ID ---> */
@@ -86,9 +79,9 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
   @Nullable protected Specs<ValidatableT, FailureT> specify;
 
   @Singular("withSpec")
-  protected Collection<Spec<ValidatableT, @Nullable FailureT>> withSpecs;
+  protected Collection<Spec<ValidatableT, FailureT>> withSpecs;
 
-  @Singular Collection<ValidatorEtr<ValidatableT, @Nullable FailureT>> withValidatorEtrs;
+  @Singular Collection<ValidatorEtr<ValidatableT, FailureT>> withValidatorEtrs;
 
   @Nullable
   Tuple2<
@@ -106,7 +99,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
    * spotless:on
    */
   @Singular("withValidator")
-  Map<? extends Validator<? super ValidatableT, FailureT>, @Nullable FailureT> withValidator;
+  Map<? extends Validator<? super ValidatableT, FailureT>, FailureT> withValidator;
 
   // ! TODO 05/08/21 gopala.akshintala: Migrate them to be used with custom assertions
   List<BaseSpec<ValidatableT, FailureT>> getSpecs() {

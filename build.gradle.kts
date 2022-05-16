@@ -196,7 +196,7 @@ sonarqube {
   }
 }
 kover {
-  coverageEngine.set(CoverageEngine.INTELLIJ)
+  coverageEngine.set(CoverageEngine.JACOCO)
   generateReportOnCheck = true
   runAllTestsForProjectTask = true
 }

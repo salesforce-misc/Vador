@@ -21,8 +21,7 @@ public class FieldConfig<FieldT, ValidatableT, FailureT> {
   @Nullable Predicate<FieldT> withFieldValidator;
 
   @Singular("shouldHaveValidFormatOrFailWith")
-  Map<@NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>, @Nullable FailureT>
-      shouldHaveValidFormatForAllOrFailWith;
+  Map<TypedPropertyGetter<ValidatableT, FieldT>, FailureT> shouldHaveValidFormatForAllOrFailWith;
 
   @Nullable
   Tuple2<
@@ -31,14 +30,11 @@ public class FieldConfig<FieldT, ValidatableT, FailureT> {
       shouldHaveValidFormatForAllOrFailWithFn;
 
   @Singular("shouldHaveValidFormatOrFailWithFn")
-  Map<
-          @NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>,
-          @NonNull Function2<String, @Nullable FieldT, @Nullable FailureT>>
+  Map<TypedPropertyGetter<ValidatableT, FieldT>, Function2<String, FieldT, FailureT>>
       shouldHaveValidFormatOrFailWithFn;
 
   @Singular("absentOrHaveValidFormatOrFailWith")
-  Map<@NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>, @Nullable FailureT>
-      absentOrHaveValidFormatForAllOrFailWith;
+  Map<TypedPropertyGetter<ValidatableT, FieldT>, FailureT> absentOrHaveValidFormatForAllOrFailWith;
 
   @Nullable
   Tuple2<
@@ -47,8 +43,6 @@ public class FieldConfig<FieldT, ValidatableT, FailureT> {
       absentOrHaveValidFormatForAllOrFailWithFn;
 
   @Singular("absentOrHaveValidFormatOrFailWithFn")
-  Map<
-          @NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>,
-          @NonNull Function2<String, @Nullable FieldT, @Nullable FailureT>>
+  Map<TypedPropertyGetter<ValidatableT, FieldT>, Function2<String, FieldT, FailureT>>
       absentOrHaveValidFormatOrFailWithFn;
 }

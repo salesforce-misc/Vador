@@ -19,8 +19,7 @@ abstract class BaseContainerValidationConfig<ContainerValidatableT, FailureT> {
   @Nullable protected Tuple2<@NonNull Integer, @Nullable FailureT> shouldHaveMaxBatchSizeOrFailWith;
 
   @Singular
-  protected Collection<ValidatorEtr<ContainerValidatableT, @Nullable FailureT>>
-      withContainerValidatorEtrs;
+  protected Collection<ValidatorEtr<ContainerValidatableT, FailureT>> withContainerValidatorEtrs;
 
   @Nullable
   protected Tuple2<
@@ -29,7 +28,7 @@ abstract class BaseContainerValidationConfig<ContainerValidatableT, FailureT> {
       withContainerValidators;
 
   @Singular("withContainerValidator")
-  protected Map<Validator<? super ContainerValidatableT, @Nullable FailureT>, @Nullable FailureT>
+  protected Map<Validator<? super ContainerValidatableT, FailureT>, FailureT>
       withContainerValidator;
 
   public List<ValidatorEtr<ContainerValidatableT, @Nullable FailureT>> getContainerValidators() {
