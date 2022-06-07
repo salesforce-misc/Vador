@@ -81,12 +81,12 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
     toValidators11(
       config?.absentOrHaveValidSFIdFormatForAllOrFailWith,
       config?.withIdValidator,
-      optionalIdValidatorFallBack,
+      optionalIdValidatorFallBack
     ) +
     toValidators12(
       config?.absentOrHaveValidSFIdFormatForAllOrFailWithFn,
       config?.withIdValidator,
-      optionalIdValidatorFallBack,
+      optionalIdValidatorFallBack
     ) +
     toValidators13(
       config?.absentOrHaveValidSFIdFormatOrFailWithFn,

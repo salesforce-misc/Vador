@@ -24,7 +24,7 @@ import java.util.Optional
 internal fun <FailureT, ValidatableT> findFirstFailure(
   validatable: Either<FailureT?, ValidatableT?>,
   validators: Collection<ValidatorEtr<ValidatableT?, FailureT?>>,
-  throwableMapper: (Throwable) -> FailureT?,
+  throwableMapper: (Throwable) -> FailureT?
 ): Either<FailureT?, ValidatableT?>? =
   if (validatable.isLeft) validatable
   else fireValidators(
@@ -42,7 +42,7 @@ internal fun <FailureT, ValidatableT> findFirstFailure(
 internal fun <FailureT, ValidatableT> fireValidators(
   validatable: Either<FailureT?, ValidatableT?>,
   validatorEtrs: Collection<ValidatorEtr<ValidatableT, FailureT>>,
-  throwableMapper: (Throwable) -> FailureT?,
+  throwableMapper: (Throwable) -> FailureT?
 ): Sequence<Either<FailureT?, ValidatableT?>> =
   validatorEtrs.asSequence().map { fireValidator(validatable, it, throwableMapper) }
 
@@ -50,7 +50,7 @@ internal fun <FailureT, ValidatableT> fireValidators(
 private fun <FailureT, ValidatableT> fireValidator(
   validatable: Either<FailureT?, ValidatableT?>,
   validatorEtr: ValidatorEtr<ValidatableT, FailureT>,
-  throwableMapper: (Throwable) -> FailureT?,
+  throwableMapper: (Throwable) -> FailureT?
 ): Either<FailureT?, ValidatableT?> =
   liftTry(validatorEtr).apply(validatable)
     .fold({ left<FailureT?, ValidatableT?>(throwableMapper(it)) }) { it }
@@ -117,7 +117,7 @@ internal fun <FailureT, ValidatableT> findAndFilterInvalids(
 
 private tailrec fun <ValidatableT, FailureT> findAndFilterInvalids(
   validatables: List<Triple<Index, ValidatableT?, Either<FailureT?, ValidatableT?>>>,
-  filterConfigs: Iterator<FilterDuplicatesConfigBuilder<ValidatableT, FailureT?>>,
+  filterConfigs: Iterator<FilterDuplicatesConfigBuilder<ValidatableT, FailureT?>>
 ): List<Triple<Index, ValidatableT?, Either<FailureT?, ValidatableT?>>> =
   if (!filterConfigs.hasNext()) {
     validatables
@@ -154,7 +154,7 @@ private fun <FailureT, ValidatableT> mapValidatablesWithNullKeys(
 
 private fun <FailureT, ValidatableT> mapValidatablesWithDuplicateKeys(
   failureForDuplicates: FailureT?,
-  duplicates: List<List<Triple<Index, ValidatableT, Either<FailureT?, ValidatableT>>>>,
+  duplicates: List<List<Triple<Index, ValidatableT, Either<FailureT?, ValidatableT>>>>
 ): List<Triple<Index, ValidatableT, Either<FailureT?, ValidatableT>>> =
   failureForDuplicates?.let {
     duplicates.flatten().map(mapWithFailure(it))
@@ -171,7 +171,7 @@ private fun <FailureT, ValidatableT> mapWithFailure(failure: FailureT?) =
 internal fun <ValidatableT, FailureT> findFirstInvalid(
   validatables: Collection<ValidatableT?>,
   failureForNullValidatable: FailureT?,
-  filterDuplicatesConfigBuilders: Collection<FilterDuplicatesConfigBuilder<ValidatableT, FailureT?>>,
+  filterDuplicatesConfigBuilders: Collection<FilterDuplicatesConfigBuilder<ValidatableT, FailureT?>>
 ): Optional<FailureT> =
   findFirstInvalid<ValidatableT, FailureT, Nothing>(
     validatables,

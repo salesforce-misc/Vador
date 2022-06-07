@@ -95,7 +95,7 @@ fun <FailureT, ValidatableT, PairT> validateAndFailFastForEach(
 private fun <FailureT, ValidatableT, PairT> pairInvalidsWithIdentifier(
   orderedValidationResults: List<Either<FailureT, ValidatableT?>>,
   validatables: List<ValidatableT>,
-  pairForInvalidMapper: (ValidatableT) -> PairT?,
+  pairForInvalidMapper: (ValidatableT) -> PairT?
 ): List<Either<Tuple2<PairT?, FailureT>, ValidatableT?>> =
   orderedValidationResults.zip(validatables).map { (result, validatable) ->
     result.mapLeft { Tuple.of(pairForInvalidMapper(validatable), it) }
@@ -131,7 +131,7 @@ private fun <FailureT, ContainerValidatableT, MemberValidatableT, ContainerPairT
   validatables: List<ContainerValidatableT>,
   memberBatchMapper: Function1<ContainerValidatableT, Collection<MemberValidatableT>>,
   containerPairForInvalidMapper: (ContainerValidatableT) -> ContainerPairT?,
-  memberPairForInvalidMapper: (MemberValidatableT) -> MemberPairT?,
+  memberPairForInvalidMapper: (MemberValidatableT) -> MemberPairT?
 ): List<Either<FFEBatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>, ContainerValidatableT?>> =
   orderedValidationResults.zip(validatables)
     .map { (result, validatable) ->
@@ -226,7 +226,7 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
   validatables: List<ValidatableT>,
   validators: List<Validator<ValidatableT?, FailureT?>>,
   none: FailureT, // ! TODO 27/09/21 gopala.akshintala: Remove this, like it's FF counterpart
-  throwableMapper: (Throwable) -> FailureT?,
+  throwableMapper: (Throwable) -> FailureT?
 ): List<List<Either<FailureT?, ValidatableT?>>> =
   validateAndAccumulateErrors(validatables, liftAllToEtr(validators, none), throwableMapper)
 
@@ -242,6 +242,6 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
 fun <FailureT, ValidatableT> validateAndAccumulateErrors(
   validatables: List<ValidatableT>,
   validatorEtrs: List<ValidatorEtr<ValidatableT?, FailureT?>>,
-  throwableMapper: (Throwable) -> FailureT? = { throw it },
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): List<List<Either<FailureT?, ValidatableT?>>> =
   validatables.map(accumulationStrategy(validatorEtrs, throwableMapper))

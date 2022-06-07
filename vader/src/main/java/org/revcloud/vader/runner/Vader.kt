@@ -44,7 +44,7 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
   validatable: ValidatableT,
   validators: Collection<Validator<ValidatableT?, FailureT?>>,
   none: FailureT,
-  throwableMapper: (Throwable) -> FailureT? = { throw it },
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): List<FailureT?> =
   validateAndAccumulateErrors(validatable, liftAllToEtr(validators, none), none, throwableMapper)
 
@@ -64,7 +64,7 @@ fun <FailureT, ValidatableT> validateAndAccumulateErrors(
   validatable: ValidatableT,
   validators: List<ValidatorEtr<ValidatableT?, FailureT?>>,
   none: FailureT,
-  throwableMapper: (Throwable) -> FailureT? = { throw it },
+  throwableMapper: (Throwable) -> FailureT? = { throw it }
 ): List<FailureT?> {
   val results = accumulationStrategy(validators, throwableMapper)(validatable)
     .map { result -> result.fold({ it }, { none }) }

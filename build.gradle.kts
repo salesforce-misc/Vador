@@ -12,7 +12,7 @@ plugins {
   idea
   id("org.jetbrains.kotlinx.kover") version "0.5.1"
   id("io.freefair.lombok") apply false
-  id("com.diffplug.spotless") version "6.4.2"
+  id("com.diffplug.spotless") version "6.7.0"
   id("org.sonarqube") version "3.3"
   id("io.gitlab.arturbosch.detekt") version "1.20.0"
   id("com.adarshr.test-logger") version "3.2.0"
@@ -32,11 +32,15 @@ allprojects {
     kotlin {
       target("src/main/java/**/*.kt", "src/test/java/**/*.kt")
       targetExclude("$buildDir/generated/**/*.*")
-      ktlint().userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
+      ktlint()
+        .setUseExperimental(true)
+        .editorConfigOverride(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
     }
     kotlinGradle {
       target("*.gradle.kts")
-      ktlint().userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
+      ktlint()
+        .setUseExperimental(true)
+        .editorConfigOverride(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
     }
     java {
       toggleOffOn()

@@ -1,4 +1,3 @@
-@file:JvmName("DateMatchersTest")
 package org.revcloud.vader.matchers
 
 import io.kotest.core.spec.style.StringSpec
@@ -14,7 +13,7 @@ class DateMatchersKtTest : StringSpec({
       row(1, GregorianCalendar(2021, Calendar.FEBRUARY, 1).time, true),
       row(2, GregorianCalendar(2021, Calendar.FEBRUARY, 1).time, false),
       row(null, GregorianCalendar(2021, Calendar.FEBRUARY, 1).time, false),
-      row(null, null, false),
+      row(null, null, false)
     ) { day, date, result ->
       isEqualToDayOfDate.apply(day, date) shouldBe result
     }
