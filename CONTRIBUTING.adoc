@@ -28,22 +28,30 @@ endif::[]
 <A>.<B>.<C>
 ====
 
-* A = We broke something on purpose. (Breaking API change)
+* A = We broke something on purpose (Breaking API change)
 * B = Profit (Feature / Improvement)
 * C = We broke something by accident (Bug)
 
 == Source-code Setup
 
 * This is a simple Gradle project and has its own Gradle wrapper. So nothing to install.
-* You need to add your nexus credentials in `~/.gradle/gradle.properties` file (create the file if not present), which are used by your local gradle to connect to nexus for downloading artifacts.
-You can find your nexus userName and password from https://nexus.soma.salesforce.com/nexus/#profile;User%20Token[here] under the *User Token* section in the dropdown.
-If you are working on `core`, you can also get them from `blt/app/main/core/workspace-user.xml` file.
+
+[NOTE]
+====
+There is currently one non-open source dependency `com.force.api:swag` due to which you may need this step. This will soon be removed as this project turns fully open source.
+
+* You need to add your nexus credentials in `~/.gradle/gradle.properties` file (create the file if not present), like below:
 
 [source,properties]
 ----
   nexusUsername=...your..nexus..username...
   nexusPassword=...your..nexus..password...
 ----
+
+* These are used by your local gradle to connect to Salesforce nexus for downloading artifacts.
+* You can find your nexus userName and password from https://nexus.soma.salesforce.com/nexus/#profile;User%20Token[here] under the *User Token* section in the dropdown.
+* If you are working on `core`, you can also get them from `blt/app/main/core/workspace-user.xml` file.
+====
 
 * Then run this from project's root to build Vader:
 
@@ -65,14 +73,14 @@ The latest version of the plugin should work.
 === Kotlin
 
 * The code-base is a mix of Java and Kotlin. If you are a Java developer and new to Kotlin, don't worry, Kotlin is a JVM language and can be used anywhere Java is used.
-In-fact, it has got the reputation of "Better Java!".
-* A typical Java developer can ramp-up on Kotlin in less than a week.
+In-fact, it has got the reputation of *"Better Java!"*.
+* A typical Java developer can ramp up on Kotlin in less than a week.
 This https://www.coursera.org/learn/kotlin-for-java-developers[*free course*] can help catalyse your ramp-up.
-* If you use Intellij, Kotlin plugin comes bundled. Similar developments aids should be present for other code editors too.
+* If you use Intellij, Kotlin plugin comes bundled. Similar development aids should be present for other code editors too.
 
 == SonarQube
 
-* The codebase is hooked to SonarQube and all the quality analysis and code-coverage can be checked https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader[in this portal]
+* The codebase is hooked to SonarQube and all the quality analysis and code-coverage can be checked https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader[in this portal].
 * The https://sonarqube.soma.salesforce.com/profiles/show?language=java&name=Vader+way[Quality Profile(QP)] has the sonar rules configured.
 For admin access on this profile, you may approach existing admins of this QP or reach out to #dpx-sonarqube-support on Slack.
 

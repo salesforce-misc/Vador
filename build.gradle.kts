@@ -12,13 +12,14 @@ plugins {
   idea
   id("org.jetbrains.kotlinx.kover") version "0.5.1"
   id("io.freefair.lombok") apply false
-  id("com.diffplug.spotless") version "6.7.0"
+  id("com.diffplug.spotless") version "6.7.2"
   id("org.sonarqube") version "3.3"
   id("io.gitlab.arturbosch.detekt") version "1.20.0"
   id("com.adarshr.test-logger") version "3.2.0"
   id("org.asciidoctor.jvm.gems") version "3.3.2"
   id("org.asciidoctor.jvm.revealjs") version "3.3.2"
   id("com.github.spotbugs") version "5.0.6"
+  id("com.github.jk1.dependency-license-report") version "2.0"
 }
 
 description = "Vader - An FP framework for POJO/Bean validation"
@@ -76,7 +77,7 @@ subprojects {
 
   val asciidoclet: Configuration by configurations.creating
   val lombokForSonarQube: Configuration by configurations.creating
-
+  val kotestVersion: String by project
   dependencies {
     asciidoclet("org.asciidoctor:asciidoclet:1.+")
     lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
@@ -85,7 +86,6 @@ subprojects {
     testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    val kotestVersion = "5.3.0"
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
   }
