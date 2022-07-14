@@ -26,22 +26,22 @@ class UtilsTest {
   @DisplayName("FailForDuplicates configured. FAIL: Null Validatables, FAIL: Duplicates")
   @Test
   void filterNullValidatablesAndFailDuplicates() {
-    final List<Bean> nullValidatables = io.vavr.collection.List.of(null, null);
+    final List<Bean1> nullValidatables = io.vavr.collection.List.of(null, null);
     final var duplicateValidatables =
         List.of(
-            new Bean(new ID("802xx000001ni4xAAA")),
-            new Bean(new ID("802xx000001ni4x")),
-            new Bean(new ID("802xx000001ni4x")));
+            new Bean1(new ID("802xx000001ni4xAAA")),
+            new Bean1(new ID("802xx000001ni4x")),
+            new Bean1(new ID("802xx000001ni4x")));
     final var validatables =
         nullValidatables
             .appendAll(duplicateValidatables)
             .appendAll(
-                List.of(new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
+                List.of(new Bean1(new ID("1")), new Bean1(new ID("2")), new Bean1(new ID("3"))));
 
     final var batchValidationConfig =
-        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        BatchValidationConfig.<Bean1, ValidationFailure>toValidate()
             .findAndFilterDuplicatesConfig(
-                FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
+                FilterDuplicatesConfig.<Bean1, ValidationFailure>toValidate()
                     .findAndFilterDuplicatesWith(
                         container -> container.getId().get18CharIdIfValid())
                     .andFailDuplicatesWith(DUPLICATE_ITEM))
@@ -125,22 +125,22 @@ class UtilsTest {
   @DisplayName("FailForDuplicates NOT configured. FAIL: NullValidatables, FILTER_ONLY: Duplicates")
   @Test
   void failNullValidatablesAndFilterDuplicates() {
-    final List<Bean> nullValidatables = List.of(null, null);
+    final List<Bean1> nullValidatables = List.of(null, null);
     final var duplicateValidatables =
         List.of(
-            new Bean(new ID("802xx000001ni4xAAA")),
-            new Bean(new ID("802xx000001ni4x")),
-            new Bean(new ID("802xx000001ni4x")));
+            new Bean1(new ID("802xx000001ni4xAAA")),
+            new Bean1(new ID("802xx000001ni4x")),
+            new Bean1(new ID("802xx000001ni4x")));
     final var validatables =
         nullValidatables
             .appendAll(duplicateValidatables)
             .appendAll(
-                List.of(new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
+                List.of(new Bean1(new ID("1")), new Bean1(new ID("2")), new Bean1(new ID("3"))));
 
     final var batchValidationConfig =
-        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        BatchValidationConfig.<Bean1, ValidationFailure>toValidate()
             .findAndFilterDuplicatesConfig(
-                FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
+                FilterDuplicatesConfig.<Bean1, ValidationFailure>toValidate()
                     .findAndFilterDuplicatesWith(
                         container ->
                             container.getId() == null
@@ -164,28 +164,70 @@ class UtilsTest {
         (r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId().toString()));
   }
 
+  @DisplayName("FailForDuplicates NOT configured. FAIL: NullValidatables, FILTER_ONLY: Duplicates")
+  @Test
+  void failNullValidatablesAndFilterDuplicates2() {
+    final List<Bean2> nullValidatables = List.of(null, null);
+    final var duplicateValidatables =
+        List.of(
+            new Bean2("802xx000001ni4x"),
+            new Bean2("802xx000001ni4x"),
+            new Bean2("802xx000001ni4x"));
+    final var validatables =
+        nullValidatables
+            .appendAll(duplicateValidatables)
+            .appendAll(
+                List.of(new Bean2("1"), new Bean2("2"), new Bean2("3")));
+
+    final var batchValidationConfig =
+        BatchValidationConfig.<Bean2, ValidationFailure>toValidate()
+            .findAndFilterDuplicatesConfig(
+                FilterDuplicatesConfig.<Bean2, ValidationFailure>toValidate()
+                    .findAndFilterDuplicatesWith(
+                        container ->
+                            container.getId() == null
+                                ? null
+                                : container.getId()))
+            .prepare();
+    final var results =
+        List.ofAll(
+            findAndFilterInvalids(
+                validatables.toJavaList(),
+                NOTHING_TO_VALIDATE,
+                batchValidationConfig.findAndFilterDuplicatesConfigs));
+
+    assertThat(results).hasSize(5);
+    final var failedInvalids = results.take(2);
+    assertThat(failedInvalids).allMatch(r -> r.getLeft() == NOTHING_TO_VALIDATE);
+
+    final var valids = results.drop(2);
+    assertTrue(valids.forAll(Either::isRight));
+    valids.forEachWithIndex(
+        (r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId().toString()));
+  }
+
   @DisplayName(
       "FailForDuplicates NOT configured. FAIL: Null Validatables, FAIL: Null Keys, FILTER_ONLY: Duplicates")
   @Test
   void failNullValidatablesAndNullKeysAndFilterDuplicates() {
-    final List<Bean> invalidValidatables = List.of(null, null);
+    final List<Bean1> invalidValidatables = List.of(null, null);
     final var duplicateValidatables =
         List.of(
-            new Bean(new ID("802xx000001ni4xAAA")),
-            new Bean(new ID("802xx000001ni4x")),
-            new Bean(new ID("802xx000001ni4x")));
-    final var validatablesWithNullKeys = List.of(new Bean(null), new Bean(null));
+            new Bean1(new ID("802xx000001ni4xAAA")),
+            new Bean1(new ID("802xx000001ni4x")),
+            new Bean1(new ID("802xx000001ni4x")));
+    final var validatablesWithNullKeys = List.of(new Bean1(null), new Bean1(null));
     final var validatables =
         invalidValidatables
             .appendAll(duplicateValidatables)
             .appendAll(validatablesWithNullKeys)
             .appendAll(
-                List.of(new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
+                List.of(new Bean1(new ID("1")), new Bean1(new ID("2")), new Bean1(new ID("3"))));
 
     final var batchValidationConfig =
-        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        BatchValidationConfig.<Bean1, ValidationFailure>toValidate()
             .findAndFilterDuplicatesConfig(
-                FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
+                FilterDuplicatesConfig.<Bean1, ValidationFailure>toValidate()
                     .findAndFilterDuplicatesWith(
                         container ->
                             container.getId() == null
@@ -217,24 +259,24 @@ class UtilsTest {
       "FailForDuplicates, FailForNullKeys NOT configured. FAIL: Null Validatables, PASS: Null Keys, FILTER_ONLY: Duplicates")
   @Test
   void failInvalidatablesAndPassNullKeysAndFilterDuplicates() {
-    final List<Bean> invalidValidatables = List.of(null, null);
+    final List<Bean1> invalidValidatables = List.of(null, null);
     final var duplicateValidatables =
         List.of(
-            new Bean(new ID("802xx000001ni4xAAA")),
-            new Bean(new ID("802xx000001ni4x")),
-            new Bean(new ID("802xx000001ni4x")));
-    final var validatablesWithNullKeys = List.of(new Bean(null), new Bean(null));
+            new Bean1(new ID("802xx000001ni4xAAA")),
+            new Bean1(new ID("802xx000001ni4x")),
+            new Bean1(new ID("802xx000001ni4x")));
+    final var validatablesWithNullKeys = List.of(new Bean1(null), new Bean1(null));
     final var validatables =
         invalidValidatables
             .appendAll(duplicateValidatables)
             .appendAll(validatablesWithNullKeys)
             .appendAll(
-                List.of(new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
+                List.of(new Bean1(new ID("1")), new Bean1(new ID("2")), new Bean1(new ID("3"))));
 
     final var batchValidationConfig =
-        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        BatchValidationConfig.<Bean1, ValidationFailure>toValidate()
             .findAndFilterDuplicatesConfig(
-                FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
+                FilterDuplicatesConfig.<Bean1, ValidationFailure>toValidate()
                     .findAndFilterDuplicatesWith(
                         container ->
                             container.getId() == null
@@ -253,7 +295,7 @@ class UtilsTest {
     assertThat(failedInvalids).allMatch(r -> r.getLeft() == NOTHING_TO_VALIDATE);
 
     final var nullKeyInvalids = results.drop(2).take(2);
-    assertThat(nullKeyInvalids).allMatch(r -> r.get().equals(new Bean(null)));
+    assertThat(nullKeyInvalids).allMatch(r -> r.get().equals(new Bean1(null)));
 
     final var valids = results.drop(4);
     assertTrue(valids.forAll(Either::isRight));
@@ -264,22 +306,22 @@ class UtilsTest {
   @DisplayName("First Failure : Null validatable")
   @Test
   void filterInvalidatablesAndFailDuplicatesForAllOrNoneNullValidatables() {
-    final List<Bean> invalidValidatables = List.of(null, null);
+    final List<Bean1> invalidValidatables = List.of(null, null);
     final var duplicateValidatables =
         List.of(
-            new Bean(new ID("802xx000001ni4xAAA")),
-            new Bean(new ID("802xx000001ni4x")),
-            new Bean(new ID("802xx000001ni4x")));
+            new Bean1(new ID("802xx000001ni4xAAA")),
+            new Bean1(new ID("802xx000001ni4x")),
+            new Bean1(new ID("802xx000001ni4x")));
     final var validatables =
         invalidValidatables
             .appendAll(duplicateValidatables)
             .appendAll(
-                List.of(new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
+                List.of(new Bean1(new ID("1")), new Bean1(new ID("2")), new Bean1(new ID("3"))));
 
     final var batchValidationConfig =
-        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        BatchValidationConfig.<Bean1, ValidationFailure>toValidate()
             .findAndFilterDuplicatesConfig(
-                FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
+                FilterDuplicatesConfig.<Bean1, ValidationFailure>toValidate()
                     .findAndFilterDuplicatesWith(container -> container.getId().toString())
                     .andFailDuplicatesWith(DUPLICATE_ITEM))
             .prepare();
@@ -294,14 +336,14 @@ class UtilsTest {
   @Test
   void filterInvalidatablesAndDuplicatesForAllOrNone() {
     final var duplicateValidatables =
-        List.of(new Bean(new ID("0")), new Bean(new ID("0")), new Bean(new ID("0")));
+        List.of(new Bean1(new ID("0")), new Bean1(new ID("0")), new Bean1(new ID("0")));
     final var validatables =
         duplicateValidatables.appendAll(
-            List.of(new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
+            List.of(new Bean1(new ID("1")), new Bean1(new ID("2")), new Bean1(new ID("3"))));
     final var batchValidationConfig =
-        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        BatchValidationConfig.<Bean1, ValidationFailure>toValidate()
             .findAndFilterDuplicatesConfig(
-                FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
+                FilterDuplicatesConfig.<Bean1, ValidationFailure>toValidate()
                     .findAndFilterDuplicatesWith(container -> container.getId().toString()))
             .prepare();
     final var result =
@@ -315,17 +357,17 @@ class UtilsTest {
   @Test
   void filterInvalidatablesAndDuplicatesAndFailNullKeysForAllOrNone() {
     final var duplicateValidatables =
-        List.of(new Bean(new ID("0")), new Bean(new ID("0")), new Bean(new ID("0")));
-    final var nullKeyValidatables = List.of(new Bean(null), new Bean(null));
+        List.of(new Bean1(new ID("0")), new Bean1(new ID("0")), new Bean1(new ID("0")));
+    final var nullKeyValidatables = List.of(new Bean1(null), new Bean1(null));
     final var validatables =
         duplicateValidatables
             .appendAll(nullKeyValidatables)
             .appendAll(
-                List.of(new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
+                List.of(new Bean1(new ID("1")), new Bean1(new ID("2")), new Bean1(new ID("3"))));
     final var batchValidationConfig =
-        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        BatchValidationConfig.<Bean1, ValidationFailure>toValidate()
             .findAndFilterDuplicatesConfig(
-                FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
+                FilterDuplicatesConfig.<Bean1, ValidationFailure>toValidate()
                     .findAndFilterDuplicatesWith(
                         container ->
                             container.getId() == null ? null : container.getId().toString())
@@ -342,15 +384,15 @@ class UtilsTest {
   @Test
   void filterInvalidatablesAndDuplicatesForAllOrNoneDuplicate() {
     final var duplicateValidatables =
-        List.of(new Bean(new ID("0")), new Bean(new ID("0")), new Bean(new ID("0")));
+        List.of(new Bean1(new ID("0")), new Bean1(new ID("0")), new Bean1(new ID("0")));
     final var validatables =
         duplicateValidatables.appendAll(
-            List.of(new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3"))));
+            List.of(new Bean1(new ID("1")), new Bean1(new ID("2")), new Bean1(new ID("3"))));
 
     final var batchValidationConfig =
-        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        BatchValidationConfig.<Bean1, ValidationFailure>toValidate()
             .findAndFilterDuplicatesConfig(
-                FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
+                FilterDuplicatesConfig.<Bean1, ValidationFailure>toValidate()
                     .findAndFilterDuplicatesWith(container -> container.getId().toString())
                     .andFailDuplicatesWith(DUPLICATE_ITEM))
             .prepare();
@@ -365,11 +407,11 @@ class UtilsTest {
   @Test
   void filterInvalidatablesAndDuplicatesForAllOrNoneAllValid() {
     final var validatables =
-        List.of(new Bean(new ID("1")), new Bean(new ID("2")), new Bean(new ID("3")));
+        List.of(new Bean1(new ID("1")), new Bean1(new ID("2")), new Bean1(new ID("3")));
     final var batchValidationConfig =
-        BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+        BatchValidationConfig.<Bean1, ValidationFailure>toValidate()
             .findAndFilterDuplicatesConfig(
-                FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
+                FilterDuplicatesConfig.<Bean1, ValidationFailure>toValidate()
                     .findAndFilterDuplicatesWith(container -> container.getId().toString())
                     .andFailDuplicatesWith(DUPLICATE_ITEM))
             .prepare();
@@ -383,11 +425,16 @@ class UtilsTest {
 
   @Value
   // tag::batch-bean[]
-  private static class Bean {
+  private static class Bean1 {
     ID id;
   }
   // end::batch-bean[]
 
+  @Value
+  private static class Bean2 {
+    String id;
+  }
+  
   @Value
   // tag::batch-bean-multikey[]
   private static class MultiKeyBean {
