@@ -3,7 +3,6 @@ package org.revcloud.vader.runner.config;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.revcloud.vader.runner.Vader.validateAndFailFast;
-import static sample.consumer.failure.ValidationFailure.FIELD_INTEGRITY_EXCEPTION;
 import static sample.consumer.failure.ValidationFailure.NONE;
 import static sample.consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
 import static sample.consumer.failure.ValidationFailure.REQUIRED_FIELD_MISSING;
@@ -12,7 +11,6 @@ import static sample.consumer.failure.ValidationFailure.REQUIRED_FIELD_MISSING_2
 import static sample.consumer.failure.ValidationFailure.REQUIRED_LIST_MISSING;
 import static sample.consumer.failure.ValidationFailure.getFailureWithParams;
 
-import com.force.swag.id.ID;
 import io.vavr.Tuple;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +25,7 @@ import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.revcloud.vader.runner.FieldConfig;
 import org.revcloud.vader.runner.ValidationConfig;
 import org.revcloud.vader.specs.Specs;
 import sample.consumer.failure.ValidationFailure;
@@ -46,10 +45,6 @@ class BaseValidationConfigTest {
                     Bean::getRequiredField1, REQUIRED_FIELD_MISSING_1,
                     Bean::getRequiredField2, REQUIRED_FIELD_MISSING_2,
                     Bean::getRequiredList, REQUIRED_LIST_MISSING))
-            .shouldHaveValidSFIdFormatForAllOrFailWith(
-                Map.of(
-                    Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION,
-                    Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION))
             .withValidatorEtr(
                 beanEtr -> beanEtr.filterOrElse(Objects::nonNull, ignore -> NOTHING_TO_VALIDATE))
             .prepare();
@@ -111,60 +106,20 @@ class BaseValidationConfigTest {
   }
 
   @Test
-  void failFastWithInvalidId() {
-    final var validationConfig =
-        ValidationConfig.<Bean, ValidationFailure>toValidate()
-            .shouldHaveFieldsOrFailWith(
-                Map.of(
-                    Bean::getRequiredField1, REQUIRED_FIELD_MISSING,
-                    Bean::getRequiredField2, REQUIRED_FIELD_MISSING))
-            .shouldHaveValidSFIdFormatForAllOrFailWith(
-                Map.of(
-                    Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION,
-                    Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION))
-            .prepare();
-    final var validatableWithInvalidSfId =
-        new Bean(0, "1", new ID("1ttxx00000000hZAAQ"), new ID("invalidSfId"), emptyList());
-    final var result = validateAndFailFast(validatableWithInvalidSfId, validationConfig);
-    assertThat(result).contains(FIELD_INTEGRITY_EXCEPTION);
-  }
-
-  @Test
-  void failFastWithInvalidIdFailWithFn() {
-    final var validationConfig =
-        ValidationConfig.<Bean, ValidationFailure>toValidate()
-            .shouldHaveValidSFIdFormatForAllOrFailWithFn(
-                Tuple.of(
-                    List.of(Bean::getSfId1, Bean::getSfId2),
-                    (name, value) ->
-                        getFailureWithParams(
-                            ValidationFailureMessage.MSG_WITH_PARAMS, name, value)))
-            .prepare();
-    final var expectedFieldNames = Set.of(Bean.Fields.sfId1, Bean.Fields.sfId2);
-    assertThat(validationConfig.getRequiredFieldNamesForSFIdFormat(Bean.class))
-        .isEqualTo(expectedFieldNames);
-    final var invalidSfId = new ID("invalidSfId");
-    final var validatableWithInvalidSfId =
-        new Bean(null, null, new ID("1ttxx00000000hZAAQ"), invalidSfId, emptyList());
-    final var result = validateAndFailFast(validatableWithInvalidSfId, validationConfig);
-    assertThat(result).isPresent();
-    assertThat(result.get().getValidationFailureMessage().getParams())
-        .containsExactly(Bean.Fields.sfId2, invalidSfId);
-  }
-
-  @Test
   void getSpecWithNameWithDuplicateNames() {
     val duplicateSpecName = "DuplicateSpecName";
     final var specsForConfig =
-        (Specs<BeanWithIdFields, ValidationFailure>)
+        (Specs<BeanWithIdStrFields, ValidationFailure>)
             spec ->
                 List.of(
                     spec._1()
                         .nameForTest(duplicateSpecName)
-                        .given(BeanWithIdFields::getRequiredField),
-                    spec._1().nameForTest(duplicateSpecName).given(BeanWithIdFields::getContactId));
+                        .given(BeanWithIdStrFields::getRequiredField),
+                    spec._1()
+                        .nameForTest(duplicateSpecName)
+                        .given(BeanWithIdStrFields::getContactId));
     final var validationConfig =
-        ValidationConfig.<BeanWithIdFields, ValidationFailure>toValidate()
+        ValidationConfig.<BeanWithIdStrFields, ValidationFailure>toValidate()
             .specify(specsForConfig)
             .prepare();
     Assertions.assertThrows(
@@ -175,17 +130,11 @@ class BaseValidationConfigTest {
   @Test
   void getFieldNames() {
     final var validationConfig =
-        ValidationConfig.<BeanWithIdFields, ValidationFailure>toValidate()
-            .shouldHaveFieldOrFailWith(BeanWithIdFields::getRequiredField, NONE)
-            .shouldHaveValidSFIdFormatOrFailWith(BeanWithIdFields::getAccountId, NONE)
-            .absentOrHaveValidSFIdFormatOrFailWith(BeanWithIdFields::getContactId, NONE)
+        ValidationConfig.<BeanWithIdStrFields, ValidationFailure>toValidate()
+            .shouldHaveFieldOrFailWith(BeanWithIdStrFields::getRequiredField, NONE)
             .prepare();
-    assertThat(validationConfig.getRequiredFieldNames(BeanWithIdFields.class))
-        .contains(BeanWithIdFields.Fields.requiredField);
-    assertThat(validationConfig.getRequiredFieldNamesForSFIdFormat(BeanWithIdFields.class))
-        .contains(BeanWithIdFields.Fields.accountId);
-    assertThat(validationConfig.getNonRequiredFieldNamesForSFIdFormat(BeanWithIdFields.class))
-        .contains(BeanWithIdFields.Fields.contactId);
+    assertThat(validationConfig.getRequiredFieldNames(BeanWithIdStrFields.class))
+        .contains(BeanWithIdStrFields.Fields.requiredField);
   }
 
   // tag::validationConfig-for-nested-bean-demo[]
@@ -193,7 +142,15 @@ class BaseValidationConfigTest {
   void nestedBeanValidationWithInvalidMember() {
     final var memberValidationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate()
-            .shouldHaveValidSFIdFormatForAllOrFailWithFn(
+            .withFieldConfig(
+                FieldConfig.<String, Bean, ValidationFailure>toValidate()
+                    .withFieldValidator(fieldStr -> !fieldStr.equals("invalidSfId"))
+                    .shouldHaveValidFormatOrFailWithFn(
+                        Bean::getSfId2,
+                        (name, value) ->
+                            getFailureWithParams(
+                                ValidationFailureMessage.MSG_WITH_PARAMS, name, value)))
+            .shouldHaveFieldsOrFailWithFn(
                 Tuple.of(
                     List.of(Bean::getSfId1, Bean::getSfId2),
                     (name, value) ->
@@ -208,9 +165,9 @@ class BaseValidationConfigTest {
                     getFailureWithParams(ValidationFailureMessage.MSG_WITH_PARAMS, name, value))
             .prepare();
 
-    final var invalidSfId = new ID("invalidSfId");
+    final String invalidSfId = "invalidSfId";
     final var memberWithInvalidSfId =
-        new Bean(null, null, new ID("1ttxx00000000hZAAQ"), invalidSfId, emptyList());
+        new Bean(null, null, "1ttxx00000000hZAAQ", invalidSfId, emptyList());
     final var validContainer = new ContainerBean("requiredField", memberWithInvalidSfId);
     final var result =
         validateAndFailFast(validContainer, containerValidationConfig)
@@ -232,15 +189,6 @@ class BaseValidationConfigTest {
   }
 
   @Data
-  @AllArgsConstructor
-  @FieldNameConstants
-  public static class BeanWithMixIdFields {
-    String requiredField;
-    ID accountId;
-    String contactId;
-  }
-
-  @Data
   @FieldNameConstants
   @AllArgsConstructor
   // tag::nested-bean[]
@@ -248,8 +196,8 @@ class BaseValidationConfigTest {
   public static class Bean {
     private final Integer requiredField1;
     private final String requiredField2;
-    private final ID sfId1;
-    private final ID sfId2;
+    private final String sfId1;
+    private final String sfId2;
     private final List<String> requiredList;
   }
   // end::flat-bean[]
@@ -262,15 +210,6 @@ class BaseValidationConfigTest {
     Bean bean;
   }
   // end::nested-bean[]
-
-  @Data
-  @FieldNameConstants
-  @AllArgsConstructor
-  public static class BeanWithIdFields {
-    String requiredField;
-    ID accountId;
-    ID contactId;
-  }
 
   @Data
   @FieldNameConstants

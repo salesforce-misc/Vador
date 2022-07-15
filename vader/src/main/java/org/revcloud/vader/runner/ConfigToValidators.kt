@@ -1,7 +1,5 @@
 package org.revcloud.vader.runner
 
-import com.force.swag.id.ID
-import com.force.swag.id.IdTraits
 import de.cronn.reflection.util.PropertyUtils
 import de.cronn.reflection.util.TypedPropertyGetter
 import io.vavr.Function2
@@ -56,49 +54,40 @@ private fun <ValidatableT, FailureT, FieldT> toValidatorEtrs3(
 
 @JvmSynthetic
 private fun <IDT, ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
-  config: IDConfig<IDT, ValidatableT, FailureT, EntityInfoT>?,
-  idValidatorFallback: (IDT?) -> Boolean,
-  optionalIdValidatorFallBack: (IDT?) -> Boolean
+  config: IDConfig<IDT, ValidatableT, FailureT, EntityInfoT>?
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   toValidators11(
     config?.shouldHaveValidSFIdFormatForAllOrFailWith,
     config?.withIdValidator,
-    idValidatorFallback,
     true
   ) +
     toValidators12(
       config?.shouldHaveValidSFIdFormatForAllOrFailWithFn,
       config?.withIdValidator,
-      idValidatorFallback,
       true
     ) +
     toValidators13(
       config?.shouldHaveValidSFIdFormatOrFailWithFn,
       config?.withIdValidator,
-      idValidatorFallback,
       true
     ) +
     toValidators11(
       config?.absentOrHaveValidSFIdFormatForAllOrFailWith,
-      config?.withIdValidator,
-      optionalIdValidatorFallBack
+      config?.withIdValidator
     ) +
     toValidators12(
       config?.absentOrHaveValidSFIdFormatForAllOrFailWithFn,
-      config?.withIdValidator,
-      optionalIdValidatorFallBack
+      config?.withIdValidator
     ) +
     toValidators13(
       config?.absentOrHaveValidSFIdFormatOrFailWithFn,
-      config?.withIdValidator,
-      optionalIdValidatorFallBack
+      config?.withIdValidator
     )
 
 @JvmSynthetic
 private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators11(
   config: Map<Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out EntityInfoT>, FailureT?>?,
   idValidator: Function2<IDT, EntityInfoT, Boolean>?,
-  idValidatorFallback: (IDT?) -> Boolean,
   optionalId: Boolean = false
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   config?.map { (tuple2, failure) ->
@@ -106,7 +95,7 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators11(
     ValidatorEtr { validatable ->
       validatable.map(idFieldMapper::get)
         .filterOrElse(
-          validateId(idValidator, entityInfo, idValidatorFallback, optionalId)
+          validateId(idValidator, entityInfo, optionalId)
         ) { failure }
     }
   } ?: emptyList()
@@ -115,7 +104,6 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators11(
 private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators12(
   config: Tuple2<Map<TypedPropertyGetter<ValidatableT, IDT?>, EntityInfoT>, Function2<String, IDT?, FailureT?>>?,
   idValidator: Function2<IDT, EntityInfoT, Boolean>?,
-  idValidatorFallback: (IDT?) -> Boolean,
   optionalId: Boolean = false
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   config?.let { (idFieldMapperToEntityInfo, failureFn) ->
@@ -123,7 +111,7 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators12(
       ValidatorEtr { validatable ->
         validatable.map(idFieldMapper::get)
           .filterOrElse(
-            validateId(idValidator, entityInfo, idValidatorFallback, optionalId),
+            validateId(idValidator, entityInfo, optionalId),
             applyFailureFn(failureFn, validatable, idFieldMapper)
           )
       }
@@ -134,7 +122,6 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators12(
 private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators13(
   config: Map<Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out EntityInfoT>, Function2<String, IDT?, FailureT?>>?,
   idValidator: Function2<IDT, EntityInfoT, Boolean>?,
-  idValidatorFallback: (IDT?) -> Boolean,
   optionalId: Boolean = false
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   config?.map { (tuple2, failureFn) ->
@@ -142,7 +129,7 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators13(
     ValidatorEtr { validatable ->
       validatable.map(idFieldMapper::get)
         .filterOrElse(
-          validateId(idValidator, entityInfo, idValidatorFallback, optionalId),
+          validateId(idValidator, entityInfo, optionalId),
           applyFailureFn(failureFn, validatable, idFieldMapper)
         )
     }
@@ -152,15 +139,14 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators13(
 private fun <IDT, EntityInfoT> validateId(
   idValidator: Function2<IDT, EntityInfoT, Boolean>?,
   entityInfo: EntityInfoT,
-  idValidatorFallback: (IDT?) -> Boolean,
   optionalId: Boolean
-) = { id: IDT? ->
+): (IDT?) -> Boolean = { id: IDT? ->
   when {
     idValidator != null -> when {
       optionalId -> id != null && idValidator.apply(id, entityInfo)
       else -> id == null || idValidator.apply(id, entityInfo)
     }
-    else -> idValidatorFallback(id)
+    else -> { true }
   }
 }
 
@@ -260,12 +246,6 @@ internal fun <ValidatableT, FailureT> toValidators(
   toValidatorEtrs1(config.shouldHaveFieldsOrFailWith, isFieldPresent) +
     toValidatorEtrs2(config.shouldHaveFieldsOrFailWithFn, isFieldPresent) +
     toValidatorEtrs3(config.shouldHaveFieldOrFailWithFn, isFieldPresent) +
-    toValidatorEtrs1(config.shouldHaveValidSFIdFormatForAllOrFailWith, isSFIdPresentAndValidFormat) +
-    toValidatorEtrs2(config.shouldHaveValidSFIdFormatForAllOrFailWithFn, isSFIdPresentAndValidFormat) +
-    toValidatorEtrs3(config.shouldHaveValidSFIdFormatOrFailWithFn, isSFIdPresentAndValidFormat) +
-    toValidatorEtrs1(config.absentOrHaveValidSFIdFormatForAllOrFailWith, isSFIdAbsentOrValidFormat) +
-    toValidatorEtrs2(config.absentOrHaveValidSFIdFormatForAllOrFailWithFn, isSFIdAbsentOrValidFormat) +
-    toValidatorEtrs3(config.absentOrHaveValidSFIdFormatOrFailWithFn, isSFIdAbsentOrValidFormat) +
     toValidatorEtrs4(config.withIdConfigs) +
     toValidatorEtrs5(config.withFieldConfigs) +
     config.specs.map { it.toValidator() } +
@@ -275,9 +255,7 @@ internal fun <ValidatableT, FailureT> toValidators(
 private fun <FailureT, ValidatableT> toValidatorEtrs4(configs: Collection<IDConfigBuilder<*, ValidatableT, FailureT, *>>?): List<ValidatorEtr<ValidatableT, FailureT>> =
   configs?.flatMap {
     idConfigToValidatorEtrs(
-      it.prepare(),
-      fallBackValidator(isSFIdPresentAndValidFormat),
-      fallBackValidator(isSFIdAbsentOrValidFormat)
+      it.prepare()
     )
   } ?: emptyList()
 
@@ -313,23 +291,5 @@ private val isFieldPresent: (Any?) -> Boolean = {
     is List<*> -> it.isNotEmpty()
     is Optional<*> -> it.isPresent
     else -> true
-  }
-}
-
-@JvmSynthetic
-private val isSFIdPresentAndValidFormat: (ID?) -> Boolean =
-  { it != null && IdTraits.isValidIdStrictChecking(it.toString(), true) }
-
-@JvmSynthetic
-private val isSFIdAbsentOrValidFormat: (ID?) -> Boolean =
-  { it == null || IdTraits.isValidIdStrictChecking(it.toString(), true) }
-
-private val fallBackValidator: ((ID?) -> Boolean) -> ((Any?) -> Boolean) = { fallBackValidator ->
-  {
-    when (it) {
-      is String -> fallBackValidator(ID(it))
-      is ID -> fallBackValidator(it)
-      else -> throw IllegalArgumentException("Unknown Data-type for required ID: ${it?.javaClass?.name}")
-    }
   }
 }

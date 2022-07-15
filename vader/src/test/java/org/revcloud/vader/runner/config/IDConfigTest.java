@@ -9,7 +9,6 @@ import static sample.consumer.failure.ValidationFailure.INVALID_UDD_ID_2;
 import static sample.consumer.failure.ValidationFailure.INVALID_UDD_ID_3;
 import static sample.consumer.failure.ValidationFailure.getFailureWithParams;
 
-import com.force.swag.id.ID;
 import io.vavr.Tuple;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
 import lombok.experimental.FieldNameConstants;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.runner.BatchValidationConfig;
 import org.revcloud.vader.runner.IDConfig;
@@ -25,7 +23,6 @@ import org.revcloud.vader.runner.Vader;
 import org.revcloud.vader.runner.VaderBatch;
 import org.revcloud.vader.runner.ValidationConfig;
 import org.revcloud.vader.runner.config.BaseValidationConfigTest.BeanWithIdStrFields;
-import org.revcloud.vader.runner.config.BaseValidationConfigTest.BeanWithMixIdFields;
 import sample.consumer.failure.ValidationFailure;
 
 class IDConfigTest {
@@ -111,27 +108,6 @@ class IDConfigTest {
   }
 
   @Test
-  @DisplayName("Not providing withValidator leads to the usage of Fallback validator")
-  void idConfigWithFallBackValidator() {
-    final var config =
-        ValidationConfig.<BeanWithIdFields2, ValidationFailure>toValidate()
-            .withIdConfig(
-                IDConfig.<ID, BeanWithIdFields2, ValidationFailure, EntityId>toValidate()
-                    .shouldHaveValidSFIdFormatForAllOrFailWith(
-                        Map.of(
-                            Tuple.of(BeanWithIdFields2::getAccountId, AccountUddConstants.EntityId),
-                            INVALID_UDD_ID,
-                            Tuple.of(BeanWithIdFields2::getContactId, ContactUddConstants.EntityId),
-                            INVALID_UDD_ID_2)))
-            .prepare();
-    final var valid18DigitSFId = "001xx000003GYQxAAO";
-    final var result =
-        Vader.validateAndFailFast(
-            new BeanWithIdFields2(new ID(valid18DigitSFId), new ID(INVALID_SF_ID)), config);
-    assertThat(result).contains(INVALID_UDD_ID_2);
-  }
-
-  @Test
   void idConfigWithStrIds() {
     final var config =
         ValidationConfig.<BeanWithIdStrFields, ValidationFailure>toValidate()
@@ -206,11 +182,11 @@ class IDConfigTest {
     // ! NOTE: These should be implemented by the client and passed through `withIdValidator`
 
     private static boolean isThisEntity(ID idToValidate, EntityId entityId) {
-      return !idToValidate.toString().equalsIgnoreCase(INVALID_SF_ID); // dummy implementation
+      return !idToValidate.value.equalsIgnoreCase(INVALID_SF_ID); // dummy implementation
     }
 
-    private static boolean isThisEntity(String idToValidate, EntityId entityId) {
-      return !idToValidate.equalsIgnoreCase(INVALID_SF_ID); // dummy implementation
+    private static boolean isThisEntity(String idStrToValidate, EntityId entityId) {
+      return !idStrToValidate.equalsIgnoreCase(INVALID_SF_ID); // dummy implementation
     }
   }
   // end::bean-strict-id-validation[]
@@ -259,5 +235,19 @@ class IDConfigTest {
     ID accountId;
     ID contactId;
     ID productId;
+  }
+
+  @Data
+  @AllArgsConstructor
+  @FieldNameConstants
+  public static class BeanWithMixIdFields {
+    String requiredField;
+    ID accountId;
+    String contactId;
+  }
+
+  @Value
+  private static class ID {
+    String value;
   }
 }

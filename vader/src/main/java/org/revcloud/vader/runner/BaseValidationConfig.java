@@ -1,6 +1,5 @@
 package org.revcloud.vader.runner;
 
-import com.force.swag.id.ID;
 import de.cronn.reflection.util.TypedPropertyGetter;
 import io.vavr.Function2;
 import io.vavr.Tuple2;
@@ -39,36 +38,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
   @Singular("shouldHaveFieldOrFailWithFn")
   protected Map<TypedPropertyGetter<ValidatableT, ?>, Function2<String, Object, FailureT>>
       shouldHaveFieldOrFailWithFn;
-
-  /** <--- ID --- */
-  @Singular("shouldHaveValidSFIdFormatOrFailWith")
-  protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT>
-      shouldHaveValidSFIdFormatForAllOrFailWith;
-
-  @Nullable
-  protected Tuple2<
-          @NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, @Nullable ID>>,
-          @NonNull Function2<String, @Nullable ID, @Nullable FailureT>>
-      shouldHaveValidSFIdFormatForAllOrFailWithFn;
-
-  @Singular("shouldHaveValidSFIdFormatOrFailWithFn")
-  protected Map<TypedPropertyGetter<ValidatableT, ID>, Function2<String, ID, FailureT>>
-      shouldHaveValidSFIdFormatOrFailWithFn;
-
-  @Singular("absentOrHaveValidSFIdFormatOrFailWith")
-  protected Map<TypedPropertyGetter<ValidatableT, ID>, FailureT>
-      absentOrHaveValidSFIdFormatForAllOrFailWith;
-
-  @Nullable
-  protected Tuple2<
-          @NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, ID>>,
-          @NonNull Function2<String, @Nullable ID, @Nullable FailureT>>
-      absentOrHaveValidSFIdFormatForAllOrFailWithFn;
-
-  @Singular("absentOrHaveValidSFIdFormatOrFailWithFn")
-  protected Map<TypedPropertyGetter<ValidatableT, ID>, Function2<String, ID, FailureT>>
-      absentOrHaveValidSFIdFormatOrFailWithFn;
-
+  
   /** --- ID ---> */
   @Singular @Nullable
   protected Collection<IDConfigBuilder<?, ValidatableT, FailureT, ?>> withIdConfigs;
@@ -92,7 +62,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
   /**
    * spotless:off
    * `withValidators` is used for the above combination. 
-   * This is meant to be used when passing individual parameters like:
+   * `withValidator` is meant to be used when passing individual parameters like:
    * ValidationConfig.<Bean, ValidationFailure>toValidate()
    *             .withValidator(validator1, failure1)
    *             .withValidator(validator2, failure2)
@@ -112,13 +82,5 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
 
   public Set<String> getRequiredFieldNames(Class<ValidatableT> beanClass) {
     return BaseValidationConfigEx.getRequiredFieldNamesEx(this, beanClass);
-  }
-
-  public Set<String> getRequiredFieldNamesForSFIdFormat(Class<ValidatableT> beanClass) {
-    return BaseValidationConfigEx.getRequiredFieldNamesForSFIdFormatEx(this, beanClass);
-  }
-
-  public Set<String> getNonRequiredFieldNamesForSFIdFormat(Class<ValidatableT> beanClass) {
-    return BaseValidationConfigEx.getNonRequiredFieldNamesForSFIdFormatEx(this, beanClass);
   }
 }

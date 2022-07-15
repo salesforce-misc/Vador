@@ -6,7 +6,8 @@
 
 package sample.consumer.bean;
 
-import com.force.swag.id.ID;
+// import com.force.swag.id.ID;
+
 import lombok.ToString;
 
 @ToString(callSuper = true)
@@ -20,7 +21,7 @@ public class Container extends Parent {
     super(id, null, null);
   }
 
-  public Container(ID sfId1) {
+  public Container(String sfId1) {
     super(0, sfId1, null);
   }
 }
