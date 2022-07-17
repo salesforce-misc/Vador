@@ -176,18 +176,14 @@ class UtilsTest {
     final var validatables =
         nullValidatables
             .appendAll(duplicateValidatables)
-            .appendAll(
-                List.of(new Bean2("1"), new Bean2("2"), new Bean2("3")));
+            .appendAll(List.of(new Bean2("1"), new Bean2("2"), new Bean2("3")));
 
     final var batchValidationConfig =
         BatchValidationConfig.<Bean2, ValidationFailure>toValidate()
             .findAndFilterDuplicatesConfig(
                 FilterDuplicatesConfig.<Bean2, ValidationFailure>toValidate()
                     .findAndFilterDuplicatesWith(
-                        container ->
-                            container.getId() == null
-                                ? null
-                                : container.getId()))
+                        container -> container.getId() == null ? null : container.getId()))
             .prepare();
     final var results =
         List.ofAll(
@@ -434,7 +430,7 @@ class UtilsTest {
   private static class Bean2 {
     String id;
   }
-  
+
   @Value
   // tag::batch-bean-multikey[]
   private static class MultiKeyBean {

@@ -150,7 +150,7 @@ private fun <FailureT, ValidatableT> associateValidatablesWithNullKeys(
 ): List<Triple<Index, ValidatableT?, Either<FailureT?, ValidatableT?>>> =
   failureForNullKeys?.let {
     withNullKeys?.map(associateWithFailure(it))
-  } ?: withNullKeys?: emptyList()
+  } ?: withNullKeys ?: emptyList()
 
 private fun <FailureT, ValidatableT> associateValidatablesWithDuplicateKeys(
   failureForDuplicates: FailureT?,
