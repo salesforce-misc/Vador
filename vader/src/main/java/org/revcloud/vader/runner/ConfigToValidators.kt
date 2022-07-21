@@ -146,7 +146,7 @@ private fun <IDT, EntityInfoT> validateId(
       optionalId -> id != null && idValidator.apply(id, entityInfo)
       else -> id == null || idValidator.apply(id, entityInfo)
     }
-    else -> { true }
+    else -> true
   }
 }
 

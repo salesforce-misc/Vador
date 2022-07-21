@@ -38,7 +38,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
   @Singular("shouldHaveFieldOrFailWithFn")
   protected Map<TypedPropertyGetter<ValidatableT, ?>, Function2<String, Object, FailureT>>
       shouldHaveFieldOrFailWithFn;
-  
+
   /** --- ID ---> */
   @Singular @Nullable
   protected Collection<IDConfigBuilder<?, ValidatableT, FailureT, ?>> withIdConfigs;

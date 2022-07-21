@@ -30,8 +30,8 @@ ifdef::env-github[]
 public static class Bean {
   private final Integer requiredField1;
   private final String requiredField2;
-  private final ID sfId1;
-  private final ID sfId2;
+  private final String sfId1;
+  private final String sfId2;
   private final List<String> requiredList;
 }
 ----
@@ -49,7 +49,6 @@ endif::[]
 ==== Validation Requirements
 
 * Configure to validate Mandatory fields.
-* Configure to validate Fields for SF ID format.
 * Configure other validators for the bean, written using one of `Validator*` types.
 
 ==== Demo
@@ -68,10 +67,6 @@ void failFastWithRequiredFieldsMissing() {
                   Bean::getRequiredField1, REQUIRED_FIELD_MISSING_1,
                   Bean::getRequiredField2, REQUIRED_FIELD_MISSING_2,
                   Bean::getRequiredList, REQUIRED_LIST_MISSING))
-          .shouldHaveValidSFIdFormatForAllOrFailWith(
-              Map.of(
-                  Bean::getSfId1, FIELD_INTEGRITY_EXCEPTION,
-                  Bean::getSfId2, FIELD_INTEGRITY_EXCEPTION))
           .withValidatorEtr(beanEtr -> beanEtr.filterOrElse(bean -> bean!=null, ignore -> NOTHING_TO_VALIDATE))
           .prepare();
 
@@ -118,9 +113,10 @@ ifdef::env-github[]
 class Bean {
   private final Integer requiredField1;
   private final String requiredField2;
-  private final ID sfId1;
-  private final ID sfId2;
+  private final String sfId1;
+  private final String sfId2;
 }
+
 class ContainerBean {
   String requiredField;
   Bean bean;
@@ -152,12 +148,14 @@ ifdef::env-github[]
 void nestedBeanValidationWithInvalidMember() {
   final var memberValidationConfig =
       ValidationConfig.<Bean, ValidationFailure>toValidate()
-          .shouldHaveValidSFIdFormatForAllOrFailWithFn(
-              Tuple.of(
-                  List.of(Bean::getSfId1, Bean::getSfId2),
-                  (name, value) ->
-                      getFailureWithParams(
-                          ValidationFailureMessage.MSG_WITH_PARAMS, name, value)))
+          .withFieldConfig(
+              FieldConfig.<String, Bean, ValidationFailure>toValidate()
+                  .withFieldValidator(fieldStr -> !"invalidSfId".equals(fieldStr))
+                  .shouldHaveValidFormatOrFailWithFn(
+                      Bean::getSfId2,
+                      (name, value) ->
+                          getFailureWithParams(
+                              ValidationFailureMessage.MSG_WITH_PARAMS, name, value)))
           .prepare();
   final var containerValidationConfig =
       ValidationConfig.<ContainerBean, ValidationFailure>toValidate()

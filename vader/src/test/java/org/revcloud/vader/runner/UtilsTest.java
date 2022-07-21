@@ -369,11 +369,6 @@ class UtilsTest {
   // end::batch-bean[]
 
   @Value
-  private static class Bean2 {
-    String id;
-  }
-  
-  @Value
   // tag::batch-bean-multikey[]
   private static class MultiKeyBean {
     String id1;

@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
 import lombok.experimental.FieldNameConstants;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.runner.BatchValidationConfig;
 import org.revcloud.vader.runner.IDConfig;
@@ -80,9 +81,10 @@ class IDConfigTest {
     assertThat(result.get().getValidationFailureMessage().getParams()).containsExactly(CONTACT_ID);
   }
 
+  @DisplayName(
+      "IdConfig With `shouldHaveValidSFIdFormatForAllOrFailWith` And `AbsentOrHaveValidSFIdFormatOrFailWith`")
   @Test
-  void
-      idConfigWithShouldHaveValidSFIdFormatForAllOrFailWithAndAbsentOrHaveValidSFIdFormatOrFailWith() {
+  void idConfigWithMultipleConditions() {
     final var config =
         ValidationConfig.<BeanWithIdFields3, ValidationFailure>toValidate()
             .withIdConfig(

@@ -144,18 +144,12 @@ class BaseValidationConfigTest {
         ValidationConfig.<Bean, ValidationFailure>toValidate()
             .withFieldConfig(
                 FieldConfig.<String, Bean, ValidationFailure>toValidate()
-                    .withFieldValidator(fieldStr -> !fieldStr.equals("invalidSfId"))
+                    .withFieldValidator(fieldStr -> !"invalidSfId".equals(fieldStr))
                     .shouldHaveValidFormatOrFailWithFn(
                         Bean::getSfId2,
                         (name, value) ->
                             getFailureWithParams(
                                 ValidationFailureMessage.MSG_WITH_PARAMS, name, value)))
-            .shouldHaveFieldsOrFailWithFn(
-                Tuple.of(
-                    List.of(Bean::getSfId1, Bean::getSfId2),
-                    (name, value) ->
-                        getFailureWithParams(
-                            ValidationFailureMessage.MSG_WITH_PARAMS, name, value)))
             .prepare();
     final var containerValidationConfig =
         ValidationConfig.<ContainerBean, ValidationFailure>toValidate()
