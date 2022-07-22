@@ -12,8 +12,8 @@ plugins {
   idea
   id("org.jetbrains.kotlinx.kover") version "0.5.1"
   id("io.freefair.lombok") apply false
-  id("com.diffplug.spotless") version "6.7.2"
-  id("org.sonarqube") version "3.3"
+  id("com.diffplug.spotless") version "6.8.0"
+  id("org.sonarqube") version "3.4.0.2513"
   id("io.gitlab.arturbosch.detekt") version "1.20.0"
   id("com.adarshr.test-logger") version "3.2.0"
   id("org.asciidoctor.jvm.gems") version "3.3.2"
@@ -27,7 +27,7 @@ description = "Vader - An FP framework for POJO/Bean validation"
 // <-- ALL PROJECTS --
 allprojects {
   group = "com.salesforce.ccspayments"
-  version = "2.7.3-SNAPSHOT"
+  version = "3.0.0"
   apply(plugin = "com.diffplug.spotless")
   spotless {
     kotlin {
@@ -86,6 +86,7 @@ subprojects {
     testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation(platform("io.kotest:kotest-bom:$kotestVersion"))
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
   }

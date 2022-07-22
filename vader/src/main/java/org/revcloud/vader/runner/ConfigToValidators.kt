@@ -16,6 +16,19 @@ import java.util.function.Predicate
 
 // ! TODO 16/04/22: Break this file into smaller files.
 @JvmSynthetic
+internal fun <ValidatableT, FailureT> configToValidators(
+  config: BaseValidationConfig<ValidatableT, FailureT>
+): List<ValidatorEtr<ValidatableT?, FailureT?>> = (
+  toValidatorEtrs1(config.shouldHaveFieldsOrFailWith, isFieldPresent) +
+    toValidatorEtrs2(config.shouldHaveFieldsOrFailWithFn, isFieldPresent) +
+    toValidatorEtrs3(config.shouldHaveFieldOrFailWithFn, isFieldPresent) +
+    toValidatorEtrs4(config.withIdConfigs) +
+    toValidatorEtrs5(config.withFieldConfigs) +
+    config.specs.map { it.toValidator() } +
+    config.getValidators()
+  )
+
+@JvmSynthetic
 private fun <ValidatableT, FailureT, FieldT> toValidatorEtrs1(
   fieldMapperToFailure: Map<out TypedPropertyGetter<in ValidatableT, out FieldT>, FailureT>,
   fieldValidator: (FieldT) -> Boolean
@@ -238,19 +251,6 @@ private fun <FieldT, ValidatableT, FailureT> toFieldValidatorEtrs3(
         )
     }
   } ?: emptyList()
-
-@JvmSynthetic
-internal fun <ValidatableT, FailureT> toValidators(
-  config: BaseValidationConfig<ValidatableT, FailureT>
-): List<ValidatorEtr<ValidatableT?, FailureT?>> = (
-  toValidatorEtrs1(config.shouldHaveFieldsOrFailWith, isFieldPresent) +
-    toValidatorEtrs2(config.shouldHaveFieldsOrFailWithFn, isFieldPresent) +
-    toValidatorEtrs3(config.shouldHaveFieldOrFailWithFn, isFieldPresent) +
-    toValidatorEtrs4(config.withIdConfigs) +
-    toValidatorEtrs5(config.withFieldConfigs) +
-    config.specs.map { it.toValidator() } +
-    config.getValidators()
-  )
 
 private fun <FailureT, ValidatableT> toValidatorEtrs4(configs: Collection<IDConfigBuilder<*, ValidatableT, FailureT, *>>?): List<ValidatorEtr<ValidatableT, FailureT>> =
   configs?.flatMap {
