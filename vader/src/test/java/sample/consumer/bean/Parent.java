@@ -6,7 +6,8 @@
 
 package sample.consumer.bean;
 
-import com.force.swag.id.ID;
+// import com.force.swag.id.ID;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,12 +21,12 @@ import lombok.ToString;
 @Getter
 public class Parent {
   final int id;
-  final ID sfId;
+  final String sfId;
   final Member member;
 
   Integer requiredField1;
   String requiredField2;
   String requiredField3;
-  ID sfId1;
-  ID sfId2;
+  String sfId1;
+  String sfId2;
 }

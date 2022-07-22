@@ -33,15 +33,3 @@ internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, Failure
 internal fun <ValidatableT> BaseValidationConfig<ValidatableT, *>.getRequiredFieldNamesEx(beanClass: Class<ValidatableT>): Set<String> =
   (shouldHaveFieldsOrFailWith.keys + (shouldHaveFieldsOrFailWithFn?._1 ?: emptyList()) + shouldHaveFieldOrFailWithFn.keys)
     .map { PropertyUtils.getPropertyName(beanClass, it) }.toSet()
-
-internal fun <ValidatableT> BaseValidationConfig<ValidatableT, *>.getRequiredFieldNamesForSFIdFormatEx(
-  beanClass: Class<ValidatableT>
-): Set<String> =
-  (shouldHaveValidSFIdFormatForAllOrFailWith.keys + (shouldHaveValidSFIdFormatForAllOrFailWithFn?._1 ?: emptyList()) + shouldHaveValidSFIdFormatOrFailWithFn.keys)
-    .map { PropertyUtils.getPropertyName(beanClass, it) }.toSet()
-
-internal fun <ValidatableT> BaseValidationConfig<ValidatableT, *>.getNonRequiredFieldNamesForSFIdFormatEx(
-  beanClass: Class<ValidatableT>
-): Set<String> =
-  (absentOrHaveValidSFIdFormatForAllOrFailWith.keys + (absentOrHaveValidSFIdFormatForAllOrFailWithFn?._1 ?: emptyList()) + absentOrHaveValidSFIdFormatOrFailWithFn.keys)
-    .map { PropertyUtils.getPropertyName(beanClass, it) }.toSet()
