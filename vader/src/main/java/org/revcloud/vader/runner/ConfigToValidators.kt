@@ -74,6 +74,11 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
     config?.withIdValidator,
     true
   ) +
+    toValidators111(
+      config?.shouldHaveValidSFPolymorphicIdFormatForAllOrFailWith,
+      config?.withIdValidator,
+      true
+    ) +
     toValidators12(
       config?.shouldHaveValidSFIdFormatForAllOrFailWithFn,
       config?.withIdValidator,
@@ -109,6 +114,22 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators11(
       validatable.map(idFieldMapper::get)
         .filterOrElse(
           validateId(idValidator, entityInfo, optionalId)
+        ) { failure }
+    }
+  } ?: emptyList()
+
+@JvmSynthetic
+private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators111(
+  config: Map<Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out Collection<EntityInfoT>>, FailureT?>?,
+  idValidator: Function2<IDT, EntityInfoT, Boolean>?,
+  optionalId: Boolean = false
+): List<ValidatorEtr<ValidatableT, FailureT>> =
+  config?.map { (tuple2, failure) ->
+    val (idFieldMapper, entitiesInfo) = tuple2
+    ValidatorEtr { validatable ->
+      validatable.map(idFieldMapper::get)
+        .filterOrElse(
+          validateId(idValidator, entitiesInfo, optionalId)
         ) { failure }
     }
   } ?: emptyList()
@@ -158,6 +179,21 @@ private fun <IDT, EntityInfoT> validateId(
     idValidator != null -> when {
       optionalId -> id != null && idValidator.apply(id, entityInfo)
       else -> id == null || idValidator.apply(id, entityInfo)
+    }
+    else -> true
+  }
+}
+
+@JvmSynthetic
+private fun <IDT, EntityInfoT> validateId(
+  idValidator: Function2<IDT, EntityInfoT, Boolean>?,
+  entitiesInfo: Collection<EntityInfoT>,
+  optionalId: Boolean
+): (IDT?) -> Boolean = { id: IDT? ->
+  when {
+    idValidator != null -> when {
+      optionalId -> id != null && entitiesInfo.any { idValidator.apply(id, it) }
+      else -> id == null || entitiesInfo.any { idValidator.apply(id, it) }
     }
     else -> true
   }

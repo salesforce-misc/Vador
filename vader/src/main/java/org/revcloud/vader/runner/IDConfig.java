@@ -3,6 +3,7 @@ package org.revcloud.vader.runner;
 import de.cronn.reflection.util.TypedPropertyGetter;
 import io.vavr.Function2;
 import io.vavr.Tuple2;
+import java.util.Collection;
 import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -27,6 +28,14 @@ public class IDConfig<IDT, ValidatableT, FailureT, EntityIdInfoT> {
               @NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>, ? extends EntityIdInfoT>,
           @Nullable FailureT>
       shouldHaveValidSFIdFormatForAllOrFailWith;
+
+  @Singular("shouldHaveValidSFPolymorphicIdFormatOrFailWith")
+  Map<
+          Tuple2<
+              @NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>,
+              ? extends Collection<? extends EntityIdInfoT>>,
+          @Nullable FailureT>
+      shouldHaveValidSFPolymorphicIdFormatForAllOrFailWith;
 
   @Nullable
   Tuple2<
