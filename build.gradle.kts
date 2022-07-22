@@ -27,7 +27,7 @@ description = "Vader - An FP framework for POJO/Bean validation"
 // <-- ALL PROJECTS --
 allprojects {
   group = "com.salesforce.ccspayments"
-  version = "3.1.1-SNAPSHOT"
+  version = "3.1.1"
   apply(plugin = "com.diffplug.spotless")
   spotless {
     kotlin {

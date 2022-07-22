@@ -50,12 +50,28 @@ public class IDConfig<IDT, ValidatableT, FailureT, EntityIdInfoT> {
           @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
       shouldHaveValidSFIdFormatForAllOrFailWithFn;
 
+  @Nullable
+  Tuple2<
+          @NonNull Map<
+              TypedPropertyGetter<ValidatableT, @Nullable IDT>,
+              ? extends Collection<? extends EntityIdInfoT>>,
+          @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
+      shouldHaveValidSFPolymorphicIdFormatForAllOrFailWithFn;
+
   @Singular("shouldHaveValidSFIdFormatOrFailWithFn")
   Map<
           Tuple2<
               @NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>, ? extends EntityIdInfoT>,
           @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
       shouldHaveValidSFIdFormatOrFailWithFn;
+
+  @Singular("shouldHaveValidSFPolymorphicIdFormatOrFailWithFn")
+  Map<
+          Tuple2<
+              @NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>,
+              ? extends Collection<? extends EntityIdInfoT>>,
+          @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
+      shouldHaveValidSFPolymorphicIdFormatOrFailWithFn;
 
   @Singular("absentOrHaveValidSFIdFormatOrFailWith")
   Map<
@@ -64,11 +80,27 @@ public class IDConfig<IDT, ValidatableT, FailureT, EntityIdInfoT> {
           @Nullable FailureT>
       absentOrHaveValidSFIdFormatForAllOrFailWith;
 
+  @Singular("absentOrHaveValidSFPolymorphicIdFormatOrFailWith")
+  Map<
+          Tuple2<
+              @NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>,
+              ? extends Collection<? extends EntityIdInfoT>>,
+          @Nullable FailureT>
+      absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWith;
+
   @Nullable
   Tuple2<
           @NonNull Map<TypedPropertyGetter<ValidatableT, IDT>, ? extends EntityIdInfoT>,
           @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
       absentOrHaveValidSFIdFormatForAllOrFailWithFn;
+
+  @Nullable
+  Tuple2<
+          @NonNull Map<
+              TypedPropertyGetter<ValidatableT, @Nullable IDT>,
+              ? extends Collection<? extends EntityIdInfoT>>,
+          @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
+      absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWithFn;
 
   @Singular("absentOrHaveValidSFIdFormatOrFailWithFn")
   Map<
@@ -76,4 +108,12 @@ public class IDConfig<IDT, ValidatableT, FailureT, EntityIdInfoT> {
               @NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>, ? extends EntityIdInfoT>,
           @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
       absentOrHaveValidSFIdFormatOrFailWithFn;
+
+  @Singular("absentOrHaveValidSFPolymorphicIdFormatOrFailWithFn")
+  Map<
+          Tuple2<
+              @NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>,
+              ? extends Collection<? extends EntityIdInfoT>>,
+          @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
+      absentOrHaveValidSFPolymorphicIdFormatOrFailWithFn;
 }

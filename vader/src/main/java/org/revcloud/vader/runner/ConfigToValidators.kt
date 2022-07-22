@@ -91,10 +91,24 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
       config?.withIdValidator,
       true
     ) +
+    toValidators121(
+      config?.shouldHaveValidSFPolymorphicIdFormatForAllOrFailWithFn,
+      config?.withIdValidator,
+      true
+    ) +
     toValidators13(
       config?.shouldHaveValidSFIdFormatOrFailWithFn,
       config?.withIdValidator,
       true
+    ) +
+    toValidators131(
+      config?.shouldHaveValidSFPolymorphicIdFormatOrFailWithFn,
+      config?.withIdValidator,
+      true
+    ) +
+    toValidators11(
+      config?.absentOrHaveValidSFIdFormatForAllOrFailWith,
+      config?.withIdValidator
     ) +
     toValidators11(
       config?.absentOrHaveValidSFIdFormatForAllOrFailWith,
@@ -104,8 +118,16 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
       config?.absentOrHaveValidSFIdFormatForAllOrFailWithFn,
       config?.withIdValidator
     ) +
+    toValidators121(
+      config?.absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWithFn,
+      config?.withIdValidator
+    ) +
     toValidators13(
       config?.absentOrHaveValidSFIdFormatOrFailWithFn,
+      config?.withIdValidator
+    ) +
+    toValidators131(
+      config?.absentOrHaveValidSFPolymorphicIdFormatOrFailWithFn,
       config?.withIdValidator
     )
 
@@ -160,6 +182,24 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators12(
   } ?: emptyList()
 
 @JvmSynthetic
+private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators121(
+  config: Tuple2<Map<TypedPropertyGetter<ValidatableT, IDT?>, Collection<EntityInfoT>>, Function2<String, IDT?, FailureT?>>?,
+  idValidator: Function2<IDT, EntityInfoT, Boolean>?,
+  optionalId: Boolean = false
+): List<ValidatorEtr<ValidatableT, FailureT>> =
+  config?.let { (idFieldMapperToEntityInfo, failureFn) ->
+    idFieldMapperToEntityInfo.map { (idFieldMapper, entitiesInfo) ->
+      ValidatorEtr { validatable ->
+        validatable.map(idFieldMapper::get)
+          .filterOrElse(
+            validateId(idValidator, entitiesInfo, optionalId),
+            applyFailureFn(failureFn, validatable, idFieldMapper)
+          )
+      }
+    }
+  } ?: emptyList()
+
+@JvmSynthetic
 private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators13(
   config: Map<Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out EntityInfoT>, Function2<String, IDT?, FailureT?>>?,
   idValidator: Function2<IDT, EntityInfoT, Boolean>?,
@@ -171,6 +211,23 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators13(
       validatable.map(idFieldMapper::get)
         .filterOrElse(
           validateId(idValidator, entityInfo, optionalId),
+          applyFailureFn(failureFn, validatable, idFieldMapper)
+        )
+    }
+  } ?: emptyList()
+
+@JvmSynthetic
+private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators131(
+  config: Map<Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out Collection<EntityInfoT>>, Function2<String, IDT?, FailureT?>>?,
+  idValidator: Function2<IDT, EntityInfoT, Boolean>?,
+  optionalId: Boolean = false
+): List<ValidatorEtr<ValidatableT, FailureT>> =
+  config?.map { (tuple2, failureFn) ->
+    val (idFieldMapper, entitiesInfo) = tuple2
+    ValidatorEtr { validatable ->
+      validatable.map(idFieldMapper::get)
+        .filterOrElse(
+          validateId(idValidator, entitiesInfo, optionalId),
           applyFailureFn(failureFn, validatable, idFieldMapper)
         )
     }
