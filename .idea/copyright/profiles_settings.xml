@@ -1,0 +1,11 @@
+<component name="CopyrightManager">
+  <settings default="Vader">
+    <module2copyright>
+      <element module="Project Files" copyright="Vader" />
+    </module2copyright>
+    <LanguageOptions name="__TEMPLATE__">
+      <option name="separateBefore" value="true" />
+      <option name="separateAfter" value="true" />
+    </LanguageOptions>
+  </settings>
+</component>
