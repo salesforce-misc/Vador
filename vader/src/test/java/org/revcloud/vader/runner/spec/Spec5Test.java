@@ -32,14 +32,14 @@ class Spec5Test {
             .withSpec(
                 spec ->
                     spec._5()
-                        .whenAllFieldsMatch(
+                        .whenAllTheseFieldsMatch(
                             Tuple.of(
                                 List.of(
                                     Bean1::getWhenField1,
                                     Bean1::getWhenField2,
                                     Bean1::getWhenField3),
                                 notNullValue()))
-                        .thenAllFieldsShouldMatch(
+                        .thenAllThoseFieldsShouldMatch(
                             Tuple.of(
                                 List.of(
                                     Bean1::getThenField1,
@@ -62,14 +62,14 @@ class Spec5Test {
             .withSpec(
                 spec ->
                     spec._5()
-                        .whenAllFieldsMatch(
+                        .whenAllTheseFieldsMatch(
                             Tuple.of(
                                 List.of(
                                     Bean1::getWhenField1,
                                     Bean1::getWhenField2,
                                     Bean1::getWhenField3),
                                 notNullValue()))
-                        .thenAllFieldsShouldMatch(
+                        .thenAllThoseFieldsShouldMatch(
                             Tuple.of(
                                 List.of(
                                     Bean1::getThenField1,
@@ -92,14 +92,14 @@ class Spec5Test {
             .withSpec(
                 spec ->
                     spec._5()
-                        .whenAllFieldsMatch(
+                        .whenAllTheseFieldsMatch(
                             Tuple.of(
                                 List.of(
                                     Bean1::getWhenField1,
                                     Bean1::getWhenField2,
                                     Bean1::getWhenField3),
                                 notNullValue()))
-                        .thenAllFieldsShouldMatch(
+                        .thenAllThoseFieldsShouldMatch(
                             Tuple.of(
                                 List.of(
                                     Bean1::getThenField1,
@@ -122,21 +122,21 @@ class Spec5Test {
                 spec ->
                     List.of(
                         spec._5()
-                            .whenAllFieldsMatch(
+                            .whenAllTheseFieldsMatch(
                                 Tuple.of(
                                     List.of(Bean2::getWhenField1, Bean2::getWhenField2),
                                     equalTo(1)))
-                            .thenAllFieldsShouldMatch(
+                            .thenAllThoseFieldsShouldMatch(
                                 Tuple.of(
                                     List.of(Bean2::getThenField1, Bean2::getThenField2),
                                     equalTo("1")))
                             .orFailWith(INVALID_BEAN_1),
                         spec._5()
-                            .whenAllFieldsMatch(
+                            .whenAllTheseFieldsMatch(
                                 Tuple.of(
                                     List.of(Bean2::getWhenField1, Bean2::getWhenField2),
                                     equalTo(1)))
-                            .thenAllFieldsShouldMatch(
+                            .thenAllThoseFieldsShouldMatch(
                                 Tuple.of(
                                     List.of(Bean2::getThenField1, Bean2::getThenField2),
                                     nullValue()))

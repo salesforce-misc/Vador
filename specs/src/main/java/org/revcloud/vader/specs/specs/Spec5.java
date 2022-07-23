@@ -27,11 +27,12 @@ import org.jetbrains.annotations.Nullable;
 @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
 public class Spec5<ValidatableT, FailureT> extends BaseSpec<ValidatableT, FailureT> {
   @NonNull
-  Tuple2<@Nullable Collection<Function1<ValidatableT, ?>>, @Nullable Matcher<?>> whenAllFieldsMatch;
+  Tuple2<@Nullable Collection<Function1<ValidatableT, ?>>, @Nullable Matcher<?>>
+      whenAllTheseFieldsMatch;
 
   @NonNull
   Tuple2<@Nullable Collection<Function1<ValidatableT, ?>>, @Nullable Matcher<?>>
-      thenAllFieldsShouldMatch;
+      thenAllThoseFieldsShouldMatch;
 
   @Nullable Function2<Collection<?>, Collection<?>, ? extends FailureT> orFailWithFn;
 

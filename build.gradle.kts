@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2022, salesforce.com, inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ ******************************************************************************/
+
 import com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep.XML
 import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
@@ -14,7 +21,7 @@ plugins {
   id("io.freefair.lombok") apply false
   id("com.diffplug.spotless") version "6.8.0"
   id("org.sonarqube") version "3.4.0.2513"
-  id("io.gitlab.arturbosch.detekt") version "1.20.0"
+  id("io.gitlab.arturbosch.detekt") version "1.21.0"
   id("com.adarshr.test-logger") version "3.2.0"
   id("org.asciidoctor.jvm.gems") version "3.3.2"
   id("org.asciidoctor.jvm.revealjs") version "3.3.2"
@@ -27,7 +34,10 @@ description = "Vader - An FP framework for POJO/Bean validation"
 // <-- ALL PROJECTS --
 allprojects {
   group = "com.salesforce.ccspayments"
-  version = "3.1.1"
+  version = "3.2.2-SNAPSHOT"
+  repositories {
+    mavenCentral()
+  }
   apply(plugin = "com.diffplug.spotless")
   spotless {
     kotlin {

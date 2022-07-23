@@ -14,9 +14,11 @@ endif::[]
 :testdir: ../vader/src/test/java
 :prewrap!:
 
-== What' Configuration?
+== What's Configuration?
 
-A config object is 1-1 mapped with a Data Structure, and holds all the information/requirements/specifications required to validate that Data-structure.
+* A config object resides outside your Validatable is 1-1 mapped with its Data-Structure.
+* Config being decoupled from the Validatable gives flexibility over annotation based frameworks. You can define configuration for classes that are not part of your code-base/module
+* It holds all the information/requirements/specifications required to validate that Data-structure.
 
 image:config-1-1-validatable.png[config-1-1-validatable]
 

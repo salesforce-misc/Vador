@@ -37,6 +37,7 @@ public class Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T>
   Collection<? extends Matcher<? extends WhenT>> matchesAnyOf;
 
   @NonNull Function1<ValidatableT, ? extends Then1T> thenField1;
+
   @NonNull Function1<ValidatableT, ? extends Then2T> thenField2;
 
   @Singular("shouldRelateWithEntry")

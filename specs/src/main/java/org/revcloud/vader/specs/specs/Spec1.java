@@ -26,10 +26,10 @@ import org.jetbrains.annotations.Nullable;
 @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
 public class Spec1<ValidatableT, FailureT, GivenT> extends BaseSpec<ValidatableT, FailureT> {
 
+  @NonNull Function1<ValidatableT, ? extends GivenT> given;
+
   @Singular("shouldMatchField")
   Collection<Function1<ValidatableT, ?>> shouldMatchAnyOfFields;
-
-  @NonNull Function1<ValidatableT, ? extends GivenT> given;
 
   @Singular("shouldMatch")
   Collection<? extends Matcher<? extends GivenT>> shouldMatchAnyOf;

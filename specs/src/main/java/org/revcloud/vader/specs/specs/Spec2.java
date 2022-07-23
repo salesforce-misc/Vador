@@ -35,6 +35,7 @@ public class Spec2<ValidatableT, FailureT, WhenT, ThenT> extends BaseSpec<Valida
   Collection<? extends Matcher<? extends WhenT>> matchesAnyOf;
 
   @NonNull Function1<ValidatableT, ? extends ThenT> then;
+
   // TODO 28/04/21 gopala.akshintala: Think about having `or` prefix
   @Singular("shouldMatch")
   Collection<? extends Matcher<? extends ThenT>> shouldMatchAnyOf;
@@ -43,6 +44,7 @@ public class Spec2<ValidatableT, FailureT, WhenT, ThenT> extends BaseSpec<Valida
   Map<? extends WhenT, ? extends Set<? extends ThenT>> shouldRelateWith;
 
   @Nullable Function2<WhenT, ThenT, Boolean> shouldRelateWithFn;
+
   @Nullable Function2<WhenT, ThenT, ? extends FailureT> orFailWithFn;
 
   @Override

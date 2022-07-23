@@ -29,12 +29,12 @@ class Spec4Test {
             .withSpec(
                 spec ->
                     spec._4()
-                        .whenFieldsMatch(
+                        .whenTheseFieldsMatch(
                             Map.of(
                                 Bean::getWhenField1, is(1),
                                 Bean::getWhenField2, is("2"),
                                 Bean::getWhenField3, is(new Field(3))))
-                        .thenFieldsShouldMatch(
+                        .thenThoseFieldsShouldMatch(
                             Map.of(
                                 Bean::getThenField1, is(2),
                                 Bean::getThenField2, is("3"),
@@ -53,12 +53,12 @@ class Spec4Test {
             .withSpec(
                 spec ->
                     spec._4()
-                        .whenFieldsMatch(
+                        .whenTheseFieldsMatch(
                             Map.of(
                                 Bean::getWhenField1, is(1),
                                 Bean::getWhenField2, is("2"),
                                 Bean::getWhenField3, is(new Field(3))))
-                        .thenFieldsShouldMatch(
+                        .thenThoseFieldsShouldMatch(
                             Map.of(
                                 Bean::getThenField1, is(2),
                                 Bean::getThenField2, is("3"),
@@ -77,12 +77,12 @@ class Spec4Test {
             .withSpec(
                 spec ->
                     spec._4()
-                        .whenFieldsMatch(
+                        .whenTheseFieldsMatch(
                             Map.of(
                                 Bean::getWhenField1, is(1),
                                 Bean::getWhenField2, is("2"),
                                 Bean::getWhenField3, is(new Field(3))))
-                        .thenFieldsShouldMatch(
+                        .thenThoseFieldsShouldMatch(
                             Map.of(
                                 Bean::getThenField1, is(2),
                                 Bean::getThenField2, is("3"),
@@ -102,24 +102,24 @@ class Spec4Test {
                 spec ->
                     List.of(
                         spec._4()
-                            .whenFieldsMatch(
+                            .whenTheseFieldsMatch(
                                 Map.of(
                                     Bean::getWhenField1, is(1),
                                     Bean::getWhenField2, is("2"),
                                     Bean::getWhenField3, is(new Field(3))))
-                            .thenFieldsShouldMatch(
+                            .thenThoseFieldsShouldMatch(
                                 Map.of(
                                     Bean::getThenField1, is(2),
                                     Bean::getThenField2, is("3"),
                                     Bean::getThenField3, is(new Field(1))))
                             .orFailWith(INVALID_BEAN_1),
                         spec._4()
-                            .whenFieldsMatch(
+                            .whenTheseFieldsMatch(
                                 Map.of(
                                     Bean::getWhenField1, is(1),
                                     Bean::getWhenField2, is("2"),
                                     Bean::getWhenField3, is(new Field(3))))
-                            .thenFieldsShouldMatch(
+                            .thenThoseFieldsShouldMatch(
                                 Map.of(
                                     Bean::getThenField1, is(2),
                                     Bean::getThenField2, is("3"),
