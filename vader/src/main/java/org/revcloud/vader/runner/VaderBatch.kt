@@ -14,6 +14,8 @@ import io.vavr.Tuple
 import io.vavr.Tuple2
 import io.vavr.control.Either
 import org.revcloud.vader.lift.liftAllToEtr
+import org.revcloud.vader.runner.config.BatchExecutionStrategy.FAIL_FAST_FOR_ANY
+import org.revcloud.vader.runner.config.BatchExecutionStrategy.FAIL_FAST_FOR_EACH
 import org.revcloud.vader.runner.config.BatchOfBatch1ValidationConfig
 import org.revcloud.vader.runner.config.BatchValidationConfig
 import org.revcloud.vader.runner.config.ContainerValidationConfig
@@ -26,7 +28,7 @@ import java.util.Optional
 
 class VaderBatch {
   companion object {
-    /** == CONTAINER == */
+    /** <--- CONTAINER --- */
     @JvmStatic
     @JvmOverloads
     fun <FailureT : Any, ContainerValidatableT> validateAndFailFastForContainer(
@@ -76,7 +78,22 @@ class VaderBatch {
         Vader.validateAndFailFastForContainer(container, containerValidationConfigWith2Levels, throwableMapper).map { Tuple.of(pairForInvalidMapper(container), it) }
       }.firstOrNull { it.isPresent } ?: Optional.empty()
 
-    /** == FOR EACH == */
+    /** --- CONTAINER ---> */
+
+    @JvmStatic
+    @JvmOverloads
+    fun <FailureT, ValidatableT> validate(
+      validatables: List<ValidatableT?>,
+      batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
+      failureForNullValidatable: FailureT? = null,
+      throwableMapper: (Throwable) -> FailureT? = { throw it }
+    ): Any = when (batchValidationConfig.batchExecutionStrategy) {
+      FAIL_FAST_FOR_EACH -> validateAndFailFastForEach(validatables, batchValidationConfig, failureForNullValidatable, throwableMapper)
+      FAIL_FAST_FOR_ANY -> validateAndFailFastForAny(validatables, batchValidationConfig, failureForNullValidatable, throwableMapper)
+      else -> throw IllegalArgumentException("Batch Execution strategy must be specified or call specific strategy methods")
+    }
+
+    /** --- FOR EACH --- */
     @JvmStatic
     @JvmOverloads
     fun <FailureT, ValidatableT> validateAndFailFastForEach(

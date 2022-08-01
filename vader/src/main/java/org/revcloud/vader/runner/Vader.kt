@@ -11,6 +11,7 @@ package org.revcloud.vader.runner
 
 import org.revcloud.vader.lift.liftAllToEtr
 import org.revcloud.vader.runner.config.ContainerValidationConfig
+import org.revcloud.vader.runner.config.ExecutionStrategy.FAIL_FAST
 import org.revcloud.vader.runner.config.ValidationConfig
 import org.revcloud.vader.types.Validator
 import org.revcloud.vader.types.ValidatorEtr
@@ -18,6 +19,7 @@ import java.util.Optional
 
 class Vader {
   companion object {
+    /** <--- CONTAINER --- */
     @JvmStatic
     @JvmOverloads
     fun <FailureT : Any, ContainerValidatableT> validateAndFailFastForContainer(
@@ -33,6 +35,19 @@ class Vader {
       containerValidationConfigWith2Levels: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
       throwableMapper: (Throwable) -> FailureT? = { throw it }
     ): Optional<FailureT> = failFastForContainer(containerValidationConfigWith2Levels, throwableMapper)(container)
+
+    /** --- CONTAINER ---> */
+
+    @JvmStatic
+    @JvmOverloads
+    fun <FailureT : Any, ValidatableT> validate(
+      validatable: ValidatableT,
+      validationConfig: ValidationConfig<ValidatableT, FailureT?>,
+      throwableMapper: (Throwable) -> FailureT? = { throw it }
+    ): Optional<FailureT> = when (validationConfig.executionStrategy) {
+      FAIL_FAST -> failFast(validationConfig, throwableMapper)(validatable)
+      else -> throw IllegalArgumentException("Execution strategy must be specified or call specific strategy methods")
+    }
 
     @JvmStatic
     @JvmOverloads
