@@ -26,11 +26,8 @@ import lombok.Value;
 import lombok.experimental.FieldNameConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.runner.BatchValidationConfig;
-import org.revcloud.vader.runner.IDConfig;
 import org.revcloud.vader.runner.Vader;
 import org.revcloud.vader.runner.VaderBatch;
-import org.revcloud.vader.runner.ValidationConfig;
 import org.revcloud.vader.runner.config.BaseValidationConfigTest.BeanWithIdStrFields;
 import sample.consumer.failure.ValidationFailure;
 

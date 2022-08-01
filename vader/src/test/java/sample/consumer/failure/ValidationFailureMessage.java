@@ -13,8 +13,6 @@
 
 package sample.consumer.failure;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -24,8 +22,6 @@ import lombok.ToString;
  * @author gakshintala
  * @since 220
  */
-@RequiredArgsConstructor
-@Getter
 @ToString
 public enum ValidationFailureMessage {
   NONE(Section.COMMON_VALIDATION_FAILURE, "Success"),
@@ -75,6 +71,15 @@ public enum ValidationFailureMessage {
   private final String section;
   private final String name;
   @Setter private Object[] params;
+
+  ValidationFailureMessage(String commonValidationFailure, String success) {
+    this.section = commonValidationFailure;
+    this.name = success;
+  }
+
+  public Object[] getParams() {
+    return params;
+  }
 
   private static final class Section {
     static final String COMMON_VALIDATION_FAILURE = "CommonValidationFailure";

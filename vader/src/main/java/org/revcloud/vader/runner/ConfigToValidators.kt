@@ -12,8 +12,12 @@ import de.cronn.reflection.util.TypedPropertyGetter
 import io.vavr.Function2
 import io.vavr.Tuple2
 import io.vavr.control.Either
-import org.revcloud.vader.runner.FieldConfig.FieldConfigBuilder
-import org.revcloud.vader.runner.IDConfig.IDConfigBuilder
+import org.revcloud.vader.runner.config.BaseValidationConfig
+import org.revcloud.vader.runner.config.FieldConfig
+import org.revcloud.vader.runner.config.FieldConfig.FieldConfigBuilder
+import org.revcloud.vader.runner.config.IDConfig
+import org.revcloud.vader.runner.config.IDConfig.IDConfigBuilder
+import org.revcloud.vader.runner.config.getValidators
 import org.revcloud.vader.specs.component1
 import org.revcloud.vader.specs.component2
 import org.revcloud.vader.specs.specs.BaseSpec

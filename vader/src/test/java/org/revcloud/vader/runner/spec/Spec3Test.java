@@ -18,7 +18,7 @@ import java.util.GregorianCalendar;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.matchers.DateMatchers;
-import org.revcloud.vader.runner.ValidationConfig;
+import org.revcloud.vader.runner.config.ValidationConfig;
 import sample.consumer.failure.ValidationFailure;
 
 class Spec3Test {

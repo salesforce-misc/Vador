@@ -24,6 +24,8 @@ import io.vavr.control.Either;
 import lombok.Value;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.revcloud.vader.runner.config.BatchValidationConfig;
+import org.revcloud.vader.runner.config.FilterDuplicatesConfig;
 import sample.consumer.failure.ValidationFailure;
 
 class UtilsTest {
@@ -55,7 +57,7 @@ class UtilsTest {
             findAndFilterInvalids(
                 validatables.toJavaList(),
                 NOTHING_TO_VALIDATE,
-                batchValidationConfig.findAndFilterDuplicatesConfigs));
+                batchValidationConfig.getFindAndFilterDuplicatesConfigs()));
 
     final var failedInvalids = results.take(2);
     assertThat(failedInvalids)
@@ -112,7 +114,7 @@ class UtilsTest {
             findAndFilterInvalids(
                 validatables.toJavaList(),
                 NOTHING_TO_VALIDATE,
-                batchValidationConfig.findAndFilterDuplicatesConfigs));
+                batchValidationConfig.getFindAndFilterDuplicatesConfigs()));
 
     final var failedInvalids = results.take(2);
     assertThat(failedInvalids).allMatch(r -> r.getLeft() == NOTHING_TO_VALIDATE);
@@ -124,8 +126,7 @@ class UtilsTest {
 
     final var valids = results.drop(5);
     assertTrue(valids.forAll(Either::isRight));
-    valids.forEachWithIndex(
-        (r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId1().toString()));
+    valids.forEachWithIndex((r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId1()));
   }
   // end::batch-bean-multikey-demo[]
 
@@ -155,7 +156,7 @@ class UtilsTest {
             findAndFilterInvalids(
                 validatables.toJavaList(),
                 NOTHING_TO_VALIDATE,
-                batchValidationConfig.findAndFilterDuplicatesConfigs));
+                batchValidationConfig.getFindAndFilterDuplicatesConfigs()));
 
     assertThat(results).hasSize(5);
     final var failedInvalids = results.take(2);
@@ -163,8 +164,7 @@ class UtilsTest {
 
     final var valids = results.drop(2);
     assertTrue(valids.forAll(Either::isRight));
-    valids.forEachWithIndex(
-        (r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId().toString()));
+    valids.forEachWithIndex((r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId()));
   }
 
   @DisplayName(
@@ -197,7 +197,7 @@ class UtilsTest {
             findAndFilterInvalids(
                 validatables.toJavaList(),
                 NOTHING_TO_VALIDATE,
-                batchValidationConfig.findAndFilterDuplicatesConfigs));
+                batchValidationConfig.getFindAndFilterDuplicatesConfigs()));
 
     assertThat(results).hasSize(validatables.size() - duplicateValidatables.size());
     final var failedInvalids = results.take(2);
@@ -208,8 +208,7 @@ class UtilsTest {
 
     final var valids = results.drop(4);
     assertTrue(valids.forAll(Either::isRight));
-    valids.forEachWithIndex(
-        (r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId().toString()));
+    valids.forEachWithIndex((r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId()));
   }
 
   @DisplayName(
@@ -241,7 +240,7 @@ class UtilsTest {
             findAndFilterInvalids(
                 validatables.toJavaList(),
                 NOTHING_TO_VALIDATE,
-                batchValidationConfig.findAndFilterDuplicatesConfigs));
+                batchValidationConfig.getFindAndFilterDuplicatesConfigs()));
 
     assertThat(results).hasSize(validatables.size() - duplicateValidatables.size());
     final var failedInvalids = results.take(2);
@@ -252,8 +251,7 @@ class UtilsTest {
 
     final var valids = results.drop(4);
     assertTrue(valids.forAll(Either::isRight));
-    valids.forEachWithIndex(
-        (r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId().toString()));
+    valids.forEachWithIndex((r, i) -> assertEquals(String.valueOf(i + 1), r.get().getId()));
   }
 
   @DisplayName("First Failure : Null validatable")
@@ -274,14 +272,14 @@ class UtilsTest {
         BatchValidationConfig.<Bean, ValidationFailure>toValidate()
             .findAndFilterDuplicatesConfig(
                 FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
-                    .findAndFilterDuplicatesWith(container -> container.getId().toString())
+                    .findAndFilterDuplicatesWith(Bean::getId)
                     .andFailDuplicatesWith(DUPLICATE_ITEM))
             .prepare();
     final var result =
         findFirstInvalid(
             validatables.toJavaList(),
             NOTHING_TO_VALIDATE,
-            batchValidationConfig.findAndFilterDuplicatesConfigs);
+            batchValidationConfig.getFindAndFilterDuplicatesConfigs());
     assertThat(result).contains(NOTHING_TO_VALIDATE);
   }
 
@@ -294,13 +292,13 @@ class UtilsTest {
         BatchValidationConfig.<Bean, ValidationFailure>toValidate()
             .findAndFilterDuplicatesConfig(
                 FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
-                    .findAndFilterDuplicatesWith(container -> container.getId().toString()))
+                    .findAndFilterDuplicatesWith(Bean::getId))
             .prepare();
     final var result =
         findFirstInvalid(
             validatables.toJavaList(),
             NOTHING_TO_VALIDATE,
-            batchValidationConfig.findAndFilterDuplicatesConfigs);
+            batchValidationConfig.getFindAndFilterDuplicatesConfigs());
     assertThat(result).isEmpty();
   }
 
@@ -317,15 +315,14 @@ class UtilsTest {
             .findAndFilterDuplicatesConfig(
                 FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
                     .findAndFilterDuplicatesWith(
-                        container ->
-                            container.getId() == null ? null : container.getId().toString())
+                        container -> container.getId() == null ? null : container.getId())
                     .andFailNullKeysWith(NULL_KEY))
             .prepare();
     final var result =
         findFirstInvalid(
             validatables.toJavaList(),
             NOTHING_TO_VALIDATE,
-            batchValidationConfig.findAndFilterDuplicatesConfigs);
+            batchValidationConfig.getFindAndFilterDuplicatesConfigs());
     assertThat(result).contains(NULL_KEY);
   }
 
@@ -339,14 +336,14 @@ class UtilsTest {
         BatchValidationConfig.<Bean, ValidationFailure>toValidate()
             .findAndFilterDuplicatesConfig(
                 FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
-                    .findAndFilterDuplicatesWith(container -> container.getId().toString())
+                    .findAndFilterDuplicatesWith(Bean::getId)
                     .andFailDuplicatesWith(DUPLICATE_ITEM))
             .prepare();
     final var result =
         findFirstInvalid(
             validatables.toJavaList(),
             NOTHING_TO_VALIDATE,
-            batchValidationConfig.findAndFilterDuplicatesConfigs);
+            batchValidationConfig.getFindAndFilterDuplicatesConfigs());
     assertThat(result).contains(DUPLICATE_ITEM);
   }
 
@@ -357,14 +354,14 @@ class UtilsTest {
         BatchValidationConfig.<Bean, ValidationFailure>toValidate()
             .findAndFilterDuplicatesConfig(
                 FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
-                    .findAndFilterDuplicatesWith(container -> container.getId().toString())
+                    .findAndFilterDuplicatesWith(Bean::getId)
                     .andFailDuplicatesWith(DUPLICATE_ITEM))
             .prepare();
     final var result =
         findFirstInvalid(
             validatables.toJavaList(),
             NOTHING_TO_VALIDATE,
-            batchValidationConfig.findAndFilterDuplicatesConfigs);
+            batchValidationConfig.getFindAndFilterDuplicatesConfigs());
     assertThat(result).isEmpty();
   }
 

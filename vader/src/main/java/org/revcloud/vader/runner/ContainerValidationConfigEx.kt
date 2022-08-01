@@ -10,6 +10,8 @@
 package org.revcloud.vader.runner
 
 import de.cronn.reflection.util.PropertyUtils
+import org.revcloud.vader.runner.config.BaseContainerValidationConfig
+import org.revcloud.vader.runner.config.ContainerValidationConfig
 import org.revcloud.vader.types.ValidatorEtr
 
 internal fun <ContainerValidatableT, FailureT> BaseContainerValidationConfig<ContainerValidatableT?, FailureT?>.getContainerValidatorsEx(): List<ValidatorEtr<ContainerValidatableT?, FailureT?>> =

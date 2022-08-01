@@ -17,6 +17,8 @@ import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.Nullable;
+import org.revcloud.vader.runner.config.BaseContainerValidationConfig;
+import org.revcloud.vader.runner.config.ContainerValidationConfig;
 
 @Value
 @FieldDefaults(level = AccessLevel.PACKAGE)

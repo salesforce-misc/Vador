@@ -22,8 +22,8 @@ import lombok.Value;
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.runner.BatchOfBatch1ValidationConfig;
-import org.revcloud.vader.runner.BatchValidationConfig;
+import org.revcloud.vader.runner.config.BatchOfBatch1ValidationConfig;
+import org.revcloud.vader.runner.config.BatchValidationConfig;
 import sample.consumer.failure.ValidationFailure;
 
 class BatchOfBatch1ValidationConfigTest {

@@ -5,11 +5,20 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  ******************************************************************************/
 
+/*******************************************************************************
+ * Copyright (c) 2022, salesforce.com, inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ ******************************************************************************/
+
 @file:JvmName("BaseValidationConfigEx")
 
-package org.revcloud.vader.runner
+package org.revcloud.vader.runner.config
 
 import de.cronn.reflection.util.PropertyUtils
+import org.revcloud.vader.runner.fromValidators1
+import org.revcloud.vader.runner.fromValidators2
 import org.revcloud.vader.specs.factory.SpecFactory
 import org.revcloud.vader.specs.specs.BaseSpec
 import org.revcloud.vader.types.ValidatorEtr

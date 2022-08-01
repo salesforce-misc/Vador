@@ -19,9 +19,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.runner.FieldConfig;
 import org.revcloud.vader.runner.Vader;
-import org.revcloud.vader.runner.ValidationConfig;
+import org.revcloud.vader.runner.config.FieldConfig;
+import org.revcloud.vader.runner.config.ValidationConfig;
 import sample.consumer.failure.ValidationFailure;
 
 public class FieldConfigTest {

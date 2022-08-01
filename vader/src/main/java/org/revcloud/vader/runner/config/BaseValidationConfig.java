@@ -5,7 +5,14 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  ******************************************************************************/
 
-package org.revcloud.vader.runner;
+/*******************************************************************************
+ * Copyright (c) 2022, salesforce.com, inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ ******************************************************************************/
+
+package org.revcloud.vader.runner.config;
 
 import de.cronn.reflection.util.TypedPropertyGetter;
 import io.vavr.Function2;
@@ -21,8 +28,8 @@ import lombok.NonNull;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.Nullable;
-import org.revcloud.vader.runner.FieldConfig.FieldConfigBuilder;
-import org.revcloud.vader.runner.IDConfig.IDConfigBuilder;
+import org.revcloud.vader.runner.config.FieldConfig.FieldConfigBuilder;
+import org.revcloud.vader.runner.config.IDConfig.IDConfigBuilder;
 import org.revcloud.vader.specs.Spec;
 import org.revcloud.vader.specs.Specs;
 import org.revcloud.vader.specs.specs.BaseSpec;
@@ -31,7 +38,7 @@ import org.revcloud.vader.types.ValidatorEtr;
 
 @Getter
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
-abstract class BaseValidationConfig<ValidatableT, FailureT> {
+public abstract class BaseValidationConfig<ValidatableT, FailureT> {
 
   @Singular("shouldHaveFieldOrFailWith")
   protected Map<TypedPropertyGetter<ValidatableT, ?>, FailureT> shouldHaveFieldsOrFailWith;
@@ -79,7 +86,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
   Map<? extends Validator<? super ValidatableT, FailureT>, FailureT> withValidator;
 
   // ! TODO 05/08/21 gopala.akshintala: Migrate them to be used with custom assertions
-  List<BaseSpec<ValidatableT, FailureT>> getSpecs() {
+  public List<BaseSpec<ValidatableT, FailureT>> getSpecs() {
     return BaseValidationConfigEx.getSpecsEx(this);
   }
 

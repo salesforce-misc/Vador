@@ -19,6 +19,7 @@ import io.vavr.control.Either;
 import java.util.List;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
+import org.revcloud.vader.runner.config.ValidationConfig;
 import org.revcloud.vader.types.Validator;
 import org.revcloud.vader.types.ValidatorEtr;
 import sample.consumer.failure.ValidationFailure;

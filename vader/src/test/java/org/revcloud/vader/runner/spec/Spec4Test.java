@@ -18,7 +18,7 @@ import java.util.Map;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.runner.Vader;
-import org.revcloud.vader.runner.ValidationConfig;
+import org.revcloud.vader.runner.config.ValidationConfig;
 import sample.consumer.failure.ValidationFailure;
 
 class Spec4Test {

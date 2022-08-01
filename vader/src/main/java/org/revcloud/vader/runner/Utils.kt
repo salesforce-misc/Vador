@@ -18,7 +18,9 @@ import io.vavr.kotlin.left
 import io.vavr.kotlin.right
 import org.revcloud.vader.lift.liftAllToEtr
 import org.revcloud.vader.lift.liftToEtr
-import org.revcloud.vader.runner.FilterDuplicatesConfig.FilterDuplicatesConfigBuilder
+import org.revcloud.vader.runner.config.BaseContainerValidationConfig
+import org.revcloud.vader.runner.config.ContainerValidationConfig
+import org.revcloud.vader.runner.config.FilterDuplicatesConfig.FilterDuplicatesConfigBuilder
 import org.revcloud.vader.specs.component1
 import org.revcloud.vader.specs.component2
 import org.revcloud.vader.types.Validator

@@ -27,6 +27,7 @@ import java.util.stream.IntStream;
 import lombok.Value;
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.Test;
+import org.revcloud.vader.runner.config.BatchValidationConfig;
 import org.revcloud.vader.types.Validator;
 import org.revcloud.vader.types.ValidatorEtr;
 import sample.consumer.failure.ValidationFailure;

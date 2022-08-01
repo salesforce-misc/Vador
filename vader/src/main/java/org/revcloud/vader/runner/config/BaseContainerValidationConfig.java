@@ -5,7 +5,14 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  ******************************************************************************/
 
-package org.revcloud.vader.runner;
+/*******************************************************************************
+ * Copyright (c) 2022, salesforce.com, inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ ******************************************************************************/
+
+package org.revcloud.vader.runner.config;
 
 import io.vavr.Tuple2;
 import java.util.Collection;
@@ -16,12 +23,13 @@ import lombok.NonNull;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.Nullable;
+import org.revcloud.vader.runner.ContainerValidationConfigEx;
 import org.revcloud.vader.types.Validator;
 import org.revcloud.vader.types.ValidatorEtr;
 
 @Getter
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
-abstract class BaseContainerValidationConfig<ContainerValidatableT, FailureT> {
+public abstract class BaseContainerValidationConfig<ContainerValidatableT, FailureT> {
   @Nullable protected Tuple2<@NonNull Integer, @Nullable FailureT> shouldHaveMinBatchSizeOrFailWith;
   @Nullable protected Tuple2<@NonNull Integer, @Nullable FailureT> shouldHaveMaxBatchSizeOrFailWith;
 

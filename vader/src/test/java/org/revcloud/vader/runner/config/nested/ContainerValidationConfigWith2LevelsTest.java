@@ -26,10 +26,10 @@ import lombok.Value;
 import lombok.experimental.FieldNameConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.revcloud.vader.runner.ContainerValidationConfig;
 import org.revcloud.vader.runner.ContainerValidationConfigWith2Levels;
 import org.revcloud.vader.runner.Vader;
 import org.revcloud.vader.runner.VaderBatch;
+import org.revcloud.vader.runner.config.ContainerValidationConfig;
 import sample.consumer.failure.ValidationFailure;
 
 class ContainerValidationConfigWith2LevelsTest {
