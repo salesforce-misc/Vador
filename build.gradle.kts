@@ -137,7 +137,7 @@ subprojects {
     withType<KotlinCompile> {
       kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
-        freeCompilerArgs = listOf("-Xuse-k2", "-Xjdk-release=11")
+        freeCompilerArgs = listOf("-Xjdk-release=11")
       }
     }
     test.get().useJUnitPlatform()

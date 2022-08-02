@@ -101,6 +101,7 @@ This decoupling comes with a lot of flexibility. Some unique selling points abou
 * You can share Config for a Validatable across different Execution strategies.
 * You can re-use a nested-member config while validating its Container.
 * Config promotes Low-Code validations, and comes with plug-and-play validators out-of-the-box that are suitable for REST APIs validation use-cases.
+* Failure type `FailureT` is generic and Consumer has the flexibility to use a failure type of his own.
 * Vader comes with Execution Strategy algorithms out-of-the-box, even for complex data-structures like batch-of-batch (which might need a Tree-Traversal algorithm).
 
 Read about more such <<_perks_of_config_based_validation, 🍫Perks>>
