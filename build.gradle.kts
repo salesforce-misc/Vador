@@ -9,7 +9,7 @@ import com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep.XML
 import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
 import io.gitlab.arturbosch.detekt.Detekt
-import kotlinx.kover.api.CoverageEngine
+import kotlinx.kover.api.DefaultJacocoEngine
 import kotlinx.kover.api.KoverTaskExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -17,7 +17,7 @@ plugins {
   kotlin("jvm")
   `maven-publish`
   idea
-  id("org.jetbrains.kotlinx.kover") version "0.5.1"
+  id("org.jetbrains.kotlinx.kover") version "0.6.0-Beta"
   id("io.freefair.lombok") apply false
   id("com.diffplug.spotless") version "6.8.0"
   id("org.sonarqube") version "3.4.0.2513"
@@ -29,16 +29,21 @@ plugins {
   id("com.github.jk1.dependency-license-report") version "2.0"
 }
 
-description = "Vader - An FP framework for POJO/Bean validation"
+description = "Vader - A framework for POJO/Data Structure/Bean validation"
 
 // <-- ALL PROJECTS --
 allprojects {
   group = "com.salesforce.ccspayments"
-  version = "3.3.3"
+  version = "3.3.4-SNAPSHOT"
   repositories {
     mavenCentral()
   }
   apply(plugin = "com.diffplug.spotless")
+  apply(plugin = "org.jetbrains.kotlinx.kover")
+  kover {
+    isDisabled.set(false)
+    engine.set(DefaultJacocoEngine)
+  }
   spotless {
     kotlin {
       target("src/main/java/**/*.kt", "src/test/java/**/*.kt")
@@ -204,16 +209,17 @@ subprojects {
   }
 }
 // -- SUB PROJECTS -->
+koverMerged {
+  enable()
+  xmlReport {
+    onCheck.set(true)
+  }
+}
 sonarqube {
   properties {
     property("sonar.modules", subprojects.joinToString(",") { it.name })
     property("detekt.sonar.kotlin.config.path", "$rootDir/config/detekt/detekt.yml")
   }
-}
-kover {
-  coverageEngine.set(CoverageEngine.JACOCO)
-  generateReportOnCheck = true
-  runAllTestsForProjectTask = true
 }
 // <-- ROOT-PROJECT TASKS --
 tasks {
@@ -222,9 +228,6 @@ tasks {
       isEnabled = true
     }
   }
-  koverMergedXmlReport.get().isEnabled = true
-  koverMergedHtmlReport.get().isEnabled = false
-  koverMergedReport.get().isEnabled = false
   sonarqube {
     properties {
       // As of now this property is ignored until sonarqube is upgraded to 8.9
