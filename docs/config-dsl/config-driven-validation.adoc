@@ -1,0 +1,184 @@
+= Config driven Validation
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:toc:
+:toc-placement: preamble
+:sourcedir: ../../vader/src/main/java
+:testdir: ../../vader/src/test/java
+:imagesdir: ../images/config-dsl
+:prewrap!:
+
+Creating a DSL is one part Engineering and many parts Art. With simple Dev UX as the primary goal, we developed a fluent https://blog.jetbrains.com/kotlin/2011/10/dsls-in-kotlin-part-1-whats-in-the-toolbox-builders/[DSL] that lets you hook the validators, along with the built-in plugin-n-play validators.
+This is powerful coz it lets you validate any Bean with any level or nesting, be it _Single_ or _Batch_.
+It's easy to fit this model in our heads, as validation configuration aligns with Bean hierarchical-structure.
+
+[.text-center]
+image:hierarchical-validation.png[hierarchical-validation]
+
+== What's Configuration?
+
+* A config object resides outside your Validatable is 1-1 mapped with its Data-Structure.
+* Config being decoupled from the Validatable gives flexibility over annotation based frameworks. You can define configuration for classes that are not part of your code-base/module
+* It holds all the information/requirements/specifications required to validate that Data-structure.
+
+image:config-1-1-validatable.png[config-1-1-validatable]
+
+== How to construct a Config Object 🔮?
+
+Different flavors of Config DSLs are here to co-pilot with you, to prepare the config instance as per your validation requirements.
+These DSL methods follow the https://blogs.oracle.com/javamagazine/post/exploring-joshua-blochs-builder-design-pattern-in-java[Builder Pattern], where you instantiate the Builder like this:
+
+[source,java,indent=0,options="nowrap"]
+.++*++ValidationConfig
+----
+*ValidationConfig.<ValidatableT, FailureT>toValidate() // <1><2>
+----
+<1> ValidatableT - Represents the data-type under validation.
+<2> FailureT - Represents the consumer data-type that represents a failure.
+
+NOTE: As you notice, these API methods are generic and Vader is agnostic of the consumer's `ValidatableT` or `FailureT`.
+
+[#_validation-config]
+== Data-structure under validation 
+
+[cols="1h,1"]
+|===
+|Single (Non-Batch)
+|link:ValidationConfig.adoc[ValidationConfig]
+
+|Collection (Batch)
+|link:BatchValidationConfig.adoc[BatchValidationConfig]
+|===
+
+=== Data-structure (Container) HAS-A Nested-Data-structure (Member)
+
+You may have a requirement to validate a Data-structure which HAS-A Nested-Data-structure that needs to be validated too.
+Such scenarios are complex as they involve various combinations Container-Member state(Batch or Non-Batch) + Execution Strategy (Fail Fast for Each or Fail Fast for Any).
+There is no one-solution-fits all.
+
+link:nested/nested-config.adoc[This table] should help you make the right choice.
+
+[#_container-scope]
+== Container Scope
+
+`++*++ValidationConfig` talks about the Data structure _itself_, whereas `ContainerValidationConfig++*++` talks about _what-it-contains_.
+
+Configuration fields like `shouldHaveMinBatchSizeOrFailWith, shouldHaveMaxBatchSizeOrFailWith` won't make sense when a `++*++ValidationConfig` is describing a Bean (or BeanBatch).
+So these config parameters are separated-out into a different config under the umbrella of `ContainerValidationConfig++*++`.
+
+[cols="1h,1"]
+|===
+|Container with 1 level deep scope
+|link:ContainerValidationConfig.adoc[ContainerValidationConfig]
+
+|Container with 2 levels deep scope
+|link:ContainerValidationConfigWith2Levels.adoc[ContainerValidationConfigWith2Levels]
+|=== 
+
+[#_containervalidationconfig_vs_validationconfig]
+=== link:#_container-scope[ContainerValidationConfig++*++] Vs link:#_validation-config[++*++ValidationConfig]
+
+However, there can be confusing in scenarios like this:
+
+[source,java,indent=0,options="nowrap"]
+----
+class ContainerWithMultiBatch {
+  List<Bean1> batch1;
+  List<Bean2> batch2;
+}
+----
+
+In a data-structure you may have a validation like `batch1` should not be empty.
+You can achieve this using both link:ContainerValidationConfig.adoc[ContainerValidationConfig] and link:BatchValidationConfig.adoc[BatchValidationConfig], with configs as below:
+
+.Using link:ContainerValidationConfig.adoc[ContainerValidationConfig]
+[source,java,indent=0,options="nowrap"]
+----
+ContainerValidationConfig.<ContainerWithMultiBatch, ValidationFailure>toValidate()
+  .withBatchMember(ContainerWithMultiBatch::getBatch1)
+  .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, INVALID_BATCH_SIZE)).prepare();
+----
+
+.Using link:ValidationConfig.adoc[ValidationConfig]
+[source,java,indent=0,options="nowrap"]
+----
+ValidationConfig.<ContainerWithMultiBatch, ValidationFailure>toValidate()
+  .shouldHaveFieldOrFailWith(ContainerWithMultiBatch::getBatch1, FIELD_MISSING).prepare();
+----
+
+This similarity may cause confusion as to which one to use.
+The answer is - *"It depends on your Intent"*.
+If you look at the list being empty/`null` as `INVALID_BATCH_SIZE`, go with link:ContainerValidationConfig.adoc[ContainerValidationConfig].
+If you look at it as any other mandatory field, go with link:ValidationConfig.adoc[ValidationConfig].
+
+== Glimpse of the DSL
+
+NOTE: These examples don't exhaustively cover all the DSL methods and use-cases.
+You may refer the Javadoc (TBD) of each validation config to find-out more. Also, the existing unit tests should help with the use-cases.
+As usual, file a GitHub issue if you have any new or unique use-cases.
+
+[.text-center]
+
+[source,java,indent=0,options="nowrap"]
+----
+BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+  .withValidators(Tuple.of( // 👈🏼 Hook your validators // <1>
+     List.of(Validators::validator1, validator2, validator2,...), 
+     ValidationFailure.NONE)) 
+  .shouldHaveFieldsOrFailWithFn(…) // Declare Mandatory fields <2>
+  .withIdConfig(…) // Declare fields for Strict SF ID validation // <3>
+  .findAndFilterDuplicatesConfigs(…) // Multi-filter criteria to knock-out duplicates // <4>
+  .specify(…) // 👈🏼 Low-code validations go here // <5>
+  .…
+  .prepare();
+----
+<1> link:#_with_validators[With Validators]
+<2> link:ValidationConfig.adoc[Mandatory fields example]
+<3> link:IDConfig.adoc[ID Config]
+<4> link:FilterDuplicatesConfig.adoc[Find and Filter/Fail Duplicates]
+<5> 🤓 link:specs.adoc[Specs]
+
+[#_with_validators]
+=== `withValidator(s)`
+
+This is used to wire link:../validator-types.adoc#_validator[`Validator`] type lambdas into the config. This accepts a Tuple (Pair) of:
+
+* `java.util.Collection<Validator>` - Collections of Validators.
+* `Failure` - Consumer defined value representing no-failure (or success). Vader recognizes that a validation passed, only if a validator returns this value.
+
+TIP: If you need an order of execution (say, ascending order of validation cost),
+all you need is _chain_ your validators in an Ordered List (like `java.util.List`) to maintain the sequence of validations.
+
+ifdef::env-github[]
+
+[source,java,indent=0,options="nowrap"]
+.link:{testdir}/org/revcloud/vader/runner/VaderTest.java[VaderTest.java, tag=withValidators]
+----
+final Validator<Bean, ValidationFailure> validator1 = bean -> NONE;
+final Validator<Bean, ValidationFailure> validator2 = bean -> NONE;
+final Validator<Bean, ValidationFailure> validator3 = bean -> UNKNOWN_EXCEPTION;
+final List<Validator<Bean, ValidationFailure>> validatorChain =
+    List.of(validator1, validator2, validator3);
+final var validationConfig =
+    ValidationConfig.<Bean, ValidationFailure>toValidate()
+        .withValidators(Tuple.of(validatorChain, NONE))
+        .prepare();
+----
+
+endif::[]
+ifndef::env-github[]
+
+[source,java,indent=0,options="nowrap"]
+.link:{testdir}/org/revcloud/vader/runner/VaderTest.java[VaderTest.java, tag=withValidators]
+----
+include::{testdir}/org/revcloud/vader/runner/VaderTest.java[tag=withValidators]
+----
+
+endif::[]

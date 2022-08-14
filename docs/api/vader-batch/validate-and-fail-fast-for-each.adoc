@@ -27,9 +27,9 @@ This execution strategy lets you run validations for your batch data structure a
 |List of POJO/Beans under validation
 
 |`batchValidationConfig`
-|`BatchValidationConfig`
+|link:../../config-dsl/BatchValidationConfig.adoc[`BatchValidationConfig`]
 |Yes
-|Config for validation
+|Config for Batch validation
 
 |`failureForNullValidatable`
 |`FailureT`

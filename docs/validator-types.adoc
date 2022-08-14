@@ -91,7 +91,7 @@ You can very well use `Validator` and wrap/unwrap the bean in and out of `Either
 == Why are there different Validator types?
 
 [.lead]
-These types only differ syntactically
+These types only differ *syntactically*
 
 NOTE: They are there to help developers focus only on their validation logic, not worry about boilerplate and use a programming style (imperative or functional) of their choice.
 You can essentially use any Data type for your validators and in-fact you can even have a mix, based on your needs.

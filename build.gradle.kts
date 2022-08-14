@@ -169,7 +169,7 @@ subprojects {
       pom {
         name.set(artifactId)
         description.set(project.description)
-        url.set("https://git.soma.salesforce.com/CCSPayments/Vader")
+        url.set("https://github.com/salesforce/Vader")
         licenses {
           license {
             name.set("The Apache License, Version 2.0")
@@ -184,9 +184,9 @@ subprojects {
           }
         }
         scm {
-          connection.set("scm:git:https://git.soma.salesforce.com/ccspayments/vader")
+          connection.set("scm:git:https://github.com/salesforce/Vader")
           developerConnection.set("scm:git:git@git.soma.salesforce.com:ccspayments/vader.git")
-          url.set("https://git.soma.salesforce.com/ccspayments/vader")
+          url.set("https://github.com/salesforce/Vader")
         }
       }
     }

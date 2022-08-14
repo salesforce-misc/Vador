@@ -25,7 +25,7 @@ image:container-level-2.png[container-level-2]
 * But the batches at level-2 can be batches of any data-type, as we use the same link:ContainerValidationConfig.adoc[ContainerValidationConfig] to declare configuration for this level.
 * Container at any level can be chosen as root for this validation config and doesn't necessarily have to be the top most root of the Data structure.
 
-== Example
+== Example: Container Validation 2 levels deep
 
 ifdef::env-github[]
 
@@ -60,7 +60,7 @@ endif::[]
 
 === Validation Requirements
 
-* Validate a container with the information about its members at two levels deep.
+* Validate a container with the information about its members at 2 levels deep.
 
 === Demo
 

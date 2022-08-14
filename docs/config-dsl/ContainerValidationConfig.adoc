@@ -27,7 +27,7 @@ image:container.png[]
 The batches can be `Collection` of same or different data type. 
 As long as the batch member is a `Collection`, this config is agnostic of Data types within the collection.
 
-TIP: Before diving into the examples, you may find this comparison useful: link:dsl-driven-configuration.adoc#_containervalidationconfig_vs_validationconfig[ContainerValidationConfig++*++ Vs ++*++ValidationConfig].
+TIP: Before diving into the examples, you may find this comparison useful: link:config-driven-validation.adoc#_containervalidationconfig_vs_validationconfig[ContainerValidationConfig++*++ Vs ++*++ValidationConfig].
 
 [#_example_container_with_multi_batch]
 == Example: Container with Multi-Batch

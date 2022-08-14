@@ -1,0 +1,117 @@
+= Stricter Salesforce `ID` Validation for Core consumers
+Gopal S Akshintala <gopala.akshintala@salesforce.com>
+:Revision: 1.0
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:toc:
+:toc-placement: preamble
+:sourcedir: ../../vader/src/main/java
+:testdir: ../../vader/src/test/java
+:imagesdir: ../images
+:prewrap!:
+
+One of the handy features of Vader, is to list all the `ID` fields of you bean that need validation at one place.
+This `ID` validation by default uses `com.force.swag.id.IdTraits.isValidIdStrictChecking(idStr, true)` utility.
+But if you wish to have a more strict validation making use of the `EntityInfo` (For example, you can check if the `ID` field has specific prefix of the entity it represents),
+you can do that too, using `IDConfig`. Let's understand that through an example:
+
+== Example: Strict ID validations
+
+ifdef::env-github[]
+
+[source,java,indent=0,options="nowrap"]
+----
+private static class BeanWithIdFields {
+  ID accountId;
+  ID contactId;
+}
+
+/**
+ * This imitates `common.udd.EntityId` interface from core which is implemented by all Entities.
+ */
+private interface EntityId {}
+
+@Value
+private static class AccountEntityId implements EntityId {}
+
+@Value
+private static class ContactEntityId implements EntityId {}
+
+/** This imitates entity UddConstants */
+private static class AccountUddConstants {
+  public static final EntityId EntityId = new AccountEntityId();
+}
+
+private static class ContactUddConstants {
+  public static final EntityId EntityId = new ContactEntityId();
+}
+----
+
+endif::[]
+ifndef::env-github[]
+
+[source,java,indent=0,options="nowrap"]
+----
+include::{testdir}/org/revcloud/vader/runner/config/IDConfigTest.java[tag=bean-with-id-fields]
+----
+
+endif::[]
+
+=== Validation Requirements
+
+* Both `ID` fields (`sfIdFormatField1`, `optionalSfIdFormatField2`) need to be validated `withIdValidator` passed by the consumer.
+
+=== Demo
+
+ifdef::env-github[]
+
+[source,java,indent=0,options="nowrap"]
+----
+@Test
+void idConfigForBatch() {
+  final var config =
+      BatchValidationConfig.<BeanWithIdFields, ValidationFailure>toValidate()
+          .withIdConfig(
+              IDConfig.<BeanWithIdFields, ValidationFailure, EntityId>toValidate()
+                  .withIdValidator(ValidIdUtil::isThisEntity)
+                  .shouldHaveValidSFIdFormatOrFailWith(
+                      Tuple.of(BeanWithIdFields::getAccountId, AccountUddConstants.EntityId),
+                      INVALID_UDD_ID)
+                  .absentOrHaveValidSFIdFormatOrFailWith(
+                      Tuple.of(BeanWithIdFields::getContactId, ContactUddConstants.EntityId),
+                      INVALID_OPTIONAL_UDD_ID))
+          .prepare();
+  final var validBean = new BeanWithIdFields(new ID("validId"), null);
+  final var validatables =
+      List.of(
+          validBean,
+          new BeanWithIdFields(new ID("invalidId"), null),
+          new BeanWithIdFields(new ID("validId"), new ID("invalidId")));
+  final var results = VaderBatch.validateAndFailFastForEach(validatables, config);
+  assertThat(results)
+      .containsExactly(right(validBean), left(INVALID_UDD_ID), left(INVALID_OPTIONAL_UDD_ID));
+}
+
+/** Dummy. A core client may use `common.udd.ValidIdUtil.isThisEntity(String, EntityId)` */
+private static class ValidIdUtil {
+  /** This should be implemented by the client and passed through `withIdValidator` config. */
+  private static boolean isThisEntity(ID idToValidate, EntityId entityId) {
+    return !idToValidate.toString().equalsIgnoreCase("invalidId"); // fake implementation
+  }
+}
+----
+
+endif::[]
+ifndef::env-github[]
+
+[source,java,indent=0,options="nowrap"]
+----
+include::{testdir}/org/revcloud/vader/runner/config/IDConfigTest.java[tag=bean-strict-id-validation]
+----
+
+endif::[]

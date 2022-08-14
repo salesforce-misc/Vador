@@ -21,7 +21,7 @@ This is the simplest config for a _Single (Non-Batch)_ bean with flat Data-struc
 
 image:bean.png[]
 
-=== Example
+=== Simple Bean Validation
 
 ifdef::env-github[]
 
@@ -49,7 +49,7 @@ endif::[]
 ==== Validation Requirements
 
 * Configure to validate Mandatory fields.
-* Configure other validators for the bean, written using one of `Validator*` types.
+* Configure other validators for the bean, written using one of link:../validator-types.adoc[`Validator*`] types.
 
 ==== Demo
 
@@ -104,7 +104,7 @@ Now validity of `ContainerT` depends on the validity of `MemberT`.
 In such case, both the data-structures can be independently validated by providing different `ValidationConfig` objects to each data-types to the Runner API and the results can be composed for Fail-Fast, as shown below.
 It supports nesting at any depth.
 
-=== Example
+=== Nested Bean Validation
 
 ifdef::env-github[]
 

@@ -95,6 +95,8 @@ It has a unique approach of decoupling *What-to-do* from *How-to-do*. The framew
 * 🧶Configuration _(What-to-do)_ - Declare your validation validators/specifications/rules/constraints through a DSL (builder).
 * ⚙️Execution Strategy _(How-to-do)_ - Call the Vader's API as per the execution strategy (Fail-Fast or Error-Accumulation)
 
+==== USP
+
 This decoupling comes with a lot of flexibility. Some unique selling points about Vader:
 
 * As Config resides outside Validatable, unlike annotation based frameworks, you can declare config for classes that are not part of your code-base/module.
@@ -158,7 +160,7 @@ So, all you need is a simple API call:
 
 image:api.png[API]
 
-== link:{docsdir}/validation-configuration.adoc[🧶Config For Validation]
+== link:{docsdir}/config-dsl/config-driven-validation.adoc[🧶Config driven Validation]
 
 == ⚙️Execution Strategy
 
@@ -250,7 +252,7 @@ It improves testability in 3 ways:
 
 NOTE: You can always test your config (to double-check if right values are provided), but no need to re-test the already well-tested implementation.
 
-link:{docsdir}/specs.adoc#_specs_do_not_need_tests[Read about no-tests argument here].
+link:{docsdir}/config-dsl/specs.adoc#_specs_do_not_need_tests[Read about no-tests argument here].
 The same argument applies to config as well.
 
 === Flexibility
@@ -271,6 +273,12 @@ Config is mapped to a data structure.
 Which means, if the validation requirements are same, you can *reuse* the config everywhere the data-structure is used, say with a different API execution strategy.
 Even if the data-structure (member) is nested inside another bean (container), the container bean can reuse member validation config and all it's validations without rewriting.
 
+== Applications
+
+It is predominantly used in combination with **REST** services, to validate the unmarshalled POJO from the REST request/response JSON.
+
+It can also be used for SObject Validation hooks or even FTests. This is generic and can be used wherever you find a requirement to run a bunch of validations or rules on a POJO. It’s not tied to any domain or framework. It’s not even tied to Backend services; you can use Vader even in Android apps.
+
 == How can I trust Vader?
 
 [.lead]
@@ -282,7 +290,7 @@ Well, coz that’s the *bread-&-jam* 🍞🥫 of what we promise!
 ** We openly display our <<shields, Code-Quality Shields>> at the top.
 
 [#_impact]
-== Impact ☄️
+== ☄️Impact
 
 Vader is being used in *Production* within Salesforce by:
 
@@ -309,8 +317,18 @@ This idea was presented as a Tech-talk at many https://overfullstack.ga/posts/fi
 
 That said, just like us, Vader matures day-by-day, and if any of your special use-cases don’t work, we shall love to fix them ASAP (TBD - Will publish SLA for P0, P1 etc).
 
-NOTE: 👋🏼 If you are facing any trouble or have any feature requests, please log a git.soma issue 👋🏼
+NOTE: 👋🏼 If you are facing any trouble or have any feature requests, please log a GitHub issue 👋🏼
+
+== How can I get my hands dirty?
+
+There are so many unit tests in the repo written for various features. You can start by understanding, playing with, or even writing new unit-tests to get hands-on experience with Vader.
+
+== How can our team on-board?
+
+Currently, link:https://salesforce-internal.slack.com/archives/C0228BHJCQP[Rev-Delphinus] maintains this repo. Feel free to ping in our link:https://salesforce-internal.slack.com/archives/C0228BHJCQP[slack channel] if you are interested to discuss more about adopting Vader for your requirements. We can provide 1:1 support and mentoring for all your doubts and feature requests.
+
+NOTE: Vader isn’t for some complex validation requirements. It makes even the simple validation requirements simpler. Plus, you don’t have to go full-on with the framework. All features are modular, so you may get your feet wet by migrating a small portion of your validation layer and incrementally adopt.
 
 image:vader.gif[]
 
-== link:CONTRIBUTING.adoc[Wanna Collab & Contribute?]
+== link:CONTRIBUTING.adoc[🙌🏼Wanna Collab & Contribute?]

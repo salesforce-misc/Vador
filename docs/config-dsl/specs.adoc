@@ -212,7 +212,7 @@ TIP: So, if a Spec compiles, it works as written!
 
 ===== _I am still not convinced, I need tests!_
 
-* First! please help us understand your concerns/use-cases by raising a git.soma issue.
+* First! please help us understand your concerns/use-cases by raising a Github issue.
 If possible, we shall cover your case and help you from the pain of writing tests.
 * And, why not! we just said you don’t need tests, but who said Specs are not testable?
 This is how simple it is to unit test them:
@@ -241,7 +241,7 @@ The declarative DSL with intuitive method names should guide the developer to co
 
 This deals with a single field.
 Use this spec if you wish to validate a field against one or more fields within the same Validatable or one or more http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/Matchers.html[Matchers].
-Vader also provides some link:matchers.adoc[Matchers out of the box].
+Vader also provides some link:../matchers.adoc[Matchers out of the box].
 Example:
 
 [source,java,indent=0,options="nowrap"]

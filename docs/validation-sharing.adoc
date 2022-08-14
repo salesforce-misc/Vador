@@ -12,7 +12,10 @@ endif::[]
 :toc-placement: preamble
 :imagesdir: images
 
-Beans sharing common data-structure can share/reuse validations too.
+Beans sharing common data-structure can share/reuse validations too. Vader supports both:
+
+* Composition sharing
+* Inheritance sharing
 
 ****
 TBD
