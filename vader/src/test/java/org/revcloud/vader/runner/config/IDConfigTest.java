@@ -167,6 +167,21 @@ class IDConfigTest {
   }
 
   @Test
+  @DisplayName("Validator types with IdConfig")
+  void validatorTypesWithIdConfig() {
+    final var config =
+        ValidationConfig.<BeanWithMixIdFields, ValidationFailure>toValidate()
+            .withIdConfig(
+                IDConfig.<ID, BeanWithMixIdFields, ValidationFailure, EntityId>toValidate()
+                    .withIdValidator(ValidIdUtil::isThisEntity)
+                    .shouldHaveValidSFIdFormatOrFailWith(
+                        Tuple.of(BeanWithMixIdFields::getAccountId, AccountUddConstants.EntityId),
+                        INVALID_UDD_ID))
+            .prepare();
+    assertThat(config.getValidatableType()).isEqualTo(BeanWithMixIdFields.class);
+  }
+
+  @Test
   void idConfigWithShouldHaveValidSFPolymorphicIdFormatForAllOrFailWith() {
     final var config =
         ValidationConfig.<BeanWithPolymorphicIdFields, ValidationFailure>toValidate()

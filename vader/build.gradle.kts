@@ -16,6 +16,7 @@ dependencies {
   api(libs.hamcrest.date)
   api(libs.java.vavr)
   implementation(libs.kotlin.vavr)
+  implementation(libs.typeTools)
   compileOnly(libs.jetbrains.annotations)
   api("de.cronn:reflection-util:2.13.2")
 

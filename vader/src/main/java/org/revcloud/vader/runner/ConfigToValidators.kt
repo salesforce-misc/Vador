@@ -17,7 +17,6 @@ import org.revcloud.vader.runner.config.FieldConfig
 import org.revcloud.vader.runner.config.FieldConfig.FieldConfigBuilder
 import org.revcloud.vader.runner.config.IDConfig
 import org.revcloud.vader.runner.config.IDConfig.IDConfigBuilder
-import org.revcloud.vader.runner.config.getValidators
 import org.revcloud.vader.specs.component1
 import org.revcloud.vader.specs.component2
 import org.revcloud.vader.specs.specs.BaseSpec
@@ -36,8 +35,13 @@ internal fun <ValidatableT, FailureT> configToValidators(
     toValidatorEtrs4(config.withIdConfigs) +
     toValidatorEtrs5(config.withFieldConfigs) +
     config.specs.map { it.toValidator() } +
-    config.getValidators()
+    config.toValidatorsEtr()
   )
+
+// * NOTE gopala.akshintala 14/08/22: Using Extension functions coz, names are almost same for all these
+@JvmSynthetic
+private fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.toValidatorsEtr(): List<ValidatorEtr<ValidatableT?, FailureT?>> =
+  fromValidators1(withValidators) + fromValidators2(withValidator) + withValidatorEtrs
 
 @JvmSynthetic
 private fun <ValidatableT, FailureT, FieldT> toValidatorEtrs1(

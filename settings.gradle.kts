@@ -26,6 +26,7 @@ dependencyResolutionManagement {
       library("java-vavr", "io.vavr:vavr:0.10.4")
       library("kotlin-vavr", "io.vavr:vavr-kotlin:0.10.2")
       library("jetbrains-annotations", "org.jetbrains:annotations:23.0.0")
+      library("typeTools", "net.jodah:typetools:0.6.3")
     }
   }
 }

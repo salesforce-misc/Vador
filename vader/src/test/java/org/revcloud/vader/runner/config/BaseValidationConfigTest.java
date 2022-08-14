@@ -142,6 +142,29 @@ class BaseValidationConfigTest {
         .contains(BeanWithIdStrFields.Fields.requiredField);
   }
 
+  @Test
+  @DisplayName("Validator Types")
+  void validatorTypes() {
+    final var validationConfig1 =
+        ValidationConfig.<Bean, ValidationFailure>toValidate()
+            .withValidator(
+                bean -> bean.getRequiredField1() == null ? REQUIRED_FIELD_MISSING_1 : NONE,
+                REQUIRED_FIELD_MISSING_1)
+            .prepare();
+    assertThat(validationConfig1.getValidatableType()).isEqualTo(Bean.class);
+
+    final var validationConfig2 =
+        ValidationConfig.<Bean, ValidationFailure>toValidate()
+            .shouldHaveFieldOrFailWithFn(
+                Bean::getRequiredField1,
+                (fieldName, value) -> {
+                  assertThat(fieldName).isEqualTo(Bean.Fields.requiredField1);
+                  return REQUIRED_FIELD_MISSING_1;
+                })
+            .prepare();
+    assertThat(validationConfig2.getValidatableType()).isEqualTo(Bean.class);
+  }
+
   // tag::validationConfig-for-nested-bean-demo[]
   @Test
   void nestedBeanValidationWithInvalidMember() {

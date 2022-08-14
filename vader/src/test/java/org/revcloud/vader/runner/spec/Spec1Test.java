@@ -44,6 +44,21 @@ class Spec1Test {
     assertThat(noneResult).isEmpty();
   }
 
+  @Test
+  @DisplayName("Validator Types from Specs")
+  void validatorTypesFromSpecs() {
+    final var validationConfig =
+        ValidationConfig.<Bean1, ValidationFailure>toValidate()
+            .withSpec(
+                spec ->
+                    spec._1()
+                        .orFailWith(INVALID_VALUE)
+                        .given(Bean1::getValue)
+                        .shouldMatch(anyOf(1, 2)))
+            .prepare();
+    assertThat(validationConfig.getValidatableType()).isEqualTo(Bean1.class);
+  }
+
   @DisplayName("ShouldMatchAnyOf")
   @Test
   void spec1ShouldMatchAnyOf() {

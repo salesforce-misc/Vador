@@ -17,6 +17,7 @@ package org.revcloud.vader.runner.config;
 import de.cronn.reflection.util.TypedPropertyGetter;
 import io.vavr.Function2;
 import io.vavr.Tuple2;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -96,5 +97,9 @@ public abstract class BaseValidationConfig<ValidatableT, FailureT> {
 
   public Set<String> getRequiredFieldNames(Class<ValidatableT> beanClass) {
     return BaseValidationConfigEx.getRequiredFieldNamesEx(this, beanClass);
+  }
+
+  public Type getValidatableType() {
+    return BaseValidationConfigEx.getValidatableType(this);
   }
 }
