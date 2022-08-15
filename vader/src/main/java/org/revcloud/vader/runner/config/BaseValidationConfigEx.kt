@@ -18,10 +18,15 @@ package org.revcloud.vader.runner.config
 
 import de.cronn.reflection.util.PropertyUtils
 import de.cronn.reflection.util.TypedPropertyGetter
+import io.vavr.CheckedFunction1
+import io.vavr.Function1
+import io.vavr.control.Either
 import net.jodah.typetools.TypeResolver
 import org.revcloud.vader.specs.factory.SpecFactory
 import org.revcloud.vader.specs.specs.BaseSpec
+import org.revcloud.vader.specs.specs.Spec1
 import org.revcloud.vader.types.Validator
+import org.revcloud.vader.types.ValidatorEtr
 import java.lang.reflect.Type
 import java.util.Optional
 import java.util.function.Predicate
@@ -54,6 +59,12 @@ internal fun <ValidatableT> getValidatableType(config: BaseValidationConfig<Vali
   (config.shouldHaveFieldsOrFailWith.keys.firstOrNull() ?: config.shouldHaveFieldsOrFailWithFn?._1?.firstOrNull() ?: config.shouldHaveFieldOrFailWithFn.keys.firstOrNull())?.let { return TypeResolver.resolveRawArguments(TypedPropertyGetter::class.java, it.javaClass)[0] }
   // ! TODO gopala.akshintala 14/08/22: For other fields and FieldConfig
   config.withIdConfigs?.firstOrNull()?.prepare()?.shouldHaveValidSFIdFormatForAllOrFailWith?.keys?.firstOrNull()?._1?.let { return TypeResolver.resolveRawArguments(TypedPropertyGetter::class.java, it.javaClass)[0] }
-  // config.withSpecs.firstOrNull()?.let { return TypeResolver.resolveRawArguments(Spec::class.java, it.javaClass)[0] }
+  config.getSpecsEx().firstOrNull()?.let {
+    // ! TODO gopala.akshintala 15/08/22: Resolve for other Specs
+    return when (it) {
+      is Spec1<*, *, *> -> TypeResolver.resolveRawArguments(Function1::class.java, it.given.javaClass)[0]
+      else -> null
+    }
+  }
   return null
 }

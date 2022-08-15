@@ -164,6 +164,17 @@ class BaseValidationConfigTest {
             .prepare();
     assertThat(validationConfig2.getValidatableType()).isEqualTo(Bean.class);
   }
+  
+    @Test
+  @DisplayName("Validator Etr types")
+  void validatorEtrTypes() {
+    final var validationConfig2 =
+        ValidationConfig.<Bean, ValidationFailure>toValidate()
+            .withValidatorEtr(
+                beanEtr -> beanEtr.map(Bean::getRequiredField1).filterOrElse(Objects::nonNull, ignore -> REQUIRED_FIELD_MISSING_1))
+            .prepare();
+    assertThat(validationConfig2.getValidatableType()).isEqualTo(Bean.class);
+  }
 
   // tag::validationConfig-for-nested-bean-demo[]
   @Test
