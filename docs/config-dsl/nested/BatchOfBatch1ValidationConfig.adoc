@@ -66,7 +66,7 @@ ifdef::env-github[]
 ----
 @DisplayName("FailFastForEach -> Root[batchOf(Items(batchOf(Beans))]) or like `List<Item<List<Bean>>`")
 @Test
-void batchOfBatchFailFastForEach() {
+void batchOfBatch1FailFastForEach() {
   final var memberBatchValidationConfig =
       BatchValidationConfig.<Bean, ValidationFailure>toValidate()
           .withSpec(

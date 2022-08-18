@@ -113,7 +113,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForAn
       failureForNullValidatable,
       throwableMapper
     )(containerValidatables)
-      .map { it.containerFailure ?: it.batchMemberFailure }.flatMap { Optional.ofNullable(it?._2) }
+      .flatMap { it.containerFailure.or { it.batchMemberFailure } }.map { it?._2 }
   }
 
 @JvmSynthetic
