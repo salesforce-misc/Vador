@@ -34,7 +34,7 @@ description = "Vader - A framework for POJO/Data Structure/Bean validation"
 // <-- ALL PROJECTS --
 allprojects {
   group = "com.salesforce.ccspayments"
-  version = "3.3.7"
+  version = "3.3.8-SNAPSHOT"
   repositories {
     mavenCentral()
   }

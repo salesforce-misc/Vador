@@ -12,7 +12,7 @@ endif::[]
 :toc-placement: preamble
 :sourcedir: ../../vader/src/main/java
 :testdir: ../../vader/src/test/java
-:imagesdir: ../images
+:imagesdir: ../images/config-dsl
 :prewrap!:
 
 image:bean-batch.png[]

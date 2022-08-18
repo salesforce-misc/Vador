@@ -11,7 +11,7 @@ endif::[]
 :toc:
 :toc-placement: preamble
 :testdir: ../vader/src/test/java
-:imagesdir: images
+:imagesdir: ../images/config-dsl
 
 [.lead]
 *A Spec is a Configuration, which lets you reuse a well-tested algorithmic pattern/template for a validation, by specifying the placeholders to fill.*
@@ -234,7 +234,7 @@ But think about it, *your tests are testing the vader's validation algorithm (wh
 
 == What Spec should I use?
 
-Currently Vader provides 3 types of Specs and their names reflect the arity of fields they deal with.
+Currently, Vader provides 3 types of Specs and their names reflect the arity of fields they deal with.
 The declarative DSL with intuitive method names should guide the developer to construct a Spec.
 
 === Spec1
