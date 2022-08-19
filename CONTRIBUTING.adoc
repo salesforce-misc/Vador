@@ -22,6 +22,7 @@ endif::[]
 :vader-version: 2.7.2
 :toc:
 
+[#_versioning_strategy]
 == Versioning Strategy
 
 ====
@@ -34,26 +35,7 @@ endif::[]
 
 == Source-code Setup
 
-* This is a simple Gradle project and has its own Gradle wrapper. So nothing to install.
-
-[NOTE]
-====
-There is currently one non-open source dependency `com.force.api:swag` due to which you may need this step. This will soon be removed as this project turns fully open source.
-
-* You need to add your nexus credentials in `~/.gradle/gradle.properties` file (create the file if not present), like below:
-
-[source,properties]
-----
-  nexusUsername=...your..nexus..username...
-  nexusPassword=...your..nexus..password...
-----
-
-* These are used by your local gradle to connect to Salesforce nexus for downloading artifacts.
-* You can find your nexus userName and password from https://nexus.soma.salesforce.com/nexus/#profile;User%20Token[here] under the *User Token* section in the dropdown.
-* If you are working on `core`, you can also get them from `blt/app/main/core/workspace-user.xml` file.
-====
-
-* Then run this from project's root to build Vader:
+* This is a simple Gradle project and has its own Gradle wrapper. So nothing to install. Just run this command
 
 CAUTION: You may see some build errors related to delombok task.
 They should not fail your build, and you may ignore them.
@@ -78,43 +60,22 @@ In-fact, it has got the reputation of *"Better Java!"*.
 This https://www.coursera.org/learn/kotlin-for-java-developers[*free course*] can help catalyse your ramp-up.
 * If you use Intellij, Kotlin plugin comes bundled. Similar development aids should be present for other code editors too.
 
-== SonarQube
-
-* The codebase is hooked to SonarQube and all the quality analysis and code-coverage can be checked https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader[in this portal].
-* The https://sonarqube.soma.salesforce.com/profiles/show?language=java&name=Vader+way[Quality Profile(QP)] has the sonar rules configured.
-For admin access on this profile, you may approach existing admins of this QP or reach out to #dpx-sonarqube-support on Slack.
-
 == Code Formatting
 
 * This repo uses https://github.com/diffplug/spotless[*Spotless*] for formatting files, as this repo has code from more than one programming-language.
-* The SFCI build (even your local `gradle build`) fails if the check-in (or code) has any formatting issues.
 * Please run `./gradlew spotlessApply` before check-in to fix any formatting errors.
 
 TIP: If you are on Intellij, replace your kbd[Cmd+Shift+L] habit with kbd[Ctrl]-kbd[Ctrl] and run `gradle spotlessApply` (Or the respective action if you are on Eclipse).
 It may be slow for the first run, but later runs should be faster.
 
-== CI/CD
-
-* SFCI is used for CI/CD.
-* A jenkins job runs for every commit pushed on any branch.
-However, to publish a jar to nexus, only commits on *master* branch are considered.
-* link:JenkinsFile[JenkinsFile] has the configuration script.
-* The job status can be monitored from the https://sfciteam.sfci.buildndeliver-s.aws-esvc1-useast2.aws.sfdc.cl/ccspayments/job/validation/job/Vader/job/master/[SFCI Portal].
-
 == Manual publishing
 
-* If you want to manually publish jar to nexus from your local, you need to have the necessary permissions to release jar into Nexus for both SNAPSHOT and RELEASE channels.
-This https://gus.my.salesforce.com/a07B0000007Qt0BIAS[Gus Item] was raised for Nexus access.
-* Please reach out to this team for any Nexus related permissions, problems, or requirements.
-As of today, the permissions are maintained by providing a role `CCSPayments`.
-We are planning to create an AD group for this.
-* In link:build.gradle.kts[],
+In link:build.gradle.kts[], follow the <<_versioning_strategy,Versioning Strategy>>
+
 ** For release increment the version property `version = "{vader-version}"` and run this command:
-** For SNAPSHOT releases, you may not need to increment, as nexus lets you override SNAPSHOT versions.
+** For SNAPSHOT releases, add a `-SNAPSHOT` at the end
 
 [source,bash]
 ----
 ./gradlew publish
 ----
-
-* The published jar should be found in https://nexus.soma.salesforce.com/nexus/index.html#welcome[Nexus Repo].

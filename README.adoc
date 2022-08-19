@@ -30,14 +30,6 @@ ____
 
 '''
 
-[#shields]
-image:https://sfciteam.sfci.buildndeliver-s.aws-esvc1-useast2.aws.sfdc.cl/ccspayments/buildStatus/icon?job=validation%2FVader%2Fmaster[Build Status,link=https://sfciteam.sfci.buildndeliver-s.aws-esvc1-useast2.aws.sfdc.cl/ccspayments/job/validation/job/Vader/job/master/]
-image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=alert_status[Quality Gate Status,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
-image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=sqale_rating[Maintainability Rating,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
-image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=security_rating[Security Rating,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
-image:https://sonarqube.soma.salesforce.com/api/project_badges/measure?project=ccspayments.vader&metric=coverage[Coverage,link=https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader]
-image:https://img.shields.io/badge/Rev%20Delphinus%20-blue?logo=slack[Slack,link=https://salesforce-internal.slack.com/archives/C0228BHJCQP]
-
 == Artifacts
 
 [source,xml,subs=attributes+]
@@ -117,7 +109,7 @@ Refer to the Unit-tests in this repo, there is a test for each feature of Vader.
 
 ====
 .Salesforce Season of Innovation, Oct 2021 + Rev Cloud Brown-Bag
-image:vav-play-poster.png[link=https://sfdc.co/vader-bb-rec]
+image:vav-play-poster.png[link=https://overfullstack.ga/my-talks/#10-2021-Season-of-Innovation-Salesforce]
 
 https://speakerdeck.com/gopalakshintala/vader-and-the-army-of-validators[Slide-deck]
 ====
@@ -139,14 +131,6 @@ endif::[]
 
 * https://speakerdeck.com/gopalakshintala/fight-complexity-with-functional-programming-in-kotlin[Slide-deck]
 * The corresponding https://overfullstack.ga/posts/fight-complexity-with-fp/[Blog Post]
-====
-
-=== More videos
-
-====
-https://drive.google.com/file/d/1H_LhlYAqQKK4UjYrQ8GG9Bo3NpW2dsZL/view?usp=sharing[Presentation done for Rev Pegasus team for Cancellation API]
-
-link:{docsdir}/presentations/2021-08-cancellation-api/1-index.adoc[Slide-deck]
 ====
 
 == 👓A glance at the API
@@ -279,16 +263,6 @@ It is predominantly used in combination with **REST** services, to validate the 
 
 It can also be used for SObject Validation hooks or even FTests. This is generic and can be used wherever you find a requirement to run a bunch of validations or rules on a POJO. It’s not tied to any domain or framework. It’s not even tied to Backend services; you can use Vader even in Android apps.
 
-== How can I trust Vader?
-
-[.lead]
-Well, coz that’s the *bread-&-jam* 🍞🥫 of what we promise!
-
-* It’s our responsibility to address all the edge cases and automate them thoroughly, for various types of POJOs.
-* We take code-quality & security seriously!
-** This code base has integration with https://sonarqube.soma.salesforce.com/dashboard?id=ccspayments.vader[*SonarQube*], where you can verify code-coverage, security of libraries used, etc.
-** We openly display our <<shields, Code-Quality Shields>> at the top.
-
 [#_impact]
 == ☄️Impact
 
@@ -322,10 +296,6 @@ NOTE: 👋🏼 If you are facing any trouble or have any feature requests, pleas
 == How can I get my hands dirty?
 
 There are so many unit tests in the repo written for various features. You can start by understanding, playing with, or even writing new unit-tests to get hands-on experience with Vader.
-
-== How can our team be on-board?
-
-Currently, link:https://salesforce-internal.slack.com/archives/C0228BHJCQP[Rev-Delphinus] maintains this repo. Feel free to ping in our link:https://salesforce-internal.slack.com/archives/C0228BHJCQP[slack channel] if you are interested to discuss more on adopting Vader for your requirements. We can provide 1:1 support and mentorship for all your doubts and feature requests.
 
 NOTE: Vader isn’t for some complex validation requirements. It makes even the simple validation requirements simpler. Plus, you don’t have to go full-on with the framework. All features are modular, so you may get your feet wet by migrating a small portion of your validation layer and incrementally adopting Vader.
 

@@ -185,26 +185,13 @@ subprojects {
         }
         scm {
           connection.set("scm:git:https://github.com/salesforce/Vader")
-          developerConnection.set("scm:git:git@git.soma.salesforce.com:ccspayments/vader.git")
+          developerConnection.set("scm:git:git@github.com/salesforce/vader.git")
           url.set("https://github.com/salesforce/Vader")
         }
       }
     }
     repositories {
-      maven {
-        name = "Nexus"
-        val releasesRepoUrl =
-          uri("https://nexus.soma.salesforce.com/nexus/content/repositories/releases")
-        val snapshotsRepoUrl =
-          uri("https://nexus.soma.salesforce.com/nexus/content/repositories/snapshots")
-        url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
-        val nexusUsername: String by project
-        val nexusPassword: String by project
-        credentials {
-          username = nexusUsername
-          password = nexusPassword
-        }
-      }
+      mavenCentral()
     }
   }
 }
