@@ -6,89 +6,25 @@
  ******************************************************************************/
 
 import com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA
-import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep.XML
 import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
 import io.gitlab.arturbosch.detekt.Detekt
-import kotlinx.kover.api.DefaultJacocoEngine
-import kotlinx.kover.api.KoverTaskExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm")
   `maven-publish`
-  idea
-  id("org.jetbrains.kotlinx.kover") version "0.6.0-Beta"
-  id("io.freefair.lombok") apply false
-  id("com.diffplug.spotless") version "6.8.0"
   id("org.sonarqube") version "3.4.0.2513"
   id("io.gitlab.arturbosch.detekt") version "1.21.0"
   id("com.adarshr.test-logger") version "3.2.0"
-  id("org.asciidoctor.jvm.gems") version "3.3.2"
-  id("org.asciidoctor.jvm.revealjs") version "3.3.2"
-  id("com.github.spotbugs") version "5.0.6"
-  id("com.github.jk1.dependency-license-report") version "2.0"
 }
-
-description = "Vader - A framework for POJO/Data Structure/Bean validation"
-
-// <-- ALL PROJECTS --
 allprojects {
-  group = "com.salesforce.ccspayments"
-  version = "3.3.8-SNAPSHOT"
-  repositories {
-    mavenCentral()
-  }
-  apply(plugin = "com.diffplug.spotless")
-  apply(plugin = "org.jetbrains.kotlinx.kover")
-  kover {
-    isDisabled.set(false)
-    engine.set(DefaultJacocoEngine)
-  }
-  spotless {
-    kotlin {
-      target("src/main/java/**/*.kt", "src/test/java/**/*.kt")
-      targetExclude("$buildDir/generated/**/*.*")
-      ktlint()
-        .setUseExperimental(true)
-        .editorConfigOverride(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
-    }
-    kotlinGradle {
-      target("*.gradle.kts")
-      ktlint()
-        .setUseExperimental(true)
-        .editorConfigOverride(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
-    }
-    java {
-      toggleOffOn()
-      target("src/main/java/**/*.java", "src/test/java/**/*.java")
-      targetExclude("$buildDir/generated/**/*.*")
-      importOrder()
-      removeUnusedImports()
-      googleJavaFormat()
-      trimTrailingWhitespace()
-      indentWithSpaces(2)
-      endWithNewline()
-    }
-    format("xml") {
-      targetExclude("pom.xml")
-      target("*.xml")
-      eclipseWtp(XML)
-    }
-    format("documentation") {
-      target("*.md", "*.adoc")
-      trimTrailingWhitespace()
-      indentWithSpaces(2)
-      endWithNewline()
-    }
-  }
+  apply(plugin = "vader.root-conventions")
 }
-// -- ALL PROJECTS -->
 // <-- SUB PROJECTS --
 subprojects {
   apply(plugin = "org.jetbrains.kotlin.jvm")
   apply(plugin = "maven-publish")
   apply(plugin = "com.adarshr.test-logger")
-  apply(plugin = "com.github.spotbugs")
 
   val asciidoclet: Configuration by configurations.creating
   val lombokForSonarQube: Configuration by configurations.creating
@@ -122,8 +58,6 @@ subprojects {
   // <-- SUBPROJECT TASKS --
   tasks {
     withType<Jar> { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
-    spotbugsMain.get().enabled = false
-    spotbugsTest.get().enabled = false
     register("configureJavadoc") {
       doLast {
         javadoc {
@@ -157,8 +91,6 @@ subprojects {
         logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to MavenLocal.")
       }
     }
-    spotbugs.ignoreFailures.set(true)
-    spotbugsTest.get().enabled = false
   }
   // -- SUBPROJECT TASKS -->
   publishing {
@@ -196,12 +128,6 @@ subprojects {
   }
 }
 // -- SUB PROJECTS -->
-koverMerged {
-  enable()
-  xmlReport {
-    onCheck.set(true)
-  }
-}
 sonarqube {
   properties {
     property("sonar.modules", subprojects.joinToString(",") { it.name })
@@ -210,11 +136,6 @@ sonarqube {
 }
 // <-- ROOT-PROJECT TASKS --
 tasks {
-  test {
-    extensions.configure(KoverTaskExtension::class) {
-      isEnabled = true
-    }
-  }
   sonarqube {
     properties {
       // As of now this property is ignored until sonarqube is upgraded to 8.9

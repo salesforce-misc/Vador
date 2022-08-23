@@ -11,10 +11,8 @@ pluginManagement {
     gradlePluginPortal()
   }
   val kotlinVersion: String by settings
-  val lombokGradlePluginVersion: String by settings
   plugins {
     kotlin("jvm") version kotlinVersion
-    id("io.freefair.lombok") version lombokGradlePluginVersion
   }
 }
 

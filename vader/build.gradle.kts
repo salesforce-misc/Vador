@@ -18,15 +18,15 @@ dependencies {
   implementation(libs.kotlin.vavr)
   implementation(libs.typeTools)
   compileOnly(libs.jetbrains.annotations)
-  api("de.cronn:reflection-util:2.13.2")
+  api("de.cronn:reflection-util:2.14.0")
 
   implementation("org.slf4j:slf4j-api:2.0.0-alpha1")
 
-  runtimeOnly("org.apache.logging.log4j:log4j-slf4j18-impl:2.17.1")
+  runtimeOnly("org.apache.logging.log4j:log4j-slf4j18-impl:2.18.0")
 
   testImplementation(project(":matchers"))
   testImplementation("org.assertj:assertj-vavr:0.4.2")
-  testImplementation("org.assertj:assertj-core:3.22.0")
+  testImplementation("org.assertj:assertj-core:3.23.1")
 }
 
 if (!System.getProperty("idea.sync.active").toBoolean()) {
@@ -40,9 +40,4 @@ tasks {
     quiet.set(true)
     input.setFrom("src/main/java")
   }
-}
-
-spotbugs {
-  // ! TODO 08/08/21 gopala.akshintala: Probably enable someday
-  ignoreFailures.set(true)
 }
