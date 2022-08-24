@@ -1,3 +1,4 @@
+import com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep.XML
 import io.freefair.gradle.plugins.lombok.LombokExtension
 import kotlinx.kover.api.DefaultJacocoEngine
@@ -8,6 +9,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   kotlin("jvm")
   `maven-publish`
+  id("com.adarshr.test-logger")
 }
 val kotestVersion: String by project
 dependencies {
@@ -26,6 +28,7 @@ tasks {
       freeCompilerArgs = listOf("-Xjdk-release=11")
     }
   }
+  testlogger.theme = MOCHA
 }
 publishing {
   publications.create<MavenPublication>("vader") {

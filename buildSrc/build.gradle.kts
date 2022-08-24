@@ -13,4 +13,5 @@ dependencies {
   implementation("io.freefair.lombok:io.freefair.lombok.gradle.plugin:6.5.0.3")
   
   implementation("org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin:1.7.20-Beta")
+  implementation("com.adarshr.test-logger:com.adarshr.test-logger.gradle.plugin:3.2.0")
 }

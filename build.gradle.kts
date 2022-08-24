@@ -5,7 +5,6 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  ******************************************************************************/
 
-import com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA
 import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
 import io.gitlab.arturbosch.detekt.Detekt
 
@@ -13,7 +12,7 @@ plugins {
   kotlin("jvm")
   id("org.sonarqube") version "3.4.0.2513"
   id("io.gitlab.arturbosch.detekt") version "1.21.0"
-  id("com.adarshr.test-logger") version "3.2.0"
+  
 }
 allprojects {
   apply(plugin = "vader.root-conventions")
@@ -21,7 +20,6 @@ allprojects {
 // <-- SUB PROJECTS --
 subprojects {
   apply(plugin = "vader.sub-conventions")
-  apply(plugin = "com.adarshr.test-logger")
 
   val asciidoclet: Configuration by configurations.creating
   val lombokForSonarQube: Configuration by configurations.creating
@@ -61,7 +59,6 @@ subprojects {
       isFailOnError = false
       options.encoding("UTF-8")
     }
-    testlogger.theme = MOCHA
     withType<PublishToMavenRepository>().configureEach {
       doLast {
         logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to ${repository.name}")
