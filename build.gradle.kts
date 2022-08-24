@@ -8,11 +8,9 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA
 import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm")
-  `maven-publish`
   id("org.sonarqube") version "3.4.0.2513"
   id("io.gitlab.arturbosch.detekt") version "1.21.0"
   id("com.adarshr.test-logger") version "3.2.0"
@@ -22,24 +20,14 @@ allprojects {
 }
 // <-- SUB PROJECTS --
 subprojects {
-  apply(plugin = "org.jetbrains.kotlin.jvm")
-  apply(plugin = "maven-publish")
+  apply(plugin = "vader.sub-conventions")
   apply(plugin = "com.adarshr.test-logger")
 
   val asciidoclet: Configuration by configurations.creating
   val lombokForSonarQube: Configuration by configurations.creating
-  val kotestVersion: String by project
   dependencies {
     asciidoclet("org.asciidoctor:asciidoclet:1.+")
     lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
-
-    val testImplementation by configurations
-    testImplementation(platform("org.junit:junit-bom:5.8.2"))
-    testImplementation("org.junit.jupiter:junit-jupiter-api")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    testImplementation(platform("io.kotest:kotest-bom:$kotestVersion"))
-    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
-    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
   }
   sonarqube {
     properties {
@@ -73,13 +61,6 @@ subprojects {
       isFailOnError = false
       options.encoding("UTF-8")
     }
-    withType<KotlinCompile> {
-      kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-        freeCompilerArgs = listOf("-Xjdk-release=11")
-      }
-    }
-    test.get().useJUnitPlatform()
     testlogger.theme = MOCHA
     withType<PublishToMavenRepository>().configureEach {
       doLast {
@@ -93,39 +74,6 @@ subprojects {
     }
   }
   // -- SUBPROJECT TASKS -->
-  publishing {
-    publications.create<MavenPublication>("vader") {
-      val subprojectJarName = tasks.jar.get().archiveBaseName.get()
-      artifactId = if (subprojectJarName == "vader") "vader" else "vader-$subprojectJarName"
-      from(components["java"])
-      pom {
-        name.set(artifactId)
-        description.set(project.description)
-        url.set("https://github.com/salesforce/Vader")
-        licenses {
-          license {
-            name.set("The Apache License, Version 2.0")
-            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-          }
-        }
-        developers {
-          developer {
-            id.set("gopala.akshintala@salesforce.com")
-            name.set("Gopal S Akshintala")
-            email.set("gopala.akshintala@salesforce.com")
-          }
-        }
-        scm {
-          connection.set("scm:git:https://github.com/salesforce/Vader")
-          developerConnection.set("scm:git:git@github.com/salesforce/vader.git")
-          url.set("https://github.com/salesforce/Vader")
-        }
-      }
-    }
-    repositories {
-      mavenCentral()
-    }
-  }
 }
 // -- SUB PROJECTS -->
 sonarqube {
