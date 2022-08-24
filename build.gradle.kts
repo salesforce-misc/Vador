@@ -44,8 +44,8 @@ subprojects {
       xml.required.set(true)
     }
   }
-  plugins.withType<DetektPlugin>() {
-    tasks.withType<Detekt>() detekt@{
+  plugins.withType<DetektPlugin> {
+    tasks.withType<Detekt> detekt@{
       finalizedBy(detektReportMerge)
       detektReportMerge.configure {
         input.from(this@detekt.xmlReportFile)

@@ -57,7 +57,7 @@ The latest version of the plugin should work.
 * The code-base is a mix of Java and Kotlin. If you are a Java developer and new to Kotlin, don't worry, Kotlin is a JVM language and can be used anywhere Java is used.
 In-fact, it has got the reputation of *"Better Java!"*.
 * A typical Java developer can ramp up on Kotlin in less than a week.
-This https://www.coursera.org/learn/kotlin-for-java-developers[*free course*] can help catalyse your ramp-up.
+This free-course: https://www.coursera.org/learn/kotlin-for-java-developers[*Kotlin for Java Developers | Coursera*] can help catalyse your ramp-up.
 * If you use Intellij, Kotlin plugin comes bundled. Similar development aids should be present for other code editors too.
 
 == Code Formatting

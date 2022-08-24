@@ -159,7 +159,7 @@ all you need is _chain_ your validators in an Ordered List (like `java.util.List
 ifdef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
-.link:{testdir}/org/revcloud/vader/runner/VaderTest.java[VaderTest.java, tag=withValidators]
+.link:{testdir}/org/revcloud/vader/execution/VaderTest.java[VaderTest.java, tag=withValidators]
 ----
 final Validator<Bean, ValidationFailure> validator1 = bean -> NONE;
 final Validator<Bean, ValidationFailure> validator2 = bean -> NONE;
@@ -176,9 +176,9 @@ endif::[]
 ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
-.link:{testdir}/org/revcloud/vader/runner/VaderTest.java[VaderTest.java, tag=withValidators]
+.link:{testdir}/org/revcloud/vader/execution/VaderTest.java[VaderTest.java, tag=withValidators]
 ----
-include::{testdir}/org/revcloud/vader/runner/VaderTest.java[tag=withValidators]
+include::{testdir}/org/revcloud/vader/execution/VaderTest.java[tag=withValidators]
 ----
 
 endif::[]
