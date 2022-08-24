@@ -11,14 +11,21 @@ plugins {
   `maven-publish`
   id("com.adarshr.test-logger")
 }
+val asciidoclet: Configuration by configurations.creating
 val kotestVersion: String by project
 dependencies {
+  asciidoclet("org.asciidoctor:asciidoclet:1.+")
   testImplementation(platform("org.junit:junit-bom:5.8.2"))
   testImplementation("org.junit.jupiter:junit-jupiter-api")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
   testImplementation(platform("io.kotest:kotest-bom:$kotestVersion"))
   testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
   testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+}
+java {
+  withJavadocJar()
+  withSourcesJar()
+  sourceCompatibility = JavaVersion.VERSION_11
 }
 tasks {
   test.get().useJUnitPlatform()
@@ -29,6 +36,32 @@ tasks {
     }
   }
   testlogger.theme = MOCHA
+  withType<Jar> { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
+  register("configureJavadoc") {
+    doLast {
+      javadoc {
+        options.doclet = "org.asciidoctor.Asciidoclet"
+        options.docletpath = asciidoclet.files.toList()
+      }
+    }
+  }
+  javadoc {
+    dependsOn("configureJavadoc")
+    (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
+    // TODO 22/05/21 gopala.akshintala: Turn this on after writing all javadocs
+    isFailOnError = false
+    options.encoding("UTF-8")
+  }
+  withType<PublishToMavenRepository>().configureEach {
+    doLast {
+      logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to ${repository.name}")
+    }
+  }
+  withType<PublishToMavenLocal>().configureEach {
+    doLast {
+      logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to MavenLocal.")
+    }
+  }
 }
 publishing {
   publications.create<MavenPublication>("vader") {

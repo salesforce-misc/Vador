@@ -20,11 +20,9 @@ allprojects {
 // <-- SUB PROJECTS --
 subprojects {
   apply(plugin = "vader.sub-conventions")
-
-  val asciidoclet: Configuration by configurations.creating
+  
   val lombokForSonarQube: Configuration by configurations.creating
   dependencies {
-    asciidoclet("org.asciidoctor:asciidoclet:1.+")
     lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
   }
   sonarqube {
@@ -36,41 +34,6 @@ subprojects {
       property("sonar.java.binaries", "build/classes")
     }
   }
-  java {
-    withJavadocJar()
-    withSourcesJar()
-    sourceCompatibility = JavaVersion.VERSION_11
-  }
-  // <-- SUBPROJECT TASKS --
-  tasks {
-    withType<Jar> { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
-    register("configureJavadoc") {
-      doLast {
-        javadoc {
-          options.doclet = "org.asciidoctor.Asciidoclet"
-          options.docletpath = asciidoclet.files.toList()
-        }
-      }
-    }
-    javadoc {
-      dependsOn("configureJavadoc")
-      (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
-      // TODO 22/05/21 gopala.akshintala: Turn this on after writing all javadocs
-      isFailOnError = false
-      options.encoding("UTF-8")
-    }
-    withType<PublishToMavenRepository>().configureEach {
-      doLast {
-        logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to ${repository.name}")
-      }
-    }
-    withType<PublishToMavenLocal>().configureEach {
-      doLast {
-        logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to MavenLocal.")
-      }
-    }
-  }
-  // -- SUBPROJECT TASKS -->
 }
 // -- SUB PROJECTS -->
 sonarqube {
