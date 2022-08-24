@@ -67,29 +67,12 @@ subprojects {
   }
 }
 // -- SUB PROJECTS -->
-// <-- ROOT-PROJECT TASKS --
-tasks {
-  sonarqube {
-    properties {
-      // As of now this property is ignored until sonarqube is upgraded to 8.9
-      // Property from sonar-project.properties is read instead.
-      // If that property is not provided, sonar finds it in default path.
-      property(
-        "sonar.coverage.jacoco.xmlReportPaths",
-        "$rootDir/build/reports/kover/report.xml"
-      )
-      property(
-        "sonar.kotlin.detekt.reportPaths",
-        "$rootDir/build/reports/detekt/merge.xml"
-      )
-    }
-  }
-}
-// -- ROOT-PROJECT TASKS -->
 sonarqube {
   properties {
     property("sonar.modules", subprojects.joinToString(",") { it.name })
-    property("detekt.sonar.kotlin.config.path", "$rootDir/config/detekt/detekt.yml")
+    property("sonar.coverage.jacoco.xmlReportPaths", rootProject.buildDir.resolve("/build/reports/kover/report.xml"))
+    property("detekt.sonar.kotlin.config.path", rootProject.buildDir.resolve("/config/detekt/detekt.yml"))
+    property("sonar.kotlin.detekt.reportPaths", rootProject.buildDir.resolve("/build/reports/detekt/merge.xml"))
   }
 }
 afterEvaluate {
