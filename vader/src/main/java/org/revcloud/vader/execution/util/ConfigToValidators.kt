@@ -19,7 +19,7 @@ import org.revcloud.vader.config.IDConfig.IDConfigBuilder
 import org.revcloud.vader.config.base.BaseValidationConfig
 import org.revcloud.vader.specs.component1
 import org.revcloud.vader.specs.component2
-import org.revcloud.vader.specs.specs.BaseSpec
+import org.revcloud.vader.specs.specs.base.BaseSpec
 import org.revcloud.vader.types.ValidatorEtr
 import java.util.Optional
 import java.util.function.Predicate

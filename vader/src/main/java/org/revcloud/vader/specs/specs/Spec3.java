@@ -23,6 +23,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.Nullable;
+import org.revcloud.vader.specs.specs.base.BaseSpec;
 
 @Value
 @EqualsAndHashCode(callSuper = true)

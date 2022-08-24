@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  ******************************************************************************/
 
-package org.revcloud.vader.specs.specs;
+package org.revcloud.vader.specs.specs.base;
 
 import java.util.function.Predicate;
 import lombok.AccessLevel;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
 public abstract class BaseSpec<ValidatableT, FailureT> {
 
-  protected static final String INVALID_FAILURE_CONFIG =
+  public static final String INVALID_FAILURE_CONFIG =
       "For Spec with: %s Either 'orFailWith' or 'orFailWithFn' should be passed, but not both";
   @Nullable protected String nameForTest;
   @Nullable protected FailureT orFailWith;

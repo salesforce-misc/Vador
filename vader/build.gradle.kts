@@ -11,7 +11,6 @@ plugins {
 }
 
 dependencies {
-  api(project(":specs"))
   api(libs.hamcrest.core)
   api(libs.hamcrest.date)
   api(libs.java.vavr)

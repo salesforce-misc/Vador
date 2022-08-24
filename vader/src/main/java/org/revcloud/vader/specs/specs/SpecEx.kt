@@ -11,6 +11,7 @@ package org.revcloud.vader.specs.specs
 
 import org.revcloud.vader.specs.component1
 import org.revcloud.vader.specs.component2
+import org.revcloud.vader.specs.specs.base.BaseSpec
 import java.util.function.Predicate
 
 internal fun <ValidatableT, FailureT, GivenT> Spec1<ValidatableT, FailureT, GivenT>.toPredicateEx(): Predicate<ValidatableT?> =

@@ -34,7 +34,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.config.FieldConfig;
 import org.revcloud.vader.config.ValidationConfig;
-import org.revcloud.vader.specs.Specs;
+import org.revcloud.vader.types.Specs;
 import sample.consumer.failure.ValidationFailure;
 import sample.consumer.failure.ValidationFailureMessage;
 

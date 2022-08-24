@@ -28,8 +28,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vader.config.ValidationConfig;
 import org.revcloud.vader.execution.Vader;
-import org.revcloud.vader.specs.Spec;
-import org.revcloud.vader.specs.Specs;
+import org.revcloud.vader.types.Spec;
+import org.revcloud.vader.types.Specs;
 import sample.consumer.failure.ValidationFailure;
 
 class Spec2Test {

@@ -5,27 +5,19 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  ******************************************************************************/
 
-/*******************************************************************************
- * Copyright (c) 2022, salesforce.com, inc.
- * All rights reserved.
- * SPDX-License-Identifier: BSD-3-Clause
- * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
- ******************************************************************************/
-
 @file:JvmName("BaseValidationConfigEx")
 
-package org.revcloud.vader.config
+package org.revcloud.vader.config.base
 
 import de.cronn.reflection.util.PropertyUtils
 import de.cronn.reflection.util.TypedPropertyGetter
 import io.vavr.Function1
 import net.jodah.typetools.TypeResolver
-import org.revcloud.vader.config.base.BaseValidationConfig
 import org.revcloud.vader.specs.factory.SpecFactory
-import org.revcloud.vader.specs.specs.BaseSpec
 import org.revcloud.vader.specs.specs.Spec1
 import org.revcloud.vader.specs.specs.Spec2
 import org.revcloud.vader.specs.specs.Spec3
+import org.revcloud.vader.specs.specs.base.BaseSpec
 import org.revcloud.vader.types.Validator
 import java.lang.reflect.Type
 import java.util.Optional

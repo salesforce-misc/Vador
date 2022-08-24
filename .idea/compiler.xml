@@ -10,9 +10,7 @@
         </processorPath>
         <module name="vader-root.main" />
         <module name="vader-root.vader.main" />
-        <module name="vader-root.specs.main" />
         <module name="vader-root.matchers.test" />
-        <module name="vader-root.specs.test" />
         <module name="vader-root.matchers.main" />
         <module name="vader-root.test" />
         <module name="vader-root.vader.test" />

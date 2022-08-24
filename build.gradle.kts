@@ -18,6 +18,7 @@ plugins {
   kotlin("jvm")
   id("org.sonarqube") version "3.4.0.2513"
   id("io.gitlab.arturbosch.detekt") version "1.21.0"
+  id("org.barfuin.gradle.taskinfo") version "1.4.0"
 }
 allprojects {
   apply(plugin = "vader.root-conventions")

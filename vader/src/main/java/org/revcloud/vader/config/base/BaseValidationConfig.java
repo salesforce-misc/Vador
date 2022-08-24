@@ -29,12 +29,11 @@ import lombok.NonNull;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.Nullable;
-import org.revcloud.vader.config.BaseValidationConfigEx;
 import org.revcloud.vader.config.FieldConfig.FieldConfigBuilder;
 import org.revcloud.vader.config.IDConfig.IDConfigBuilder;
-import org.revcloud.vader.specs.Spec;
-import org.revcloud.vader.specs.Specs;
-import org.revcloud.vader.specs.specs.BaseSpec;
+import org.revcloud.vader.specs.specs.base.BaseSpec;
+import org.revcloud.vader.types.Spec;
+import org.revcloud.vader.types.Specs;
 import org.revcloud.vader.types.Validator;
 import org.revcloud.vader.types.ValidatorEtr;
 

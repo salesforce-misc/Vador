@@ -9,32 +9,31 @@ package org.revcloud.vader.specs.specs;
 
 import io.vavr.Function1;
 import io.vavr.Function2;
+import io.vavr.Tuple2;
 import java.util.Collection;
-import java.util.Map;
 import java.util.function.Predicate;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import lombok.Singular;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.Nullable;
+import org.revcloud.vader.specs.specs.base.BaseSpec;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PACKAGE)
 @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
-public class Spec4<ValidatableT, FailureT> extends BaseSpec<ValidatableT, FailureT> {
-
-  @Singular("whenFieldMatches")
+public class Spec5<ValidatableT, FailureT> extends BaseSpec<ValidatableT, FailureT> {
   @NonNull
-  Map<Function1<ValidatableT, ?>, Matcher<?>> whenTheseFieldsMatch;
+  Tuple2<@Nullable Collection<Function1<ValidatableT, ?>>, @Nullable Matcher<?>>
+      whenAllTheseFieldsMatch;
 
-  @Singular("thenFieldShouldMatch")
   @NonNull
-  Map<Function1<ValidatableT, ?>, Matcher<?>> thenThoseFieldsShouldMatch;
+  Tuple2<@Nullable Collection<Function1<ValidatableT, ?>>, @Nullable Matcher<?>>
+      thenAllThoseFieldsShouldMatch;
 
   @Nullable Function2<Collection<?>, Collection<?>, ? extends FailureT> orFailWithFn;
 
