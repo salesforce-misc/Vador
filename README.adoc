@@ -11,7 +11,7 @@ endif::[]
 :hide-uri-scheme:
 :toc:
 :toc-placement!:
-:vader-version: 3.2.1
+:vader-version: 3.3.7
 :docsdir: docs
 :imagesdir: {docsdir}/images
 
@@ -40,10 +40,6 @@ ____
   <version>{vader-version}</version>
 </dependency>
 ----
-
-== Awards
-.238 Innovation Showcase, Revenue cloud, Salesforce, Feb 2022
-image:238-innovation-showcase-award.jpg[role=center]
 
 toc::[]
 
@@ -74,7 +70,7 @@ TIP: Good read about https://blog.sonarsource.com/cognitive-complexity-because-t
 
 === Why Vader?
 
-If you are convinced that you need a framework for validations, why use Vader?
+If you are convinced that you need a framework for validations, why use *Vader*?
 
 [.lead]
 Developed at an API-first company _Salesforce_, Vader is designed to ease and ace REST API validation.
@@ -83,9 +79,9 @@ But, Vader is an independent *POJO/Bean validation framework*, not tied to any c
 
 It has a unique approach to decoupling *What-to-do* from *How-to-do*. The framework asks your validation layer to be broken into *_3 decoupled_* parts:
 
-* ✌🏼Validatable _(What-to-do)_ - The Data-Structure/Bean to be Validated
-* 🧶Configuration _(What-to-do)_ - Declare your validation validators/specifications/rules/constraints through a DSL (builder).
-* ⚙️Execution Strategy _(How-to-do)_ - Call the Vader's API as per the execution strategy (Fail-Fast or Error-Accumulation)
+* ✌🏼*Validatable* _(What-to-do)_ - The Data-Structure/Bean to be Validated
+* 🧶*Configuration* _(What-to-do)_ - Declare your validation validators/specifications/rules/constraints through a DSL (builder).
+* ⚙️**Execution Strategy** _(How-to-do)_ - Call the Vader's API as per the execution strategy (Fail-Fast or Error-Accumulation)
 
 ==== USP
 
@@ -98,6 +94,7 @@ This decoupling comes with a lot of flexibility. Some unique selling points abou
 * Failure type `FailureT` is generic and Consumer has the flexibility to use a failure type of their own.
 * Vader comes with Execution Strategy algorithms out-of-the-box, even for complex data-structures like batch-of-batch (which might need a Tree-Traversal algorithm).
 
+[.lead]
 Read about more such <<_perks_of_config_based_validation, 🍫Perks>>
 
 == Demo pls!
