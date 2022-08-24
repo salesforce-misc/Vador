@@ -27,9 +27,6 @@ koverMerged {
   xmlReport {
     onCheck.set(true)
   }
-  htmlReport {
-    onCheck.set(true)
-  }
 }
 spotless {
   kotlin {

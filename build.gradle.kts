@@ -7,20 +7,51 @@
 
 import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
 import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektPlugin
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_SRC_DIR_JAVA
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_SRC_DIR_KOTLIN
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_TEST_SRC_DIR_JAVA
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_TEST_SRC_DIR_KOTLIN
+import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 
 plugins {
   kotlin("jvm")
   id("org.sonarqube") version "3.4.0.2513"
   id("io.gitlab.arturbosch.detekt") version "1.21.0"
-  
 }
 allprojects {
   apply(plugin = "vader.root-conventions")
+  apply(plugin = "io.gitlab.arturbosch.detekt")
+  detekt {
+    source = objects.fileCollection().from(
+      DEFAULT_SRC_DIR_JAVA,
+      DEFAULT_TEST_SRC_DIR_JAVA,
+      DEFAULT_SRC_DIR_KOTLIN,
+      DEFAULT_TEST_SRC_DIR_KOTLIN
+    )
+    buildUponDefaultConfig = true
+    baseline = file("$rootDir/config/detekt/baseline.xml")
+  }
+}
+val detektReportMerge by tasks.registering(ReportMergeTask::class) {
+  output.set(rootProject.buildDir.resolve("reports/detekt/merge.xml"))
 }
 // <-- SUB PROJECTS --
 subprojects {
   apply(plugin = "vader.sub-conventions")
-  
+  tasks.withType<Detekt>().configureEach {
+    reports {
+      xml.required.set(true)
+    }
+  }
+  plugins.withType<DetektPlugin>() {
+    tasks.withType<Detekt>() detekt@{
+      finalizedBy(detektReportMerge)
+      detektReportMerge.configure {
+        input.from(this@detekt.xmlReportFile)
+      }
+    }
+  }
   val lombokForSonarQube: Configuration by configurations.creating
   dependencies {
     lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION")
@@ -36,12 +67,6 @@ subprojects {
   }
 }
 // -- SUB PROJECTS -->
-sonarqube {
-  properties {
-    property("sonar.modules", subprojects.joinToString(",") { it.name })
-    property("detekt.sonar.kotlin.config.path", "$rootDir/config/detekt/detekt.yml")
-  }
-}
 // <-- ROOT-PROJECT TASKS --
 tasks {
   sonarqube {
@@ -55,35 +80,22 @@ tasks {
       )
       property(
         "sonar.kotlin.detekt.reportPaths",
-        "$rootDir/build/reports/detekt/detekt.xml"
+        "$rootDir/build/reports/detekt/merge.xml"
       )
-    }
-  }
-  register<Detekt>("detektAll") {
-    parallel = true
-    ignoreFailures = false
-    autoCorrect = false
-    buildUponDefaultConfig = true
-    basePath = projectDir.toString()
-    setSource(file(projectDir))
-    include("**/*.kt")
-    include("**/*.kts")
-    exclude("**/resources/**")
-    exclude("**/build/**")
-    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
-    baseline.set(File("$rootDir/config/baseline.xml"))
-  }
-  withType<Detekt>().configureEach {
-    reports {
-      xml.required.set(true)
     }
   }
 }
 // -- ROOT-PROJECT TASKS -->
+sonarqube {
+  properties {
+    property("sonar.modules", subprojects.joinToString(",") { it.name })
+    property("detekt.sonar.kotlin.config.path", "$rootDir/config/detekt/detekt.yml")
+  }
+}
 afterEvaluate {
   tasks {
     check.configure {
-      dependsOn(named("detektAll"))
+      dependsOn(detektReportMerge)
     }
     sonarqube.configure { dependsOn(check) }
   }
