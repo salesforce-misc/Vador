@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  ******************************************************************************/
 
-package org.revcloud.vader.execution.util
+package org.revcloud.vader.execution.strategies.util
 
 import de.cronn.reflection.util.PropertyUtils
 import de.cronn.reflection.util.TypedPropertyGetter

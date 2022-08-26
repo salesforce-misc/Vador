@@ -17,11 +17,11 @@ import org.revcloud.vader.config.ValidationConfig
 import org.revcloud.vader.config.base.BaseBatchValidationConfig
 import org.revcloud.vader.config.container.ContainerValidationConfig
 import org.revcloud.vader.config.container.ContainerValidationConfigWith2Levels
-import org.revcloud.vader.execution.util.configToValidators
-import org.revcloud.vader.execution.util.findAndFilterInvalids
-import org.revcloud.vader.execution.util.findFirstFailure
-import org.revcloud.vader.execution.util.findFirstInvalid
-import org.revcloud.vader.execution.util.validateBatchSize
+import org.revcloud.vader.execution.strategies.util.configToValidators
+import org.revcloud.vader.execution.strategies.util.findAndFilterInvalids
+import org.revcloud.vader.execution.strategies.util.findFirstFailure
+import org.revcloud.vader.execution.strategies.util.findFirstInvalid
+import org.revcloud.vader.execution.strategies.util.validateBatchSize
 import org.revcloud.vader.types.failures.FFABatchOfBatchFailureWithPair
 import org.revcloud.vader.types.failures.FFEBatchOfBatchFailure
 import java.util.Optional

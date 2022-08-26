@@ -31,7 +31,7 @@ allprojects {
       DEFAULT_TEST_SRC_DIR_KOTLIN
     )
     buildUponDefaultConfig = true
-    baseline = file("$rootDir/config/detekt/baseline.xml")
+    baseline = file("$rootDir/detekt/baseline.xml")
   }
 }
 val detektReportMerge by tasks.registering(ReportMergeTask::class) {
@@ -41,6 +41,7 @@ val detektReportMerge by tasks.registering(ReportMergeTask::class) {
 subprojects {
   apply(plugin = "vader.sub-conventions")
   tasks.withType<Detekt>().configureEach {
+    ignoreFailures = true
     reports {
       xml.required.set(true)
     }
@@ -72,7 +73,7 @@ sonarqube {
   properties {
     property("sonar.modules", subprojects.joinToString(",") { it.name })
     property("sonar.coverage.jacoco.xmlReportPaths", rootProject.buildDir.resolve("/build/reports/kover/report.xml"))
-    property("detekt.sonar.kotlin.config.path", rootProject.buildDir.resolve("/config/detekt/detekt.yml"))
+    property("detekt.sonar.kotlin.config.path", rootProject.buildDir.resolve("/detekt/detekt.yml"))
     property("sonar.kotlin.detekt.reportPaths", rootProject.buildDir.resolve("/build/reports/detekt/merge.xml"))
   }
 }

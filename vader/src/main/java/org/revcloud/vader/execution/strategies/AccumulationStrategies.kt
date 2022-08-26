@@ -9,7 +9,7 @@ package org.revcloud.vader.execution.strategies
 
 import io.vavr.control.Either
 import io.vavr.kotlin.right
-import org.revcloud.vader.execution.util.fireValidators
+import org.revcloud.vader.execution.strategies.util.fireValidators
 import org.revcloud.vader.types.ValidatorEtr
 
 /**

@@ -7,7 +7,7 @@
 
 @file:JvmName("Utils")
 
-package org.revcloud.vader.execution.util
+package org.revcloud.vader.execution.strategies.util
 
 import io.vavr.CheckedFunction1.liftTry
 import io.vavr.Function1.identity
@@ -226,7 +226,7 @@ private fun <ValidatableT, FailureT, PairT> findFirstInvalid(
   // Optional[Key] - Validatables with Nonnull keys
   val groups = validatables.groupBy { if (it == null) null else Optional.ofNullable(keyMapperForDuplicates.apply(it)) }
   val nullValidatables = groups[null]
-  if (nullValidatables != null && nullValidatables.isNotEmpty()) {
+  if (!nullValidatables.isNullOrEmpty()) {
     return Optional.ofNullable(Tuple.of(null, failureForNullValidatable))
   }
   val invalidsWithNullKeys = groups[Optional.empty()]
