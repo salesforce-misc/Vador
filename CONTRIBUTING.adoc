@@ -19,7 +19,7 @@ endif::[]
 :hide-uri-scheme:
 :sourcedir: src/main/java
 :imagesdir: images
-:vader-version: 2.7.2
+:vador-version: 2.7.2
 :toc:
 
 [#_versioning_strategy]
@@ -50,7 +50,7 @@ There is an https://youtrack.jetbrains.com/issue/KT-46959[Active Issue] filed fo
 * For source code navigation you need to have https://projectlombok.org/[*Lombok*] plugin, which is used to generate boilerplate code.
 There are plugins available for all popular IDEs, which you need to install.
 The latest version of the plugin should work.
-* You can run/debug the existing unit tests or write your own to play with Vader.
+* You can run/debug the existing unit tests or write your own to play with Vador.
 
 === Kotlin
 
@@ -72,7 +72,7 @@ It may be slow for the first run, but later runs should be faster.
 
 In link:build.gradle.kts[], follow the <<_versioning_strategy,Versioning Strategy>>
 
-** For release increment the version property `version = "{vader-version}"` and run this command:
+** For release increment the version property `version = "{vador-version}"` and run this command:
 ** For SNAPSHOT releases, add a `-SNAPSHOT` at the end
 
 [source,bash]

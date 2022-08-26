@@ -1,4 +1,4 @@
-= 🦾 Vader 🦾
+= 🦾 Vador 🦾
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
 ifdef::env-github[]
@@ -11,13 +11,11 @@ endif::[]
 :hide-uri-scheme:
 :toc:
 :toc-placement!:
-:vader-version: 3.3.7
+:vador-version: 3.3.7
 :docsdir: docs
 :imagesdir: {docsdir}/images
 
-image:vader.png[role=center]
-
-[quote,Lord Vader]
+[quote,Lord Vador]
 ____
 A piece-of-code is a costly solution to solve a simple problem
 ____
@@ -36,24 +34,20 @@ ____
 ----
 <dependency>
   <groupId>com.salesforce.ccspayments</groupId>
-  <artifactId>vader</artifactId>
-  <version>{vader-version}</version>
+  <artifactId>vador</artifactId>
+  <version>{vador-version}</version>
 </dependency>
 ----
 
 toc::[]
 
-== USP for Vader
+== USP for Vador
 
 === Why a framework for Validations?
 
 ====
 
-link:{docsdir}/requirements.adoc[Requirements that led to the birth of Vader]
-
-🔊 https://www.youtube.com/watch?v=49WFdDIFlAs[The birth of Lord Vader] playing in the background
-
-image:birth-of-vader.gif[inline]
+link:{docsdir}/requirements.adoc[Requirements that led to the birth of Vador]
 
 ====
 
@@ -68,31 +62,31 @@ and https://www.sonarsource.com/docs/CognitiveComplexity.pdf[*Cognitive Complexi
 
 TIP: Good read about https://blog.sonarsource.com/cognitive-complexity-because-testability-understandability[Cyclomatic Complexity vs Cognitive Complexity]
 
-=== Why Vader?
+=== Why Vador?
 
-If you are convinced that you need a framework for validations, why use *Vader*?
+If you are convinced that you need a framework for validations, why use *Vador*?
 
 [.lead]
-Developed at an API-first company _Salesforce_, Vader is designed to ease and ace REST API validation.
+Developed at an API-first company _Salesforce_, Vador is designed to ease and ace REST API validation.
 
-But, Vader is an independent *POJO/Bean validation framework*, not tied to any consumer implementation details. Its implementation is generic and can cater to anyone looking for a declarative way to validate their Beans/POJOs.
+But, Vador is an independent *POJO/Bean validation framework*, not tied to any consumer implementation details. Its implementation is generic and can cater to anyone looking for a declarative way to validate their Beans/POJOs.
 
 It has a unique approach to decoupling *What-to-do* from *How-to-do*. The framework asks your validation layer to be broken into *_3 decoupled_* parts:
 
 * ✌🏼*Validatable* _(What-to-do)_ - The Data-Structure/Bean to be Validated
 * 🧶*Configuration* _(What-to-do)_ - Declare your validation validators/specifications/rules/constraints through a DSL (builder).
-* ⚙️**Execution Strategy** _(How-to-do)_ - Call the Vader's API as per the execution strategy (Fail-Fast or Error-Accumulation)
+* ⚙️**Execution Strategy** _(How-to-do)_ - Call the Vador's API as per the execution strategy (Fail-Fast or Error-Accumulation)
 
 ==== USP
 
-This decoupling comes with a lot of flexibility. Some unique selling points about Vader:
+This decoupling comes with a lot of flexibility. Some unique selling points about Vador:
 
 * As Config resides outside Validatable (Bean/Data Structure/POJO), unlike annotation-based frameworks, you can declare config for classes that are not part of your code-base/module.
 * You can share Config for a Validatable across different Execution strategies.
 * You can re-use a nested-member config while validating its Container.
 * Config promotes Low-Code validations and comes with plug-and-play validators out-of-the-box that are suitable for REST APIs validation use-cases.
 * Failure type `FailureT` is generic and Consumer has the flexibility to use a failure type of their own.
-* Vader comes with Execution Strategy algorithms out-of-the-box, even for complex data-structures like batch-of-batch (which might need a Tree-Traversal algorithm).
+* Vador comes with Execution Strategy algorithms out-of-the-box, even for complex data-structures like batch-of-batch (which might need a Tree-Traversal algorithm).
 
 [.lead]
 Read about more such <<_perks_of_config_based_validation, 🍫Perks>>
@@ -102,18 +96,11 @@ Read about more such <<_perks_of_config_based_validation, 🍫Perks>>
 === TL;DR Show me the code
 
 [.lead]
-Refer to the Unit-tests in this repo, there is a test for each feature of Vader.
+Refer to the Unit-tests in this repo, there is a test for each feature of Vador.
 
 ====
-.Salesforce Season of Innovation, Oct 2021 + Rev Cloud Brown-Bag
-image:vav-play-poster.png[link=https://overfullstack.ga/my-talks/#10-2021-Season-of-Innovation-Salesforce]
-
-https://speakerdeck.com/gopalakshintala/vader-and-the-army-of-validators[Slide-deck]
-====
-
-====
-Watch this Tech-talk as a prerequisite to understanding the problem Vader solves and its design philosophy.
-It explains why `if-else-try-catch` is easy to start but difficult to manage and how Vader takes all that complexity away:
+Watch this Tech-talk as a prerequisite to understanding the problem Vador solves and its design philosophy.
+It explains why `if-else-try-catch` is easy to start but difficult to manage and how Vador takes all that complexity away:
 
 ifdef::env-github[]
 
@@ -147,9 +134,9 @@ image:api.png[API]
 
 * Execution Strategy is how you want to Orchestrate your Validations against the Data-structure.
 * Orchestration complexity can be directly proportional to the Data structure complexity. For example, a batch-of-batch data structure might need to a Tree-Traversal algorithm (Ref: link:{docsdir}/config-dsl/nested/BatchOfBatch1ValidationConfig.adoc[BatchOfBatch1ValidationConfig])
-* Vader provides all these Execution Strategies out-of-the-box for non-batch, batch and even batch-of-batch data structures:
+* Vador provides all these Execution Strategies out-of-the-box for non-batch, batch and even batch-of-batch data structures:
 
-=== Vader (For Non-Batch)
+=== Vador (For Non-Batch)
 
 [cols="1,1"]
 |===
@@ -159,14 +146,14 @@ image:api.png[API]
 
 [cols="1h,1"]
 |===
-|link:{docsdir}/api/vader/validate-and-fail-fast.adoc[validateAndFailFast]
+|link:{docsdir}/api/vador/validate-and-fail-fast.adoc[validateAndFailFast]
 |`Optional<FailureT>`
 
 |validateAndAccumulateErrors
 |`List<FailureT>`
 |===
 
-=== VaderBatch
+=== VadorBatch
 
 [cols="1,1"]
 |===
@@ -176,16 +163,16 @@ image:api.png[API]
 
 [cols="1h,1"]
 |===
-|link:{docsdir}/api/vader-batch/validate-and-fail-fast-for-each.adoc[validateAndFailFastForEach]
+|link:{docsdir}/api/vador-batch/validate-and-fail-fast-for-each.adoc[validateAndFailFastForEach]
 |`List<Either<FailureT, ValidatableT>>`
 
-|link:{docsdir}/api/vader-batch/validate-and-fail-fast-for-each-with-pair.adoc[validateAndFailFastForEach (with Pair for Failure)]
+|link:{docsdir}/api/vador-batch/validate-and-fail-fast-for-each-with-pair.adoc[validateAndFailFastForEach (with Pair for Failure)]
 |`List<Either<Tuple2<PairT, FailureT>, ValidatableT>>`
 
-|link:{docsdir}/api/vader-batch/validate-and-fail-fast-for-any.adoc[validateAndFailFastForAny]
+|link:{docsdir}/api/vador-batch/validate-and-fail-fast-for-any.adoc[validateAndFailFastForAny]
 |`Optional<FailureT>`
 
-|link:{docsdir}/api/vader-batch/validate-and-fail-fast-for-any-with-pair.adoc[validateAndFailFastForAny (with Pair for Failure)]
+|link:{docsdir}/api/vador-batch/validate-and-fail-fast-for-any-with-pair.adoc[validateAndFailFastForAny (with Pair for Failure)]
 |`Optional<Tuple2<PairT, FailureT>>`
 |===
 
@@ -258,12 +245,12 @@ Even if the data-structure (member) is nested inside another bean (container), t
 
 It is predominantly used in combination with **REST** services, to validate the unmarshalled POJO from the REST request/response JSON.
 
-It can also be used for SObject Validation hooks or even FTests. This is generic and can be used wherever you find a requirement to run a bunch of validations or rules on a POJO. It’s not tied to any domain or framework. It’s not even tied to Backend services; you can use Vader even in Android apps.
+It can also be used for SObject Validation hooks or even FTests. This is generic and can be used wherever you find a requirement to run a bunch of validations or rules on a POJO. It’s not tied to any domain or framework. It’s not even tied to Backend services; you can use Vador even in Android apps.
 
 [#_impact]
 == ☄️Impact
 
-Vader is being used in *Production* within Salesforce by:
+Vador is being used in *Production* within Salesforce by:
 
 4 Teams from Revenue Cloud:
 
@@ -286,16 +273,14 @@ In 3 different domains:
 
 This idea was presented as a Tech-talk at many https://overfullstack.ga/posts/fight-complexity-with-fp/#My-Talk-on-this[International Conferences & Meetups]
 
-That said, just like us, Vader matures day-by-day, and if any of your special use-cases don’t work, we shall love to fix them ASAP (TBD - Will publish SLA for P0, P1 etc).
+That said, just like us, Vador matures day-by-day, and if any of your special use-cases don’t work, we shall love to fix them ASAP (TBD - Will publish SLA for P0, P1 etc).
 
 NOTE: 👋🏼 If you are facing any trouble or have any feature requests, please log a GitHub issue 👋🏼
 
 == How can I get my hands dirty?
 
-There are so many unit tests in the repo written for various features. You can start by understanding, playing with, or even writing new unit-tests to get hands-on experience with Vader.
+There are so many unit tests in the repo written for various features. You can start by understanding, playing with, or even writing new unit-tests to get hands-on experience with Vador.
 
-NOTE: Vader isn’t for some complex validation requirements. It makes even the simple validation requirements simpler. Plus, you don’t have to go full-on with the framework. All features are modular, so you may get your feet wet by migrating a small portion of your validation layer and incrementally adopting Vader.
-
-image:vader.gif[]
+NOTE: Vador isn’t for some complex validation requirements. It makes even the simple validation requirements simpler. Plus, you don’t have to go full-on with the framework. All features are modular, so you may get your feet wet by migrating a small portion of your validation layer and incrementally adopting Vador.
 
 == link:CONTRIBUTING.adoc[🙌🏼Wanna Collab & Contribute?]

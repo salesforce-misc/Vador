@@ -11,8 +11,8 @@ endif::[]
 :toc:
 :toc-placement: preamble
 :prewrap!:
-:sourcedir: ../../../vader/src/main/java
-:testdir: ../../../vader/src/test/java
+:sourcedir: ../../../vador/src/main/java
+:testdir: ../../../vador/src/test/java
 :imagesdir: ../../images/config-dsl
 
 == Level Order Validation
@@ -139,7 +139,7 @@ List.of(containerValidator, memberValidator); // ^^^ Compile Error
 
 So all nested member validators need to be lifted to the container type, essentially changing their type matching with the Container's, like: `ValidatorEtr<Container, ValidationFailure>`.
 
-We can achieve this with `org.revcloud.vader.lift.++*++Util` functions.
+We can achieve this with `org.revcloud.vador.lift.++*++Util` functions.
 These are *Higher-Order Functions* which *lift* member validator to the container type.
 This takes a `containerToMemberMapper` which is the function to extract member-bean from container-bean.
 
@@ -150,8 +150,6 @@ ValidatorEtr<Container, ValidationFailure> liftedMemberValidator =...;
 List.of(containerValidator, liftToContainerValidatorType(memberValidator, containerToMemberMapper)); // Happy Compiler :)
 ----
 
-image:lift.jpg[lift]
-
 This way, we can configure a *Chain* of validators in-order, sorting out all the container-member dependencies.
 This is nothing but, the most popular *Chain of Responsibility* Design pattern, with a functional touch-up.
 
@@ -159,7 +157,7 @@ If the inter-dependencies between Container-Member happens to be more complex, w
 
 === How to combine Validators & ValidatorEtrs?
 
-Similarly, Vader has utils to lift `Validator` to `ValidatorEtr`.
+Similarly, Vador has utils to lift `Validator` to `ValidatorEtr`.
 This is handy, when you have a mix of validations, and they all need to be of the same type to stitch them together.
 
 === Lift Util

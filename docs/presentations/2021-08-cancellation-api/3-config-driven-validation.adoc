@@ -15,7 +15,7 @@ image:../../images/config-spectrum.png[]
 == Translate your Spike doc to Type-safe code (line-to-line)!
 
 The idea is, just take your validation requirements from the spike doc and describe them in a Type-safe format through a `Config`.
-Vader does the rest!
+Vador does the rest!
 
 == Configure your validation requirements
 

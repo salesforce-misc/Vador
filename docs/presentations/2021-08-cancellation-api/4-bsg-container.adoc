@@ -36,5 +36,5 @@ final var bsgHeaderValidationConfig = ContainerValidationConfig.<BillingSchedule
   .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, ofInvalidBatchSize(INPUT_DATA_MISSING_REFERENCE_IDS))).prepare();
 
 final Optional<BillingScheduleFailure> result =
-  Vader.validateAndFailFastForContainer(rootContainer.getBillingScheduleGroups(), bsgHeaderValidationConfig)
+  Vador.validateAndFailFastForContainer(rootContainer.getBillingScheduleGroups(), bsgHeaderValidationConfig)
 ----

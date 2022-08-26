@@ -1,4 +1,4 @@
-= 🏁 Vader's Track record
+= 🏁 Vador's Track record
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
 ifdef::env-github[]
@@ -13,7 +13,7 @@ endif::[]
 
 == Impact
 
-* Although a generic bean validation framework, Vader is written with the link:../../docs/requirements.adoc[Context of Phoenix connect APIs].
+* Although a generic bean validation framework, Vador is written with the link:../../docs/requirements.adoc[Context of Phoenix connect APIs].
 * link:../../../README.adoc#_impact[Teams using it currently]
 
 === BillingSchedule Batch API in 234
@@ -35,7 +35,7 @@ if (inputRep.getAllOrNone()) {
 
 ** The cyclomatic complexity brought down by *~45%* (measured from the Cx metric in code-coverage dashboard).
 
-== Vader's design was presented at International conferences and meetups
+== Vador's design was presented at International conferences and meetups
 * 🇺🇸 *https://2020.allthingsopen.org/speakers/gopal-s-akshintala/[All Things Open]*, 2020, Raleigh, USA. https://www.youtube.com/watch?v=Dvr6gx4XaD8&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or&index=1[📹]
 * 🏴󠁧󠁢󠁥󠁮󠁧󠁿 https://www.youtube.com/watch?v=QVuMSsIUw6M&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or&index=2[Kotlin User Group, London]
 * 🇩🇪 https://www.youtube.com/watch?v=DBDTNmLbU2Y&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or&index=3[Berlin Functional Programming Group]

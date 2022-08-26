@@ -25,7 +25,7 @@ endif::[]
 * We added a lot of documentation with runnable examples (in-fact each unit test in the repo is a runnable example). 
 We are committed to keep iterating and improving it. 
 * We are happy to provide 1:1 support, until the documentation is comprehensive.
-* Vader is under active development. We have a *Healthy backlog* of features and are eager to take-up more feature requests.
+* Vador is under active development. We have a *Healthy backlog* of features and are eager to take-up more feature requests.
 
 
 

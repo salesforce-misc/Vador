@@ -31,6 +31,6 @@ final var rootHeaderValidationConfig = ContainerValidationConfigWith2Levels...
 final var bsgHeaderValidationConfig = ContainerValidationConfig...
 
 final Optional<BillingScheduleFailure> headerValidationResult =
-  Vader.validateAndFailFastForContainer(rootContainer, rootHeaderValidationConfig)
-    .or(() -> Vader.validateAndFailFastForContainer(rootContainer.getBillingScheduleGroups(), bsgHeaderValidationConfig));
+  Vador.validateAndFailFastForContainer(rootContainer, rootHeaderValidationConfig)
+    .or(() -> Vador.validateAndFailFastForContainer(rootContainer.getBillingScheduleGroups(), bsgHeaderValidationConfig));
 ----

@@ -10,8 +10,8 @@ ifdef::env-github[]
 endif::[]
 :toc:
 :toc-placement: preamble
-:sourcedir: ../../vader/src/main/java
-:testdir: ../../vader/src/test/java
+:sourcedir: ../../vador/src/main/java
+:testdir: ../../vador/src/test/java
 :imagesdir: ../images/config-dsl
 :prewrap!:
 
@@ -43,7 +43,7 @@ These DSL methods follow the https://blogs.oracle.com/javamagazine/post/explorin
 <1> ValidatableT - Represents the data-type under validation.
 <2> FailureT - Represents the consumer data-type that represents a failure.
 
-NOTE: As you notice, these API methods are generic and Vader is agnostic of the consumer's `ValidatableT` or `FailureT`.
+NOTE: As you notice, these API methods are generic and Vador is agnostic of the consumer's `ValidatableT` or `FailureT`.
 
 [#_validation-config]
 == Data-structure under validation 
@@ -151,7 +151,7 @@ BatchValidationConfig.<Bean, ValidationFailure>toValidate()
 This is used to wire link:../validator-types.adoc#_validator[`Validator`] type lambdas into the config. This accepts a Tuple (Pair) of:
 
 * `java.util.Collection<Validator>` - Collections of Validators.
-* `Failure` - Consumer defined value representing no-failure (or success). Vader recognizes that a validation passed, only if a validator returns this value.
+* `Failure` - Consumer defined value representing no-failure (or success). Vador recognizes that a validation passed, only if a validator returns this value.
 
 TIP: If you need an order of execution (say, ascending order of validation cost),
 all you need is _chain_ your validators in an Ordered List (like `java.util.List`) to maintain the sequence of validations.
@@ -159,7 +159,7 @@ all you need is _chain_ your validators in an Ordered List (like `java.util.List
 ifdef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
-.link:{testdir}/org/revcloud/vader/execution/VaderTest.java[VaderTest.java, tag=withValidators]
+.link:{testdir}/org/revcloud/vador/execution/VadorTest.java[VadorTest.java, tag=withValidators]
 ----
 final Validator<Bean, ValidationFailure> validator1 = bean -> NONE;
 final Validator<Bean, ValidationFailure> validator2 = bean -> NONE;
@@ -176,9 +176,9 @@ endif::[]
 ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
-.link:{testdir}/org/revcloud/vader/execution/VaderTest.java[VaderTest.java, tag=withValidators]
+.link:{testdir}/org/revcloud/vador/execution/VadorTest.java[VadorTest.java, tag=withValidators]
 ----
-include::{testdir}/org/revcloud/vader/execution/VaderTest.java[tag=withValidators]
+include::{testdir}/org/revcloud/vador/execution/VadorTest.java[tag=withValidators]
 ----
 
 endif::[]

@@ -10,8 +10,8 @@ ifdef::env-github[]
 endif::[]
 :toc:
 :toc-placement: preamble
-:sourcedir: ../../vader/src/main/java
-:testdir: ../../vader/src/test/java
+:sourcedir: ../../vador/src/main/java
+:testdir: ../../vador/src/test/java
 :imagesdir: ../images/config-dsl
 
 This is handy when validation on a _Batch_ member beans need to run from the context of its container, say `ContainerT`.
@@ -47,7 +47,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/execution/config/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-multi-batch]
+include::{testdir}/org/revcloud/vador/execution/config/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-multi-batch]
 ----
 
 endif::[]
@@ -76,7 +76,7 @@ void failFastForHeaderConfigBatchSizeForMultiBatch() {
           .shouldHaveMaxBatchSizeOrFailWith(Tuple.of(3, MAX_BATCH_SIZE_EXCEEDED))
           .prepare();
   final var headerBean = new ContainerWithMultiBatch(emptyList(), List.of(new Bean2()));
-  final var result = Vader.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+  final var result = Vador.validateAndFailFastForContainer(headerBean, containerValidationConfig);
   assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
 }
 ----
@@ -86,7 +86,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/execution/config/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-multi-batch-demo]
+include::{testdir}/org/revcloud/vador/execution/config/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-multi-batch-demo]
 ----
 
 endif::[]
@@ -113,7 +113,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/execution/config/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-container-batch]
+include::{testdir}/org/revcloud/vador/execution/config/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-container-batch]
 ----
 
 endif::[]
@@ -167,7 +167,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/execution/config/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-container-batch-demo]
+include::{testdir}/org/revcloud/vador/execution/config/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-container-batch-demo]
 ----
 
 endif::[]

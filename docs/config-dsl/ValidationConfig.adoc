@@ -11,8 +11,8 @@ endif::[]
 :toc:
 
 :prewrap!:
-:sourcedir: ../../vader/src/main/java
-:testdir: ../../vader/src/test/java
+:sourcedir: ../../vador/src/main/java
+:testdir: ../../vador/src/test/java
 :imagesdir: ../images/config-dsl
 
 == Flat
@@ -41,7 +41,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/execution/config/BaseValidationConfigTest.java[tag=flat-bean]
+include::{testdir}/org/revcloud/vador/execution/config/BaseValidationConfigTest.java[tag=flat-bean]
 ----
 
 endif::[]
@@ -89,7 +89,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/execution/config/BaseValidationConfigTest.java[tag=validationConfig-for-flat-bean-demo]
+include::{testdir}/org/revcloud/vador/execution/config/BaseValidationConfigTest.java[tag=validationConfig-for-flat-bean-demo]
 ----
 
 endif::[]
@@ -128,7 +128,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/execution/config/BaseValidationConfigTest.java[tag=nested-bean]
+include::{testdir}/org/revcloud/vador/execution/config/BaseValidationConfigTest.java[tag=nested-bean]
 ----
 
 endif::[]
@@ -190,7 +190,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vader/execution/config/BaseValidationConfigTest.java[tag=validationConfig-for-nested-bean-demo]
+include::{testdir}/org/revcloud/vador/execution/config/BaseValidationConfigTest.java[tag=validationConfig-for-nested-bean-demo]
 ----
 
 endif::[]

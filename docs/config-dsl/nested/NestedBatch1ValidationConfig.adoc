@@ -11,8 +11,8 @@ endif::[]
 :toc:
 :toc-placement: preamble
 :prewrap!:
-:sourcedir: ../../../vader/src/main/java
-:testdir: ../../../vader/src/test/java
+:sourcedir: ../../../vador/src/main/java
+:testdir: ../../../vador/src/test/java
 :imagesdir: ../../images/config-dsl
 
 If each of your _Batch_ bean, say `List<ContainerT>` HAS-A nested non-batch bean say `MemberT`, then their validity is inter-dependent 1:1. 

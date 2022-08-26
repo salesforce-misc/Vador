@@ -12,7 +12,7 @@ endif::[]
 :toc-placement: preamble
 :imagesdir: images
 
-Vader provides few matchers out of the box to help write Specs.
+Vador provides few matchers out of the box to help write Specs.
 These matchers address generic use-cases common among consumers.
 New matchers can be added as needed/requested.
 Currently, these are the available matchers:
@@ -34,7 +34,7 @@ This is a separate artifact, please use these coordinates to include them in you
 ----
 <dependency>
     <groupId>com.salesforce.ccspayments</groupId>
-    <artifactId>vader-matchers</artifactId>
-    <version>${revcloud.vader.version}</version>
+    <artifactId>vador-matchers</artifactId>
+    <version>${revcloud.vador.version}</version>
 </dependency>
 ----

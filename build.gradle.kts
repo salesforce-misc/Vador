@@ -21,7 +21,7 @@ plugins {
   id("org.barfuin.gradle.taskinfo") version "1.4.0"
 }
 allprojects {
-  apply(plugin = "vader.root-conventions")
+  apply(plugin = "vador.root-conventions")
   apply(plugin = "io.gitlab.arturbosch.detekt")
   detekt {
     source = objects.fileCollection().from(
@@ -39,7 +39,7 @@ val detektReportMerge by tasks.registering(ReportMergeTask::class) {
 }
 // <-- SUB PROJECTS --
 subprojects {
-  apply(plugin = "vader.sub-conventions")
+  apply(plugin = "vador.sub-conventions")
   tasks.withType<Detekt>().configureEach {
     ignoreFailures = true
     reports {

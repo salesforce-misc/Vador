@@ -10,8 +10,8 @@ ifdef::env-github[]
 endif::[]
 :toc:
 :toc-placement: preamble
-:sourcedir: ../../vader/src/main/java
-:testdir: ../../vader/src/test/java
+:sourcedir: ../../vador/src/main/java
+:testdir: ../../vador/src/test/java
 :imagesdir: ../images/config-dsl
 
 As the name indicates, use this to configure validation requirements for a data-structure that exists in a _Collection_ or a _Batch_, say `List<ValidatableT>`.

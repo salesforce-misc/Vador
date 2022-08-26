@@ -1,4 +1,4 @@
-= 🦾 Vader for Cancellation API 🦾
+= 🦾 Vador for Cancellation API 🦾
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
 ifdef::env-github[]
@@ -11,12 +11,10 @@ endif::[]
 :hide-uri-scheme:
 :!sectnums:
 
-image:../../images/vader.png[Vader]
-
 {empty} +
 {empty} +
 
-== But! this is not about [.line-through]#Vader#!
+== But! this is not about [.line-through]#Vador#!
 
 === We have a Problem to solve and how can we solve it easily and elegantly
 
@@ -30,7 +28,7 @@ image:../../images/vader.png[Vader]
 ** link:7-bsg-batch.adoc[Batch validation with Filter config]
 ** link:8-refItem-batch.adoc[Batch Validation with more built-in validators]
 * link:9-retro-on-benefits.adoc[Retro on the benefits]
-* link:10-track-record.adoc[Vader's Track record] 
+* link:10-track-record.adoc[Vador's Track record] 
 * link:11-stability-and-support.adoc[Stability & Support]
 * link:12-next-steps.adoc[Next Steps]
 ****

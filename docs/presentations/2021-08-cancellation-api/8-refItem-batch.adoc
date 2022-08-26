@@ -64,7 +64,7 @@ final var refItemFilterDuplicatesConfig = List.of(
           .andFailDuplicatesWith(ofInvalidAPIInput(DUPLICATE_OFFSET_REFERENCE_ITEM_IDS_IN_REQUEST)));
 
 final Optional<Tuple2<ID, BillingScheduleFailure>> refItemValidationResult = 
-  VaderBatch.validateAndFailFastForAny(
+  VadorBatch.validateAndFailFastForAny(
         getAllRefItems(inputRequest.getBillingScheduleGroups()),
         ReferenceItemInputRepresentation::getReferenceItemId,
         refItemBatchValidationConfig);

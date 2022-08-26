@@ -43,7 +43,7 @@ final var bsgBatchValidationConfig = BatchValidationConfig.<BillingScheduleGroup
   .shouldHaveValidSFIdFormatOrFailWithFn(BillingScheduleGroupInputRepresentation::getBillingScheduleGroupId, invalidSfIdFormatFailureMapper).prepare();
 
 final Optional<Tuple2<ID, BillingScheduleFailure>> bsgValidationResult = 
-  VaderBatch.validateAndFailFastForAny(
+  VadorBatch.validateAndFailFastForAny(
         inputRequest.getBillingScheduleGroups(),
         BillingScheduleGroupInputRepresentation::getBillingScheduleGroupId,
         bsgBatchValidationConfig);

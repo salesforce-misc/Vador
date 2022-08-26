@@ -14,7 +14,7 @@ endif::[]
 
 The job of validator is simple, just to convey if a POJO is valid or why it's invalid (in the form of a Validation Failure).
 
-Vader provides various *Validator Data-Types*, to get this done.
+Vador provides various *Validator Data-Types*, to get this done.
 These are https://www.baeldung.com/java-8-functional-interfaces[Functional Interfaces] to which a lambda can be assigned. 
 Such lambdas are called *https://dzone.com/articles/java-lambda-expressions-functions-as-first-class-citizens[First-Class functions aka Functions as values]*
 

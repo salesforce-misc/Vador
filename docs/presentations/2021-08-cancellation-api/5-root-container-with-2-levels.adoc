@@ -49,6 +49,6 @@ final var bsgContainerConfigWithRootScope = ContainerValidationConfig.<BillingSc
   .shouldHaveMaxBatchSizeOrFailWith(Tuple.of(MAX_OFFSET_REFERENCE_IDS_ALLOWED, ofQueryTooComplicated(MAX_100_REFERENCE_BS_CAN_BE_OFFSET))).prepare();
 
 final Optional<BillingScheduleFailure> result =
-  Vader.validateAndFailFastForContainer(rootContainer, rootHeaderValidationConfig)
+  Vador.validateAndFailFastForContainer(rootContainer, rootHeaderValidationConfig)
 ----
 

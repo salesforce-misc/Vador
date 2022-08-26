@@ -10,7 +10,7 @@ ifdef::env-github[]
 endif::[]
 :toc:
 :toc-placement: preamble
-:testdir: ../vader/src/test/java
+:testdir: ../vador/src/test/java
 :imagesdir: ../images/config-dsl
 
 [.lead]
@@ -138,7 +138,7 @@ spec._2().nameForTest(BILLING_TERM_BILLING_METHOD_COMBO_SPEC)
 
 TIP: No FTests/Unit tests required for these Specs 🤫!!
 
-These Specs go into your DI config (Typically Spring Config on a Core module) and are handed over to Vader for execution like below:
+These Specs go into your DI config (Typically Spring Config on a Core module) and are handed over to Vador for execution like below:
 
 [source,java,indent=0,options="nowrap"]
 ----
@@ -166,7 +166,7 @@ Hear out the rationale behind this *Recommendation*.
 There are mainly two parts in this feature:
 
 * *What-to-do:* Specs
-* *How-to-do:* How Vader checks your Specs, against your Bean/POJO
+* *How-to-do:* How Vador checks your Specs, against your Bean/POJO
 
 ==== 🧪Specs are just Configuration
 
@@ -175,7 +175,7 @@ Why do we cover validations code with tests?
 ===== _I need Test all branches of my code_
 
 * But, a Spec has no logic.
-It’s only a configuration you provide to vader to execute the corresponding well-tested validation algorithm.
+It’s only a configuration you provide to vador to execute the corresponding well-tested validation algorithm.
 
 ===== _Tests act as a live documentation_
 
@@ -229,19 +229,19 @@ public void invalidBillingTermFails() {
 ----
 
 * For the specs that you want to test, you can name them with a DSL method `nameForTest` and use that name as above to call `getSpecWithName`.
-But think about it, *your tests are testing the vader's validation algorithm (which is already well-tested) and not your logic*, because there is no logic in Specs!
+But think about it, *your tests are testing the vador's validation algorithm (which is already well-tested) and not your logic*, because there is no logic in Specs!
 🤔
 
 == What Spec should I use?
 
-Currently, Vader provides 3 types of Specs and their names reflect the arity of fields they deal with.
+Currently, Vador provides 3 types of Specs and their names reflect the arity of fields they deal with.
 The declarative DSL with intuitive method names should guide the developer to construct a Spec.
 
 === Spec1
 
 This deals with a single field.
 Use this spec if you wish to validate a field against one or more fields within the same Validatable or one or more http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/Matchers.html[Matchers].
-Vader also provides some link:../matchers.adoc[Matchers out of the box].
+Vador also provides some link:../matchers.adoc[Matchers out of the box].
 Example:
 
 [source,java,indent=0,options="nowrap"]
