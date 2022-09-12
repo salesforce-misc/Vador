@@ -30,6 +30,7 @@ allprojects {
       DEFAULT_SRC_DIR_KOTLIN,
       DEFAULT_TEST_SRC_DIR_KOTLIN
     )
+    parallel = true
     buildUponDefaultConfig = true
     baseline = file("$rootDir/detekt/baseline.xml")
   }

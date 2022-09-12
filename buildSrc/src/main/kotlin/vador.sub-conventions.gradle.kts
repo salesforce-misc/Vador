@@ -11,7 +11,7 @@ val asciidoclet: Configuration by configurations.creating
 val kotestVersion: String by project
 dependencies {
   asciidoclet("org.asciidoctor:asciidoclet:1.+")
-  testImplementation(platform("org.junit:junit-bom:5.8.2"))
+  testImplementation(platform("org.junit:junit-bom:5.9.0"))
   testImplementation("org.junit.jupiter:junit-jupiter-api")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
   testImplementation(platform("io.kotest:kotest-bom:$kotestVersion"))
