@@ -15,6 +15,7 @@
 package org.revcloud.vador.config.base;
 
 import de.cronn.reflection.util.TypedPropertyGetter;
+import io.vavr.Function1;
 import io.vavr.Function2;
 import io.vavr.Tuple2;
 import java.lang.reflect.Type;
@@ -85,6 +86,8 @@ public abstract class BaseValidationConfig<ValidatableT, FailureT> {
    */
   @Singular("withValidator")
   Map<? extends Validator<? super ValidatableT, FailureT>, FailureT> withValidator;
+
+  @Nullable Function1<ValidatableT, List<ValidatableT>> withRecursiveMapper;
 
   // ! TODO 05/08/21 gopala.akshintala: Migrate them to be used with custom assertions
   public List<BaseSpec<ValidatableT, FailureT>> getSpecs() {

@@ -10,10 +10,6 @@ pluginManagement {
     mavenCentral()
     gradlePluginPortal()
   }
-  val kotlinVersion: String by settings
-  plugins {
-    kotlin("jvm") version kotlinVersion
-  }
 }
 
 dependencyResolutionManagement {

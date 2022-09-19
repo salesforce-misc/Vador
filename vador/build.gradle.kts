@@ -1,3 +1,6 @@
+repositories {
+  mavenCentral()
+}
 /*******************************************************************************
  * Copyright (c) 2022, salesforce.com, inc.
  * All rights reserved.
@@ -19,7 +22,7 @@ dependencies {
   compileOnly(libs.jetbrains.annotations)
   api("de.cronn:reflection-util:2.14.0")
 
-  implementation("org.slf4j:slf4j-api:2.0.0-alpha1")
+  implementation("org.slf4j:slf4j-api:2.0.0")
 
   runtimeOnly("org.apache.logging.log4j:log4j-slf4j18-impl:2.18.0")
 

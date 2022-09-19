@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static sample.consumer.failure.ValidationFailure.NONE;
 import static sample.consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
+import static sample.consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 import static sample.consumer.failure.ValidationFailure.VALIDATION_FAILURE_1;
 import static sample.consumer.failure.ValidationFailure.VALIDATION_FAILURE_2;
 import static sample.consumer.failure.ValidationFailure.VALIDATION_FAILURE_3;
@@ -20,6 +21,7 @@ import static sample.consumer.failure.ValidationFailure.VALIDATION_FAILURE_3;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.control.Either;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -28,6 +30,7 @@ import lombok.Value;
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vador.config.BatchValidationConfig;
+import org.revcloud.vador.config.ValidationConfig;
 import org.revcloud.vador.types.Validator;
 import org.revcloud.vador.types.ValidatorEtr;
 import sample.consumer.failure.ValidationFailure;
@@ -118,6 +121,38 @@ class VadorBatchTest {
     final var result =
         VadorBatch.validateAndFailFastForAny(VALIDATABLE_BATCH, batchValidationConfig);
     assertThat(result).contains(VALIDATION_FAILURE_1);
+  }
+
+  @Test
+  void failFastForAnyRecursively() {
+    final Validator<RecursiveBean, ValidationFailure> validator =
+        recursiveBean -> recursiveBean.id == -1 ? UNKNOWN_EXCEPTION : NONE;
+    final var recursiveBeans = List.of(
+        new RecursiveBean(
+            1,
+            List.of(
+                new RecursiveBean(11, Collections.emptyList()),
+                new RecursiveBean(12, Collections.emptyList()),
+                new RecursiveBean(13, Collections.emptyList()))),
+        new RecursiveBean(
+            1,
+            List.of(
+                new RecursiveBean(11, Collections.emptyList()),
+                new RecursiveBean(-1, Collections.emptyList()),
+                new RecursiveBean(13, Collections.emptyList()))),
+        new RecursiveBean(
+            1,
+            List.of(
+                new RecursiveBean(11, Collections.emptyList()),
+                new RecursiveBean(12, Collections.emptyList()),
+                new RecursiveBean(13, Collections.emptyList()))));
+    final var validationConfig =
+        BatchValidationConfig.<RecursiveBean, ValidationFailure>toValidate()
+            .withValidator(validator, NONE)
+            .withRecursiveMapper(RecursiveBean::getRecursiveBeans)
+            .prepare();
+    final var result = VadorBatch.validateAndFailFastForAny(recursiveBeans, validationConfig);
+    assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
   @Test
@@ -218,5 +253,11 @@ class VadorBatchTest {
   @Value
   private static class Bean {
     int id;
+  }
+
+  @Value
+  private static class RecursiveBean {
+    int id;
+    List<RecursiveBean> recursiveBeans;
   }
 }

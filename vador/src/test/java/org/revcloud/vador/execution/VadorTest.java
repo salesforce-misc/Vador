@@ -16,6 +16,7 @@ import static sample.consumer.failure.ValidationFailure.VALIDATION_FAILURE_2;
 
 import io.vavr.Tuple;
 import io.vavr.control.Either;
+import java.util.Collections;
 import java.util.List;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,26 @@ class VadorTest {
             .prepare();
     // end::withValidators[]
     final var result = Vador.validateAndFailFast(VALIDATABLE, validationConfig);
+    assertThat(result).contains(UNKNOWN_EXCEPTION);
+  }
+
+  @Test
+  void failFastRecursively() {
+    final Validator<RecursiveBean, ValidationFailure> validator =
+        recursiveBean -> recursiveBean.id == -1 ? UNKNOWN_EXCEPTION : NONE;
+    final var recursiveBean =
+        new RecursiveBean(
+            1,
+            List.of(
+                new RecursiveBean(11, Collections.emptyList()),
+                new RecursiveBean(-1, Collections.emptyList()),
+                new RecursiveBean(13, Collections.emptyList())));
+    final var validationConfig =
+        ValidationConfig.<RecursiveBean, ValidationFailure>toValidate()
+            .withValidator(validator, NONE)
+            .withRecursiveMapper(RecursiveBean::getRecursiveBeans)
+            .prepare();
+    final var result = Vador.validateAndFailFast(recursiveBean, validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -108,5 +129,11 @@ class VadorTest {
   @Value
   private static class Bean {
     int id;
+  }
+
+  @Value
+  private static class RecursiveBean {
+    int id;
+    List<RecursiveBean> recursiveBeans;
   }
 }

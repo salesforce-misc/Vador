@@ -15,6 +15,7 @@ import io.vavr.kotlin.right
 import org.revcloud.vador.config.BatchOfBatch1ValidationConfig
 import org.revcloud.vador.config.ValidationConfig
 import org.revcloud.vador.config.base.BaseBatchValidationConfig
+import org.revcloud.vador.config.base.BaseValidationConfig
 import org.revcloud.vador.config.container.ContainerValidationConfig
 import org.revcloud.vador.config.container.ContainerValidationConfigWith2Levels
 import org.revcloud.vador.execution.strategies.util.configToValidators
@@ -45,9 +46,17 @@ internal fun <ValidatableT, FailureT : Any> failFast(
   validationConfig: ValidationConfig<ValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFast<ValidatableT, FailureT> = { validatable: ValidatableT ->
-  findFirstFailure(right(validatable), configToValidators(validationConfig), throwableMapper)
+  findFirstFailureRecursively(validatable, validationConfig, throwableMapper)
     .toFailureOptional()
 }
+
+private fun <ValidatableT, FailureT : Any> findFirstFailureRecursively(
+  validatable: ValidatableT,
+  validationConfig: BaseValidationConfig<ValidatableT, FailureT?>,
+  throwableMapper: (Throwable) -> FailureT?
+): Either<FailureT?, ValidatableT?>? =
+  findFirstFailure(right(validatable), configToValidators(validationConfig), throwableMapper) ?: validationConfig.withRecursiveMapper?.apply(validatable)?.asSequence()?.map { findFirstFailureRecursively(it, validationConfig, throwableMapper) }
+    ?.filterNotNull()?.firstOrNull()
 
 /**
  * Batch + Simple + Config
@@ -185,7 +194,7 @@ internal fun <ValidatableT, FailureT, PairT> failFastForAny(
     pairForInvalidMapper
   ).or {
     validatables.asSequence().map { validatable ->
-      findFirstFailure(right(validatable), configToValidators(batchValidationConfig), throwableMapper)
+      findFirstFailureRecursively(validatable, batchValidationConfig, throwableMapper)
         ?.mapLeft { failure -> Tuple.of(pairForInvalidMapper(validatable), failure) }
     }.firstOrNull { it?.isLeft == true }.toFailureWithPairOptional()
   }
