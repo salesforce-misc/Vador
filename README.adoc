@@ -11,7 +11,7 @@ endif::[]
 :hide-uri-scheme:
 :toc:
 :toc-placement!:
-:vador-version: 3.3.7
+:vador-version: 1.0.0
 :docsdir: docs
 :imagesdir: {docsdir}/images
 
@@ -30,13 +30,21 @@ ____
 
 == Artifacts
 
+[.lead]
+Maven
 [source,xml,subs=attributes+]
 ----
 <dependency>
-  <groupId>com.salesforce.ccspayments</groupId>
+  <groupId>ga.overfullstack</groupId>
   <artifactId>vador</artifactId>
   <version>{vador-version}</version>
 </dependency>
+----
+[.lead]
+Gradle Kts
+[source,kts,subs=attributes+]
+----
+implementation("ga.overfullstack:vador:{vador-version}")
 ----
 
 toc::[]

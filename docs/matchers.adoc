@@ -8,6 +8,7 @@ ifdef::env-github[]
 :caution-caption: :fire:
 :warning-caption: :warning:
 endif::[]
+:vador-version: 1.0.0
 :toc:
 :toc-placement: preamble
 :imagesdir: images
@@ -30,11 +31,11 @@ Currently, these are the available matchers:
 [.lead]
 This is a separate artifact, please use these coordinates to include them in your module.
 
-[source,xml]
+[source,xml,subs=attributes+]
 ----
 <dependency>
-    <groupId>com.salesforce.ccspayments</groupId>
+    <groupId>ga.overfullstack</groupId>
     <artifactId>vador-matchers</artifactId>
-    <version>${revcloud.vador.version}</version>
+    <version>{vador-version}</version>
 </dependency>
 ----
