@@ -11,8 +11,8 @@ plugins {
   id("com.github.spotbugs") apply false
 }
 
-version = "3.3.8-SNAPSHOT"
-group = "com.salesforce.ccspayments"
+version = "1.0.0"
+group = "ga.overfullstack"
 description = "Vador - A framework for POJO/Data Structure/Bean validation"
 
 repositories {

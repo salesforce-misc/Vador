@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   kotlin("jvm")
   `maven-publish`
+  signing
   id("com.adarshr.test-logger")
 }
 val asciidoclet: Configuration by configurations.creating
@@ -76,9 +77,9 @@ publishing {
       }
       developers {
         developer {
-          id.set("gopala.akshintala@salesforce.com")
+          id.set("overfullstack")
           name.set("Gopal S Akshintala")
-          email.set("gopala.akshintala@salesforce.com")
+          email.set("gopalakshintala@gmail.com")
         }
       }
       scm {
@@ -88,7 +89,20 @@ publishing {
       }
     }
   }
+  val ossrhUsername: String by lazy { System.getenv("OSSRH_USERNAME") ?: project.providers.gradleProperty("ossrhUsername").get() }
+  val ossrhPassword: String by lazy { System.getenv("OSSRH_PASSWORD") ?: project.providers.gradleProperty("ossrhPassword").get() }
   repositories {
-    mavenCentral()
+    maven {
+      val releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+      val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+      url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+      credentials {
+        username = ossrhUsername
+        password = ossrhPassword
+      }
+    }
   }
+}
+signing {
+  sign(publishing.publications["vador"])
 }
