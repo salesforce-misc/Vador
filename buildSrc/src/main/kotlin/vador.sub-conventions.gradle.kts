@@ -76,9 +76,9 @@ publishing {
       }
       developers {
         developer {
-          id.set("gopala.akshintala@salesforce.com")
+          id.set("overfullstack")
           name.set("Gopal S Akshintala")
-          email.set("gopala.akshintala@salesforce.com")
+          email.set("gopalakshintala@gmail.com")
         }
       }
       scm {
