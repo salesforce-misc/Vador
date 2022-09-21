@@ -63,7 +63,7 @@ You may have a requirement to validate a Data-structure which HAS-A Nested-Data-
 Such scenarios are complex as they involve various combinations Container-Member state(Batch or Non-Batch) + Execution Strategy (Fail Fast for Each or Fail Fast for Any).
 There is no one-solution-fits all.
 
-link:nested/nested-config.adoc[This table] should help you make the right choice.
+link:nested/nested-validation.adoc[This table] should help you make the right choice.
 
 [#_container-scope]
 == Container Scope

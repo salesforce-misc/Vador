@@ -1,4 +1,4 @@
-= Nested Config
+= Nested Validation
 Gopal S Akshintala <gopala.akshintala@salesforce.com>
 :Revision: 1.0
 ifdef::env-github[]
@@ -15,7 +15,13 @@ endif::[]
 :testdir: ../../../vador/src/test/java
 :imagesdir: ../../images/config-dsl
 
-== Level Order Validation
+To validate a Nested Data-structures (Eg: `ContainerT` HAS-A `MemberT`). 
+Based on type of `ContainerT` and `MemberT`, the below table should guide you on how you can achieve Ne
+
+
+== Level-Order Validation
+
+This lets you validate all the nodes are `ContainerT` level first and them validate their HAS-A `MemberT` nodes in next level:
 
 [cols="4a,4a,2"]
 |===
@@ -124,7 +130,7 @@ Otherwise, compose `Optional` results with ValidationConfig link:../ValidationCo
 WARNING: Some of the above are TBD or may support only upto a nesting depth of 1.
 As we work on addressing more complex use cases, there is another way where you can manually club Container and Member validations
 
-=== How to combine Container & Member validators?
+== How to combine Container & Member validators?
 
 But, there's a catch!
 A List of Validators for a container node consists of a mix of all container validators and all its nested member validators.
@@ -153,20 +159,7 @@ List.of(containerValidator, liftToContainerValidatorType(memberValidator, contai
 This way, we can configure a *Chain* of validators in-order, sorting out all the container-member dependencies.
 This is nothing but, the most popular *Chain of Responsibility* Design pattern, with a functional touch-up.
 
-If the inter-dependencies between Container-Member happens to be more complex, we may end-up with _Graph_ relationship, but we can easily _flatten_ it into a Chain with a simple _Topological Sort_.
-
-=== How to combine Validators & ValidatorEtrs?
-
-Similarly, Vador has utils to lift `Validator` to `ValidatorEtr`.
-This is handy, when you have a mix of validations, and they all need to be of the same type to stitch them together.
-
-=== Lift Util
-
-Below are the utils currently available, with self-explanatory names.
-There are multiple overloads suitable for simple/non-simple.
-The Java Docs should guide you to use proper overload:
-
-==== Aggregation Util: To lift Member validator to Container validator type
+=== Aggregation Util: To lift Member validator to Container validator type
 
 These are available for both `Validator` and `ValidatorEtr`.
 
@@ -176,7 +169,16 @@ These are available for both `Validator` and `ValidatorEtr`.
 |liftToContainerValidatorType |liftAllToContainerValidatorType
 |===
 
-==== Validator Util: To lift Simple validator to ValidatorEtr type
+TIP: If the interdependencies between Container-Member happens to be more complex, we may end-up with _Graph_ relationship, 
+but we can easily _flatten_ it into a Chain with a simple _Topological Sort_.
+
+
+== How to combine Validators & ValidatorEtrs?
+
+Similarly, Vador has utils to lift `Validator` to `ValidatorEtr`.
+This is handy, when you have a mix of validations, and they all need to be of the same type to stitch them together.
+
+=== Validator Util: To lift Simple validator to ValidatorEtr type
 
 [cols="<,<"]
 |===
