@@ -12,7 +12,7 @@ plugins {
 }
 
 version = "1.0.0"
-group = "ga.overfullstack"
+group = "com.salesforce.vador"
 description = "Vador - A framework for POJO/Data Structure/Bean validation"
 
 repositories {

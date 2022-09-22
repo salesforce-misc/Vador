@@ -34,7 +34,7 @@ This is a separate artifact, please use these coordinates to include them in you
 [source,xml,subs=attributes+]
 ----
 <dependency>
-    <groupId>ga.overfullstack</groupId>
+    <groupId>com.salesforce.vador</groupId>
     <artifactId>vador-matchers</artifactId>
     <version>{vador-version}</version>
 </dependency>

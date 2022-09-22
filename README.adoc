@@ -35,7 +35,7 @@ Maven
 [source,xml,subs=attributes+]
 ----
 <dependency>
-  <groupId>ga.overfullstack</groupId>
+  <groupId>com.salesforce.vador</groupId>
   <artifactId>vador</artifactId>
   <version>{vador-version}</version>
 </dependency>
@@ -44,7 +44,7 @@ Maven
 Gradle Kts
 [source,kts,subs=attributes+]
 ----
-implementation("ga.overfullstack:vador:{vador-version}")
+implementation("com.salesforce.vador:vador:{vador-version}")
 ----
 
 toc::[]
