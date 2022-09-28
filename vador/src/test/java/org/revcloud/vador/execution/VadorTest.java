@@ -30,6 +30,7 @@ class VadorTest {
 
   private static final Bean VALIDATABLE = new Bean(0);
 
+  // tag::failFastDemo[]
   @Test
   void failFastWithFirstFailureWithValidator() {
     // tag::withValidators[]
@@ -46,6 +47,7 @@ class VadorTest {
     final var result = Vador.validateAndFailFast(VALIDATABLE, validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
+  // end::failFastDemo[]
 
   @Test
   void failFastRecursively() {

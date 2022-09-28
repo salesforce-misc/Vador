@@ -13,7 +13,7 @@ endif::[]
 
 == Why a new Framework for Bean validation?
 
-When shopping for Bean validation frameworks, we stumbled-upon these well-known ones:
+While shopping for Bean validation frameworks, we stumbled-upon these well-known ones:
 
 * https://www.baeldung.com/javax-validation[Java Bean validation]: This is only suitable for simple data validations
  like `@NotNull, @Min, @Max`.

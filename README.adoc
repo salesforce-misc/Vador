@@ -12,6 +12,7 @@ endif::[]
 :toc:
 :toc-placement!:
 :vador-version: 1.0.0
+:testdir: vador/src/test/java
 :docsdir: docs
 :imagesdir: {docsdir}/images
 
@@ -21,10 +22,9 @@ A piece-of-code is a costly solution to solve a simple problem
 ____
 
 '''
-== Mission Statement
 
 [.lead]
-*Abstract away the Validation Orchestration complexity with a Reusable Design, that sets a dev-friendly framework to Write & Wire validations that are easy to Test, Extend and Share*
+*Vador is a modern Validation framework, from an API-first organization _Salesforce_, designed to ease and ace REST API validation.*
 
 '''
 
@@ -49,9 +49,9 @@ implementation("com.salesforce.vador:vador:{vador-version}")
 
 toc::[]
 
-== USP for Vador
+== Why Vador?
 
-=== Why a framework for Validations?
+=== Why a framework for Validations? 🤷🏻♂️
 
 ====
 
@@ -59,42 +59,42 @@ link:{docsdir}/requirements.adoc[Requirements that led to the birth of Vador]
 
 ====
 
+Validations are a problem almost as old as programming itself, but why a new library or Framework for Validations?
 Validations are predominantly done with `if-else-try-catch` pyramids, similar to https://github.com/overfullstack/railway-oriented-validation/blob/master/src/main/java/app/imperative/ImperativeValidation.java[this].
 A domain may have many validations across its batch & non-batch services.
 Having validations as loose functions and using exceptions to halt the validation flow for the above requirements, can create a mess of function calls and execution flow.
 
-image:function-call-mess.png[function-call-mess]
+image::function-call-mess.png[function-call-mess]
 
 This approach can spike the https://www.ibm.com/developerworks/java/library/j-cq03316/[*Cyclomatic Complexity*]
 and https://www.sonarsource.com/docs/CognitiveComplexity.pdf[*Cognitive Complexity*] metrics and renders a code-base which is difficult to test, extend and maintain.
 
 TIP: Good read about https://blog.sonarsource.com/cognitive-complexity-because-testability-understandability[Cyclomatic Complexity vs Cognitive Complexity]
 
-=== Why Vador?
+=== USP for Vador
 
 If you are convinced that you need a framework for validations, why use *Vador*?
 
 [.lead]
-Developed at an API-first company _Salesforce_, Vador is designed to ease and ace REST API validation.
+Developed at an API-first company _Salesforce_, Vador is a *modern Validation framework*, designed to ease and ace REST API validation.
 
-But, Vador is an independent *POJO/Bean validation framework*, not tied to any consumer implementation details. Its implementation is generic and can cater to anyone looking for a declarative way to validate their Beans/POJOs.
+But it's not limited to REST APIs. Vador is an independent *POJO/Bean validation framework*, not tied to any consumer implementation details. 
+Its implementation is generic and can cater to anyone looking for a declarative way to validate their Beans/POJOs.
 
 It has a unique approach to decoupling *What-to-do* from *How-to-do*. The framework asks your validation layer to be broken into *_3 decoupled_* parts:
 
 * ✌🏼*Validatable* _(What-to-do)_ - The Data-Structure/Bean to be Validated
-* 🧶*Configuration* _(What-to-do)_ - Declare your validation validators/specifications/rules/constraints through a DSL (builder).
+* 🧶*Configuration* _(What-to-do)_ - Declare your validators/specifications/rules/constraints through a DSL (builder).
 * ⚙️**Execution Strategy** _(How-to-do)_ - Call the Vador's API as per the execution strategy (Fail-Fast or Error-Accumulation)
-
-==== USP
 
 This decoupling comes with a lot of flexibility. Some unique selling points about Vador:
 
 * As Config resides outside Validatable (Bean/Data Structure/POJO), unlike annotation-based frameworks, you can declare config for classes that are not part of your code-base/module.
 * You can share Config for a Validatable across different Execution strategies.
-* You can re-use a nested-member config while validating its Container.
-* Config promotes Low-Code validations and comes with plug-and-play validators out-of-the-box that are suitable for REST APIs validation use-cases.
+* Vador supports validating nested data-structures.
+* Config promotes Low-Code validations and comes with plug-and-play validators out-of-the-box that are suitable for REST API validation use-cases.
 * Failure type `FailureT` is generic and Consumer has the flexibility to use a failure type of their own.
-* Vador comes with Execution Strategy algorithms out-of-the-box, even for complex data-structures like batch-of-batch (which might need a Tree-Traversal algorithm).
+* Vador comes with Execution Strategy algorithms out-of-the-box, even for complex nested data-structures like batch-of-batch (which might need a Tree-Traversal algorithm).
 
 [.lead]
 Read about more such <<_perks_of_config_based_validation, 🍫Perks>>
@@ -103,8 +103,36 @@ Read about more such <<_perks_of_config_based_validation, 🍫Perks>>
 
 === TL;DR Show me the code
 
-[.lead]
-Refer to the Unit-tests in this repo, there is a test for each feature of Vador.
+TIP: Refer to the Unit-tests in this repo, there is a test for every feature of Vador.
+
+ifdef::env-github[]
+
+[source,java,indent=0,options="nowrap"]
+.link:{testdir}/org/revcloud/vador/execution/VadorTest.java[VadorTest.java, tag=withValidators]
+----
+final Validator<Bean, ValidationFailure> validator1 = bean -> NONE;
+final Validator<Bean, ValidationFailure> validator2 = bean -> NONE;
+final Validator<Bean, ValidationFailure> validator3 = bean -> UNKNOWN_EXCEPTION;
+final List<Validator<Bean, ValidationFailure>> validatorChain =
+    List.of(validator1, validator2, validator3);
+final var validationConfig =
+    ValidationConfig.<Bean, ValidationFailure>toValidate()
+        .withValidators(Tuple.of(validatorChain, NONE))
+        .prepare();
+final var result = Vador.validateAndFailFast(VALIDATABLE, validationConfig);
+assertThat(result).contains(UNKNOWN_EXCEPTION);
+----
+
+endif::[]
+ifndef::env-github[]
+
+[source,java,indent=0,options="nowrap"]
+.link:{testdir}/org/revcloud/vador/execution/VadorTest.java[VadorTest.java, tag=failFastDemo]
+----
+include::{testdir}/org/revcloud/vador/execution/VadorTest.java[tag=failFastDemo]
+----
+
+endif::[]
 
 ====
 Watch this Tech-talk as a prerequisite to understanding the problem Vador solves and its design philosophy.

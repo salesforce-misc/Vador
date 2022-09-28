@@ -9,19 +9,28 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 :toc:
-:toc-placement: preamble
 :prewrap!:
 :sourcedir: ../../../vador/src/main/java
 :testdir: ../../../vador/src/test/java
 :imagesdir: ../../images/config-dsl
 
 To validate a Nested Data-structures (Eg: `ContainerT` HAS-A `MemberT`). 
-Based on type of `ContainerT` and `MemberT`, the below table should guide you on how you can achieve Ne
+Based on type of `ContainerT` and `MemberT`, the below table should guide you how to compose their Validation Execution results.
+ For example, the below table:
 
+[%autowidth]
+[cols="1h,1"]
+|===
+| Type | Non-Batch
+| Strategy | Fail Fast
+| Result | `Optional<FailureT>`
+|===
+
+indicates that the `ContainerT` is a Non-Batch type, with `failFast` strategy, the result of such validation execution shall be of type `Optional<FailureT>`.
 
 == Level-Order Validation
 
-This lets you validate all the nodes are `ContainerT` level first and them validate their HAS-A `MemberT` nodes in next level:
+This lets you validate all the nodes at `ContainerT` level first and then validate their HAS-A `MemberT` nodes in next level:
 
 [cols="4a,4a,2"]
 |===
@@ -30,26 +39,28 @@ This lets you validate all the nodes are `ContainerT` level first and them valid
 |
 [cols="1"]
 !===
-! Non-Batch ! `Optional<FailureT>`
+! Non-Batch
+! Fail Fast
+! `Optional<FailureT>`
 !===
 
 |[cols="1"]
 
 !===
-! Non-Batch ! `Optional<FailureT>`
+! Non-Batch ! Fail Fast ! `Optional<FailureT>`
 !===
 
 |Compose `Optional` results with ValidationConfig link:../ValidationConfig.adoc#_nested-non-batch-non-batch-level-order[like this]
 |[cols="1"]
 
 !===
-! Non-Batch ! `Optional<FailureT>`
+! Non-Batch ! Fail Fast ! `Optional<FailureT>`
 !===
 
 |[cols="1"]
 
 !===
-! Batch (Fail Fast for Any) ! `Optional<FailureT>`
+! Batch ! Fail Fast for Any ! `Optional<FailureT>`
 !===
 
 |Compose `Optional` results with ValidationConfig link:../ValidationConfig.adoc#_nested-non-batch-non-batch-level-order[similar to this]
@@ -57,13 +68,13 @@ This lets you validate all the nodes are `ContainerT` level first and them valid
 |[cols="1"]
 
 !===
-! Non-Batch ! `Optional<FailureT>`
+! Non-Batch ! Fail Fast ! `Optional<FailureT>`
 !===
 
 |[cols="1"]
 
 !===
-! Batch (Fail Fast for Each) ! `List<Either<FailureT, ValidatableT>>`
+! Batch ! Fail Fast for Each ! `List<Either<FailureT, ValidatableT>>`
 !===
 
 |TBD
@@ -71,13 +82,13 @@ This lets you validate all the nodes are `ContainerT` level first and them valid
 |[cols="1"]
 
 !===
-! Batch (Fail Fast for Any) ! `Optional<FailureT>`
+! Batch ! Fail Fast for Any ! `Optional<FailureT>`
 !===
 
 |[cols="1"]
 
 !===
-! Non-Batch ! `Optional<FailureT>`
+! Non-Batch ! Fail Fast ! `Optional<FailureT>`
 !===
 
 |Compose `Optional` results with ValidationConfig link:../ValidationConfig.adoc#_nested-non-batch-non-batch-level-order[similar to this]
@@ -85,13 +96,13 @@ This lets you validate all the nodes are `ContainerT` level first and them valid
 |[cols="1"]
 
 !===
-! Batch (Fail Fast for Each) ! `List<Either<FailureT, ValidatableT>>`
+! Batch ! Fail Fast for Each ! `List<Either<FailureT, ValidatableT>>`
 !===
 
 |[cols="1"]
 
 !===
-! Non-Batch ! `Optional<FailureT>`
+! Non-Batch ! Fail Fast ! `Optional<FailureT>`
 !===
 
 |TBD
@@ -99,13 +110,13 @@ This lets you validate all the nodes are `ContainerT` level first and them valid
 |[cols="1"]
 
 !===
-! Batch (Fail Fast for Any) ! `Optional<FailureT>`
+! Batch ! Fail Fast for Any ! `Optional<FailureT>`
 !===
 
 |[cols="1"]
 
 !===
-! Batch (Fail Fast for Any) ! `Optional<FailureT>`
+! Batch ! Fail Fast for Any ! `Optional<FailureT>`
 !===
 
 |link:BatchOfBatch1ValidationConfig.adoc[BatchOfBatch1ValidationConfig] if needed with Pair.
@@ -114,13 +125,13 @@ Otherwise, compose `Optional` results with ValidationConfig link:../ValidationCo
 |[cols="1"]
 
 !===
-! Batch (Fail Fast for Each) ! `List<Either<FailureT, ValidatableT>>`
+! Batch ! Fail Fast for Each ! `List<Either<FailureT, ValidatableT>>`
 !===
 
 |[cols="1"]
 
 !===
-! Batch (Fail Fast for Each) ! `List<Either<FailureT, ValidatableT>>`
+! Batch ! Fail Fast for Each ! `List<Either<FailureT, ValidatableT>>`
 !===
 
 |link:BatchOfBatch1ValidationConfig.adoc[BatchOfBatch1ValidationConfig]
