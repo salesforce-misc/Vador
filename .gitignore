@@ -144,3 +144,4 @@ release.properties
 !/gradle/wrapper/gradle-wrapper.jar
 rebel.xml
 .rebel.xml.bak
+bin/

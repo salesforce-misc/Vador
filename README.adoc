@@ -78,7 +78,7 @@ If you are convinced that you need a framework for validations, why use *Vador*?
 [.lead]
 Developed at an API-first company _Salesforce_, Vador is a *modern Validation framework*, designed to ease and ace REST API validation.
 
-But it's not limited to REST APIs. Vador is an independent *POJO/Bean validation framework*, not tied to any consumer implementation details. 
+But it's not limited to REST APIs. Vador is an independent *POJO/Bean validation framework*, not tied to any consumer implementation details.
 Its implementation is generic and can cater to anyone looking for a declarative way to validate their Beans/POJOs.
 
 It has a unique approach to decoupling *What-to-do* from *How-to-do*. The framework asks your validation layer to be broken into *_3 decoupled_* parts:

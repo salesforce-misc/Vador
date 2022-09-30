@@ -30,7 +30,6 @@ import lombok.Value;
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.Test;
 import org.revcloud.vador.config.BatchValidationConfig;
-import org.revcloud.vador.config.ValidationConfig;
 import org.revcloud.vador.types.Validator;
 import org.revcloud.vador.types.ValidatorEtr;
 import sample.consumer.failure.ValidationFailure;
@@ -127,25 +126,26 @@ class VadorBatchTest {
   void failFastForAnyRecursively() {
     final Validator<RecursiveBean, ValidationFailure> validator =
         recursiveBean -> recursiveBean.id == -1 ? UNKNOWN_EXCEPTION : NONE;
-    final var recursiveBeans = List.of(
-        new RecursiveBean(
-            1,
-            List.of(
-                new RecursiveBean(11, Collections.emptyList()),
-                new RecursiveBean(12, Collections.emptyList()),
-                new RecursiveBean(13, Collections.emptyList()))),
-        new RecursiveBean(
-            1,
-            List.of(
-                new RecursiveBean(11, Collections.emptyList()),
-                new RecursiveBean(-1, Collections.emptyList()),
-                new RecursiveBean(13, Collections.emptyList()))),
-        new RecursiveBean(
-            1,
-            List.of(
-                new RecursiveBean(11, Collections.emptyList()),
-                new RecursiveBean(12, Collections.emptyList()),
-                new RecursiveBean(13, Collections.emptyList()))));
+    final var recursiveBeans =
+        List.of(
+            new RecursiveBean(
+                1,
+                List.of(
+                    new RecursiveBean(11, Collections.emptyList()),
+                    new RecursiveBean(12, Collections.emptyList()),
+                    new RecursiveBean(13, Collections.emptyList()))),
+            new RecursiveBean(
+                1,
+                List.of(
+                    new RecursiveBean(11, Collections.emptyList()),
+                    new RecursiveBean(-1, Collections.emptyList()),
+                    new RecursiveBean(13, Collections.emptyList()))),
+            new RecursiveBean(
+                1,
+                List.of(
+                    new RecursiveBean(11, Collections.emptyList()),
+                    new RecursiveBean(12, Collections.emptyList()),
+                    new RecursiveBean(13, Collections.emptyList()))));
     final var validationConfig =
         BatchValidationConfig.<RecursiveBean, ValidationFailure>toValidate()
             .withValidator(validator, NONE)
