@@ -13,8 +13,8 @@
 
 package sample.consumer.validators.etr;
 
+import com.salesforce.vador.types.ValidatorEtr;
 import java.util.Objects;
-import org.revcloud.vador.types.ValidatorEtr;
 import sample.consumer.bean.Member;
 import sample.consumer.failure.ValidationFailure;
 import sample.consumer.failure.ValidationFailureMessage;

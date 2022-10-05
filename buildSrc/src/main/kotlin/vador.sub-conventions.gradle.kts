@@ -93,8 +93,8 @@ publishing {
   val ossrhPassword: String by lazy { System.getenv("OSSRH_PASSWORD") ?: project.providers.gradleProperty("ossrhPassword").get() }
   repositories {
     maven {
-      val releasesRepoUrl = "https://s01.oss.sonatype.org/content/repositories/releases/"
-      val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+      val releasesRepoUrl = "https://oss.sonatype.org/content/repositories/releases/"
+      val snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
       url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
       credentials {
         username = ossrhUsername

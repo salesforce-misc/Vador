@@ -13,8 +13,8 @@
 
 package sample.consumer;
 
+import com.salesforce.vador.types.ValidatorEtr;
 import io.vavr.collection.List;
-import org.revcloud.vador.types.ValidatorEtr;
 import sample.consumer.failure.ValidationFailure;
 
 /** gakshintala created on 4/13/20. */

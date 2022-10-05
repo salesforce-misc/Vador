@@ -9,9 +9,9 @@ package sample.consumer.validators;
 
 import static sample.consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
 
+import com.salesforce.vador.types.Validator;
+import com.salesforce.vador.types.ValidatorEtr;
 import lombok.Value;
-import org.revcloud.vador.types.Validator;
-import org.revcloud.vador.types.ValidatorEtr;
 import sample.consumer.failure.ValidationFailure;
 
 /** Sample Validators for some random Bean */

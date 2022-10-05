@@ -53,7 +53,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vador/execution/config/nested/ContainerValidationConfigWith2LevelsTest.java[tag=container-config-level-2]
+include::{testdir}/com/salesforce/vador/execution/config/nested/ContainerValidationConfigWith2LevelsTest.java[tag=container-config-level-2]
 ----
 
 endif::[]
@@ -123,7 +123,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vador/execution/config/nested/ContainerValidationConfigWith2LevelsTest.java[tag=container-config-level-2-demo]
+include::{testdir}/com/salesforce/vador/execution/config/nested/ContainerValidationConfigWith2LevelsTest.java[tag=container-config-level-2-demo]
 ----
 
 endif::[]

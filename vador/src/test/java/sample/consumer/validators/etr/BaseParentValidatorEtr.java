@@ -15,7 +15,7 @@ package sample.consumer.validators.etr;
 
 import static sample.consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMPTY;
 
-import org.revcloud.vador.types.ValidatorEtr;
+import com.salesforce.vador.types.ValidatorEtr;
 import sample.consumer.bean.Parent;
 import sample.consumer.failure.ValidationFailure;
 

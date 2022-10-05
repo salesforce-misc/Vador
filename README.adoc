@@ -108,7 +108,7 @@ TIP: Refer to the Unit-tests in this repo, there is a test for every feature of 
 ifdef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
-.link:{testdir}/org/revcloud/vador/execution/VadorTest.java[VadorTest.java, tag=withValidators]
+.link:{testdir}/com/salesforce/vador/execution/VadorTest.java[VadorTest.java, tag=withValidators]
 ----
 final Validator<Bean, ValidationFailure> validator1 = bean -> NONE;
 final Validator<Bean, ValidationFailure> validator2 = bean -> NONE;
@@ -127,9 +127,9 @@ endif::[]
 ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
-.link:{testdir}/org/revcloud/vador/execution/VadorTest.java[VadorTest.java, tag=failFastDemo]
+.link:{testdir}/com/salesforce/vador/execution/VadorTest.java[VadorTest.java, tag=failFastDemo]
 ----
-include::{testdir}/org/revcloud/vador/execution/VadorTest.java[tag=failFastDemo]
+include::{testdir}/com/salesforce/vador/execution/VadorTest.java[tag=failFastDemo]
 ----
 
 endif::[]

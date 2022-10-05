@@ -49,7 +49,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vador/execution/config/nested/BatchOfBatch1ValidationConfigTest.java[tag=batch-of-batch-1]
+include::{testdir}/com/salesforce/vador/execution/config/nested/BatchOfBatch1ValidationConfigTest.java[tag=batch-of-batch-1]
 ----
 
 endif::[]
@@ -111,7 +111,7 @@ ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
 ----
-include::{testdir}/org/revcloud/vador/execution/config/nested/BatchOfBatch1ValidationConfigTest.java[tag=batch-of-batch-1-demo]
+include::{testdir}/com/salesforce/vador/execution/config/nested/BatchOfBatch1ValidationConfigTest.java[tag=batch-of-batch-1-demo]
 ----
 
 endif::[]

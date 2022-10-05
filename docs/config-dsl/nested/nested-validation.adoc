@@ -156,7 +156,7 @@ List.of(containerValidator, memberValidator); // ^^^ Compile Error
 
 So all nested member validators need to be lifted to the container type, essentially changing their type matching with the Container's, like: `ValidatorEtr<Container, ValidationFailure>`.
 
-We can achieve this with `org.revcloud.vador.lift.++*++Util` functions.
+We can achieve this with `com.salesforce.vador.lift.++*++Util` functions.
 These are *Higher-Order Functions* which *lift* member validator to the container type.
 This takes a `containerToMemberMapper` which is the function to extract member-bean from container-bean.
 

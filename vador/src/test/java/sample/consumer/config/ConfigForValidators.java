@@ -13,10 +13,10 @@
 
 package sample.consumer.config;
 
+import com.salesforce.vador.types.Validator;
+import com.salesforce.vador.types.ValidatorEtr;
 import io.vavr.collection.List;
 import lombok.experimental.UtilityClass;
-import org.revcloud.vador.types.Validator;
-import org.revcloud.vador.types.ValidatorEtr;
 import sample.consumer.bean.Container;
 import sample.consumer.bean.Parent;
 import sample.consumer.failure.ValidationFailure;

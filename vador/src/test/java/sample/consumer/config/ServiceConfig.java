@@ -13,8 +13,8 @@
 
 package sample.consumer.config;
 
+import com.salesforce.vador.types.ValidatorEtr;
 import io.vavr.collection.List;
-import org.revcloud.vador.types.ValidatorEtr;
 import sample.consumer.BaseService;
 import sample.consumer.Service;
 import sample.consumer.bean.Parent;
