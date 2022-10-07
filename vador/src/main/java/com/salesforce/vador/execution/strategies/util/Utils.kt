@@ -72,7 +72,7 @@ private fun <FailureT, ValidatableT> fireValidator(
 @JvmSynthetic
 internal fun <ContainerRootValidatableT, ContainerLevel1ValidatableT, FailureT : Any> validateBatchSize(
   container: ContainerRootValidatableT,
-  containerValidationConfig: _root_ide_package_.com.salesforce.vador.config.container.ContainerValidationConfigWith2Levels<ContainerRootValidatableT, ContainerLevel1ValidatableT, FailureT?>
+  containerValidationConfig: ContainerValidationConfigWith2Levels<ContainerRootValidatableT, ContainerLevel1ValidatableT, FailureT?>
 ): Optional<FailureT> {
   val containerLevel1Batch: Collection<ContainerLevel1ValidatableT> =
     containerValidationConfig.withBatchMembers.mapNotNull { it[container] }.flatten()
@@ -87,7 +87,7 @@ internal fun <ContainerRootValidatableT, ContainerLevel1ValidatableT, FailureT :
 @JvmSynthetic
 internal fun <ContainerT, FailureT : Any> validateBatchSize(
   container: ContainerT,
-  containerValidationConfig: _root_ide_package_.com.salesforce.vador.config.container.ContainerValidationConfig<ContainerT, FailureT?>
+  containerValidationConfig: ContainerValidationConfig<ContainerT, FailureT?>
 ): Optional<FailureT> {
   val memberBatch: Collection<*> = containerValidationConfig.withBatchMembers.mapNotNull { it[container] }.flatten()
   return validateBatchSize(memberBatch, containerValidationConfig)
@@ -96,7 +96,7 @@ internal fun <ContainerT, FailureT : Any> validateBatchSize(
 @JvmSynthetic
 private fun <FailureT : Any> validateBatchSize(
   memberBatch: Collection<*>,
-  containerConfig: _root_ide_package_.com.salesforce.vador.config.base.BaseContainerValidationConfig<*, FailureT?>
+  containerConfig: BaseContainerValidationConfig<*, FailureT?>
 ): Optional<FailureT> {
   val minBatchSize = containerConfig.shouldHaveMinBatchSizeOrFailWith
   if (minBatchSize != null && memberBatch.size < minBatchSize._1) {

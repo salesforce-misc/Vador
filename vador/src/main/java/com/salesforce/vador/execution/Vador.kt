@@ -27,7 +27,7 @@ object Vador {
   @JvmOverloads
   fun <FailureT : Any, ContainerValidatableT> validateAndFailFastForContainer(
     container: ContainerValidatableT,
-    containerValidationConfig: _root_ide_package_.com.salesforce.vador.config.container.ContainerValidationConfig<ContainerValidatableT, FailureT?>,
+    containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): Optional<FailureT> = failFastForContainer(containerValidationConfig, throwableMapper)(container)
 
@@ -35,7 +35,7 @@ object Vador {
   @JvmOverloads
   fun <FailureT : Any, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
     container: ContainerValidatableT,
-    containerValidationConfigWith2Levels: _root_ide_package_.com.salesforce.vador.config.container.ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
+    containerValidationConfigWith2Levels: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): Optional<FailureT> = failFastForContainer(containerValidationConfigWith2Levels, throwableMapper)(container)
 
@@ -45,7 +45,7 @@ object Vador {
   @JvmOverloads
   fun <FailureT : Any, ValidatableT> validate(
     validatable: ValidatableT,
-    validationConfig: _root_ide_package_.com.salesforce.vador.config.ValidationConfig<ValidatableT, FailureT?>,
+    validationConfig: ValidationConfig<ValidatableT, FailureT?>,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): Optional<FailureT> = when (validationConfig.executionStrategy) {
     FAIL_FAST -> failFast(validationConfig, throwableMapper)(validatable)
@@ -56,7 +56,7 @@ object Vador {
   @JvmOverloads
   fun <FailureT : Any, ValidatableT> validateAndFailFast(
     validatable: ValidatableT,
-    validationConfig: _root_ide_package_.com.salesforce.vador.config.ValidationConfig<ValidatableT, FailureT?>,
+    validationConfig: ValidationConfig<ValidatableT, FailureT?>,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): Optional<FailureT> = failFast(validationConfig, throwableMapper)(validatable)
 

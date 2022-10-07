@@ -23,14 +23,13 @@ import java.lang.reflect.Type
 import java.util.Optional
 import java.util.function.Predicate
 
-internal fun <ValidatableT, FailureT> _root_ide_package_.com.salesforce.vador.config.base.BaseValidationConfig<ValidatableT, FailureT>.getSpecsEx(): List<_root_ide_package_.com.salesforce.vador.specs.specs.base.BaseSpec<ValidatableT, FailureT>> {
-  val specFactory =
-    _root_ide_package_.com.salesforce.vador.specs.factory.SpecFactory<ValidatableT, FailureT?>()
-  return (specify?.invoke(specFactory)?.map { it.done() as _root_ide_package_.com.salesforce.vador.specs.specs.base.BaseSpec<ValidatableT, FailureT> } ?: emptyList()) +
-    withSpecs.map { it.invoke(specFactory).done() as _root_ide_package_.com.salesforce.vador.specs.specs.base.BaseSpec<ValidatableT, FailureT> }
+internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.getSpecsEx(): List<BaseSpec<ValidatableT, FailureT>> {
+  val specFactory = SpecFactory<ValidatableT, FailureT?>()
+  return (specify?.invoke(specFactory)?.map { it.done() as BaseSpec<ValidatableT, FailureT> } ?: emptyList()) +
+    withSpecs.map { it.invoke(specFactory).done() as BaseSpec<ValidatableT, FailureT> }
 }
 
-internal fun <ValidatableT, FailureT> _root_ide_package_.com.salesforce.vador.config.base.BaseValidationConfig<ValidatableT, FailureT>.getPredicateOfSpecForTestEx(
+internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.getPredicateOfSpecForTestEx(
   nameForTest: String
 ): Optional<Predicate<ValidatableT?>> {
   // TODO 29/04/21 gopala.akshintala: Move this duplicate-check to ValidationConfig `prepare`
@@ -42,11 +41,11 @@ internal fun <ValidatableT, FailureT> _root_ide_package_.com.salesforce.vador.co
   return Optional.ofNullable(specs.first { it.nameForTest == nameForTest }?.toPredicate())
 }
 
-internal fun <ValidatableT> _root_ide_package_.com.salesforce.vador.config.base.BaseValidationConfig<ValidatableT, *>.getRequiredFieldNamesEx(beanClass: Class<ValidatableT>): Set<String> =
+internal fun <ValidatableT> BaseValidationConfig<ValidatableT, *>.getRequiredFieldNamesEx(beanClass: Class<ValidatableT>): Set<String> =
   (shouldHaveFieldsOrFailWith.keys + (shouldHaveFieldsOrFailWithFn?._1 ?: emptyList()) + shouldHaveFieldOrFailWithFn.keys)
     .map { PropertyUtils.getPropertyName(beanClass, it) }.toSet()
 
-internal fun <ValidatableT> getValidatableType(config: _root_ide_package_.com.salesforce.vador.config.base.BaseValidationConfig<ValidatableT, *>): Type? {
+internal fun <ValidatableT> getValidatableType(config: BaseValidationConfig<ValidatableT, *>): Type? {
   (config.withValidators?._1?.firstOrNull() ?: config.withValidator.keys.firstOrNull())?.let { return TypeResolver.resolveRawArguments(Validator::class.java, it.javaClass)[0] }
   (config.shouldHaveFieldsOrFailWith.keys.firstOrNull() ?: config.shouldHaveFieldsOrFailWithFn?._1?.firstOrNull() ?: config.shouldHaveFieldOrFailWithFn.keys.firstOrNull())?.let { return TypeResolver.resolveRawArguments(TypedPropertyGetter::class.java, it.javaClass)[0] }
   // ! TODO gopala.akshintala 14/08/22: For other fields and FieldConfig
@@ -54,9 +53,9 @@ internal fun <ValidatableT> getValidatableType(config: _root_ide_package_.com.sa
   config.getSpecsEx().firstOrNull()?.let {
     // ! TODO gopala.akshintala 15/08/22: Resolve for other Specs
     return when (it) {
-      is _root_ide_package_.com.salesforce.vador.specs.specs.Spec1<*, *, *> -> TypeResolver.resolveRawArguments(Function1::class.java, it.given.javaClass)[0]
-      is _root_ide_package_.com.salesforce.vador.specs.specs.Spec2<*, *, *, *> -> TypeResolver.resolveRawArguments(Function1::class.java, it.`when`.javaClass)[0]
-      is _root_ide_package_.com.salesforce.vador.specs.specs.Spec3<*, *, *, *, *> -> TypeResolver.resolveRawArguments(Function1::class.java, it.`when`.javaClass)[0]
+      is Spec1<*, *, *> -> TypeResolver.resolveRawArguments(Function1::class.java, it.given.javaClass)[0]
+      is Spec2<*, *, *, *> -> TypeResolver.resolveRawArguments(Function1::class.java, it.`when`.javaClass)[0]
+      is Spec3<*, *, *, *, *> -> TypeResolver.resolveRawArguments(Function1::class.java, it.`when`.javaClass)[0]
       else -> null
     }
   }

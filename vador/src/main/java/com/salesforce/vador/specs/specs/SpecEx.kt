@@ -14,14 +14,14 @@ import com.salesforce.vador.specs.component2
 import com.salesforce.vador.specs.specs.base.BaseSpec
 import java.util.function.Predicate
 
-internal fun <ValidatableT, FailureT, GivenT> _root_ide_package_.com.salesforce.vador.specs.specs.Spec1<ValidatableT, FailureT, GivenT>.toPredicateEx(): Predicate<ValidatableT?> =
+internal fun <ValidatableT, FailureT, GivenT> Spec1<ValidatableT, FailureT, GivenT>.toPredicateEx(): Predicate<ValidatableT?> =
   Predicate { validatable ->
     val givenValue: GivenT = given.apply(validatable)
     shouldMatchAnyOf.any { it.matches(givenValue) } ||
       shouldMatchAnyOfFields.any { it.apply(validatable) == givenValue }
   }
 
-internal fun <ValidatableT, FailureT, WhenT, ThenT> _root_ide_package_.com.salesforce.vador.specs.specs.Spec2<ValidatableT, FailureT, WhenT, ThenT>.toPredicateEx(): Predicate<ValidatableT?> {
+internal fun <ValidatableT, FailureT, WhenT, ThenT> Spec2<ValidatableT, FailureT, WhenT, ThenT>.toPredicateEx(): Predicate<ValidatableT?> {
   return Predicate { validatable ->
     if ((matchesAnyOf.isNotEmpty() || shouldMatchAnyOf.isNotEmpty()) && (shouldRelateWith.isNotEmpty() || shouldRelateWithFn != null)) {
       throw IllegalArgumentException("`when-matches/matchesAnyOf + then-shouldMatch/shouldMatchAnyOf` cannot be given along with `shouldRelateWith` or `shouldRelateWithFn`")
@@ -49,7 +49,7 @@ internal fun <ValidatableT, FailureT, WhenT, ThenT> _root_ide_package_.com.sales
   }
 }
 
-internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> _root_ide_package_.com.salesforce.vador.specs.specs.Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T>.toPredicateEx(): Predicate<ValidatableT?> =
+internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T>.toPredicateEx(): Predicate<ValidatableT?> =
   Predicate { validatable ->
     val whenValue = `when`.apply(validatable)
     if (matchesAnyOf.none { it.matches(whenValue) }) {
@@ -69,9 +69,9 @@ internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> _root_ide_package_.
       orField2ShouldMatchAnyOf.any { it.matches(thenValue2) }
   }
 
-internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> _root_ide_package_.com.salesforce.vador.specs.specs.Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T>.getFailureEx(validatable: ValidatableT?): FailureT? {
+internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T>.getFailureEx(validatable: ValidatableT?): FailureT? {
   require((orFailWith == null) != (orFailWithFn == null)) {
-    String.format(_root_ide_package_.com.salesforce.vador.specs.specs.base.BaseSpec.INVALID_FAILURE_CONFIG, nameForTest)
+    String.format(BaseSpec.INVALID_FAILURE_CONFIG, nameForTest)
   }
   return if (orFailWith != null) {
     orFailWith
@@ -84,7 +84,7 @@ internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> _root_ide_package_.
   }
 }
 
-internal fun <ValidatableT, FailureT> _root_ide_package_.com.salesforce.vador.specs.specs.Spec4<ValidatableT, FailureT>.toPredicateEx(): Predicate<ValidatableT?> {
+internal fun <ValidatableT, FailureT> Spec4<ValidatableT, FailureT>.toPredicateEx(): Predicate<ValidatableT?> {
   return Predicate { validatable ->
     val whenAllFieldsMatch = whenTheseFieldsMatch.all { (mapper, matcher) -> matcher?.matches(mapper?.apply(validatable)) ?: true }
     if (!whenAllFieldsMatch) {
@@ -94,7 +94,7 @@ internal fun <ValidatableT, FailureT> _root_ide_package_.com.salesforce.vador.sp
   }
 }
 
-internal fun <ValidatableT, FailureT> _root_ide_package_.com.salesforce.vador.specs.specs.Spec5<ValidatableT, FailureT>.toPredicateEx(): Predicate<ValidatableT?> {
+internal fun <ValidatableT, FailureT> Spec5<ValidatableT, FailureT>.toPredicateEx(): Predicate<ValidatableT?> {
   return Predicate { validatable ->
     val (whenFieldMappers, whenMatcher) = whenAllTheseFieldsMatch
     val doesAllFieldsMatch = whenFieldMappers?.all { whenMapper -> whenMatcher?.matches(whenMapper?.apply(validatable)) ?: true } ?: false

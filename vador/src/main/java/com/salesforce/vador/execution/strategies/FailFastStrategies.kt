@@ -43,7 +43,7 @@ internal typealias FailFastForAnyBatchOfBatch1WithPair<ValidatableT, FailureT, C
 
 @JvmSynthetic
 internal fun <ValidatableT, FailureT : Any> failFast(
-  validationConfig: _root_ide_package_.com.salesforce.vador.config.ValidationConfig<ValidatableT, FailureT?>,
+  validationConfig: ValidationConfig<ValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFast<ValidatableT, FailureT> = { validatable: ValidatableT ->
   findFirstFailureRecursively(validatable, validationConfig, throwableMapper)
@@ -52,7 +52,7 @@ internal fun <ValidatableT, FailureT : Any> failFast(
 
 private fun <ValidatableT, FailureT : Any> findFirstFailureRecursively(
   validatable: ValidatableT,
-  validationConfig: _root_ide_package_.com.salesforce.vador.config.base.BaseValidationConfig<ValidatableT, FailureT?>,
+  validationConfig: BaseValidationConfig<ValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): Either<FailureT?, ValidatableT?>? =
   findFirstFailure(right(validatable), configToValidators(validationConfig), throwableMapper) ?: validationConfig.withRecursiveMapper?.apply(validatable)?.asSequence()?.map { findFirstFailureRecursively(it, validationConfig, throwableMapper) }
@@ -70,7 +70,7 @@ private fun <ValidatableT, FailureT : Any> findFirstFailureRecursively(
  */
 @JvmSynthetic
 internal fun <FailureT, ValidatableT> failFastForEach(
-  batchValidationConfig: _root_ide_package_.com.salesforce.vador.config.base.BaseBatchValidationConfig<ValidatableT, FailureT?>,
+  batchValidationConfig: BaseBatchValidationConfig<ValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForEach<ValidatableT, FailureT> = { validatables: Collection<ValidatableT?> ->
@@ -83,7 +83,7 @@ internal fun <FailureT, ValidatableT> failFastForEach(
 
 @JvmSynthetic
 internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEachBatchOfBatch1(
-  batchOfBatch1ValidationConfig: _root_ide_package_.com.salesforce.vador.config.BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
+  batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForEachBatchOfBatch1<ContainerValidatableT, FailureT> =
@@ -121,7 +121,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEa
 
 @JvmSynthetic
 internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForAnyBatchOfBatch1(
-  batchOfBatch1ValidationConfig: _root_ide_package_.com.salesforce.vador.config.BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
+  batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForAny<ContainerValidatableT, FailureT> =
@@ -136,7 +136,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForAn
 
 @JvmSynthetic
 internal fun <ContainerValidatableT, MemberValidatableT, FailureT, ContainerPairT, MemberPairT> failFastForAnyBatchOfBatch1(
-  batchOfBatch1ValidationConfig: _root_ide_package_.com.salesforce.vador.config.BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
+  batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?,
   containerPairForInvalidMapper: (ContainerValidatableT?) -> ContainerPairT? = { null },
@@ -172,7 +172,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT, ContainerPair
 // TODO 13/05/21 gopala.akshintala: Reconsider any advantage of having this as a HOF
 @JvmSynthetic
 internal fun <ValidatableT, FailureT> failFastForAny(
-  batchValidationConfig: _root_ide_package_.com.salesforce.vador.config.base.BaseBatchValidationConfig<ValidatableT, FailureT?>,
+  batchValidationConfig: BaseBatchValidationConfig<ValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForAny<ValidatableT, FailureT> = { validatables ->
@@ -185,7 +185,7 @@ internal fun <ValidatableT, FailureT> failFastForAny(
 
 @JvmSynthetic
 internal fun <ValidatableT, FailureT, PairT> failFastForAny(
-  batchValidationConfig: _root_ide_package_.com.salesforce.vador.config.base.BaseBatchValidationConfig<ValidatableT, FailureT?>,
+  batchValidationConfig: BaseBatchValidationConfig<ValidatableT, FailureT?>,
   failureForNullValidatable: FailureT?,
   throwableMapper: (Throwable) -> FailureT?,
   pairForInvalidMapper: (ValidatableT?) -> PairT? = { null }
@@ -205,7 +205,7 @@ internal fun <ValidatableT, FailureT, PairT> failFastForAny(
 
 @JvmSynthetic
 internal fun <ContainerValidatableT, FailureT : Any> failFastForContainer(
-  containerValidationConfig: _root_ide_package_.com.salesforce.vador.config.container.ContainerValidationConfig<ContainerValidatableT, FailureT?>,
+  containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForContainer<ContainerValidatableT, FailureT> = { container: ContainerValidatableT ->
   validateBatchSize(container, containerValidationConfig).or {
@@ -219,7 +219,7 @@ internal fun <ContainerValidatableT, FailureT : Any> failFastForContainer(
 
 @JvmSynthetic
 internal fun <ContainerValidatableT, NestedContainerValidatableT, FailureT : Any> failFastForContainer(
-  containerValidationConfigWith2Levels: _root_ide_package_.com.salesforce.vador.config.container.ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
+  containerValidationConfigWith2Levels: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForContainer<ContainerValidatableT, FailureT> = { container: ContainerValidatableT ->
   validateBatchSize(container, containerValidationConfigWith2Levels).or {

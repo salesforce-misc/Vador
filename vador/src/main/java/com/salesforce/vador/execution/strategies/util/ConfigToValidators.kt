@@ -27,7 +27,7 @@ import java.util.function.Predicate
 // ! TODO 16/04/22: Break this file into smaller files.
 @JvmSynthetic
 internal fun <ValidatableT, FailureT> configToValidators(
-  config: _root_ide_package_.com.salesforce.vador.config.base.BaseValidationConfig<ValidatableT, FailureT>
+  config: BaseValidationConfig<ValidatableT, FailureT>
 ): List<ValidatorEtr<ValidatableT?, FailureT?>> = (
   toValidatorEtrs1(config.shouldHaveFieldsOrFailWith, isFieldPresent) +
     toValidatorEtrs2(config.shouldHaveFieldsOrFailWithFn, isFieldPresent) +
@@ -40,7 +40,7 @@ internal fun <ValidatableT, FailureT> configToValidators(
 
 // * NOTE gopala.akshintala 14/08/22: Using Extension functions coz, names are almost same for all these
 @JvmSynthetic
-private fun <ValidatableT, FailureT> _root_ide_package_.com.salesforce.vador.config.base.BaseValidationConfig<ValidatableT, FailureT>.toValidatorsEtr(): List<ValidatorEtr<ValidatableT?, FailureT?>> =
+private fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.toValidatorsEtr(): List<ValidatorEtr<ValidatableT?, FailureT?>> =
   fromValidators1(withValidators) + fromValidators2(withValidator) + withValidatorEtrs
 
 @JvmSynthetic
@@ -82,7 +82,7 @@ private fun <ValidatableT, FailureT, FieldT> toValidatorEtrs3(
 
 @JvmSynthetic
 private fun <IDT, ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
-  config: _root_ide_package_.com.salesforce.vador.config.IDConfig<IDT, ValidatableT, FailureT, EntityInfoT>?
+  config: IDConfig<IDT, ValidatableT, FailureT, EntityInfoT>?
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   toValidators11(
     config?.shouldHaveValidSFIdFormatForAllOrFailWith,
@@ -284,7 +284,7 @@ private fun <FieldT> validateField(
 
 @JvmSynthetic
 private fun <FieldT, ValidatableT, FailureT> fieldConfigToValidatorEtrs(
-  config: _root_ide_package_.com.salesforce.vador.config.FieldConfig<FieldT, ValidatableT, FailureT>?
+  config: FieldConfig<FieldT, ValidatableT, FailureT>?
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   toFieldValidatorEtrs1(
     config?.shouldHaveValidFormatForAllOrFailWith,
@@ -388,7 +388,7 @@ private fun <ValidatableT, FailureT, FieldT> getFieldName(
 ): String = validatable.map { PropertyUtils.getPropertyName(validatable.get(), fieldMapper) }.getOrElse("Validatable is on Left")
 
 @JvmSynthetic
-private fun <ValidatableT, FailureT> _root_ide_package_.com.salesforce.vador.specs.specs.base.BaseSpec<ValidatableT, FailureT>.toValidator(): ValidatorEtr<ValidatableT?, FailureT?> =
+private fun <ValidatableT, FailureT> BaseSpec<ValidatableT, FailureT>.toValidator(): ValidatorEtr<ValidatableT?, FailureT?> =
   ValidatorEtr { it.filterOrElse(toPredicate()) { validatable -> getFailure(validatable) } }
 
 @JvmSynthetic

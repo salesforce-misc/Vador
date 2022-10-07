@@ -38,7 +38,7 @@ object VadorBatch {
   @JvmOverloads
   fun <FailureT : Any, ContainerValidatableT> validateAndFailFastForContainer(
     batchValidatable: Collection<ContainerValidatableT>,
-    containerValidationConfig: _root_ide_package_.com.salesforce.vador.config.container.ContainerValidationConfig<ContainerValidatableT, FailureT?>,
+    containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): Optional<FailureT> = batchValidatable.asSequence()
     .map { container: ContainerValidatableT ->
@@ -50,7 +50,7 @@ object VadorBatch {
   fun <FailureT : Any, ContainerValidatableT, PairT> validateAndFailFastForContainer(
     batchValidatable: Collection<ContainerValidatableT>,
     pairForInvalidMapper: (ContainerValidatableT?) -> PairT?,
-    containerValidationConfig: _root_ide_package_.com.salesforce.vador.config.container.ContainerValidationConfig<ContainerValidatableT, FailureT?>,
+    containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): Optional<Tuple2<PairT?, FailureT?>> = batchValidatable.asSequence()
     .map { container: ContainerValidatableT ->
@@ -64,7 +64,7 @@ object VadorBatch {
   @JvmOverloads
   fun <FailureT : Any, ContainerValidatableT, NestedContainerValidatableT> validateAndFailFastForContainer(
     batchValidatable: Collection<ContainerValidatableT>,
-    containerValidationConfigWith2Levels: _root_ide_package_.com.salesforce.vador.config.container.ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
+    containerValidationConfigWith2Levels: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): Optional<FailureT> = batchValidatable.asSequence()
     .map { container: ContainerValidatableT ->
@@ -76,7 +76,7 @@ object VadorBatch {
   fun <FailureT : Any, ContainerValidatableT, NestedContainerValidatableT, PairT> validateAndFailFastForContainer(
     batchValidatable: Collection<ContainerValidatableT>,
     pairForInvalidMapper: (ContainerValidatableT?) -> PairT?,
-    containerValidationConfigWith2Levels: _root_ide_package_.com.salesforce.vador.config.container.ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
+    containerValidationConfigWith2Levels: ContainerValidationConfigWith2Levels<ContainerValidatableT, NestedContainerValidatableT, FailureT?>,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): Optional<Tuple2<PairT?, FailureT?>> = batchValidatable.asSequence()
     .map { container: ContainerValidatableT ->
@@ -89,7 +89,7 @@ object VadorBatch {
   @JvmOverloads
   fun <FailureT, ValidatableT> validate(
     validatables: List<ValidatableT?>,
-    batchValidationConfig: _root_ide_package_.com.salesforce.vador.config.BatchValidationConfig<ValidatableT, FailureT?>,
+    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
     failureForNullValidatable: FailureT? = null,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): Any = when (batchValidationConfig.batchExecutionStrategy) {
@@ -103,7 +103,7 @@ object VadorBatch {
   @JvmOverloads
   fun <FailureT, ValidatableT> validateAndFailFastForEach(
     validatables: List<ValidatableT?>,
-    batchValidationConfig: _root_ide_package_.com.salesforce.vador.config.BatchValidationConfig<ValidatableT, FailureT?>,
+    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
     failureForNullValidatable: FailureT? = null,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): List<Either<FailureT?, ValidatableT?>> =
@@ -114,7 +114,7 @@ object VadorBatch {
   fun <FailureT, ValidatableT, PairT> validateAndFailFastForEach(
     validatables: List<ValidatableT?>,
     pairForInvalidMapper: (ValidatableT?) -> PairT?,
-    batchValidationConfig: _root_ide_package_.com.salesforce.vador.config.BatchValidationConfig<ValidatableT, FailureT?>,
+    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
     failureForNullValidatable: FailureT? = null,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): List<Either<Tuple2<PairT?, FailureT?>, ValidatableT?>> {
@@ -145,7 +145,7 @@ object VadorBatch {
   @JvmOverloads
   fun <FailureT, ContainerValidatableT, MemberValidatableT, ContainerPairT, MemberPairT> validateAndFailFastForEach(
     validatables: List<ContainerValidatableT>,
-    batchOfBatch1ValidationConfig: _root_ide_package_.com.salesforce.vador.config.BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
+    batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
     containerPairForInvalidMapper: (ContainerValidatableT?) -> ContainerPairT?,
     memberPairForInvalidMapper: (MemberValidatableT?) -> MemberPairT?,
     failureForNullValidatable: FailureT? = null,
@@ -192,7 +192,7 @@ object VadorBatch {
   @JvmOverloads
   fun <FailureT, ContainerValidatableT, MemberValidatableT> validateAndFailFastForEach(
     validatables: List<ContainerValidatableT?>,
-    batchOfBatch1ValidationConfig: _root_ide_package_.com.salesforce.vador.config.BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
+    batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
     failureForNullValidatable: FailureT? = null,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): List<Either<FFEBatchOfBatchFailure<FailureT?>, ContainerValidatableT?>> =
@@ -203,7 +203,7 @@ object VadorBatch {
   @JvmOverloads
   fun <FailureT, ValidatableT> validateAndFailFastForAny(
     validatables: List<ValidatableT?>,
-    batchValidationConfig: _root_ide_package_.com.salesforce.vador.config.BatchValidationConfig<ValidatableT, FailureT?>,
+    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
     failureForNullValidatable: FailureT? = null,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): Optional<FailureT> =
@@ -218,7 +218,7 @@ object VadorBatch {
   fun <FailureT, ValidatableT, PairT> validateAndFailFastForAny(
     validatables: List<ValidatableT?>,
     pairForInvalidMapper: (ValidatableT?) -> PairT?,
-    batchValidationConfig: _root_ide_package_.com.salesforce.vador.config.BatchValidationConfig<ValidatableT, FailureT?>,
+    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
     failureForNullValidatable: FailureT? = null,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): Optional<Tuple2<PairT?, FailureT?>> =
@@ -228,7 +228,7 @@ object VadorBatch {
   @JvmOverloads
   fun <FailureT, ContainerValidatableT, MemberValidatableT> validateAndFailFastForAny(
     validatables: List<ContainerValidatableT?>,
-    batchOfBatch1ValidationConfig: _root_ide_package_.com.salesforce.vador.config.BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
+    batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
     failureForNullValidatable: FailureT? = null,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): Optional<FailureT> =
@@ -244,7 +244,7 @@ object VadorBatch {
     validatables: List<ContainerValidatableT?>,
     containerPairForInvalidMapper: (ContainerValidatableT?) -> ContainerPairT?,
     memberPairForInvalidMapper: (MemberValidatableT?) -> MemberPairT?,
-    batchOfBatch1ValidationConfig: _root_ide_package_.com.salesforce.vador.config.BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
+    batchOfBatch1ValidationConfig: BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT?>,
     failureForNullValidatable: FailureT? = null,
     throwableMapper: (Throwable) -> FailureT? = { throw it }
   ): Optional<FFABatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>> =
