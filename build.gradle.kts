@@ -14,10 +14,12 @@ import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_TEST_SRC_DIR_KOTLIN
 import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-  kotlin("jvm")
+  id(libs.plugins.detekt.pluginId)
+  id(libs.plugins.kotlin.jvm.pluginId)
+  alias(libs.plugins.lombok) apply false
   id("org.sonarqube") version "3.4.0.2513"
-  id("io.gitlab.arturbosch.detekt") version "1.21.0"
   id("org.barfuin.gradle.taskinfo") version "1.4.0"
 }
 allprojects {

@@ -8,16 +8,12 @@ plugins {
   signing
   id("com.adarshr.test-logger")
 }
+repositories {
+  mavenCentral()
+}
 val asciidoclet: Configuration by configurations.creating
-val kotestVersion: String by project
 dependencies {
   asciidoclet("org.asciidoctor:asciidoclet:1.+")
-  testImplementation(platform("org.junit:junit-bom:5.9.0"))
-  testImplementation("org.junit.jupiter:junit-jupiter-api")
-  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-  testImplementation(platform("io.kotest:kotest-bom:$kotestVersion"))
-  testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
-  testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
 }
 java {
   withJavadocJar()
@@ -56,7 +52,7 @@ tasks {
   }
   withType<PublishToMavenLocal>().configureEach {
     doLast {
-      logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to MavenLocal.")
+      logger.lifecycle("Successfully created ${publication.groupId}:${publication.artifactId}:${publication.version} in MavenLocal")
     }
   }
 }

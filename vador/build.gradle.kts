@@ -1,6 +1,3 @@
-repositories {
-  mavenCentral()
-}
 /*******************************************************************************
  * Copyright (c) 2022, salesforce.com, inc.
  * All rights reserved.
@@ -8,9 +5,9 @@ repositories {
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  ******************************************************************************/
 
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-  id("io.freefair.lombok")
-  id("com.github.spotbugs")
+  alias(libs.plugins.lombok)
 }
 
 dependencies {
@@ -20,15 +17,16 @@ dependencies {
   implementation(libs.kotlin.vavr)
   implementation(libs.typeTools)
   compileOnly(libs.jetbrains.annotations)
-  api("de.cronn:reflection-util:2.14.0")
+  api(libs.reflection.util)
 
-  implementation("org.slf4j:slf4j-api:2.0.0")
-
-  runtimeOnly("org.apache.logging.log4j:log4j-slf4j18-impl:2.18.0")
+  implementation(libs.slf4j.api)
+  runtimeOnly(libs.log4j.slf4j18.impl)
 
   testImplementation(project(":matchers"))
-  testImplementation("org.assertj:assertj-vavr:0.4.2")
-  testImplementation("org.assertj:assertj-core:3.23.1")
+  testImplementation(libs.assertj.vavr)
+  testImplementation(libs.assertj.core)
+  testImplementation(platform(libs.junit.bom))
+  testImplementation(libs.bundles.junit)
 }
 
 if (!System.getProperty("idea.sync.active").toBoolean()) {

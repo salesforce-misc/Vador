@@ -7,14 +7,12 @@ plugins {
   idea
   id("com.diffplug.spotless")
   id("org.jetbrains.kotlinx.kover")
-  id("io.freefair.lombok") apply false
   id("com.github.spotbugs") apply false
 }
 
 version = "1.0.0"
 group = "com.salesforce.vador"
 description = "Vador - A framework for POJO/Data Structure/Bean validation"
-
 repositories {
   mavenCentral()
 }

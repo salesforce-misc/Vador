@@ -5,10 +5,15 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  ******************************************************************************/
 
-dependencies {
-  api(libs.hamcrest.core)
-  api(libs.hamcrest.date)
-  api(libs.kotlin.vavr)
-  api(libs.java.vavr)
-  api(libs.bundles.kotest)
+enableFeaturePreview("VERSION_CATALOGS")
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") { from(files("../libs.versions.toml")) }
+    }
+
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
 }
