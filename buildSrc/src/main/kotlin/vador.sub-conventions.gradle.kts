@@ -18,7 +18,9 @@ dependencies {
 java {
   withJavadocJar()
   withSourcesJar()
-  sourceCompatibility = JavaVersion.VERSION_11
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(11))
+  }
 }
 tasks {
   test.get().useJUnitPlatform()
