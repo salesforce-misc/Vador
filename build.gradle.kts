@@ -12,15 +12,13 @@ import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
+  java
   id(libs.plugins.detekt.pluginId) apply false
-  id(libs.plugins.kotlin.jvm.pluginId)
   alias(libs.plugins.lombok) apply false
   id("org.sonarqube") version "3.4.0.2513"
-  id("org.barfuin.gradle.taskinfo") version "1.4.0"
 }
 allprojects {
   apply(plugin = "vador.root-conventions")
-  apply(plugin = "io.gitlab.arturbosch.detekt")
 }
 val detektReportMerge by tasks.registering(ReportMergeTask::class) {
   output.set(rootProject.buildDir.resolve("reports/detekt/merge.xml"))
