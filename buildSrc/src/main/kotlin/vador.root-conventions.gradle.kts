@@ -1,4 +1,11 @@
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep.XML
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektPlugin
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_SRC_DIR_JAVA
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_SRC_DIR_KOTLIN
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_TEST_SRC_DIR_JAVA
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_TEST_SRC_DIR_KOTLIN
+import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 import kotlinx.kover.api.DefaultJacocoEngine
 import kotlinx.kover.api.KoverTaskExtension
 
@@ -7,6 +14,7 @@ plugins {
   idea
   id("com.diffplug.spotless")
   id("org.jetbrains.kotlinx.kover")
+  id("io.gitlab.arturbosch.detekt")
   id("com.github.spotbugs") apply false
 }
 
@@ -62,6 +70,18 @@ spotless {
     indentWithSpaces(2)
     endWithNewline()
   }
+}
+detekt {
+  source = objects.fileCollection().from(
+    DEFAULT_SRC_DIR_JAVA,
+    DEFAULT_TEST_SRC_DIR_JAVA,
+    DEFAULT_SRC_DIR_KOTLIN,
+    DEFAULT_TEST_SRC_DIR_KOTLIN
+  )
+  parallel = true
+  buildUponDefaultConfig = true
+  baseline = file("$rootDir/detekt/baseline.xml")
+  config = files("$rootDir/detekt/detekt.yml")
 }
 tasks {
   spotbugsMain.get().enabled = false

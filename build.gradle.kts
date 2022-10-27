@@ -8,15 +8,11 @@
 import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektPlugin
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_SRC_DIR_JAVA
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_SRC_DIR_KOTLIN
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_TEST_SRC_DIR_JAVA
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_TEST_SRC_DIR_KOTLIN
 import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-  id(libs.plugins.detekt.pluginId)
+  id(libs.plugins.detekt.pluginId) apply false
   id(libs.plugins.kotlin.jvm.pluginId)
   alias(libs.plugins.lombok) apply false
   id("org.sonarqube") version "3.4.0.2513"
@@ -25,28 +21,16 @@ plugins {
 allprojects {
   apply(plugin = "vador.root-conventions")
   apply(plugin = "io.gitlab.arturbosch.detekt")
-  detekt {
-    source = objects.fileCollection().from(
-      DEFAULT_SRC_DIR_JAVA,
-      DEFAULT_TEST_SRC_DIR_JAVA,
-      DEFAULT_SRC_DIR_KOTLIN,
-      DEFAULT_TEST_SRC_DIR_KOTLIN
-    )
-    parallel = true
-    buildUponDefaultConfig = true
-    baseline = file("$rootDir/detekt/baseline.xml")
-  }
 }
 val detektReportMerge by tasks.registering(ReportMergeTask::class) {
   output.set(rootProject.buildDir.resolve("reports/detekt/merge.xml"))
 }
-// <-- SUB PROJECTS --
 subprojects {
   apply(plugin = "vador.sub-conventions")
   tasks.withType<Detekt>().configureEach {
     ignoreFailures = true
     reports {
-      xml.required.set(true)
+      xml.required by true
     }
   }
   plugins.withType<DetektPlugin> {
@@ -71,7 +55,6 @@ subprojects {
     }
   }
 }
-// -- SUB PROJECTS -->
 sonarqube {
   properties {
     property("sonar.modules", subprojects.joinToString(",") { it.name })
