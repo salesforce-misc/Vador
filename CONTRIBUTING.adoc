@@ -79,3 +79,6 @@ In link:build.gradle.kts[], follow the <<_versioning_strategy,Versioning Strateg
 ----
 ./gradlew publish
 ----
+
+Follow https://central.sonatype.org/publish/release/[Releasing the Deployment instructions]
+to release from staging
