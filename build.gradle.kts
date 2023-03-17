@@ -26,7 +26,6 @@ val detektReportMerge by tasks.registering(ReportMergeTask::class) {
 subprojects {
   apply(plugin = "vador.sub-conventions")
   tasks.withType<Detekt>().configureEach {
-    ignoreFailures = true
     reports {
       xml.required by true
     }

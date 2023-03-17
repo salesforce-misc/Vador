@@ -11,22 +11,17 @@ plugins {
 }
 
 dependencies {
-  api(libs.hamcrest.core)
-  api(libs.hamcrest.date)
-  api(libs.java.vavr)
+  implementation(libs.hamcrest.core)
+  implementation(libs.hamcrest.date)
+  implementation(libs.java.vavr)
   implementation(libs.kotlin.vavr)
   implementation(libs.typeTools)
   compileOnly(libs.jetbrains.annotations)
   api(libs.reflection.util)
-
-  implementation(libs.slf4j.api)
-  runtimeOnly(libs.log4j.slf4j18.impl)
-
+  implementation(libs.bundles.apache.log4j)
   testImplementation(project(":matchers"))
   testImplementation(libs.assertj.vavr)
   testImplementation(libs.assertj.core)
-  testImplementation(platform(libs.junit.bom))
-  testImplementation(libs.bundles.junit)
 }
 
 if (!System.getProperty("idea.sync.active").toBoolean()) {

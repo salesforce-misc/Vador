@@ -18,7 +18,7 @@ plugins {
   id("com.github.spotbugs") apply false
 }
 
-version = "1.0.0"
+version = "1.0.1"
 group = "com.salesforce.vador"
 description = "Vador - A framework for POJO/Data Structure/Bean validation"
 repositories {

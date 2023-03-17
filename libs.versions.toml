@@ -7,7 +7,7 @@ jetbrains-annotations = "23.0.0"
 typeTools = "0.6.3"
 kover = "0.6.1"
 kotlin = "1.7.20"
-detekt = "1.22.0-RC1"
+detekt = "1.22.0-RC2"
 kotest = "5.5.1"
 spotless = "6.11.0"
 spotbugs = "5.0.12"
@@ -15,10 +15,9 @@ lombok = "6.5.1"
 testLogger = "3.2.0"
 assertj-core = "3.23.1"
 assertj-vavr = "0.4.2"
-slf4j-api = "2.0.3"
-log4j-slf4j18-impl = "2.18.0"
 reflection-util = "2.14.0"
-jupiter = "5.9.1"
+junit = "5.9.1"
+apache-log4j = "2.19.0"
 
 [libraries]
 hamcrest-core = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest-core" }
@@ -40,11 +39,12 @@ kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest"
 kotest-runnerJUnit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj-core" }
 assertj-vavr = { module = "org.assertj:assertj-vavr", version.ref = "assertj-vavr" }
-slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j-api" }
-log4j-slf4j18-impl = { module = "org.apache.logging.log4j:log4j-slf4j18-impl", version.ref = "log4j-slf4j18-impl" }
-junit-bom = { module = "org.junit:junit-bom", version.ref = "jupiter" }
-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "jupiter" }
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }
+log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "apache-log4j" }
+log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "apache-log4j" }
+log4j-slf4j2-impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "apache-log4j" }
 
 [bundles]
 kotest = [
@@ -54,6 +54,7 @@ kotest = [
     "kotest-runnerJUnit5",
 ]
 junit = ["junit-jupiter", "junit-engine"]
+apache-log4j = ["log4j-api", "log4j-core", "log4j-slf4j2-impl"]
 
 [plugins]
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }

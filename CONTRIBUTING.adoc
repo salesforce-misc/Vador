@@ -19,7 +19,7 @@ endif::[]
 :hide-uri-scheme:
 :sourcedir: src/main/java
 :imagesdir: images
-:vador-version: 2.7.2
+:vador-version: 1.0.0
 :toc:
 
 [#_versioning_strategy]
@@ -37,8 +37,8 @@ endif::[]
 
 * This is a simple Gradle project and has its own Gradle wrapper. So nothing to install. Just run this command
 
-CAUTION: You may see some build errors related to delombok task.
-They should not fail your build, and you may ignore them.
+CAUTION: You may see some build errors related to the delombok task.
+They shouldn't fail your build, and you may ignore them.
 They will be addressed once Kotlin Lombok compiler supports Lombok `@Builders`.
 There is an https://youtrack.jetbrains.com/issue/KT-46959[Active Issue] filed for this as well.
 
@@ -47,14 +47,14 @@ There is an https://youtrack.jetbrains.com/issue/KT-46959[Active Issue] filed fo
 ./gradlew clean build
 ----
 
-* For source code navigation you need to have https://projectlombok.org/[*Lombok*] plugin, which is used to generate boilerplate code.
+* For source code navigation, you need to have https://projectlombok.org/[*Lombok*] plugin, which is used to generate boilerplate code.
 There are plugins available for all popular IDEs, which you need to install.
 The latest version of the plugin should work.
 * You can run/debug the existing unit tests or write your own to play with Vador.
 
 === Kotlin
 
-* The code-base is a mix of Java and Kotlin. If you are a Java developer and new to Kotlin, don't worry, Kotlin is a JVM language and can be used anywhere Java is used.
+* The code-base is a mix of Java and Kotlin. If you're a Java developer and new to Kotlin, don't worry, Kotlin is a JVM language and can be used anywhere Java is used.
 In-fact, it has got the reputation of *"Better Java!"*.
 * A typical Java developer can ramp up on Kotlin in less than a week.
 This free-course: https://www.coursera.org/learn/kotlin-for-java-developers[*Kotlin for Java Developers | Coursera*] can help catalyse your ramp-up.
@@ -65,7 +65,7 @@ This free-course: https://www.coursera.org/learn/kotlin-for-java-developers[*Kot
 * This repo uses https://github.com/diffplug/spotless[*Spotless*] for formatting files, as this repo has code from more than one programming-language.
 * Please run `./gradlew spotlessApply` before check-in to fix any formatting errors.
 
-TIP: If you are on Intellij, replace your kbd[Cmd+Shift+L] habit with kbd[Ctrl]-kbd[Ctrl] and run `gradle spotlessApply` (Or the respective action if you are on Eclipse).
+TIP: If you're on Intellij, replace your kbd:[Cmd+Shift+L] habit with kbd:[Ctrl]-kbd:[Ctrl] and run `gradle spotlessApply` (Or the respective action if you're on Eclipse).
 It may be slow for the first run, but later runs should be faster.
 
 == Manual publishing

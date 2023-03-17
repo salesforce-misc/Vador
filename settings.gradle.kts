@@ -9,21 +9,10 @@ rootProject.name = "vador-root"
 include("matchers")
 include("vador")
 
-plugins {
-  id("com.gradle.enterprise") version "3.11.1"
-}
-
 dependencyResolutionManagement {
   versionCatalogs {
     create("libs") {
       from(files("libs.versions.toml"))
     }
-  }
-}
-
-gradleEnterprise {
-  buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
   }
 }

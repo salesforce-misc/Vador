@@ -22,8 +22,14 @@ java {
     languageVersion.set(JavaLanguageVersion.of(11))
   }
 }
+testing {
+  suites {
+    val test by getting(JvmTestSuite::class) {
+      useJUnitJupiter("5.9.2")
+    }
+  }
+}
 tasks {
-  test.get().useJUnitPlatform()
   withType<KotlinCompile> {
     kotlinOptions {
       jvmTarget = JavaVersion.VERSION_11.toString()

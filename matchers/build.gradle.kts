@@ -6,8 +6,8 @@
  ******************************************************************************/
 
 dependencies {
-  api(libs.hamcrest.core)
-  api(libs.hamcrest.date)
+  implementation(libs.hamcrest.core)
+  implementation(libs.hamcrest.date)
   api(libs.kotlin.vavr)
   api(libs.java.vavr)
   api(libs.bundles.kotest)
