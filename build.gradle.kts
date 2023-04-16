@@ -15,7 +15,7 @@ plugins {
   id(libs.plugins.detekt.pluginId) apply false
   alias(libs.plugins.lombok.gradle) apply false
   id(libs.plugins.kover.pluginId)
-  id("org.sonarqube") version "3.4.0.2513"
+  id("org.sonarqube") version "3.5.0.2730"
 }
 allprojects {
   apply(plugin = "vador.root-conventions")
