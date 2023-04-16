@@ -77,7 +77,7 @@ In link:build.gradle.kts[], follow the <<_versioning_strategy,Versioning Strateg
 
 [source,bash]
 ----
-./gradlew publish
+./gradlew publish -Dorg.gradle.parallel=false
 ----
 
 Follow https://central.sonatype.org/publish/release/[Releasing the Deployment instructions]

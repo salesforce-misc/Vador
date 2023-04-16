@@ -7,6 +7,7 @@ plugins {
   `maven-publish`
   signing
   id("com.adarshr.test-logger")
+  id("org.jetbrains.kotlinx.kover")
 }
 repositories {
   mavenCentral()

@@ -5,9 +5,8 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  ******************************************************************************/
 
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-  alias(libs.plugins.lombok)
+  alias(libs.plugins.lombok.gradle)
 }
 
 dependencies {

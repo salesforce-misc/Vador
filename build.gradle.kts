@@ -10,15 +10,23 @@ import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektPlugin
 import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
   java
   id(libs.plugins.detekt.pluginId) apply false
-  alias(libs.plugins.lombok) apply false
+  alias(libs.plugins.lombok.gradle) apply false
+  id(libs.plugins.kover.pluginId)
   id("org.sonarqube") version "3.4.0.2513"
 }
 allprojects {
   apply(plugin = "vador.root-conventions")
+}
+koverReport {
+  xml {
+    onCheck = true
+  }
+}
+dependencies {
+  subprojects.forEach { kover(project(":${it.name}")) }
 }
 val detektReportMerge by tasks.registering(ReportMergeTask::class) {
   output.set(rootProject.buildDir.resolve("reports/detekt/merge.xml"))
@@ -27,7 +35,7 @@ subprojects {
   apply(plugin = "vador.sub-conventions")
   tasks.withType<Detekt>().configureEach {
     reports {
-      xml.required by true
+      xml.required = true
     }
   }
   plugins.withType<DetektPlugin> {

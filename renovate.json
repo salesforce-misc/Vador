@@ -1,20 +1,21 @@
 {
-  "extends": [
+  "extends" : [
     "config:base"
   ],
-  "commitBodyTable": true,
-  "packageRules": [
+  "automerge" : true,
+  "commitBodyTable" : true,
+  "packageRules" : [
     {
-      "matchPackagePatterns": [
+      "matchPackagePatterns" : [
         "*"
       ],
-      "matchUpdateTypes": [
+      "matchUpdateTypes" : [
         "major",
         "minor",
         "patch"
       ],
-      "groupName": "all dependencies",
-      "groupSlug": "all"
+      "groupName" : "all dependencies",
+      "groupSlug" : "all"
     }
   ]
 }
