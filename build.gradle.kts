@@ -21,8 +21,10 @@ allprojects {
   apply(plugin = "vador.root-conventions")
 }
 koverReport {
-  xml {
-    onCheck = true
+  defaults {
+    xml {
+      onCheck = true
+    }
   }
 }
 dependencies {
