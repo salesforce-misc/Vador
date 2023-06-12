@@ -26,7 +26,7 @@ java {
 testing {
   suites {
     val test by getting(JvmTestSuite::class) {
-      useJUnitJupiter("5.9.2")
+      useJUnitJupiter("5.9.3")
     }
   }
 }
@@ -94,8 +94,8 @@ publishing {
       }
     }
   }
-  val ossrhUsername: String by lazy { System.getenv("OSSRH_USERNAME") ?: project.providers.gradleProperty("ossrhUsername").get() }
-  val ossrhPassword: String by lazy { System.getenv("OSSRH_PASSWORD") ?: project.providers.gradleProperty("ossrhPassword").get() }
+  val ossrhUsername: String by lazy { System.getenv("OSSRH_USERNAME") ?: project.providers.gradleProperty("ossrhUsername").getOrElse("") }
+  val ossrhPassword: String by lazy { System.getenv("OSSRH_PASSWORD") ?: project.providers.gradleProperty("ossrhPassword").getOrElse("") }
   repositories {
     maven {
       val releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
