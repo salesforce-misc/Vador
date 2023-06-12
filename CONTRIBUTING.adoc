@@ -47,6 +47,8 @@ There is an https://youtrack.jetbrains.com/issue/KT-46959[Active Issue] filed fo
 ./gradlew clean build
 ----
 
+TIP: You *don't* need a local Gradle installation as the `gradlew` (Gradle wrapper) takes care of everything. But if you wish to install gradle locally, I recommend doing it via https://sdkman.io/install[SDKMAN]. After you install SDKMAN, run `sdk install gradle` to install Gradle
+
 * For source code navigation, you need to have https://projectlombok.org/[*Lombok*] plugin, which is used to generate boilerplate code.
 There are plugins available for all popular IDEs, which you need to install.
 The latest version of the plugin should work.
