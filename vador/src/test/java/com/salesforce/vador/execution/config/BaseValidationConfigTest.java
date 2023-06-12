@@ -68,6 +68,7 @@ class BaseValidationConfigTest {
     final var result3 = validateAndFailFast(validatableWithEmptyReqList, validationConfig);
     assertThat(result3).contains(REQUIRED_LIST_MISSING);
   }
+
   // end::validationConfig-for-flat-bean-demo[]
 
   @Test
@@ -201,6 +202,7 @@ class BaseValidationConfigTest {
     assertThat(result.get().getValidationFailureMessage().getParams())
         .containsExactly(Bean.Fields.sfId2, invalidSfId);
   }
+
   // end::validationConfig-for-nested-bean-demo[]
 
   @Data
@@ -224,6 +226,7 @@ class BaseValidationConfigTest {
     private final String sfId2;
     private final List<String> requiredList;
   }
+
   // end::flat-bean[]
   // end::nested-bean[]
 
@@ -233,6 +236,7 @@ class BaseValidationConfigTest {
     String requiredField;
     Bean bean;
   }
+
   // end::nested-bean[]
 
   @Data

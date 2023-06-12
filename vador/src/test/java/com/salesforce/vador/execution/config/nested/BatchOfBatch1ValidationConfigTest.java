@@ -83,6 +83,7 @@ class BatchOfBatch1ValidationConfigTest {
     final var result3 = results.get(2);
     VavrAssertions.assertThat(result3).isRight();
   }
+
   // end::batch-of-batch-1-demo[]
 
   @DisplayName(
@@ -306,6 +307,7 @@ class BatchOfBatch1ValidationConfigTest {
     int value;
     String label;
   }
+
   // end::batch-of-batch-1[]
 
   @Value
@@ -314,6 +316,7 @@ class BatchOfBatch1ValidationConfigTest {
     String id;
     List<Bean> beanBatch;
   }
+
   // end::batch-of-batch-1[]
 
   @Value

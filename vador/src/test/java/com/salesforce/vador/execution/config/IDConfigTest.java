@@ -283,6 +283,7 @@ class IDConfigTest {
           && ID_TO_ENTITY_ID.get(idStrToValidate).isInstance(entityId);
     }
   }
+
   // end::bean-strict-id-validation[]
 
   @Data
@@ -313,6 +314,7 @@ class IDConfigTest {
   private static class ContactUddConstants {
     public static final EntityId EntityId = new ContactEntityId();
   }
+
   // end::bean-with-id-fields[]
 
   @Value

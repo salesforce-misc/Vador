@@ -138,6 +138,7 @@ class ContainerValidationConfigTest {
     final var result = Vador.validateAndFailFastForContainer(headerBean, containerValidationConfig);
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
   }
+
   // end::container-config-level-1-container-with-multi-batch-demo[]
 
   @Test
@@ -210,6 +211,7 @@ class ContainerValidationConfigTest {
 
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_1);
   }
+
   // end::container-config-level-1-container-with-container-batch-demo[]
 
   @Value
@@ -226,11 +228,13 @@ class ContainerValidationConfigTest {
     List<Bean1> batch1;
     List<Bean2> batch2;
   }
+
   // end::container-config-level-1-container-with-multi-batch[]
 
   @Value
   // tag::container-config-level-1-container-with-container-batch[]
   private static class Bean {}
+
   // end::container-config-level-1-container-with-container-batch[]
 
   @Value
@@ -238,6 +242,7 @@ class ContainerValidationConfigTest {
   private static class ContainerLevel1 {
     List<Bean> beanBatch;
   }
+
   // end::container-config-level-1-container-with-container-batch[]
 
   @Value
@@ -245,6 +250,7 @@ class ContainerValidationConfigTest {
   public static class ContainerRoot {
     List<ContainerLevel1> containerLevel1Batch;
   }
+
   // end::container-config-level-1-container-with-container-batch[]
 
   @Value

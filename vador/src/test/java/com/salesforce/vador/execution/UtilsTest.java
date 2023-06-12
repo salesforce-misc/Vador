@@ -72,6 +72,7 @@ class UtilsTest {
         (r, i) ->
             org.junit.jupiter.api.Assertions.assertEquals(String.valueOf(i + 1), r.get().getId()));
   }
+
   // end::batch-bean-demo[]
 
   // tag::batch-bean-multikey-demo[]
@@ -130,6 +131,7 @@ class UtilsTest {
         (r, i) ->
             org.junit.jupiter.api.Assertions.assertEquals(String.valueOf(i + 1), r.get().getId1()));
   }
+
   // end::batch-bean-multikey-demo[]
 
   @DisplayName("FailForDuplicates NOT configured. FAIL: NullValidatables, FILTER_ONLY: Duplicates")
@@ -378,6 +380,7 @@ class UtilsTest {
   private static class Bean {
     String id;
   }
+
   // end::batch-bean[]
 
   @Value

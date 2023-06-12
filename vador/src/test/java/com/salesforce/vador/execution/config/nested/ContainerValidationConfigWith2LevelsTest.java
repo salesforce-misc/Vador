@@ -85,6 +85,7 @@ class ContainerValidationConfigWith2LevelsTest {
 
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET_LEVEL_1);
   }
+
   // end::container-config-level-2-demo[]
 
   @DisplayName(
@@ -217,6 +218,7 @@ class ContainerValidationConfigWith2LevelsTest {
   @Value
   // tag::container-config-level-2[]
   private static class Bean {}
+
   // end::container-config-level-2[]
 
   @Value
@@ -225,6 +227,7 @@ class ContainerValidationConfigWith2LevelsTest {
     int id;
     List<Bean> beanBatch;
   }
+
   // end::container-config-level-2[]
 
   @Value
@@ -233,6 +236,7 @@ class ContainerValidationConfigWith2LevelsTest {
     int id;
     List<ContainerLevel2> containerLevel2Batch;
   }
+
   // end::container-config-level-2[]
 
   @Value
@@ -240,6 +244,7 @@ class ContainerValidationConfigWith2LevelsTest {
   public static class ContainerRoot {
     List<ContainerLevel1> containerLevel1Batch;
   }
+
   // end::container-config-level-2[]
 
   @Data

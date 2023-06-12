@@ -47,6 +47,7 @@ class VadorTest {
     final var result = Vador.validateAndFailFast(VALIDATABLE, validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
+
   // end::failFastDemo[]
 
   @Test
