@@ -11,7 +11,7 @@ endif::[]
 :hide-uri-scheme:
 :toc:
 :toc-placement!:
-:vador-version: 1.0.0
+:vador-version: 1.0.1
 :testdir: vador/src/test/java
 :docsdir: docs
 :imagesdir: {docsdir}/images
@@ -134,14 +134,32 @@ include::{testdir}/com/salesforce/vador/execution/VadorTest.java[tag=failFastDem
 
 endif::[]
 
+=== Talks
+
 ====
-Watch this Tech-talk as a prerequisite to understanding the problem Vador solves and its design philosophy.
+
+ifdef::env-github[]
+
+*Season of Innovation*, 2021, Salesforce
+image:vav-poster.png[link=https://www.youtube.com/watch?v=NuD32oEjfWk&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or]
+
+endif::[]
+
+ifndef::env-github[]
+video::NuD32oEjfWk[youtube]
+endif::[]
+
+* https://bit.ly/vader-slides[Slide-deck]
+====
+
+====
+TIP: Watch this Tech-talk as a prerequisite to understanding the problem Vador solves and its design philosophy.
 It explains why `if-else-try-catch` is easy to start but difficult to manage and how Vador takes all that complexity away:
 
 ifdef::env-github[]
 
 https://2020.allthingsopen.org/speakers/gopal-s-akshintala/[**All Things Open**], 2020, Raleigh, USA
-image:fcwfp-play-poster.jpeg[link=https://www.youtube.com/watch?v=Dvr6gx4XaD8&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or&index=2]
+image:fcwfp-play-poster.jpeg[link=https://www.youtube.com/watch?v=Dvr6gx4XaD8&list=PLrJbJ9wDl9EC0bG6y9fyDylcfmB_lT_Or&index=1]
 
 endif::[]
 
