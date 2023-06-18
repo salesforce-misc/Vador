@@ -5,9 +5,9 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  ******************************************************************************/
 
-rootProject.name = "vador-root"
-include("matchers")
-include("vador")
+plugins {
+  id("com.gradle.enterprise") version "3.13"
+}
 
 dependencyResolutionManagement {
   versionCatalogs {
@@ -16,3 +16,17 @@ dependencyResolutionManagement {
     }
   }
 }
+
+gradleEnterprise {
+  if (System.getenv("CI") != null) {
+    buildScan {
+      publishAlways()
+      termsOfServiceUrl = "https://gradle.com/terms-of-service"
+      termsOfServiceAgree = "yes"
+    }
+  }
+}
+
+rootProject.name = "vador-root"
+include("matchers")
+include("vador")

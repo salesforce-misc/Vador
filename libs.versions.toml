@@ -1,23 +1,25 @@
 [versions]
+kotlin = "1.8.22"
+java-vavr = "0.10.4"
+lombok-gradle = "8.0.1"
 hamcrest-core = "2.2"
 hamcrest-date = "2.0.8"
-java-vavr = "0.10.4"
 kotlin-vavr = "0.10.2"
-jetbrains-annotations = "24.0.1"
 typeTools = "0.6.3"
-kover = "0.7.1"
-kotlin = "1.8.22"
-detekt = "1.23.0"
-kotest = "5.6.2"
-spotless = "6.19.0"
 spotbugs = "5.0.14"
-lombok-gradle = "8.0.1"
-testLogger = "3.2.0"
-assertj-core = "3.24.2"
 assertj-vavr = "0.4.3"
 reflection-util = "2.14.0"
+
+# Common dependencies
 junit = "5.9.3"
+kover = "0.7.1"
+kotest = "5.6.2"
+assertj-core = "3.24.2"
+detekt = "1.23.0"
+spotless = "6.19.0"
 apache-log4j = "2.20.0"
+testLogger = "3.2.0"
+jetbrains-annotations = "24.0.1"
 
 [libraries]
 hamcrest-core = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest-core" }
@@ -26,11 +28,6 @@ java-vavr = { module = "io.vavr:vavr", version.ref = "java-vavr" }
 kotlin-vavr = { module = "io.vavr:vavr-kotlin", version.ref = "kotlin-vavr" }
 jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
 typeTools = { module = "net.jodah:typetools", version.ref = "typeTools" }
-kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-detekt-gradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
-kover-gradle = { module = "org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.gradle.plugin", version.ref = "kover" }
-spotless-gradle = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
-spotbugs-gradle = { module = "com.github.spotbugs.snom:spotbugs-gradle-plugin", version.ref = "spotbugs" }
 reflection-util = { module = "de.cronn:reflection-util", version.ref = "reflection-util" }
 testLogger-gradle = { module = "com.adarshr.test-logger:com.adarshr.test-logger.gradle.plugin", version.ref = "testLogger" }
 kotest-assertionsCore = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
@@ -45,6 +42,13 @@ junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }
 log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "apache-log4j" }
 log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "apache-log4j" }
 log4j-slf4j2-impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "apache-log4j" }
+
+# Gradle plugins
+kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+detekt-gradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+kover-gradle = { module = "org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.gradle.plugin", version.ref = "kover" }
+spotless-gradle = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
+spotbugs-gradle = { module = "com.github.spotbugs.snom:spotbugs-gradle-plugin", version.ref = "spotbugs" }
 
 [bundles]
 kotest = [
