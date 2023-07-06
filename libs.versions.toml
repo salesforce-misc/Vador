@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.8.22"
+kotlin = "1.9.0"
 java-vavr = "0.10.4"
 lombok-gradle = "8.1.0"
 hamcrest-core = "2.2"
