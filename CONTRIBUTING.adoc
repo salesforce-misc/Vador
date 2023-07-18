@@ -36,9 +36,11 @@ endif::[]
 == Source-code Setup
 
 === Install Java 11
+
 * It needs JDK 11 installed in your system. I recommend doing it via https://sdkman.io/install[SDKMAN]. After you install SDKMAN, run `sdk list java` -> Pick Identifier for your favorite java dist -> Run `sdk install java <Identifier-you-picked>  to install Java.
 
 === Build with Gradle
+
 * This is a simple Gradle project and has its own Gradle wrapper. So nothing to install. Just run this command
 
 CAUTION: You may see some build errors related to the delombok task.
@@ -61,9 +63,9 @@ The latest version of the plugin should work.
 === Kotlin
 
 * The code-base is a mix of Java and Kotlin. If you're a Java developer and new to Kotlin, don't worry, Kotlin is a JVM language and can be used anywhere Java is used.
-In-fact, it has got the reputation of *"Better Java!"*.
+In fact, it has got the reputation of *"Better Java!"*.
 * A typical Java developer can ramp up on Kotlin in less than a week.
-This free-course: https://www.coursera.org/learn/kotlin-for-java-developers[*Kotlin for Java Developers | Coursera*] can help catalyse your ramp-up.
+This free-course: https://www.coursera.org/learn/kotlin-for-java-developers[*Kotlin for Java Developers | Coursera*] can help catalyze your ramp-up.
 * If you use Intellij, Kotlin plugin comes bundled. Similar development aids should be present for other code editors too.
 
 == Code Formatting

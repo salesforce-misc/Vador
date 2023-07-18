@@ -1,3 +1,5 @@
+import com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA
+import com.diffplug.spotless.LineEnding
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep.XML
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_SRC_DIR_JAVA
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_SRC_DIR_KOTLIN
@@ -9,6 +11,7 @@ plugins {
   idea
   id("com.diffplug.spotless")
   id("io.gitlab.arturbosch.detekt")
+  id("com.adarshr.test-logger")
   id("com.github.spotbugs") apply false
 }
 
@@ -19,22 +22,24 @@ repositories {
   mavenCentral()
 }
 spotless {
+  lineEndings = LineEnding.PLATFORM_NATIVE
   kotlin {
-    target("src/main/java/**/*.kt", "src/test/java/**/*.kt")
-    targetExclude("$buildDir/generated/**/*.*")
-    ktlint()
-      .setUseExperimental(true)
-      .editorConfigOverride(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
+    ktfmt().googleStyle()
+    target("**/*.kt")
+    trimTrailingWhitespace()
+    endWithNewline()
+    targetExclude("**/build/**", "**/.gradle/**", "**/generated/**")
   }
   kotlinGradle {
-    target("*.gradle.kts")
-    ktlint()
-      .setUseExperimental(true)
-      .editorConfigOverride(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
+    ktfmt().googleStyle()
+    target("**/*.gradle.kts")
+    trimTrailingWhitespace()
+    endWithNewline()
+    targetExclude("**/build/**", "**/.gradle/**", "**/generated/**")
   }
   java {
     toggleOffOn()
-    target("src/main/java/**/*.java", "src/test/java/**/*.java")
+    target("**/*.java")
     targetExclude("$buildDir/generated/**/*.*")
     importOrder()
     removeUnusedImports()
@@ -42,6 +47,7 @@ spotless {
     trimTrailingWhitespace()
     indentWithSpaces(2)
     endWithNewline()
+    targetExclude("**/build/**", "**/.gradle/**", "**/generated/**")
   }
   format("xml") {
     targetExclude("pom.xml")
@@ -67,6 +73,7 @@ detekt {
   baseline = file("$rootDir/detekt/baseline.xml")
   config = files("$rootDir/detekt/detekt.yml")
 }
+testlogger.theme = MOCHA
 tasks {
   spotbugsMain.get().enabled = false
   spotbugsTest.get().enabled = false

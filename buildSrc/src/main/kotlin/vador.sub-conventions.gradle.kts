@@ -1,4 +1,3 @@
-import com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA
 import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -6,30 +5,27 @@ plugins {
   kotlin("jvm")
   `maven-publish`
   signing
-  id("com.adarshr.test-logger")
   id("org.jetbrains.kotlinx.kover")
 }
-repositories {
-  mavenCentral()
-}
+
+repositories { mavenCentral() }
+
 val asciidoclet: Configuration by configurations.creating
-dependencies {
-  asciidoclet("org.asciidoctor:asciidoclet:1.+")
-}
+
+dependencies { asciidoclet("org.asciidoctor:asciidoclet:1.+") }
+
 java {
   withJavadocJar()
   withSourcesJar()
-  toolchain {
-    languageVersion.set(JavaLanguageVersion.of(11))
-  }
+  toolchain { languageVersion.set(JavaLanguageVersion.of(11)) }
 }
+
 testing {
   suites {
-    val test by getting(JvmTestSuite::class) {
-      useJUnitJupiter("5.9.3")
-    }
+    val test by getting(JvmTestSuite::class) { useJUnitJupiter("5.9.3") }
   }
 }
+
 tasks {
   withType<KotlinCompile> {
     kotlinOptions {
@@ -37,7 +33,6 @@ tasks {
       freeCompilerArgs = listOf("-Xjdk-release=11")
     }
   }
-  testlogger.theme = MOCHA
   withType<Jar> { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
   register("configureJavadoc") {
     doLast {
@@ -56,15 +51,20 @@ tasks {
   }
   withType<PublishToMavenRepository>().configureEach {
     doLast {
-      logger.lifecycle("Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to ${repository.name}")
+      logger.lifecycle(
+        "Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to ${repository.name}"
+      )
     }
   }
   withType<PublishToMavenLocal>().configureEach {
     doLast {
-      logger.lifecycle("Successfully created ${publication.groupId}:${publication.artifactId}:${publication.version} in MavenLocal")
+      logger.lifecycle(
+        "Successfully created ${publication.groupId}:${publication.artifactId}:${publication.version} in MavenLocal"
+      )
     }
   }
 }
+
 publishing {
   publications.create<MavenPublication>("vador") {
     val subprojectJarName = tasks.jar.get().archiveBaseName.get()
@@ -94,8 +94,14 @@ publishing {
       }
     }
   }
-  val ossrhUsername: String by lazy { System.getenv("OSSRH_USERNAME") ?: project.providers.gradleProperty("ossrhUsername").getOrElse("") }
-  val ossrhPassword: String by lazy { System.getenv("OSSRH_PASSWORD") ?: project.providers.gradleProperty("ossrhPassword").getOrElse("") }
+  val ossrhUsername: String by lazy {
+    System.getenv("OSSRH_USERNAME")
+      ?: project.providers.gradleProperty("ossrhUsername").getOrElse("")
+  }
+  val ossrhPassword: String by lazy {
+    System.getenv("OSSRH_PASSWORD")
+      ?: project.providers.gradleProperty("ossrhPassword").getOrElse("")
+  }
   repositories {
     maven {
       val releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -108,6 +114,5 @@ publishing {
     }
   }
 }
-signing {
-  sign(publishing.publications["vador"])
-}
+
+signing { sign(publishing.publications["vador"]) }
