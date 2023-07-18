@@ -1,13 +1,11 @@
-/*******************************************************************************
- * Copyright (c) 2022, salesforce.com, inc.
- * All rights reserved.
- * SPDX-License-Identifier: BSD-3-Clause
- * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
- ******************************************************************************/
-
-plugins {
-  alias(libs.plugins.lombok.gradle)
-}
+/**
+ * ****************************************************************************
+ * Copyright (c) 2022, salesforce.com, inc. All rights reserved. SPDX-License-Identifier:
+ * BSD-3-Clause For full license text, see the LICENSE file in the repo root or
+ * https://opensource.org/licenses/BSD-3-Clause
+ * ****************************************************************************
+ */
+plugins { alias(libs.plugins.lombok.gradle) }
 
 dependencies {
   implementation(libs.hamcrest.core)
@@ -24,9 +22,7 @@ dependencies {
 }
 
 if (!System.getProperty("idea.sync.active").toBoolean()) {
-  kotlin.sourceSets.main {
-    kotlin.setSrcDirs(listOf(tasks.delombok))
-  }
+  kotlin.sourceSets.main { kotlin.setSrcDirs(listOf(tasks.delombok)) }
 }
 
 tasks {

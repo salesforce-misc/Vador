@@ -16,11 +16,13 @@ plugins {
 }
 
 version = "1.0.2-SNAPSHOT"
+
 group = "com.salesforce.vador"
+
 description = "Vador - A framework for POJO/Data Structure/Bean validation"
-repositories {
-  mavenCentral()
-}
+
+repositories { mavenCentral() }
+
 spotless {
   lineEndings = LineEnding.PLATFORM_NATIVE
   kotlin {
@@ -40,7 +42,6 @@ spotless {
   java {
     toggleOffOn()
     target("**/*.java")
-    targetExclude("$buildDir/generated/**/*.*")
     importOrder()
     removeUnusedImports()
     googleJavaFormat()
@@ -61,19 +62,25 @@ spotless {
     endWithNewline()
   }
 }
+
 detekt {
-  source = objects.fileCollection().from(
-    DEFAULT_SRC_DIR_JAVA,
-    DEFAULT_TEST_SRC_DIR_JAVA,
-    DEFAULT_SRC_DIR_KOTLIN,
-    DEFAULT_TEST_SRC_DIR_KOTLIN
-  )
+  source =
+    objects
+      .fileCollection()
+      .from(
+        DEFAULT_SRC_DIR_JAVA,
+        DEFAULT_TEST_SRC_DIR_JAVA,
+        DEFAULT_SRC_DIR_KOTLIN,
+        DEFAULT_TEST_SRC_DIR_KOTLIN
+      )
   parallel = true
   buildUponDefaultConfig = true
   baseline = file("$rootDir/detekt/baseline.xml")
   config = files("$rootDir/detekt/detekt.yml")
 }
+
 testlogger.theme = MOCHA
+
 tasks {
   spotbugsMain.get().enabled = false
   spotbugsTest.get().enabled = false

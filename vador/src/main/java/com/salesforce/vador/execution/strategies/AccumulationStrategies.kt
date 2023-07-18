@@ -1,10 +1,10 @@
-/*******************************************************************************
- * Copyright (c) 2022, salesforce.com, inc.
- * All rights reserved.
- * SPDX-License-Identifier: BSD-3-Clause
- * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
- ******************************************************************************/
-
+/**
+ * ****************************************************************************
+ * Copyright (c) 2022, salesforce.com, inc. All rights reserved. SPDX-License-Identifier:
+ * BSD-3-Clause For full license text, see the LICENSE file in the repo root or
+ * https://opensource.org/licenses/BSD-3-Clause
+ * ****************************************************************************
+ */
 package com.salesforce.vador.execution.strategies
 
 import com.salesforce.vador.execution.strategies.util.fireValidators
@@ -29,4 +29,5 @@ internal fun <FailureT, ValidatableT> accumulationStrategy(
   fireValidators(right(it), validators, throwableMapper).toList()
 }
 
-internal typealias Accumulation<ValidatableT, FailureT> = (ValidatableT) -> List<Either<FailureT?, ValidatableT?>>
+internal typealias Accumulation<ValidatableT, FailureT> =
+  (ValidatableT) -> List<Either<FailureT?, ValidatableT?>>
