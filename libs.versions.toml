@@ -1,7 +1,7 @@
 [versions]
-kotlin = "1.8.22"
+kotlin = "1.9.0"
 java-vavr = "0.10.4"
-lombok-gradle = "8.0.1"
+lombok-gradle = "8.1.0"
 hamcrest-core = "2.2"
 hamcrest-date = "2.0.8"
 kotlin-vavr = "0.10.2"
@@ -12,7 +12,7 @@ reflection-util = "2.14.0"
 
 # Common dependencies
 junit = "5.9.3"
-kover = "0.7.1"
+kover = "0.7.2"
 kotest = "5.6.2"
 assertj-core = "3.24.2"
 detekt = "1.23.0"
