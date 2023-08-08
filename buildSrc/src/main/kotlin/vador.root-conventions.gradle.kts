@@ -15,9 +15,9 @@ plugins {
   id("com.github.spotbugs") apply false
 }
 
-version = "1.0.2-SNAPSHOT"
+group = GROUP_ID
 
-group = "com.salesforce.vador"
+version = VERSION
 
 description = "Vador - A framework for POJO/Data Structure/Bean validation"
 
@@ -30,14 +30,14 @@ spotless {
     target("**/*.kt")
     trimTrailingWhitespace()
     endWithNewline()
-    targetExclude("**/build/**", "**/.gradle/**", "**/generated/**")
+    targetExclude("**/build/**", "**/.gradle/**", "**/generated/**", "**/bin/**", "**/out/**")
   }
   kotlinGradle {
     ktfmt().googleStyle()
     target("**/*.gradle.kts")
     trimTrailingWhitespace()
     endWithNewline()
-    targetExclude("**/build/**", "**/.gradle/**", "**/generated/**")
+    targetExclude("**/build/**", "**/.gradle/**", "**/generated/**", "**/bin/**", "**/out/**")
   }
   java {
     toggleOffOn()
@@ -48,7 +48,7 @@ spotless {
     trimTrailingWhitespace()
     indentWithSpaces(2)
     endWithNewline()
-    targetExclude("**/build/**", "**/.gradle/**", "**/generated/**")
+    targetExclude("**/build/**", "**/.gradle/**", "**/generated/**", "**/bin/**", "**/out/**")
   }
   format("xml") {
     targetExclude("pom.xml")

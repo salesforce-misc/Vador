@@ -14,7 +14,7 @@ import io.kotest.matchers.shouldBe
 import java.util.Calendar
 import java.util.GregorianCalendar
 
-class DateMatchersKtTest :
+class DateMatchersTest :
   StringSpec({
     "is Date's day matching" {
       forAll(
