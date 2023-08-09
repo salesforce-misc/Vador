@@ -15,6 +15,9 @@ plugins {
   id(libs.plugins.detekt.pluginId) apply false
   alias(libs.plugins.lombok.gradle) apply false
   id(libs.plugins.kover.pluginId)
+  `maven-publish`
+  id("io.github.gradle-nexus.publish-plugin")
+  signing
   id("org.sonarqube") version "4.3.0.3225"
 }
 
@@ -58,7 +61,7 @@ sonarqube {
       "sonar.coverage.jacoco.xmlReportPaths",
       rootProject.buildDir.resolve("/build/reports/kover/report.xml")
     )
-    property("detekt.sonar.kotlin.config.path", rootProject.buildDir.resolve("/detekt/detekt.yml"))
+    property("detekt.sonar.kotlin.config.path", rootProject.buildDir.resolve("/detekt/config.yml"))
     property(
       "sonar.kotlin.detekt.reportPaths",
       rootProject.buildDir.resolve("/build/reports/detekt/merge.xml")
@@ -72,3 +75,49 @@ afterEvaluate {
     sonarqube.configure { dependsOn(check) }
   }
 }
+
+publishing {
+  publications.create<MavenPublication>("vador") {
+    val subprojectJarName = tasks.jar.get().archiveBaseName.get()
+    artifactId = if (subprojectJarName == "vador") "vador" else "vador-$subprojectJarName"
+    from(components["java"])
+    pom {
+      name.set(artifactId)
+      description.set(project.description)
+      url.set("https://github.com/salesforce-misc/Vador")
+      licenses {
+        license {
+          name.set("The 3-Clause BSD License")
+          url.set("https://opensource.org/license/bsd-3-clause/")
+        }
+      }
+      developers {
+        developer {
+          id.set("overfullstack")
+          name.set("Gopal S Akshintala")
+          email.set("gopalakshintala@gmail.com")
+        }
+      }
+      scm {
+        connection.set("scm:git:https://github.com/salesforce-misc/Vador")
+        developerConnection.set("scm:git:git@github.com/salesforce-misc/vador.git")
+        url.set("https://github.com/salesforce-misc/Vador")
+      }
+    }
+  }
+}
+
+nexusPublishing {
+  repositories {
+    sonatype {
+      username =
+        System.getenv("OSSRH_USERNAME")
+          ?: project.providers.gradleProperty("ossrhUsername").getOrElse("")
+      password =
+        System.getenv("OSSRH_PASSWORD")
+          ?: project.providers.gradleProperty("ossrhPassword").getOrElse("")
+    }
+  }
+}
+
+signing { sign(publishing.publications["vador"]) }

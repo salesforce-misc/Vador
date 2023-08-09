@@ -10,6 +10,7 @@ dependencies {
   implementation(libs.spotless.gradle)
   implementation(libs.detekt.gradle)
   implementation(libs.kover.gradle)
+  implementation(libs.nexus.publish.gradle)
   implementation(libs.spotbugs.gradle)
   implementation(libs.testLogger.gradle)
 }
