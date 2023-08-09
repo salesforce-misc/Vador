@@ -3,8 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm")
-  `maven-publish`
-  signing
   id("org.jetbrains.kotlinx.kover")
 }
 
@@ -22,7 +20,7 @@ java {
 
 testing {
   suites {
-    val test by getting(JvmTestSuite::class) { useJUnitJupiter("5.9.3") }
+    val test by getting(JvmTestSuite::class) { useJUnitJupiter("5.10.0") }
   }
 }
 
@@ -49,70 +47,4 @@ tasks {
     isFailOnError = false
     options.encoding("UTF-8")
   }
-  withType<PublishToMavenRepository>().configureEach {
-    doLast {
-      logger.lifecycle(
-        "Successfully uploaded ${publication.groupId}:${publication.artifactId}:${publication.version} to ${repository.name}"
-      )
-    }
-  }
-  withType<PublishToMavenLocal>().configureEach {
-    doLast {
-      logger.lifecycle(
-        "Successfully created ${publication.groupId}:${publication.artifactId}:${publication.version} in MavenLocal"
-      )
-    }
-  }
 }
-
-publishing {
-  publications.create<MavenPublication>("vador") {
-    val subprojectJarName = tasks.jar.get().archiveBaseName.get()
-    artifactId = if (subprojectJarName == "vador") "vador" else "vador-$subprojectJarName"
-    from(components["java"])
-    pom {
-      name.set(artifactId)
-      description.set(project.description)
-      url.set("https://github.com/salesforce-misc/Vador")
-      licenses {
-        license {
-          name.set("The Apache License, Version 2.0")
-          url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-        }
-      }
-      developers {
-        developer {
-          id.set("overfullstack")
-          name.set("Gopal S Akshintala")
-          email.set("gopalakshintala@gmail.com")
-        }
-      }
-      scm {
-        connection.set("scm:git:https://github.com/salesforce-misc/Vador")
-        developerConnection.set("scm:git:git@github.com/salesforce-misc/vador.git")
-        url.set("https://github.com/salesforce-misc/Vador")
-      }
-    }
-  }
-  val ossrhUsername: String by lazy {
-    System.getenv("OSSRH_USERNAME")
-      ?: project.providers.gradleProperty("ossrhUsername").getOrElse("")
-  }
-  val ossrhPassword: String by lazy {
-    System.getenv("OSSRH_PASSWORD")
-      ?: project.providers.gradleProperty("ossrhPassword").getOrElse("")
-  }
-  repositories {
-    maven {
-      val releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-      val snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-      url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
-      credentials {
-        username = ossrhUsername
-        password = ossrhPassword
-      }
-    }
-  }
-}
-
-signing { sign(publishing.publications["vador"]) }

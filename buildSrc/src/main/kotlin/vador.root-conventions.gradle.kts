@@ -1,10 +1,6 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA
 import com.diffplug.spotless.LineEnding
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep.XML
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_SRC_DIR_JAVA
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_SRC_DIR_KOTLIN
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_TEST_SRC_DIR_JAVA
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_TEST_SRC_DIR_KOTLIN
 
 plugins {
   java
@@ -64,19 +60,10 @@ spotless {
 }
 
 detekt {
-  source =
-    objects
-      .fileCollection()
-      .from(
-        DEFAULT_SRC_DIR_JAVA,
-        DEFAULT_TEST_SRC_DIR_JAVA,
-        DEFAULT_SRC_DIR_KOTLIN,
-        DEFAULT_TEST_SRC_DIR_KOTLIN
-      )
   parallel = true
   buildUponDefaultConfig = true
   baseline = file("$rootDir/detekt/baseline.xml")
-  config = files("$rootDir/detekt/detekt.yml")
+  config.setFrom(file("$rootDir/detekt/config.yml"))
 }
 
 testlogger.theme = MOCHA

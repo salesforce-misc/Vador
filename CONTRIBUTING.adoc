@@ -88,5 +88,4 @@ In link:build.gradle.kts[], follow the <<_versioning_strategy,Versioning Strateg
 ./gradlew publish -Dorg.gradle.parallel=false
 ----
 
-Follow https://central.sonatype.org/publish/release/[Releasing the Deployment instructions]
-to release from staging
+* Login and Navigate to link:https://oss.sonatype.org/#stagingRepositories and close the rep
