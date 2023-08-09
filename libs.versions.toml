@@ -6,7 +6,7 @@ hamcrest-core = "2.2"
 hamcrest-date = "2.0.8"
 kotlin-vavr = "0.10.2"
 typeTools = "0.6.3"
-spotbugs = "5.1.1"
+spotbugs = "5.1.2"
 assertj-vavr = "0.4.3"
 reflection-util = "2.14.0"
 
