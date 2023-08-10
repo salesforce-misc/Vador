@@ -24,7 +24,8 @@ tasks {
   withType<KotlinCompile> {
     kotlinOptions {
       jvmTarget = JavaVersion.VERSION_11.toString()
-      freeCompilerArgs = listOf("-Xjdk-release=11", "-Xjvm-default=all", "-Xcontext-receivers", "-progressive")
+      freeCompilerArgs =
+        listOf("-Xjdk-release=11", "-Xjvm-default=all", "-Xcontext-receivers", "-progressive")
     }
   }
   withType<Jar> { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
