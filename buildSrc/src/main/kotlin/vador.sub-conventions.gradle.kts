@@ -8,10 +8,6 @@ plugins {
 
 repositories { mavenCentral() }
 
-val asciidoclet: Configuration by configurations.creating
-
-dependencies { asciidoclet("org.asciidoctor:asciidoclet:1.+") }
-
 java {
   withJavadocJar()
   withSourcesJar()
@@ -28,21 +24,11 @@ tasks {
   withType<KotlinCompile> {
     kotlinOptions {
       jvmTarget = JavaVersion.VERSION_11.toString()
-      freeCompilerArgs = listOf("-Xjdk-release=11")
+      freeCompilerArgs = listOf("-Xjdk-release=11", "-Xjvm-default=all", "-Xcontext-receivers", "-progressive")
     }
   }
   withType<Jar> { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
-  register("configureJavadoc") {
-    doLast {
-      javadoc {
-        options.doclet = "org.asciidoctor.Asciidoclet"
-        options.docletpath = asciidoclet.files.toList()
-      }
-    }
-  }
   javadoc {
-    dependsOn("configureJavadoc")
-    (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
     // TODO 22/05/21 gopala.akshintala: Turn this on after writing all javadocs
     isFailOnError = false
     options.encoding("UTF-8")
