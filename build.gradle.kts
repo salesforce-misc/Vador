@@ -34,6 +34,7 @@ val detektReportMerge by
 
 subprojects {
   apply(plugin = "vador.sub-conventions")
+  apply(plugin = "vador.kt-conventions")
   tasks.withType<Detekt>().configureEach { reports { xml.required = true } }
   plugins.withType<DetektPlugin> {
     tasks.withType<Detekt> detekt@{

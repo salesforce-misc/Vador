@@ -1,12 +1,7 @@
-import org.gradle.kotlin.dsl.kotlin
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-  kotlin("jvm")
+  application
   id("org.jetbrains.kotlinx.kover")
 }
-
-repositories { mavenCentral() }
 
 java {
   withJavadocJar()
@@ -21,13 +16,6 @@ testing {
 }
 
 tasks {
-  withType<KotlinCompile> {
-    kotlinOptions {
-      jvmTarget = JavaVersion.VERSION_11.toString()
-      freeCompilerArgs =
-        listOf("-Xjdk-release=11", "-Xjvm-default=all", "-Xcontext-receivers", "-progressive")
-    }
-  }
   withType<Jar> { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
   javadoc {
     // TODO 22/05/21 gopala.akshintala: Turn this on after writing all javadocs
