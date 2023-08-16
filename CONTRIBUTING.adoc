@@ -17,9 +17,8 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 :hide-uri-scheme:
-:sourcedir: src/main/java
 :imagesdir: images
-:vador-version: 1.0.0
+:vador-version: 1.0.2
 :toc:
 
 [#_versioning_strategy]
@@ -53,7 +52,7 @@ There is an https://youtrack.jetbrains.com/issue/KT-46959[Active Issue] filed fo
 ./gradlew clean build
 ----
 
-TIP: You *don't* need a local Gradle installation as the `gradlew` (Gradle wrapper) takes care of everything. But if you wish to install gradle locally, I recommend doing it via https://sdkman.io/install[SDKMAN]. After you install SDKMAN, run `sdk install gradle` to install Gradle
+TIP: You *don't* need a local Gradle installation as the `gradlew` (Gradle wrapper) takes care of everything. But if you wish to install gradle locally, the recommendation is to  do it via https://sdkman.io/install[SDKMAN]. After you install SDKMAN, run `sdk install gradle` to install Gradle
 
 * For source code navigation, you need to have https://projectlombok.org/[*Lombok*] plugin, which is used to generate boilerplate code.
 There are plugins available for all popular IDEs, which you need to install.
@@ -85,7 +84,5 @@ In link:build.gradle.kts[], follow the <<_versioning_strategy,Versioning Strateg
 
 [source,bash]
 ----
-./gradlew publish -Dorg.gradle.parallel=false
+./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository -Dorg.gradle.parallel=false
 ----
-
-* Login and Navigate to link:https://oss.sonatype.org/#stagingRepositories and close the rep

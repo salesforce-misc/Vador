@@ -108,17 +108,6 @@ publishing {
   }
 }
 
-nexusPublishing {
-  repositories {
-    sonatype {
-      username =
-        System.getenv("OSSRH_USERNAME")
-          ?: project.providers.gradleProperty("ossrhUsername").getOrElse("")
-      password =
-        System.getenv("OSSRH_PASSWORD")
-          ?: project.providers.gradleProperty("ossrhPassword").getOrElse("")
-    }
-  }
-}
+nexusPublishing { this.repositories { sonatype() } }
 
 signing { sign(publishing.publications["vador"]) }
