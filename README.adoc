@@ -11,7 +11,7 @@ endif::[]
 :hide-uri-scheme:
 :toc:
 :toc-placement!:
-:vador-version: 1.0.1
+:vador-version: 1.0.2
 :testdir: vador/src/test/java
 :docsdir: docs
 :imagesdir: {docsdir}/images

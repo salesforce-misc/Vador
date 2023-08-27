@@ -13,7 +13,8 @@ endif::[]
 :testdir: ../../../vador/src/test/java
 :imagesdir: ../../images
 
-This execution strategy lets you run validations for your batch data structure and fail-fast on the first failure for _any_ member in the batch i.e., 
+This execution strategy lets you run validations for your batch data structure
+and _fails-fast_ on the first failure for _any_ member in the batch i.e.,
 if a member fails one of the validations, it stops running further validations on the rest of the members in the batch. 
 
 == Params

@@ -13,7 +13,7 @@ endif::[]
 :testdir: ../../../vador/src/test/java
 :imagesdir: ../../images
 
-This execution strategy lets you run validations and fail-fast on the first failure.
+This execution strategy lets you run validations and _fail-fast_ on the first failure.
 
 == Params
 

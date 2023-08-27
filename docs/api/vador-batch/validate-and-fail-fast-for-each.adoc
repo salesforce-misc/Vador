@@ -13,7 +13,10 @@ endif::[]
 :testdir: ../../../vador/src/test/java
 :imagesdir: ../../images
 
-This execution strategy lets you run validations for your batch data structure and fail-fast on the first failure for _each_ member in the batch i.e., if a member fails one of the validations, it stops running further validations on that members and moves on to the next member in the batch. 
+This execution strategy lets you run validations for your batch data structure
+and _fail-fast_ on the first failure for _each_ member in the batch i.e.,
+if a member fails one of the validations,
+it stops running further validations on that member and moves on to the next member in the batch. 
 
 == Params
 
@@ -39,7 +42,7 @@ This execution strategy lets you run validations for your batch data structure a
 |`throwableMapper`
 |`(Throwable) -> FailureT?`
 |No
-|xref:../../../README.adoc#_what_if_there_is_an_exception_during_execution[Refer this section]
+|xref:../../../README.adoc#_what_if_there_is_an_exception_during_execution[Refer to this section]
 
 |===
 
@@ -48,5 +51,6 @@ This execution strategy lets you run validations for your batch data structure a
 You can read more about `Either` data type https://docs.vavr.io/#_either[here].
 
 `List<Either<FailureT, ValidatableT>>` - One entry per member in the same order of `validatables`. 
-If the member passes all validations, the result hold the validatable that is validated in the right state `Either.right(Validatable)`. 
+If the member passes all validations,
+the result holds the validatable that is validated in the right state `Either.right(Validatable)`. 
 Otherwise, the result will be `Either.left(Failure)`, holding the first failure for that validatable.
