@@ -1,7 +1,7 @@
 [versions]
 kotlin = "1.9.10"
 java-vavr = "0.10.4"
-lombok-gradle = "8.2.2"
+lombok-gradle = "8.3"
 hamcrest-core = "2.2"
 hamcrest-date = "2.0.8"
 kotlin-vavr = "0.10.2"
