@@ -14,3 +14,7 @@ fun interface Validator<ValidatableT, FailureT> : CheckedFunction1<ValidatableT,
 
 fun interface ValidatorEtr<ValidatableT, FailureT> :
   CheckedFunction1<Either<FailureT?, ValidatableT?>, Either<FailureT?, *>>
+
+fun interface ValidatorAnnotation<FailureT> {
+  fun validate(value: Any, failure: FailureT, none: FailureT): FailureT
+}
