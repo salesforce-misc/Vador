@@ -11,7 +11,7 @@ import io.gitlab.arturbosch.detekt.DetektPlugin
 import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 
 plugins {
-  java
+  `java-library`
   id(libs.plugins.detekt.pluginId) apply false
   alias(libs.plugins.lombok.gradle) apply false
   id(libs.plugins.kover.pluginId)
@@ -29,7 +29,7 @@ dependencies { subprojects.forEach { kover(project(":${it.name}")) } }
 
 val detektReportMerge by
   tasks.registering(ReportMergeTask::class) {
-    output.set(rootProject.buildDir.resolve("reports/detekt/merge.xml"))
+    output.set(rootProject.layout.buildDirectory.file("reports/detekt/merge.xml"))
   }
 
 subprojects {
@@ -60,12 +60,15 @@ sonarqube {
     property("sonar.modules", subprojects.joinToString(",") { it.name })
     property(
       "sonar.coverage.jacoco.xmlReportPaths",
-      rootProject.buildDir.resolve("/build/reports/kover/report.xml")
+      rootProject.layout.buildDirectory.file("/build/reports/kover/report.xml")
     )
-    property("detekt.sonar.kotlin.config.path", rootProject.buildDir.resolve("/detekt/config.yml"))
+    property(
+      "detekt.sonar.kotlin.config.path",
+      rootProject.layout.buildDirectory.file("/detekt/config.yml")
+    )
     property(
       "sonar.kotlin.detekt.reportPaths",
-      rootProject.buildDir.resolve("/build/reports/detekt/merge.xml")
+      rootProject.layout.buildDirectory.file("/build/reports/detekt/merge.xml")
     )
   }
 }

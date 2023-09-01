@@ -1,0 +1,15 @@
+load("@rules_java//java:defs.bzl", "java_import")
+
+package(default_visibility = ["//visibility:public"])
+
+java_import(
+    name = "com_salesforce_vador_vador",
+    jars = glob(["vador/build/libs/vador-*.jar"]),
+    srcjar = glob(["vador/build/libs/vador-*-sources.jar"])[0],
+)
+
+java_import(
+    name = "com_salesforce_vador_vador-matchers",
+    jars = glob(["matchers/build/libs/matchers-*.jar"]),
+    srcjar = glob(["matchers/build/libs/matchers-*-sources.jar"])[0],
+)

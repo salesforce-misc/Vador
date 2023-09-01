@@ -3,7 +3,6 @@
   <component name="AdditionalModuleElements">
     <content url="file://$MODULE_DIR$/../../../vador/build/generated/sources/annotationProcessor/java/main">
       <sourceFolder url="file://$MODULE_DIR$/../../../vador/build/generated/sources/annotationProcessor/java/main" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../vador/build/generated/sources/annotationProcessor/java/main" isTestSource="false" generated="true" />
     </content>
   </component>
   <component name="SonarLintModuleSettings">
