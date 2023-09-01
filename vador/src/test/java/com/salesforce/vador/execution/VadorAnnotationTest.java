@@ -6,6 +6,7 @@ import static sample.consumer.failure.ValidationFailure.NONE;
 import static sample.consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 
 import com.salesforce.vador.annotation.Negative;
+import com.salesforce.vador.annotation.NonNegative;
 import com.salesforce.vador.annotation.Positive;
 import com.salesforce.vador.annotation.ValidateWith;
 import com.salesforce.vador.config.ValidationConfig;
@@ -17,7 +18,7 @@ import sample.consumer.failure.ValidationFailure;
 
 public class VadorAnnotationTest {
 
-  private static final Bean VALIDATABLE = new Bean(6, -90);
+  private static final Bean VALIDATABLE = new Bean(1, -90, 0);
 
   private static final BeanMix VALIDATABLEMIX = new BeanMix(6, "abed");
 
@@ -37,7 +38,7 @@ public class VadorAnnotationTest {
         ValidationConfig.<VadorAnnotationTest.Bean, ValidationFailure>toValidate()
             .forAnnotation(Tuple.of(Map.of("Unexpected_exception", UNKNOWN_EXCEPTION), NONE))
             .prepare();
-    final var result = Vador.validateAndFailFast(new Bean(-9, -9), validationConfig);
+    final var result = Vador.validateAndFailFast(new Bean(-9, -9, 1), validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -61,6 +62,9 @@ public class VadorAnnotationTest {
 
     @ValidateWith(validator = Negative.class, failureKey = "Unexpected_exception")
     int idTwo;
+
+    @ValidateWith(validator = NonNegative.class, failureKey = "Unexpected_exception")
+    int idThree;
   }
 
   @Value
