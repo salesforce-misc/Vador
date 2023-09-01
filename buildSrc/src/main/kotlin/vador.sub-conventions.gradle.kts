@@ -1,5 +1,5 @@
 plugins {
-  application
+  `java-library`
   id("org.jetbrains.kotlinx.kover")
 }
 

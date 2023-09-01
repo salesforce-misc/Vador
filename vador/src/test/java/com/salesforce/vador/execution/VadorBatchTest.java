@@ -89,8 +89,7 @@ class VadorBatchTest {
 
     Assertions.assertEquals(VALIDATABLE_BATCH.size(), results.size());
     VavrAssertions.assertThat(results.get(2)).containsOnRight(new Bean(2));
-    assertThat(results.stream().limit(2))
-        .containsOnly(Either.left(VALIDATION_FAILURE_1));
+    assertThat(results.stream().limit(2)).containsOnly(Either.left(VALIDATION_FAILURE_1));
     assertThat(results.stream().skip(results.size() - 2))
         .containsOnly(Either.left(VALIDATION_FAILURE_2));
   }
