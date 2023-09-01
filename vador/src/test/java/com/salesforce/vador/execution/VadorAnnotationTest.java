@@ -49,7 +49,7 @@ public class VadorAnnotationTest {
             .forAnnotation(Tuple.of(Map.of("Unexpected_exception", UNKNOWN_EXCEPTION), NONE))
             .prepare();
     assertThrows(
-        RuntimeException.class,
+        IllegalArgumentException.class,
         () -> {
           Vador.validateAndFailFast(VALIDATABLEMIX, validationConfig);
         });

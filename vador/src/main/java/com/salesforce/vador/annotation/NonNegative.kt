@@ -7,7 +7,7 @@ class NonNegative<FailureT> : ValidatorAnnotation<FailureT> {
     val intValue =
       when (value) {
         is Int -> value
-        else -> throw RuntimeException("Value is not an integer")
+        else -> throw IllegalArgumentException("Value is not an integer")
       }
     if (intValue < 0) {
       return failure
