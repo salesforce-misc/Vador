@@ -47,8 +47,23 @@ class VadorTest {
     final var result = Vador.validateAndFailFast(VALIDATABLE, validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
-
   // end::failFastDemo[]
+
+  @Test
+  void noFailure() {
+    // tag::withValidators[]
+    final Validator<Bean, ValidationFailure> validator1 = bean -> NONE;
+    final Validator<Bean, ValidationFailure> validator2 = bean -> NONE;
+    final List<Validator<Bean, ValidationFailure>> validatorChain =
+        List.of(validator1, validator2);
+    final var validationConfig =
+        ValidationConfig.<Bean, ValidationFailure>toValidate()
+            .withValidators(Tuple.of(validatorChain, NONE))
+            .prepare();
+    // end::withValidators[]
+    final var result = Vador.validateAndFailFast(VALIDATABLE, validationConfig);
+    assertThat(result).isEmpty();
+  }
 
   @Test
   void failFastRecursively() {

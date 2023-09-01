@@ -8,7 +8,6 @@
 package com.salesforce.vador.execution;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.vavr.api.VavrAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static sample.consumer.failure.ValidationFailure.NONE;
@@ -90,9 +89,9 @@ class VadorBatchTest {
 
     Assertions.assertEquals(VALIDATABLE_BATCH.size(), results.size());
     VavrAssertions.assertThat(results.get(2)).containsOnRight(new Bean(2));
-    org.assertj.core.api.Assertions.assertThat(results.stream().limit(2))
+    assertThat(results.stream().limit(2))
         .containsOnly(Either.left(VALIDATION_FAILURE_1));
-    org.assertj.core.api.Assertions.assertThat(results.stream().skip(results.size() - 2))
+    assertThat(results.stream().skip(results.size() - 2))
         .containsOnly(Either.left(VALIDATION_FAILURE_2));
   }
 
