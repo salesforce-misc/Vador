@@ -9,12 +9,13 @@ package com.salesforce.vador.types
 
 import io.vavr.CheckedFunction1
 import io.vavr.control.Either
+import java.lang.reflect.Field
 
 fun interface Validator<ValidatableT, FailureT> : CheckedFunction1<ValidatableT, FailureT>
 
 fun interface ValidatorEtr<ValidatableT, FailureT> :
   CheckedFunction1<Either<FailureT?, ValidatableT?>, Either<FailureT?, *>>
 
-fun interface ValidatorAnnotation<FailureT> {
-  fun validate(value: Any, failure: FailureT, none: FailureT): FailureT
+fun interface ValidatorAnnotation1<FieldT, FailureT> {
+  fun validate(field: Field, value: FieldT, failure: FailureT, none: FailureT): FailureT
 }

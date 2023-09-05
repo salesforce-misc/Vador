@@ -75,7 +75,7 @@ public abstract class BaseValidationConfig<ValidatableT, FailureT> {
           @NonNull FailureT>
       withValidators;
 
-  @Nullable Tuple2<Map<String, @Nullable FailureT>, @Nullable FailureT> forAnnotation;
+  @Nullable Tuple2<Map<String, @Nullable FailureT>, @Nullable FailureT> forAnnotations;
 
   /**
    * spotless:off
