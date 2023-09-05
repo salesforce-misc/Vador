@@ -31,6 +31,8 @@ public class VadorAnnotationTest {
   private static final BeanCustom2 VALIDATBLECUSTOM2 =
       new BeanCustom2(new ID("Test Class1"), new ID("Test Class2"));
 
+  private static final BeanCustom3 VALIDATBLECUSTOM3 = new BeanCustom3(new ID("Test Class1"));
+
   @Test
   void failFastWithFirstFailureWithValidatorAnnotation() {
     final var validationConfig =
@@ -84,6 +86,19 @@ public class VadorAnnotationTest {
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
+  @Test
+  void failFastWithFirstFailureWithValidatorCustomAnnotationWithDifferentInterface() {
+    final var validationConfig =
+        ValidationConfig.<VadorAnnotationTest.BeanCustom3, ValidationFailure>toValidate()
+            .forAnnotations(Tuple.of(Map.of("Unexpected_exception", UNKNOWN_EXCEPTION), NONE))
+            .prepare();
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> {
+          Vador.validateAndFailFast(VALIDATBLECUSTOM3, validationConfig);
+        });
+  }
+
   @Value
   private static class Bean {
     @ValidateWith(validator = Positive.class, failureKey = "Unexpected_exception")
@@ -120,6 +135,12 @@ public class VadorAnnotationTest {
     ID idTwo;
   }
 
+  @Value
+  private static class BeanCustom3 {
+    @ValidateWith(validator = myIdValidator3.class, failureKey = "Unexpected_exception")
+    ID idOne;
+  }
+
   static class ID {
     String value;
 
@@ -142,6 +163,17 @@ public class VadorAnnotationTest {
 
   public static class myIdValidator2 implements ValidatorAnnotation1<ID, ValidationFailure> {
     @Override
+    public ValidationFailure validate(
+        @NotNull Field field, ID bean, ValidationFailure failure, ValidationFailure none) {
+      if (Objects.equals(bean.value, "Test")) {
+        return NONE;
+      } else {
+        return UNKNOWN_EXCEPTION;
+      }
+    }
+  }
+
+  public static class myIdValidator3 {
     public ValidationFailure validate(
         @NotNull Field field, ID bean, ValidationFailure failure, ValidationFailure none) {
       if (Objects.equals(bean.value, "Test")) {

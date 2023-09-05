@@ -42,7 +42,7 @@ object AnnotationProcessorBase {
             }
           liftToEtr<FailureT, ValidatableT>(validator, none)
         } else {
-          null
+          throw IllegalArgumentException("Provided Annotation is not supported.")
         }
       } else {
         null
