@@ -14,7 +14,7 @@ nexus-publish = "2.0.0-rc-1"
 # Common dependencies
 junit = "5.10.0"
 kover = "0.7.3"
-kotest = "5.7.1"
+kotest = "5.7.2"
 assertj-core = "3.24.2"
 detekt = "1.23.1"
 spotless = "6.21.0"
