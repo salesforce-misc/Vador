@@ -18,7 +18,6 @@ ifdef::env-github[]
 endif::[]
 :hide-uri-scheme:
 :imagesdir: images
-:vador-version: 1.0.2
 :toc:
 
 [#_versioning_strategy]
@@ -79,8 +78,9 @@ It may be slow for the first run, but later runs should be faster.
 
 In link:build.gradle.kts[], follow the <<_versioning_strategy,Versioning Strategy>>
 
-** For release increment the version property `version = "{vador-version}"` and run this command:
-** For SNAPSHOT releases, add a `-SNAPSHOT` at the end
+* Follow the <<_versioning_strategy,Versioning Strategy>> to increment version link:buildSrc/{sourcedir}/Config.kt[here]
+** For SNAPSHOT releases, add a `-SNAPSHOT` at the end of version number
+* Run this command to publish it to Nexus:
 
 [source,bash]
 ----

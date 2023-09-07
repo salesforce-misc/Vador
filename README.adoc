@@ -39,12 +39,25 @@ Maven
   <artifactId>vador</artifactId>
   <version>{vador-version}</version>
 </dependency>
+
+<dependency>
+  <groupId>com.salesforce.vador</groupId>
+  <artifactId>vador-matchers</artifactId>
+  <version>{vador-version}</version>
+</dependency>
+----
+[.lead]
+Bazel
+[source,bzl,subs=attributes+]
+----
+"com.salesforce.vador:vador"
 ----
 [.lead]
 Gradle Kts
 [source,kts,subs=attributes+]
 ----
 implementation("com.salesforce.vador:vador:{vador-version}")
+implementation("com.salesforce.vador:vador-matchers:{vador-version}")
 ----
 
 toc::[]
@@ -67,7 +80,9 @@ Having validations as loose functions and using exceptions to halt the validatio
 image::function-call-mess.png[function-call-mess]
 
 This approach can spike the https://www.ibm.com/developerworks/java/library/j-cq03316/[*Cyclomatic Complexity*]
-and https://www.sonarsource.com/docs/CognitiveComplexity.pdf[*Cognitive Complexity*] metrics and renders a code-base which is difficult to test, extend and maintain.
+and https://www.sonarsource.com/docs/CognitiveComplexity.pdf[*Cognitive Complexity*] metrics
+and render a code-base which is difficult to test,
+extend and maintain.
 
 TIP: Good read about https://blog.sonarsource.com/cognitive-complexity-because-testability-understandability[Cyclomatic Complexity vs Cognitive Complexity]
 
