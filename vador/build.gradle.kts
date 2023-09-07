@@ -13,6 +13,7 @@ dependencies {
   implementation(libs.java.vavr)
   implementation(libs.kotlin.vavr)
   implementation(libs.typeTools)
+  implementation(libs.apache.common.text)
   compileOnly(libs.jetbrains.annotations)
   api(libs.reflection.util)
   implementation(libs.bundles.apache.log4j)

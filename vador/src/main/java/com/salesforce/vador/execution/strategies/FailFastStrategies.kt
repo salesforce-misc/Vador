@@ -18,6 +18,7 @@ import com.salesforce.vador.execution.strategies.util.findAndFilterInvalids
 import com.salesforce.vador.execution.strategies.util.findFirstFailure
 import com.salesforce.vador.execution.strategies.util.findFirstInvalid
 import com.salesforce.vador.execution.strategies.util.validateBatchSize
+import com.salesforce.vador.types.ValidatorEtr
 import com.salesforce.vador.types.failures.FFABatchOfBatchFailureWithPair
 import com.salesforce.vador.types.failures.FFEBatchOfBatchFailure
 import io.vavr.Tuple
@@ -25,7 +26,7 @@ import io.vavr.Tuple2
 import io.vavr.control.Either
 import io.vavr.kotlin.left
 import io.vavr.kotlin.right
-import java.util.Optional
+import java.util.*
 
 internal typealias FailFastForContainer<ValidatableT, FailureT> =
   (ValidatableT) -> Optional<FailureT>
@@ -47,7 +48,7 @@ internal typealias FailFastForAnyWithPair<ValidatableT, FailureT, PairT> =
 internal typealias FailFastForAnyBatchOfBatch1WithPair<
   ValidatableT, FailureT, ContainerPairT, MemberPairT> =
   (Collection<ValidatableT?>) -> Optional<
-      FFABatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>
+      FFABatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>,
     >
 
 @JvmSynthetic
@@ -62,14 +63,20 @@ private fun <ValidatableT, FailureT : Any> findFirstFailureRecursively(
   validatable: ValidatableT,
   validationConfig: BaseValidationConfig<ValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?
-): Either<FailureT?, ValidatableT?>? =
-  findFirstFailure(right(validatable), configToValidators(validationConfig), throwableMapper)
+): Either<FailureT?, ValidatableT?>? {
+  val validatorsFromAnnotationNew: List<ValidatorEtr<ValidatableT?, FailureT?>> =
+    AnnotationProcessorBase.derivedValidators(validatable, validationConfig.forAnnotations)
+  // combined list is a list of validators and annotation validators
+  val combinedListOfValidators: List<ValidatorEtr<ValidatableT?, FailureT?>> =
+    validatorsFromAnnotationNew + configToValidators(validationConfig)
+  return findFirstFailure(right(validatable), combinedListOfValidators, throwableMapper)
     ?: validationConfig.withRecursiveMapper
       ?.apply(validatable)
       ?.asSequence()
       ?.map { findFirstFailureRecursively(it, validationConfig, throwableMapper) }
       ?.filterNotNull()
       ?.firstOrNull()
+}
 
 /**
  * Batch + Simple + Config
