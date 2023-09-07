@@ -97,7 +97,7 @@ internal fun <FailureT, ValidatableT> failFastForEach(
   findAndFilterInvalids(
       validatables,
       failureForNullValidatable,
-      batchValidationConfig.findAndFilterDuplicatesConfigs,
+      batchValidationConfig.findAndFilterDuplicatesConfigs
     )
     .map { findFirstFailure(it, configToValidators(batchValidationConfig), throwableMapper) ?: it }
 }
@@ -111,7 +111,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEa
 ): FailFastForEachBatchOfBatch1<ContainerValidatableT, FailureT> =
   { containerValidatables: Collection<ContainerValidatableT?> ->
     failFastForEach(batchOfBatch1ValidationConfig, failureForNullValidatable, throwableMapper)(
-        containerValidatables,
+        containerValidatables
       )
       .map { validContainer: Either<FailureT?, ContainerValidatableT?> ->
         validContainer
@@ -138,7 +138,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEa
               } else {
                 left(right(memberFailures.map { it.left }))
               }
-            },
+            }
           )
           .mapLeft { FFEBatchOfBatchFailure(it) }
       }
@@ -153,15 +153,11 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForAn
 ): FailFastForAny<ContainerValidatableT, FailureT> =
   { containerValidatables: Collection<ContainerValidatableT?> ->
     failFastForAnyBatchOfBatch1<
-        ContainerValidatableT,
-        MemberValidatableT,
-        FailureT,
-        Nothing,
-        Nothing,
+        ContainerValidatableT, MemberValidatableT, FailureT, Nothing, Nothing
       >(
         batchOfBatch1ValidationConfig,
         failureForNullValidatable,
-        throwableMapper,
+        throwableMapper
       )(containerValidatables)
       .flatMap { it.containerFailure.or { it.batchMemberFailure } }
       .map { it?._2 }
@@ -190,7 +186,7 @@ internal fun <
       batchOfBatch1ValidationConfig,
       failureForNullValidatable,
       throwableMapper,
-      containerPairForInvalidMapper,
+      containerPairForInvalidMapper
     )(containerValidatables)
     .map { FFABatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>(left(it)) }
     .or {
@@ -223,7 +219,7 @@ internal fun <ValidatableT, FailureT> failFastForAny(
   failFastForAny<ValidatableT, FailureT, Nothing>(
       batchValidationConfig,
       failureForNullValidatable,
-      throwableMapper,
+      throwableMapper
     )(validatables)
     .map { it._2 }
 }
@@ -262,7 +258,7 @@ internal fun <ContainerValidatableT, FailureT : Any> failFastForContainer(
     findFirstFailure(
         right(container),
         containerValidationConfig.containerValidators,
-        throwableMapper,
+        throwableMapper
       )
       .toFailureOptional()
   }
@@ -273,9 +269,7 @@ internal fun <
   ContainerValidatableT, NestedContainerValidatableT, FailureT : Any> failFastForContainer(
   containerValidationConfigWith2Levels:
     ContainerValidationConfigWith2Levels<
-      ContainerValidatableT,
-      NestedContainerValidatableT,
-      FailureT?,
+      ContainerValidatableT, NestedContainerValidatableT, FailureT?
     >,
   throwableMapper: (Throwable) -> FailureT?
 ): FailFastForContainer<ContainerValidatableT, FailureT> = { container: ContainerValidatableT ->
@@ -283,7 +277,7 @@ internal fun <
     findFirstFailure(
         right(container),
         containerValidationConfigWith2Levels.containerValidators,
-        throwableMapper,
+        throwableMapper
       )
       .toFailureOptional()
   }
