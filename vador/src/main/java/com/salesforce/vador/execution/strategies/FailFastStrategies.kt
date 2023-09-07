@@ -120,7 +120,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEa
             failFastForEach(
               batchOfBatch1ValidationConfig.withMemberBatchValidationConfig._2,
               failureForNullValidatable,
-              throwableMapper,
+              throwableMapper
             )(members)
           }
           .map { memberResults: List<Either<FailureT?, MemberValidatableT?>> ->
@@ -177,10 +177,7 @@ internal fun <
   containerPairForInvalidMapper: (ContainerValidatableT?) -> ContainerPairT? = { null },
   memberPairForInvalidMapper: (MemberValidatableT?) -> MemberPairT? = { null }
 ): FailFastForAnyBatchOfBatch1WithPair<
-  ContainerValidatableT,
-  FailureT,
-  ContainerPairT,
-  MemberPairT,
+  ContainerValidatableT, FailureT, ContainerPairT, MemberPairT
 > = { containerValidatables: Collection<ContainerValidatableT?> ->
   failFastForAny(
       batchOfBatch1ValidationConfig,
@@ -198,7 +195,7 @@ internal fun <
               batchOfBatch1ValidationConfig.withMemberBatchValidationConfig._2,
               failureForNullValidatable,
               throwableMapper,
-              memberPairForInvalidMapper,
+              memberPairForInvalidMapper
             )(members)
             .map {
               FFABatchOfBatchFailureWithPair<ContainerPairT?, MemberPairT?, FailureT?>(right(it))
@@ -235,7 +232,7 @@ internal fun <ValidatableT, FailureT, PairT> failFastForAny(
       validatables,
       batchValidationConfig.findAndFilterDuplicatesConfigs,
       failureForNullValidatable,
-      pairForInvalidMapper,
+      pairForInvalidMapper
     )
     .or {
       validatables
