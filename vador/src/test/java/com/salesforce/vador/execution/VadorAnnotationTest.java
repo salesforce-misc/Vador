@@ -165,7 +165,6 @@ public class VadorAnnotationTest {
     ID idOne;
   }
 
-  
   @Value
   private static class BeanInt {
     @MaxForInt(limit = 100, failureKey = "unexpectedException")
@@ -174,7 +173,7 @@ public class VadorAnnotationTest {
     @MinForInt(limit = 500, failureKey = "unexpectedException")
     int idTwo;
   }
-
+  
   static class ID {
     String value;
 
