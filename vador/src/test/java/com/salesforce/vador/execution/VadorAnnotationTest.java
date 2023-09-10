@@ -173,7 +173,7 @@ public class VadorAnnotationTest {
     @MinForInt(limit = 500, failureKey = "unexpectedException")
     int idTwo;
   }
-  
+
   static class ID {
     String value;
 
