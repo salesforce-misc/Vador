@@ -19,3 +19,13 @@ fun interface ValidatorEtr<ValidatableT, FailureT> :
 fun interface ValidatorAnnotation1<FieldT, FailureT> {
   fun validate(field: Field, value: FieldT, failure: FailureT, none: FailureT): FailureT
 }
+
+fun interface ValidatorAnnotation2<FieldT, FailureT> {
+  fun validate(
+    field: Field,
+    value1: FieldT,
+    value2: FieldT,
+    failure: FailureT,
+    none: FailureT
+  ): FailureT
+}
