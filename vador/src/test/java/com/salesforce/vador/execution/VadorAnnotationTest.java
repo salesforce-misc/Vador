@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static sample.consumer.failure.ValidationFailure.NONE;
 import static sample.consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 
+import com.salesforce.vador.annotation.MaxForInt;
+import com.salesforce.vador.annotation.MinForInt;
 import com.salesforce.vador.annotation.Negative;
 import com.salesforce.vador.annotation.NonNegative;
 import com.salesforce.vador.annotation.Positive;
@@ -32,6 +34,8 @@ public class VadorAnnotationTest {
       new BeanCustom2(new ID("Test Class1"), new ID("Test Class2"));
 
   private static final BeanCustom3 VALIDATBLECUSTOM3 = new BeanCustom3(new ID("Test Class1"));
+
+  private static final BeanInt VALIDATABLEINT = new BeanInt(99, 1000);
 
   @Test
   void failFastWithFirstFailureWithValidatorAnnotation() {
@@ -99,24 +103,44 @@ public class VadorAnnotationTest {
         });
   }
 
+  @Test
+  void failFastWithFirstFailureWithValidatorAnnotationMaxMin() {
+    final var validationConfig =
+        ValidationConfig.<VadorAnnotationTest.BeanInt, ValidationFailure>toValidate()
+            .forAnnotations(Tuple.of(Map.of("unexpectedException", UNKNOWN_EXCEPTION), NONE))
+            .prepare();
+    final var result = Vador.validateAndFailFast(VALIDATABLEINT, validationConfig);
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  void failFastWithFirstFailureWithValidatorAnnotationMaxMinError() {
+    final var validationConfig =
+        ValidationConfig.<VadorAnnotationTest.BeanInt, ValidationFailure>toValidate()
+            .forAnnotations(Tuple.of(Map.of("unexpectedException", UNKNOWN_EXCEPTION), NONE))
+            .prepare();
+    final var result = Vador.validateAndFailFast(new BeanInt(-9, -9), validationConfig);
+    assertThat(result).contains(UNKNOWN_EXCEPTION);
+  }
+
   @Value
   private static class Bean {
-    @ValidateWith(validator = Positive.class, failureKey = "unexpectedException")
+    @Positive(failureKey = "unexpectedException")
     int idOne;
 
-    @ValidateWith(validator = Negative.class, failureKey = "unexpectedException")
+    @Negative(failureKey = "unexpectedException")
     int idTwo;
 
-    @ValidateWith(validator = NonNegative.class, failureKey = "unexpectedException")
+    @NonNegative(failureKey = "unexpectedException")
     int idThree;
   }
 
   @Value
   private static class BeanMix {
-    @ValidateWith(validator = Positive.class, failureKey = "unexpectedException")
+    @Positive(failureKey = "unexpectedException")
     int idOne;
 
-    @ValidateWith(validator = Negative.class, failureKey = "unexpectedException")
+    @Negative(validator = Negative.class, failureKey = "unexpectedException")
     String idTwo;
   }
 
@@ -139,6 +163,16 @@ public class VadorAnnotationTest {
   private static class BeanCustom3 {
     @ValidateWith(validator = myIdValidator3.class, failureKey = "unexpectedException")
     ID idOne;
+  }
+
+  
+  @Value
+  private static class BeanInt {
+    @MaxForInt(limit = 100, failureKey = "unexpectedException")
+    int idOne;
+
+    @MinForInt(limit = 500, failureKey = "unexpectedException")
+    int idTwo;
   }
 
   static class ID {
