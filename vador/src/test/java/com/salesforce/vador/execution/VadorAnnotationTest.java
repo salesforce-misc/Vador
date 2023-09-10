@@ -140,7 +140,7 @@ public class VadorAnnotationTest {
     @Positive(failureKey = "unexpectedException")
     int idOne;
 
-    @Negative(validator = Negative.class, failureKey = "unexpectedException")
+    @Negative(failureKey = "unexpectedException")
     String idTwo;
   }
 
