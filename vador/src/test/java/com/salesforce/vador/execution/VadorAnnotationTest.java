@@ -10,6 +10,7 @@ import com.salesforce.vador.annotation.MinForInt;
 import com.salesforce.vador.annotation.Negative;
 import com.salesforce.vador.annotation.NonNegative;
 import com.salesforce.vador.annotation.Positive;
+import com.salesforce.vador.annotation.TestAnnotation;
 import com.salesforce.vador.annotation.ValidateWith;
 import com.salesforce.vador.config.ValidationConfig;
 import com.salesforce.vador.types.ValidatorAnnotation1;
@@ -123,6 +124,16 @@ public class VadorAnnotationTest {
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
+  @Test
+  void failFastWithFirstFailureWithValidatorAnnotationNotDefinedByVador() {
+    final var validationConfig =
+        ValidationConfig.<VadorAnnotationTest.BeanFailure, ValidationFailure>toValidate()
+            .forAnnotations(Tuple.of(Map.of("unexpectedException", UNKNOWN_EXCEPTION), NONE))
+            .prepare();
+    final var result = Vador.validateAndFailFast(new BeanFailure(-9), validationConfig);
+    assertThat(result).isEmpty();
+  }
+
   @Value
   private static class Bean {
     @Positive(failureKey = "unexpectedException")
@@ -172,6 +183,12 @@ public class VadorAnnotationTest {
 
     @MinForInt(limit = 500, failureKey = "unexpectedException")
     int idTwo;
+  }
+
+  @Value
+  private static class BeanFailure {
+    @TestAnnotation(testParam = 100)
+    int idOne;
   }
 
   static class ID {
