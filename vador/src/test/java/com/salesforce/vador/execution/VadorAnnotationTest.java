@@ -36,8 +36,6 @@ public class VadorAnnotationTest {
 
   private static final BeanCustom3 VALIDATBLECUSTOM3 = new BeanCustom3(new ID("Test Class1"));
 
-  private static final BeanInt VALIDATABLEINT = new BeanInt(99, 1000);
-
   @Test
   void failFastWithFirstFailureWithValidatorAnnotation() {
     final var validationConfig =
@@ -110,7 +108,7 @@ public class VadorAnnotationTest {
         ValidationConfig.<VadorAnnotationTest.BeanInt, ValidationFailure>toValidate()
             .forAnnotations(Tuple.of(Map.of("unexpectedException", UNKNOWN_EXCEPTION), NONE))
             .prepare();
-    final var result = Vador.validateAndFailFast(VALIDATABLEINT, validationConfig);
+    final var result = Vador.validateAndFailFast(new BeanInt(99, 1000), validationConfig);
     assertThat(result).isEmpty();
   }
 
