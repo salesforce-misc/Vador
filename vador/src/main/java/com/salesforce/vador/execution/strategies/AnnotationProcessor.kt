@@ -36,120 +36,103 @@ object AnnotationProcessorBase {
     val none = mapOfAnnotation?._2()
     return fields.mapNotNull { field ->
       if (field.annotations.isNotEmpty()) {
-        val validator: Validator<ValidatableT?, FailureT?>
-        when (field.annotations[0].annotationClass.simpleName) {
-          "ValidateWith" -> {
-            val annotation = field.getAnnotation(ValidateWith::class.java)
-            val failureKey = annotation.failureKey
-            if (ValidatorAnnotation1::class.java.isAssignableFrom(annotation.validator.java)) {
-              val validatorAnnotation =
-                annotation.validator.java.getDeclaredConstructor().newInstance()
-                  as ValidatorAnnotation1<Any, FailureT?>
-              validator =
-                Validator<ValidatableT?, FailureT?> {
-                  validatorAnnotation.validate(
-                    field,
-                    FieldUtils.readField(field, bean, true) as Any,
-                    map?.get(failureKey),
-                    none,
+        val validator: Validator<ValidatableT?, FailureT?> =
+          when (field.annotations[0].annotationClass) {
+            ValidateWith::class -> {
+              val annotation = field.getAnnotation(ValidateWith::class.java)
+              when {
+                ValidatorAnnotation1::class.java.isAssignableFrom(annotation.validator.java) -> {
+                  val validatorAnnotation =
+                    annotation.validator.java.getDeclaredConstructor().newInstance()
+                      as ValidatorAnnotation1<Any, FailureT?>
+                  Validator<ValidatableT?, FailureT?> {
+                    validatorAnnotation.validate(
+                      field,
+                      FieldUtils.readField(field, bean, true) as Any,
+                      map?.get(annotation.failureKey),
+                      none,
+                    )
+                  }
+                }
+                else -> {
+                  throw IllegalArgumentException(
+                    "Provided Annotation is not supported. Please use supported annotations or custom annotations with valid instance. For more info please check official documentation."
                   )
                 }
-              liftToEtr<FailureT, ValidatableT>(validator, none)
-            } else {
-              throw IllegalArgumentException(
-                "Provided Annotation is not supported. Please use supported annotations or custom annotations with valid instance. For more info please check official documentation.",
-              )
+              }
             }
-          }
-          "Negative" -> {
-            val annotation = field.getAnnotation(Negative::class.java)
-            val failureKey = annotation.failureKey
-            val negativeValidator =
-              NegativeValidator::class.java.getDeclaredConstructor().newInstance()
-                as ValidatorAnnotation1<Any, FailureT?>
-            validator =
+            Negative::class -> {
+              val negativeValidator =
+                NegativeValidator::class.java.getDeclaredConstructor().newInstance()
+                  as ValidatorAnnotation1<Any, FailureT?>
               Validator<ValidatableT?, FailureT?> {
                 negativeValidator.validate(
                   field,
                   FieldUtils.readField(field, bean, true) as Any,
-                  map?.get(failureKey),
+                  map?.get(field.getAnnotation(Negative::class.java).failureKey),
                   none,
                 )
               }
-            liftToEtr<FailureT, ValidatableT>(validator, none)
-          }
-          "NonNegative" -> {
-            val annotation = field.getAnnotation(NonNegative::class.java)
-            val failureKey = annotation.failureKey
-            val nonNegativeValidator =
-              NonNegativeValidator::class.java.getDeclaredConstructor().newInstance()
-                as ValidatorAnnotation1<Any, FailureT?>
-            validator =
+            }
+            NonNegative::class -> {
+              val nonNegativeValidator =
+                NonNegativeValidator::class.java.getDeclaredConstructor().newInstance()
+                  as ValidatorAnnotation1<Any, FailureT?>
               Validator<ValidatableT?, FailureT?> {
                 nonNegativeValidator.validate(
                   field,
                   FieldUtils.readField(field, bean, true) as Any,
-                  map?.get(failureKey),
+                  map?.get(field.getAnnotation(NonNegative::class.java).failureKey),
                   none,
                 )
               }
-            liftToEtr<FailureT, ValidatableT>(validator, none)
-          }
-          "Positive" -> {
-            val annotation = field.getAnnotation(Positive::class.java)
-            val failureKey = annotation.failureKey
-            val positiveValidator =
-              PositiveValidator::class.java.getDeclaredConstructor().newInstance()
-                as ValidatorAnnotation1<Any, FailureT?>
-            validator =
+            }
+            Positive::class -> {
+              val positiveValidator =
+                PositiveValidator::class.java.getDeclaredConstructor().newInstance()
+                  as ValidatorAnnotation1<Any, FailureT?>
               Validator<ValidatableT?, FailureT?> {
                 positiveValidator.validate(
                   field,
                   FieldUtils.readField(field, bean, true) as Any,
-                  map?.get(failureKey),
+                  map?.get(field.getAnnotation(Positive::class.java).failureKey),
                   none,
                 )
               }
-            liftToEtr<FailureT, ValidatableT>(validator, none)
-          }
-          "MaxForInt" -> {
-            val annotation = field.getAnnotation(MaxForInt::class.java)
-            val failureKey = annotation.failureKey
-            val maxIntValidator =
-              MaxForIntValidator::class.java.getDeclaredConstructor().newInstance()
-                as ValidatorAnnotation2<Any, FailureT?>
-            validator =
+            }
+            MaxForInt::class -> {
+              val annotation = field.getAnnotation(MaxForInt::class.java)
+              val maxIntValidator =
+                MaxForIntValidator::class.java.getDeclaredConstructor().newInstance()
+                  as ValidatorAnnotation2<Any, FailureT?>
               Validator<ValidatableT?, FailureT?> {
                 maxIntValidator.validate(
                   field,
                   FieldUtils.readField(field, bean, true) as Any,
                   annotation.limit,
-                  map?.get(failureKey),
+                  map?.get(annotation.failureKey),
                   none,
                 )
               }
-            liftToEtr<FailureT, ValidatableT>(validator, none)
-          }
-          "MinForInt" -> {
-            val annotation = field.getAnnotation(MinForInt::class.java)
-            val failureKey = annotation.failureKey
-            val minIntValidator =
-              MinForIntValidator::class.java.getDeclaredConstructor().newInstance()
-                as ValidatorAnnotation2<Any, FailureT?>
-            validator =
+            }
+            MinForInt::class -> {
+              val annotation = field.getAnnotation(MinForInt::class.java)
+              val minIntValidator =
+                MinForIntValidator::class.java.getDeclaredConstructor().newInstance()
+                  as ValidatorAnnotation2<Any, FailureT?>
               Validator<ValidatableT?, FailureT?> {
                 minIntValidator.validate(
                   field,
                   FieldUtils.readField(field, bean, true) as Any,
                   annotation.limit,
-                  map?.get(failureKey),
+                  map?.get(annotation.failureKey),
                   none,
                 )
               }
-            liftToEtr<FailureT, ValidatableT>(validator, none)
+            }
+            else -> Validator<ValidatableT?, FailureT?> { null }
           }
-          else -> null
-        }
+        liftToEtr<FailureT, ValidatableT>(validator, none)
       } else {
         null
       }
