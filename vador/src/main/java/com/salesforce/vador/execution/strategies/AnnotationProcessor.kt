@@ -1,5 +1,7 @@
 package com.salesforce.vador.execution.strategies
 
+import com.salesforce.vador.annotation.FutureDateField
+import com.salesforce.vador.annotation.FutureDateFieldValidator
 import com.salesforce.vador.annotation.MaxForInt
 import com.salesforce.vador.annotation.MaxForIntValidator
 import com.salesforce.vador.annotation.MinForInt
@@ -8,6 +10,8 @@ import com.salesforce.vador.annotation.Negative
 import com.salesforce.vador.annotation.NegativeValidator
 import com.salesforce.vador.annotation.NonNegative
 import com.salesforce.vador.annotation.NonNegativeValidator
+import com.salesforce.vador.annotation.PastDateField
+import com.salesforce.vador.annotation.PastDateFieldValidator
 import com.salesforce.vador.annotation.Positive
 import com.salesforce.vador.annotation.PositiveValidator
 import com.salesforce.vador.annotation.ValidateWith
@@ -125,6 +129,34 @@ object AnnotationProcessorBase {
                   field,
                   FieldUtils.readField(field, bean, true) as Any,
                   annotation.limit,
+                  map?.get(annotation.failureKey),
+                  none,
+                )
+              }
+            }
+            FutureDateField::class -> {
+              val annotation = field.getAnnotation(FutureDateField::class.java)
+              val futDateValidator =
+                FutureDateFieldValidator::class.java.getDeclaredConstructor().newInstance()
+                  as ValidatorAnnotation1<Any?, FailureT?>
+              Validator<ValidatableT?, FailureT?> {
+                futDateValidator.validate(
+                  field,
+                  FieldUtils.readField(field, bean, true) as Any,
+                  map?.get(annotation.failureKey),
+                  none,
+                )
+              }
+            }
+            PastDateField::class -> {
+              val annotation = field.getAnnotation(PastDateField::class.java)
+              val pastDateValidator =
+                PastDateFieldValidator::class.java.getDeclaredConstructor().newInstance()
+                  as ValidatorAnnotation1<Any?, FailureT?>
+              Validator<ValidatableT?, FailureT?> {
+                pastDateValidator.validate(
+                  field,
+                  FieldUtils.readField(field, bean, true) as Any,
                   map?.get(annotation.failureKey),
                   none,
                 )

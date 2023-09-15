@@ -5,10 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static sample.consumer.failure.ValidationFailure.NONE;
 import static sample.consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 
+import com.salesforce.vador.annotation.FutureDateField;
 import com.salesforce.vador.annotation.MaxForInt;
 import com.salesforce.vador.annotation.MinForInt;
 import com.salesforce.vador.annotation.Negative;
 import com.salesforce.vador.annotation.NonNegative;
+import com.salesforce.vador.annotation.PastDateField;
 import com.salesforce.vador.annotation.Positive;
 import com.salesforce.vador.annotation.TestAnnotation;
 import com.salesforce.vador.annotation.ValidateWith;
@@ -16,6 +18,7 @@ import com.salesforce.vador.config.ValidationConfig;
 import com.salesforce.vador.types.ValidatorAnnotation1;
 import io.vavr.Tuple;
 import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
 import lombok.Value;
@@ -132,6 +135,43 @@ public class VadorAnnotationTest {
     assertThat(result).isEmpty();
   }
 
+  @Test
+  void failFastWithFirstFailureWithValidatorAnnotationPastFutureDate() {
+    final var validationConfig =
+        ValidationConfig.<VadorAnnotationTest.BeanDate, ValidationFailure>toValidate()
+            .forAnnotations(Tuple.of(Map.of("unexpectedException", UNKNOWN_EXCEPTION), NONE))
+            .prepare();
+    final var result =
+        Vador.validateAndFailFast(
+            new BeanDate(LocalDate.parse("2018-12-31"), LocalDate.parse("2050-12-31")),
+            validationConfig);
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  void failFastWithFirstFailureWithValidatorAnnotationPastFutDateAgainstTodayError() {
+    final var validationConfig =
+        ValidationConfig.<VadorAnnotationTest.BeanDate, ValidationFailure>toValidate()
+            .forAnnotations(Tuple.of(Map.of("unexpectedException", UNKNOWN_EXCEPTION), NONE))
+            .prepare();
+    final var result =
+        Vador.validateAndFailFast(new BeanDate(LocalDate.now(), LocalDate.now()), validationConfig);
+    assertThat(result).contains(UNKNOWN_EXCEPTION);
+  }
+
+  @Test
+  void failFastWithFirstFailureWithValidatorAnnotationPastFutDateRevError() {
+    final var validationConfig =
+        ValidationConfig.<VadorAnnotationTest.BeanDate, ValidationFailure>toValidate()
+            .forAnnotations(Tuple.of(Map.of("unexpectedException", UNKNOWN_EXCEPTION), NONE))
+            .prepare();
+    final var result =
+        Vador.validateAndFailFast(
+            new BeanDate(LocalDate.parse("2050-12-31"), LocalDate.parse("2018-12-31")),
+            validationConfig);
+    assertThat(result).contains(UNKNOWN_EXCEPTION);
+  }
+
   @Value
   private static class Bean {
     @Positive(failureKey = "unexpectedException")
@@ -187,6 +227,15 @@ public class VadorAnnotationTest {
   private static class BeanFailure {
     @TestAnnotation(testParam = 100)
     int idOne;
+  }
+
+  @Value
+  private static class BeanDate {
+    @PastDateField(failureKey = "unexpectedException")
+    LocalDate datePast;
+
+    @FutureDateField(failureKey = "unexpectedException")
+    LocalDate dateFuture;
   }
 
   static class ID {
