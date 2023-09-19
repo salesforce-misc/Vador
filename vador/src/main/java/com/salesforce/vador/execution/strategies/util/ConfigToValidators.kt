@@ -417,7 +417,7 @@ private fun <ValidatableT, FailureT> BaseSpec<ValidatableT, FailureT>.toValidato
 }
 
 @JvmSynthetic
-private val isFieldPresent: (Any?) -> Boolean = {
+internal val isFieldPresent: (Any?) -> Boolean = {
   when (it) {
     null -> false
     is String -> it.isNotBlank()
