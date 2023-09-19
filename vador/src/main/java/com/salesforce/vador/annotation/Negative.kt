@@ -7,9 +7,9 @@ import java.lang.reflect.Field
 @Target(AnnotationTarget.FIELD)
 annotation class Negative(val failureKey: String)
 
-class NegativeValidator<FailureT> : ValidatorAnnotation1<Int, FailureT> {
-  override fun validate(field: Field, value: Int, failure: FailureT, none: FailureT): FailureT {
-    if (value > -1) {
+class NegativeValidator<FailureT> : ValidatorAnnotation1<Int?, FailureT> {
+  override fun validate(field: Field, value: Int?, failure: FailureT, none: FailureT): FailureT {
+    if (value != null && value > -1) {
       return failure
     }
     return none

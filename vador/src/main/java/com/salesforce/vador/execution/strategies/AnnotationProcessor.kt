@@ -10,6 +10,8 @@ import com.salesforce.vador.annotation.NonNegative
 import com.salesforce.vador.annotation.NonNegativeValidator
 import com.salesforce.vador.annotation.Positive
 import com.salesforce.vador.annotation.PositiveValidator
+import com.salesforce.vador.annotation.Required
+import com.salesforce.vador.annotation.RequiredValidator
 import com.salesforce.vador.annotation.ValidateWith
 import com.salesforce.vador.lift.liftToEtr
 import com.salesforce.vador.types.Validator
@@ -64,11 +66,11 @@ object AnnotationProcessorBase {
             Negative::class -> {
               val negativeValidator =
                 NegativeValidator::class.java.getDeclaredConstructor().newInstance()
-                  as ValidatorAnnotation1<Any, FailureT?>
+                  as ValidatorAnnotation1<Any?, FailureT?>
               Validator<ValidatableT?, FailureT?> {
                 negativeValidator.validate(
                   field,
-                  FieldUtils.readField(field, bean, true) as Any,
+                  FieldUtils.readField(field, bean, true) as Any?,
                   map?.get(field.getAnnotation(Negative::class.java).failureKey),
                   none,
                 )
@@ -77,11 +79,11 @@ object AnnotationProcessorBase {
             NonNegative::class -> {
               val nonNegativeValidator =
                 NonNegativeValidator::class.java.getDeclaredConstructor().newInstance()
-                  as ValidatorAnnotation1<Any, FailureT?>
+                  as ValidatorAnnotation1<Any?, FailureT?>
               Validator<ValidatableT?, FailureT?> {
                 nonNegativeValidator.validate(
                   field,
-                  FieldUtils.readField(field, bean, true) as Any,
+                  FieldUtils.readField(field, bean, true) as Any?,
                   map?.get(field.getAnnotation(NonNegative::class.java).failureKey),
                   none,
                 )
@@ -90,11 +92,11 @@ object AnnotationProcessorBase {
             Positive::class -> {
               val positiveValidator =
                 PositiveValidator::class.java.getDeclaredConstructor().newInstance()
-                  as ValidatorAnnotation1<Any, FailureT?>
+                  as ValidatorAnnotation1<Any?, FailureT?>
               Validator<ValidatableT?, FailureT?> {
                 positiveValidator.validate(
                   field,
-                  FieldUtils.readField(field, bean, true) as Any,
+                  FieldUtils.readField(field, bean, true) as Any?,
                   map?.get(field.getAnnotation(Positive::class.java).failureKey),
                   none,
                 )
@@ -125,6 +127,20 @@ object AnnotationProcessorBase {
                   field,
                   FieldUtils.readField(field, bean, true) as Any,
                   annotation.limit,
+                  map?.get(annotation.failureKey),
+                  none,
+                )
+              }
+            }
+            Required::class -> {
+              val annotation = field.getAnnotation(Required::class.java)
+              val requiredValidator =
+                RequiredValidator::class.java.getDeclaredConstructor().newInstance()
+                  as ValidatorAnnotation1<Any?, FailureT?>
+              Validator<ValidatableT?, FailureT?> {
+                requiredValidator.validate(
+                  field,
+                  FieldUtils.readField(field, bean, true) as Any?,
                   map?.get(annotation.failureKey),
                   none,
                 )

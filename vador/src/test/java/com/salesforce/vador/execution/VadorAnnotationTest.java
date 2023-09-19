@@ -1,5 +1,6 @@
 package com.salesforce.vador.execution;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static sample.consumer.failure.ValidationFailure.NONE;
@@ -10,6 +11,7 @@ import com.salesforce.vador.annotation.MinForInt;
 import com.salesforce.vador.annotation.Negative;
 import com.salesforce.vador.annotation.NonNegative;
 import com.salesforce.vador.annotation.Positive;
+import com.salesforce.vador.annotation.Required;
 import com.salesforce.vador.annotation.TestAnnotation;
 import com.salesforce.vador.annotation.ValidateWith;
 import com.salesforce.vador.config.ValidationConfig;
@@ -132,6 +134,56 @@ public class VadorAnnotationTest {
     assertThat(result).isEmpty();
   }
 
+  @Test
+  void failFastWithFirstFailureWithValidatorAnnotationRequiredInt() {
+    final var validationConfig =
+        ValidationConfig.<VadorAnnotationTest.BeanRequired, ValidationFailure>toValidate()
+            .forAnnotations(Tuple.of(Map.of("unexpectedException", UNKNOWN_EXCEPTION), NONE))
+            .prepare();
+    final var result = Vador.validateAndFailFast(new BeanRequired(1), validationConfig);
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  void failFastWithFirstFailureWithValidatorAnnotationRequiredString() {
+    final var validationConfig =
+        ValidationConfig.<VadorAnnotationTest.BeanRequired, ValidationFailure>toValidate()
+            .forAnnotations(Tuple.of(Map.of("unexpectedException", UNKNOWN_EXCEPTION), NONE))
+            .prepare();
+    final var result = Vador.validateAndFailFast(new BeanRequired("Test"), validationConfig);
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  void failFastWithFirstFailureWithValidatorAnnotationRequiredNull() {
+    final var validationConfig =
+        ValidationConfig.<VadorAnnotationTest.BeanRequired, ValidationFailure>toValidate()
+            .forAnnotations(Tuple.of(Map.of("unexpectedException", UNKNOWN_EXCEPTION), NONE))
+            .prepare();
+    final var result = Vador.validateAndFailFast(new BeanRequired(null), validationConfig);
+    assertThat(result).contains(UNKNOWN_EXCEPTION);
+  }
+
+  @Test
+  void failFastWithFirstFailureWithValidatorAnnotationRequiredEmptyString() {
+    final var validationConfig =
+        ValidationConfig.<VadorAnnotationTest.BeanRequired, ValidationFailure>toValidate()
+            .forAnnotations(Tuple.of(Map.of("unexpectedException", UNKNOWN_EXCEPTION), NONE))
+            .prepare();
+    final var result = Vador.validateAndFailFast(new BeanRequired(""), validationConfig);
+    assertThat(result).contains(UNKNOWN_EXCEPTION);
+  }
+
+  @Test
+  void failFastWithFirstFailureWithValidatorAnnotationRequiredEmptyList() {
+    final var validationConfig =
+        ValidationConfig.<VadorAnnotationTest.BeanRequired, ValidationFailure>toValidate()
+            .forAnnotations(Tuple.of(Map.of("unexpectedException", UNKNOWN_EXCEPTION), NONE))
+            .prepare();
+    final var result = Vador.validateAndFailFast(new BeanRequired(emptyList()), validationConfig);
+    assertThat(result).contains(UNKNOWN_EXCEPTION);
+  }
+
   @Value
   private static class Bean {
     @Positive(failureKey = "unexpectedException")
@@ -187,6 +239,12 @@ public class VadorAnnotationTest {
   private static class BeanFailure {
     @TestAnnotation(testParam = 100)
     int idOne;
+  }
+
+  @Value
+  private static class BeanRequired<T> {
+    @Required(failureKey = "unexpectedException")
+    T idOne;
   }
 
   static class ID {
