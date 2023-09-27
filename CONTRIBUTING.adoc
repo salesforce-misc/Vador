@@ -1,5 +1,5 @@
 = Contributing
-Gopal S Akshintala <gopala.akshintala@salesforce.com>
+Gopal S Akshintala <gopalakshintala@gmail.com>
 :Revision: 1.0
 ifdef::env-github[]
 :tip-caption: :bulb:
@@ -68,7 +68,7 @@ This free-course: https://www.coursera.org/learn/kotlin-for-java-developers[*Kot
 
 == Code Formatting
 
-* This repo uses https://github.com/diffplug/spotless[*Spotless*] for formatting files, as this repo has code from more than one programming-language.
+* This repo uses https://github.com/diffplug/spotless[*Spotless*] for formatting files, as this repo has code from more than one programming language.
 * Please run `./gradlew spotlessApply` before check-in to fix any formatting errors.
 
 TIP: If you're on Intellij, replace your kbd:[Cmd+Shift+L] habit with kbd:[Ctrl]-kbd:[Ctrl] and run `gradle spotlessApply` (Or the respective action if you're on Eclipse).

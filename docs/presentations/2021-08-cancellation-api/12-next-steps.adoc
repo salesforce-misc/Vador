@@ -1,5 +1,5 @@
 = 🐾 Next steps 🐾
-Gopal S Akshintala <gopala.akshintala@salesforce.com>
+Gopal S Akshintala <gopalakshintala@gmail.com>
 :Revision: 1.0
 ifdef::env-github[]
 :tip-caption: :bulb:

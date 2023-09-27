@@ -2,12 +2,12 @@
 <module version="4">
   <component name="AdditionalModuleElements">
     <content url="file://$MODULE_DIR$/../.." dumb="true">
+      <excludeFolder url="file://$MODULE_DIR$/../sonarlint" />
       <excludeFolder url="file://$MODULE_DIR$/../../bin" />
       <excludeFolder url="file://$MODULE_DIR$/../../target" />
-      <excludeFolder url="file://$MODULE_DIR$/../sonarlint" />
     </content>
   </component>
   <component name="SonarLintModuleSettings">
-    <option name="uniqueId" value="57850313-e366-4478-9b22-39e2e944773e" />
+    <option name="uniqueId" value="2a63bff5-bc2a-4f5c-8da8-963d3a5fb540" />
   </component>
 </module>
