@@ -11,12 +11,6 @@ plugins {
   id("com.github.spotbugs") apply false
 }
 
-group = GROUP_ID
-
-version = VERSION
-
-description = "Vador - A framework for POJO/Data Structure/Bean validation"
-
 repositories { mavenCentral() }
 
 spotless {
@@ -30,7 +24,7 @@ spotless {
   }
   kotlinGradle {
     ktfmt().googleStyle()
-    target("**/*.gradle.kts")
+    target("**/*.gradle.kts", "buildSrc/src/main/kotlin/**")
     trimTrailingWhitespace()
     endWithNewline()
     targetExclude("**/build/**", "**/.gradle/**", "**/generated/**", "**/bin/**", "**/out/**")
@@ -47,9 +41,9 @@ spotless {
     targetExclude("**/build/**", "**/.gradle/**", "**/generated/**", "**/bin/**", "**/out/**")
   }
   format("xml") {
-    targetExclude("pom.xml")
     target("*.xml")
     eclipseWtp(XML)
+    targetExclude("**/build/**", "**/.gradle/**", "**/generated/**", "**/bin/**", "**/out/**")
   }
   format("documentation") {
     target("*.md", "*.adoc")

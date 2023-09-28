@@ -35,6 +35,7 @@ val detektReportMerge by
 subprojects {
   apply(plugin = "vador.sub-conventions")
   apply(plugin = "vador.kt-conventions")
+  apply(plugin = "vador.publishing-conventions")
   tasks.withType<Detekt>().configureEach { reports { xml.required = true } }
   plugins.withType<DetektPlugin> {
     tasks.withType<Detekt> detekt@{
@@ -80,37 +81,4 @@ afterEvaluate {
   }
 }
 
-publishing {
-  publications.create<MavenPublication>("vador") {
-    val subprojectJarName = tasks.jar.get().archiveBaseName.get()
-    artifactId = if (subprojectJarName == "vador") "vador" else "vador-$subprojectJarName"
-    from(components["java"])
-    pom {
-      name.set(artifactId)
-      description.set(project.description)
-      url.set("https://github.com/salesforce-misc/Vador")
-      licenses {
-        license {
-          name.set("The 3-Clause BSD License")
-          url.set("https://opensource.org/license/bsd-3-clause/")
-        }
-      }
-      developers {
-        developer {
-          id.set("overfullstack")
-          name.set("Gopal S Akshintala")
-          email.set("gopalakshintala@gmail.com")
-        }
-      }
-      scm {
-        connection.set("scm:git:https://github.com/salesforce-misc/Vador")
-        developerConnection.set("scm:git:git@github.com/salesforce-misc/vador.git")
-        url.set("https://github.com/salesforce-misc/Vador")
-      }
-    }
-  }
-}
-
-nexusPublishing { this.repositories { sonatype() } }
-
-signing { sign(publishing.publications["vador"]) }
+nexusPublishing { this.repositories { sonatype { stagingProfileId = STAGING_PROFILE_ID } } }

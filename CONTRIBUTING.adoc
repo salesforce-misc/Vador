@@ -84,5 +84,5 @@ In link:build.gradle.kts[], follow the <<_versioning_strategy,Versioning Strateg
 
 [source,bash]
 ----
-./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository -Dorg.gradle.parallel=false
+./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository -Dorg.gradle.parallel=false --no-configuration-cache
 ----
