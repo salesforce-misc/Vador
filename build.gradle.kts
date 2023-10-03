@@ -18,7 +18,7 @@ plugins {
   `maven-publish`
   id("io.github.gradle-nexus.publish-plugin")
   signing
-  id("org.sonarqube") version "4.4.0.3356"
+  id("org.sonarqube") version "4.4.1.3373"
 }
 
 allprojects { apply(plugin = "vador.root-conventions") }
