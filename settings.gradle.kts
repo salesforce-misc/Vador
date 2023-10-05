@@ -5,7 +5,7 @@
  * https://opensource.org/licenses/BSD-3-Clause
  * ****************************************************************************
  */
-plugins { id("com.gradle.enterprise") version "3.15" }
+plugins { id("com.gradle.enterprise") version "3.15.1" }
 
 dependencyResolutionManagement {
   versionCatalogs { create("libs") { from(files("libs.versions.toml")) } }
