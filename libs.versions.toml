@@ -2,7 +2,7 @@
 kotlin = "1.9.10"
 java-vavr = "0.10.4"
 kotlin-vavr = "0.10.2"
-lombok-gradle = "8.3"
+lombok-gradle = "8.4"
 hamcrest-core = "2.2"
 hamcrest-date = "2.0.8"
 typeTools = "0.6.3"
