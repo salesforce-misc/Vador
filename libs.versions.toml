@@ -14,7 +14,7 @@ apache-common-text-version = "1.10.0"
 
 # Common dependencies
 junit = "5.10.0"
-kover = "0.7.3"
+kover = "0.7.4"
 kotest = "5.7.2"
 assertj-core = "3.24.2"
 detekt = "1.23.1"
