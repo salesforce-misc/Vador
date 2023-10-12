@@ -10,5 +10,5 @@ dependencies {
   implementation(libs.hamcrest.date)
   api(libs.kotlin.vavr)
   api(libs.java.vavr)
-  api(libs.bundles.kotest)
+  testImplementation(libs.bundles.kotest)
 }

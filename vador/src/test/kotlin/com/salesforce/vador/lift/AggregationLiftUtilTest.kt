@@ -14,7 +14,7 @@ import io.vavr.kotlin.right
 import sample.consumer.failure.ValidationFailure
 import sample.consumer.failure.ValidationFailure.NONE
 
-class AggregationLiftUtilKtTest :
+class AggregationLiftUtilTest :
   FunSpec({
     test("liftToContainerValidatorType") {
       val memberValidator: ValidatorEtr<Member?, ValidationFailure?> = ValidatorEtr { right(NONE) }

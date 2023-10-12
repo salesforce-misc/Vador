@@ -16,7 +16,7 @@ plugins {
   alias(libs.plugins.lombok.gradle) apply false
   id(libs.plugins.kover.pluginId)
   `maven-publish`
-  id("io.github.gradle-nexus.publish-plugin")
+  alias(libs.plugins.nexus.publish)
   signing
   id("org.sonarqube") version "4.4.1.3373"
 }

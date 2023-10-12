@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module version="4">
-  <component name="AdditionalModuleElements">
-    <content url="file://$MODULE_DIR$/../../../vador/build/generated/sources/annotationProcessor/java/test">
-      <sourceFolder url="file://$MODULE_DIR$/../../../vador/build/generated/sources/annotationProcessor/java/test" isTestSource="true" generated="true" />
-    </content>
-  </component>
   <component name="SonarLintModuleSettings">
     <option name="uniqueId" value="bc24697c-309a-4a8f-9d29-2e59b27f078f" />
   </component>

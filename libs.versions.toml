@@ -72,3 +72,4 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 spotbugs = { id = "com.github.spotbugs", version.ref = "spotbugs" }
 lombok-gradle = { id = "io.freefair.lombok", version.ref = "lombok-gradle" }
 testLogger = { id = "com.adarshr.test-logger", version.ref = "testLogger" }
+nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish" }

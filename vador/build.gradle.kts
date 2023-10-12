@@ -20,6 +20,7 @@ dependencies {
   testImplementation(project(":matchers"))
   testImplementation(libs.assertj.vavr)
   testImplementation(libs.assertj.core)
+  testImplementation(libs.bundles.kotest)
 }
 
 if (!System.getProperty("idea.sync.active").toBoolean()) {
