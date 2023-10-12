@@ -8,8 +8,8 @@ import org.gradle.kotlin.dsl.`java-library`
 import org.gradle.kotlin.dsl.withType
 
 plugins {
-  id("maven-publish")
-  id("signing")
+  `maven-publish`
+  signing
   `java-library`
 }
 
