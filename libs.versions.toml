@@ -19,7 +19,7 @@ kotest = "5.7.2"
 assertj-core = "3.24.2"
 detekt = "1.23.1"
 spotless = "6.22.0"
-apache-log4j = "2.21.0"
+apache-log4j = "2.21.1"
 testLogger = "4.0.0"
 jetbrains-annotations = "24.0.1"
 
