@@ -11,7 +11,7 @@ endif::[]
 :hide-uri-scheme:
 :toc:
 :toc-placement!:
-:vador-version: 1.0.2
+:vador-version: 1.1.0
 :testdir: vador/src/test/java
 :docsdir: docs
 :imagesdir: {docsdir}/images
@@ -319,26 +319,7 @@ It can also be used for SObject Validation hooks or even FTests. This is generic
 [#_impact]
 == ☄️Impact
 
-Vador is being used in *Production* within Salesforce by:
-
-4 Teams from Revenue Cloud:
-
-[%autowidth]
-|===
-|Rev-Hydra
-|Rev-Delphinus
-|Rev-Centaurus
-|Rev-Pegasus
-|===
-
-In 3 different domains:
-
-[%autowidth]
-|===
-|Payments
-|Tax
-|Billing
-|===
+Vador is being used in *Production* within Salesforce by multiple teams
 
 This idea was presented as a Tech-talk at many https://overfullstack.ga/posts/fight-complexity-with-fp/#My-Talk-on-this[International Conferences & Meetups]
 

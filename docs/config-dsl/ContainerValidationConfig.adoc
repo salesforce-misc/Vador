@@ -75,8 +75,8 @@ void failFastForHeaderConfigBatchSizeForMultiBatch() {
           .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET))
           .shouldHaveMaxBatchSizeOrFailWith(Tuple.of(3, MAX_BATCH_SIZE_EXCEEDED))
           .prepare();
-  final var headerBean = new ContainerWithMultiBatch(emptyList(), List.of(new Bean2()));
-  final var result = Vador.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+  final var containerBean = new ContainerWithMultiBatch(emptyList(), List.of(new Bean2()));
+  final var result = Vador.validateAndFailFastForContainer(containerBean, containerValidationConfig);
   assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
 }
 ----

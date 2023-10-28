@@ -1,5 +1,8 @@
 {
   "cSpell.words": [
+    "Bazel",
+    "Vador",
     "Validatable"
-  ]
+  ],
+  "java.compile.nullAnalysis.mode": "automatic"
 }

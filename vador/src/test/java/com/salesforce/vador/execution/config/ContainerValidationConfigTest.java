@@ -42,8 +42,9 @@ class ContainerValidationConfigTest {
             .withContainerValidator(ignore -> UNKNOWN_EXCEPTION, NONE)
             .prepare();
     final var batch = List.of(new Bean());
-    final var headerBean = new ContainerLevel1(batch);
-    final var result = Vador.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+    final var containerBean = new ContainerLevel1(batch);
+    final var result =
+        Vador.validateAndFailFastForContainer(containerBean, containerValidationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -67,8 +68,9 @@ class ContainerValidationConfigTest {
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
     final var batch = List.of(new Bean());
-    final var headerBean = new ContainerLevel1(batch);
-    final var result = Vador.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+    final var containerBean = new ContainerLevel1(batch);
+    final var result =
+        Vador.validateAndFailFastForContainer(containerBean, containerValidationConfig);
     assertThat(result).isEmpty();
   }
 
@@ -80,8 +82,9 @@ class ContainerValidationConfigTest {
             .shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET))
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
-    final var headerBean = new ContainerLevel1(emptyList());
-    final var result = Vador.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+    final var containerBean = new ContainerLevel1(emptyList());
+    final var result =
+        Vador.validateAndFailFastForContainer(containerBean, containerValidationConfig);
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
   }
 
@@ -94,13 +97,13 @@ class ContainerValidationConfigTest {
             .withContainerValidator(ignore -> NONE, NONE)
             .prepare();
     final var containerWithInvalidMember = new ContainerWithPair(2, emptyList());
-    final var headerBeanBatch =
+    final var containerBeanBatch =
         List.of(
             new ContainerWithPair(1, List.of(new Bean())),
             containerWithInvalidMember,
             new ContainerWithPair(3, List.of(new Bean())));
     final var result =
-        VadorBatch.validateAndFailFastForContainer(headerBeanBatch, containerValidationConfig);
+        VadorBatch.validateAndFailFastForContainer(containerBeanBatch, containerValidationConfig);
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
   }
 
@@ -134,8 +137,9 @@ class ContainerValidationConfigTest {
             .shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET))
             .shouldHaveMaxBatchSizeOrFailWith(Tuple.of(3, MAX_BATCH_SIZE_EXCEEDED))
             .prepare();
-    final var headerBean = new ContainerWithMultiBatch(emptyList(), List.of(new Bean2()));
-    final var result = Vador.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+    final var containerBean = new ContainerWithMultiBatch(emptyList(), List.of(new Bean2()));
+    final var result =
+        Vador.validateAndFailFastForContainer(containerBean, containerValidationConfig);
     assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
   }
 
@@ -148,8 +152,9 @@ class ContainerValidationConfigTest {
             .withBatchMember(ContainerLevel1::getBeanBatch)
             .shouldHaveMaxBatchSizeOrFailWith(Tuple.of(0, MAX_BATCH_SIZE_EXCEEDED))
             .prepare();
-    final var headerBean = new ContainerLevel1(List.of(new Bean()));
-    final var result = Vador.validateAndFailFastForContainer(headerBean, containerValidationConfig);
+    final var containerBean = new ContainerLevel1(List.of(new Bean()));
+    final var result =
+        Vador.validateAndFailFastForContainer(containerBean, containerValidationConfig);
     assertThat(result).contains(MAX_BATCH_SIZE_EXCEEDED);
   }
 
@@ -159,9 +164,9 @@ class ContainerValidationConfigTest {
         ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
             .withContainerValidatorEtrs(
                 List.of(
-                    headerBean -> Either.right(NONE),
-                    headerBean -> Either.left(UNKNOWN_EXCEPTION),
-                    headerBean -> Either.right(NONE)))
+                    containerBean -> Either.right(NONE),
+                    containerBean -> Either.left(UNKNOWN_EXCEPTION),
+                    containerBean -> Either.right(NONE)))
             .withBatchMember(ContainerLevel1::getBeanBatch)
             .prepare();
     final var result =
