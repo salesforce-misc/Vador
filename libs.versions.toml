@@ -10,7 +10,7 @@ spotbugs = "5.2.1"
 assertj-vavr = "0.4.3"
 reflection-util = "2.14.0"
 nexus-publish = "2.0.0-rc-1"
-apache-common-text-version = "1.10.0"
+apache-common-text-version = "1.11.0"
 
 # Common dependencies
 junit = "5.10.0"
