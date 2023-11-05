@@ -13,7 +13,7 @@ nexus-publish = "2.0.0-rc-1"
 apache-common-text-version = "1.11.0"
 
 # Common dependencies
-junit = "5.10.0"
+junit = "5.10.1"
 kover = "0.7.4"
 kotest = "5.8.0"
 assertj-core = "3.24.2"
