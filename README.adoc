@@ -81,7 +81,7 @@ image::function-call-mess.png[function-call-mess]
 
 This approach can spike the https://www.ibm.com/developerworks/java/library/j-cq03316/[*Cyclomatic Complexity*]
 and https://www.sonarsource.com/docs/CognitiveComplexity.pdf[*Cognitive Complexity*] metrics
-and render a code-base which is difficult to test,
+and render a code-base which is challenging to test,
 extend and maintain.
 
 TIP: Good read about https://blog.sonarsource.com/cognitive-complexity-because-testability-understandability[Cyclomatic Complexity vs Cognitive Complexity]
@@ -108,7 +108,7 @@ This decoupling comes with a lot of flexibility. Some unique selling points abou
 * You can share Config for a Validatable across different Execution strategies.
 * Vador supports validating nested data-structures.
 * Config promotes Low-Code validations and comes with plug-and-play validators out-of-the-box that are suitable for REST API validation use-cases.
-* Failure type `FailureT` is generic and Consumer has the flexibility to use a failure type of their own.
+* Failure type `FailureT` is generic, and Consumer has the flexibility to use a failure type of their own.
 * Vador comes with Execution Strategy algorithms out-of-the-box, even for complex nested data-structures like batch-of-batch (which might need a Tree-Traversal algorithm).
 
 [.lead]
@@ -255,11 +255,11 @@ TIP: You can place a logger or a debug point (during development) in this method
 We have plans to add Logger support in the future too.
 
 [#_perks_of_config_based_validation]
-== 🍫 Perks of Config based Validation
+== 🍫 Perks of Config-based Validation
 
-=== Low Learning Curve
+=== Low-Learning Curve
 
-Use of same Config pattern throughout, with self-explaining DSL methods to drive your development.
+Use of a same Config pattern throughout, with self-explaining DSL methods to drive your development.
 This keeps the scope and slope of your learning curve required, low.
 
 === Readability
@@ -274,7 +274,7 @@ Strips out a lot of the code/logic to maintain.
 
 * No branching => No Cyclomatic complexity/Cognitive complexity.
 * It abstracts away all the implementation complexity.
-* Saves a lot of Man hours while writing and _10X_ more while reading.
+* Saves a lot of dev hours while writing and _10X_ more while reading.
 * Eliminates the need to spike on your validation strategy/design.
 
 TIP: An *8-pointer* Story for Free 🤑
@@ -294,9 +294,9 @@ The same argument applies to config as well.
 
 === Flexibility
 
-* This is decoupled from the API orchestration method.
-For example, currently, it's *Fail-Fast for Any*.
-But if you want to migrate to Fail-Fast for each item (to handle partial failures) or if you have another route like SObject where you need to accumulate all errors, that's as simple as calling a different API method without changing anything else.
+* It's simple to switch orchestration strategy,
+For example, if the current strategy is *Fail-Fast for Any*.
+But if you want to migrate to Fail-Fast for each item (to handle partial failures) or if you have another route where you need to accumulate all errors, that's as simple as calling a different API method without changing anything else.
 * If you wish to skip some validations or add new validations depending on the route, you can have different configs instances for different routes.
 
 === Extensibility
@@ -325,7 +325,7 @@ This idea was presented as a Tech-talk at many https://overfullstack.ga/posts/fi
 
 That said, just like us, Vador matures day-by-day, and if any of your special use-cases don’t work, we shall love to fix them ASAP (TBD - Will publish SLA for P0, P1 etc).
 
-NOTE: 👋🏼 If you are facing any trouble or have any feature requests, please log a GitHub issue 👋🏼
+NOTE: 👋🏼 If you are facing any trouble or have any feature requests, please log a GitHub issue. 👋🏼
 
 == How can I get my hands dirty?
 
