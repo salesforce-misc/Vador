@@ -10,6 +10,7 @@ package com.salesforce.vador.execution;
 import static org.assertj.core.api.Assertions.assertThat;
 import static sample.consumer.failure.ValidationFailure.NONE;
 import static sample.consumer.failure.ValidationFailure.NOTHING_TO_VALIDATE;
+import static sample.consumer.failure.ValidationFailure.OUT_OF_BOUND;
 import static sample.consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 import static sample.consumer.failure.ValidationFailure.VALIDATION_FAILURE_1;
 import static sample.consumer.failure.ValidationFailure.VALIDATION_FAILURE_2;
@@ -34,18 +35,23 @@ class VadorTest {
   @Test
   void failFastWithFirstFailureWithValidator() {
     // tag::withValidators[]
-    final Validator<Bean, ValidationFailure> validator1 = bean -> NONE;
-    final Validator<Bean, ValidationFailure> validator2 = bean -> NONE;
-    final Validator<Bean, ValidationFailure> validator3 = bean -> UNKNOWN_EXCEPTION;
     final List<Validator<Bean, ValidationFailure>> validatorChain =
-        List.of(validator1, validator2, validator3);
+        List.of(validator(1, 9), validator(3, 7), validator(5, 5));
     final var validationConfig =
         ValidationConfig.<Bean, ValidationFailure>toValidate()
             .withValidators(Tuple.of(validatorChain, NONE))
             .prepare();
     // end::withValidators[]
-    final var result = Vador.validateAndFailFast(VALIDATABLE, validationConfig);
-    assertThat(result).contains(UNKNOWN_EXCEPTION);
+    final var result = Vador.validateAndFailFast(new Bean(0), validationConfig);
+    assertThat(result).contains(OUT_OF_BOUND);
+  }
+
+  /**
+   * You can pass any number of arguments (like lowerLimit, upperLimit), to write your validator
+   * closure
+   */
+  Validator<Bean, ValidationFailure> validator(int lowerLimit, int upperLimit) {
+    return bean -> bean.value >= lowerLimit && bean.value <= upperLimit ? NONE : OUT_OF_BOUND;
   }
 
   // end::failFastDemo[]
@@ -146,7 +152,7 @@ class VadorTest {
 
   @Value
   private static class Bean {
-    int id;
+    int value;
   }
 
   @Value

@@ -45,6 +45,7 @@ public enum ValidationFailureMessage {
   INVALID_CHILD(Section.COMMON_VALIDATION_FAILURE, "InvalidChild"),
   INVALID_MEMBER(Section.COMMON_VALIDATION_FAILURE, "InvalidMember"),
   UNKNOWN_EXCEPTION("", ""),
+  OUT_OF_BOUND("", ""),
   VALIDATION_FAILURE_1("", ""),
   VALIDATION_FAILURE_2("", ""),
   VALIDATION_FAILURE_3("", ""),

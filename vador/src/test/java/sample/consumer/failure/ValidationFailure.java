@@ -57,6 +57,8 @@ public class ValidationFailure {
       new ValidationFailure(ValidationFailureMessage.INVALID_UDD_ID_3);
   public static final ValidationFailure INVALID_MEMBER =
       new ValidationFailure(ValidationFailureMessage.INVALID_CHILD);
+  public static final ValidationFailure OUT_OF_BOUND =
+      new ValidationFailure(ValidationFailureMessage.UNKNOWN_EXCEPTION);
   public static final ValidationFailure UNKNOWN_EXCEPTION =
       new ValidationFailure(ValidationFailureMessage.UNKNOWN_EXCEPTION);
   public static final ValidationFailure VALIDATION_FAILURE_1 =
