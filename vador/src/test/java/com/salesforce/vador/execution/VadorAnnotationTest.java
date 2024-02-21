@@ -25,18 +25,18 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import sample.consumer.failure.ValidationFailure;
 
-public class VadorAnnotationTest {
+class VadorAnnotationTest {
 
   private static final Bean VALIDATABLE = new Bean(1, -90, 0);
 
-  private static final BeanMix VALIDATABLEMIX = new BeanMix(6, "abed");
+  private static final BeanMix VALIDATABLE_MIX = new BeanMix(6, "abed");
 
-  private static final BeanCustom VALIDATBLECUSTOM = new BeanCustom(new ID("Test Class"));
+  private static final BeanCustom VALIDATABLE_CUSTOM = new BeanCustom(new ID("Test Class"));
 
-  private static final BeanCustom2 VALIDATBLECUSTOM2 =
+  private static final BeanCustom2 VALIDATABLE_CUSTOM2 =
       new BeanCustom2(new ID("Test Class1"), new ID("Test Class2"));
 
-  private static final BeanCustom3 VALIDATBLECUSTOM3 = new BeanCustom3(new ID("Test Class1"));
+  private static final BeanCustom3 VALIDATABLE_CUSTOM3 = new BeanCustom3(new ID("Test Class1"));
 
   @Test
   void failFastWithFirstFailureWithValidatorAnnotation() {
@@ -67,7 +67,7 @@ public class VadorAnnotationTest {
     assertThrows(
         ClassCastException.class,
         () -> {
-          Vador.validateAndFailFast(VALIDATABLEMIX, validationConfig);
+          Vador.validateAndFailFast(VALIDATABLE_MIX, validationConfig);
         });
   }
 
@@ -77,7 +77,7 @@ public class VadorAnnotationTest {
         ValidationConfig.<VadorAnnotationTest.BeanCustom, ValidationFailure>toValidate()
             .forAnnotations(Tuple.of(Map.of("unexpectedException", UNKNOWN_EXCEPTION), NONE))
             .prepare();
-    final var result = Vador.validateAndFailFast(VALIDATBLECUSTOM, validationConfig);
+    final var result = Vador.validateAndFailFast(VALIDATABLE_CUSTOM, validationConfig);
     assertThat(result).isEmpty();
   }
 
@@ -87,7 +87,7 @@ public class VadorAnnotationTest {
         ValidationConfig.<VadorAnnotationTest.BeanCustom2, ValidationFailure>toValidate()
             .forAnnotations(Tuple.of(Map.of("unexpectedException", UNKNOWN_EXCEPTION), NONE))
             .prepare();
-    final var result = Vador.validateAndFailFast(VALIDATBLECUSTOM2, validationConfig);
+    final var result = Vador.validateAndFailFast(VALIDATABLE_CUSTOM2, validationConfig);
     assertThat(result).contains(UNKNOWN_EXCEPTION);
   }
 
@@ -100,7 +100,7 @@ public class VadorAnnotationTest {
     assertThrows(
         IllegalArgumentException.class,
         () -> {
-          Vador.validateAndFailFast(VALIDATBLECUSTOM3, validationConfig);
+          Vador.validateAndFailFast(VALIDATABLE_CUSTOM3, validationConfig);
         });
   }
 

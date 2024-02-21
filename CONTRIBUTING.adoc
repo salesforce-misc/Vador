@@ -35,7 +35,16 @@ endif::[]
 
 === Install Java 11
 
-* It needs JDK 11 installed in your system. I recommend doing it via https://sdkman.io/install[SDKMAN]. After you install SDKMAN, run `sdk list java` -> Pick Identifier for your favorite java dist -> Run `sdk install java <Identifier-you-picked>  to install Java.
+It needs JDK 11 installed in your system.
+Recommendation is to do it via https://sdkman.io/install[SDKMAN].
+After you install SDKMAN,
+run `sdk list java` -> Pick Identifier for your favorite java distribution -> Run `sdk install java <Identifier-you-picked>`
+to install Java. For example:
+
+[source,bash]
+----
+sdk install java 11.0.22-tem
+----
 
 === Build with Gradle
 
