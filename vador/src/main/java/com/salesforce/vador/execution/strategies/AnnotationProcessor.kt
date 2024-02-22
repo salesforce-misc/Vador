@@ -22,14 +22,14 @@ import io.vavr.Tuple2
 import java.lang.reflect.InvocationTargetException
 import org.apache.commons.lang3.reflect.FieldUtils
 
-object AnnotationProcessorBase {
+object AnnotationProcessor {
   @Throws(
     NoSuchMethodException::class,
     InvocationTargetException::class,
     InstantiationException::class,
     IllegalAccessException::class,
   )
-  fun <ValidatableT, FailureT> derivedValidators(
+  fun <ValidatableT, FailureT> deriveValidators(
     bean: ValidatableT,
     mapOfAnnotation: Tuple2<MutableMap<String, FailureT>, FailureT>?
   ): List<ValidatorEtr<ValidatableT?, FailureT?>> {
@@ -47,7 +47,7 @@ object AnnotationProcessorBase {
                   val validatorAnnotation =
                     annotation.validator.java.getDeclaredConstructor().newInstance()
                       as ValidatorAnnotation1<Any, FailureT?>
-                  Validator<ValidatableT?, FailureT?> {
+                  Validator {
                     validatorAnnotation.validate(
                       field,
                       FieldUtils.readField(field, bean, true) as Any,
@@ -67,7 +67,7 @@ object AnnotationProcessorBase {
               val negativeValidator =
                 NegativeValidator::class.java.getDeclaredConstructor().newInstance()
                   as ValidatorAnnotation1<Any?, FailureT?>
-              Validator<ValidatableT?, FailureT?> {
+              Validator {
                 negativeValidator.validate(
                   field,
                   FieldUtils.readField(field, bean, true) as Any?,
@@ -80,7 +80,7 @@ object AnnotationProcessorBase {
               val nonNegativeValidator =
                 NonNegativeValidator::class.java.getDeclaredConstructor().newInstance()
                   as ValidatorAnnotation1<Any?, FailureT?>
-              Validator<ValidatableT?, FailureT?> {
+              Validator {
                 nonNegativeValidator.validate(
                   field,
                   FieldUtils.readField(field, bean, true) as Any?,
@@ -93,7 +93,7 @@ object AnnotationProcessorBase {
               val positiveValidator =
                 PositiveValidator::class.java.getDeclaredConstructor().newInstance()
                   as ValidatorAnnotation1<Any?, FailureT?>
-              Validator<ValidatableT?, FailureT?> {
+              Validator {
                 positiveValidator.validate(
                   field,
                   FieldUtils.readField(field, bean, true) as Any?,
@@ -107,7 +107,7 @@ object AnnotationProcessorBase {
               val maxIntValidator =
                 MaxForIntValidator::class.java.getDeclaredConstructor().newInstance()
                   as ValidatorAnnotation2<Any, FailureT?>
-              Validator<ValidatableT?, FailureT?> {
+              Validator {
                 maxIntValidator.validate(
                   field,
                   FieldUtils.readField(field, bean, true) as Any,
@@ -122,7 +122,7 @@ object AnnotationProcessorBase {
               val minIntValidator =
                 MinForIntValidator::class.java.getDeclaredConstructor().newInstance()
                   as ValidatorAnnotation2<Any, FailureT?>
-              Validator<ValidatableT?, FailureT?> {
+              Validator {
                 minIntValidator.validate(
                   field,
                   FieldUtils.readField(field, bean, true) as Any,
@@ -137,7 +137,7 @@ object AnnotationProcessorBase {
               val requiredValidator =
                 RequiredValidator::class.java.getDeclaredConstructor().newInstance()
                   as ValidatorAnnotation1<Any?, FailureT?>
-              Validator<ValidatableT?, FailureT?> {
+              Validator {
                 requiredValidator.validate(
                   field,
                   FieldUtils.readField(field, bean, true) as Any?,
@@ -146,7 +146,7 @@ object AnnotationProcessorBase {
                 )
               }
             }
-            else -> Validator<ValidatableT?, FailureT?> { null }
+            else -> Validator { null }
           }
         liftToEtr<FailureT, ValidatableT>(validator, none)
       } else {

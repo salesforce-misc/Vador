@@ -65,7 +65,7 @@ private fun <ValidatableT, FailureT : Any> findFirstFailureRecursively(
   throwableMapper: (Throwable) -> FailureT?
 ): Either<FailureT?, ValidatableT?>? {
   val validatorsFromAnnotationNew: List<ValidatorEtr<ValidatableT?, FailureT?>> =
-    AnnotationProcessorBase.derivedValidators(validatable, validationConfig.forAnnotations)
+    AnnotationProcessor.deriveValidators(validatable, validationConfig.forAnnotations)
   // combined list is a list of validators and annotation validators
   val combinedListOfValidators: List<ValidatorEtr<ValidatableT?, FailureT?>> =
     validatorsFromAnnotationNew + configToValidators(validationConfig)
