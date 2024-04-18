@@ -5,19 +5,22 @@
  * https://opensource.org/licenses/BSD-3-Clause
  * ****************************************************************************
  */
-plugins { id("com.gradle.enterprise") version "3.15.1" }
+plugins { id("com.gradle.develocity") version "3.17.2" }
 
 dependencyResolutionManagement {
   versionCatalogs { create("libs") { from(files("libs.versions.toml")) } }
 }
 
-gradleEnterprise {
-  if (System.getenv("CI") != null) {
-    buildScan {
-      publishAlways()
-      termsOfServiceUrl = "https://gradle.com/terms-of-service"
-      termsOfServiceAgree = "yes"
+val isCI = !System.getenv("CI").isNullOrEmpty()
+
+develocity {
+  buildScan {
+    publishing.onlyIf {
+      it.buildResult.failures.isNotEmpty() && !System.getenv("CI").isNullOrEmpty()
     }
+    uploadInBackground.set(!isCI)
+    termsOfUseUrl = "https://gradle.com/help/legal-terms-of-use"
+    termsOfUseAgree = "yes"
   }
 }
 
