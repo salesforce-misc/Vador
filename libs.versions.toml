@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.9.21"
+kotlin = "2.0.0-RC1"
 java-vavr = "0.10.4"
 kotlin-vavr = "0.10.2"
 lombok-gradle = "8.4"
