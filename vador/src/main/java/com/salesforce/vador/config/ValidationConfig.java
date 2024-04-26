@@ -15,7 +15,6 @@
 package com.salesforce.vador.config;
 
 import com.salesforce.vador.config.base.BaseValidationConfig;
-import com.salesforce.vador.config.base.ExecutionStrategy;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -27,6 +26,4 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 public class ValidationConfig<ValidatableT, FailureT>
-    extends BaseValidationConfig<ValidatableT, FailureT> {
-  ExecutionStrategy executionStrategy;
-}
+    extends BaseValidationConfig<ValidatableT, FailureT> {}

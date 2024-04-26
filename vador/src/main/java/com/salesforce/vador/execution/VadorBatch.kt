@@ -11,8 +11,6 @@ package com.salesforce.vador.execution
 
 import com.salesforce.vador.config.BatchOfBatch1ValidationConfig
 import com.salesforce.vador.config.BatchValidationConfig
-import com.salesforce.vador.config.base.BatchExecutionStrategy.FAIL_FAST_FOR_ANY
-import com.salesforce.vador.config.base.BatchExecutionStrategy.FAIL_FAST_FOR_EACH
 import com.salesforce.vador.config.container.ContainerValidationConfig
 import com.salesforce.vador.config.container.ContainerValidationConfigWith2Levels
 import com.salesforce.vador.execution.strategies.accumulationStrategy
@@ -121,35 +119,6 @@ object VadorBatch {
       ?: Optional.empty()
 
   /** --- CONTAINER ---> */
-  @JvmStatic
-  @JvmOverloads
-  fun <FailureT, ValidatableT> validate(
-    validatables: List<ValidatableT?>,
-    batchValidationConfig: BatchValidationConfig<ValidatableT, FailureT?>,
-    failureForNullValidatable: FailureT? = null,
-    throwableMapper: (Throwable) -> FailureT? = { throw it }
-  ): Any =
-    when (batchValidationConfig.batchExecutionStrategy) {
-      FAIL_FAST_FOR_EACH ->
-        validateAndFailFastForEach(
-          validatables,
-          batchValidationConfig,
-          failureForNullValidatable,
-          throwableMapper
-        )
-      FAIL_FAST_FOR_ANY ->
-        validateAndFailFastForAny(
-          validatables,
-          batchValidationConfig,
-          failureForNullValidatable,
-          throwableMapper
-        )
-      else ->
-        throw IllegalArgumentException(
-          "Batch Execution strategy must be specified or call specific strategy methods"
-        )
-    }
-
   /** --- FOR EACH --- */
   @JvmStatic
   @JvmOverloads

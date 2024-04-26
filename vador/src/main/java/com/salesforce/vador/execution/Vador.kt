@@ -10,7 +10,6 @@
 package com.salesforce.vador.execution
 
 import com.salesforce.vador.config.ValidationConfig
-import com.salesforce.vador.config.base.ExecutionStrategy.FAIL_FAST
 import com.salesforce.vador.config.container.ContainerValidationConfig
 import com.salesforce.vador.config.container.ContainerValidationConfigWith2Levels
 import com.salesforce.vador.execution.strategies.accumulationStrategy
@@ -50,21 +49,6 @@ object Vador {
   /** --- CONTAINER ---> */
   @JvmStatic
   @JvmOverloads
-  fun <FailureT : Any, ValidatableT> validate(
-    validatable: ValidatableT,
-    validationConfig: ValidationConfig<ValidatableT, FailureT?>,
-    throwableMapper: (Throwable) -> FailureT? = { throw it }
-  ): Optional<FailureT> =
-    when (validationConfig.executionStrategy) {
-      FAIL_FAST -> failFast(validationConfig, throwableMapper)(validatable)
-      else ->
-        throw IllegalArgumentException(
-          "Execution strategy must be specified or call specific strategy methods"
-        )
-    }
-
-  @JvmStatic
-  @JvmOverloads
   fun <FailureT : Any, ValidatableT> validateAndFailFast(
     validatable: ValidatableT,
     validationConfig: ValidationConfig<ValidatableT, FailureT?>,
@@ -77,7 +61,6 @@ object Vador {
    *
    * @param validatable
    * @param validators
-   * @param invalidValidatable FailureT if the validatable is null.
    * @param none Value to be returned in case of no failures.
    * @param <FailureT>
    * @param <ValidatableT>
@@ -98,7 +81,6 @@ object Vador {
    *
    * @param validatable
    * @param validators
-   * @param invalidValidatable FailureT if the validatable is null.
    * @param none Value to be returned in case of no failures.
    * @param <FailureT>
    * @param <ValidatableT>

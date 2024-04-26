@@ -31,6 +31,4 @@ public abstract class BaseBatchValidationConfig<ValidatableT, FailureT>
   @Singular
   protected Collection<FilterDuplicatesConfigBuilder<ValidatableT, @Nullable FailureT>>
       findAndFilterDuplicatesConfigs;
-
-  BatchExecutionStrategy batchExecutionStrategy;
 }

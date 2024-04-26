@@ -36,9 +36,7 @@ internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, Failure
   // TODO 29/04/21 gopala.akshintala: Move this duplicate-check to ValidationConfig `prepare`
   val specNameToSpecs =
     specs.groupingBy { it.nameForTest }.eachCount().filter { it.value > 1 }.keys.filterNotNull()
-  if (specNameToSpecs.isNotEmpty()) {
-    throw IllegalArgumentException("Specs with Duplicate NamesForTest found: $specNameToSpecs")
-  }
+  require(specNameToSpecs.isEmpty()) { "Specs with Duplicate NamesForTest found: $specNameToSpecs" }
   return Optional.ofNullable(specs.first { it.nameForTest == nameForTest }?.toPredicate())
 }
 
