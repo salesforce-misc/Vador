@@ -1,5 +1,6 @@
 [versions]
-kotlin = "2.0.0-RC1"
+jdk = "11"
+kotlin = "2.0.0"
 java-vavr = "0.10.4"
 kotlin-vavr = "0.10.2"
 lombok-gradle = "8.4"
@@ -13,8 +14,8 @@ nexus-publish = "2.0.0-rc-1"
 apache-common-text-version = "1.11.0"
 
 # Common dependencies
-junit = "5.10.1"
-kover = "0.7.5"
+junit = "5.10.2"
+kover = "0.8.1"
 kotest = "5.8.0"
 assertj-core = "3.24.2"
 detekt = "1.23.4"

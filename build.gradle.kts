@@ -7,7 +7,6 @@
  */
 import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
 import io.gitlab.arturbosch.detekt.Detekt
-import io.gitlab.arturbosch.detekt.DetektPlugin
 import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 
 plugins {
@@ -21,26 +20,26 @@ plugins {
 
 allprojects { apply(plugin = "vador.root-conventions") }
 
-koverReport { defaults { xml { onCheck = true } } }
+kover { reports { total { html { onCheck = true } } } }
 
 dependencies { subprojects.forEach { kover(project(":${it.name}")) } }
 
 val detektReportMerge by
   tasks.registering(ReportMergeTask::class) {
-    output.set(rootProject.layout.buildDirectory.file("reports/detekt/merge.xml"))
+    output = project.layout.buildDirectory.file("reports/detekt/merge.sarif")
   }
 
 subprojects {
   apply(plugin = "vador.sub-conventions")
   apply(plugin = "vador.kt-conventions")
   apply(plugin = "vador.publishing-conventions")
-  tasks.withType<Detekt>().configureEach { reports { xml.required = true } }
-  plugins.withType<DetektPlugin> {
-    tasks.withType<Detekt> detekt@{
+  tasks {
+    withType<Detekt>().configureEach {
       finalizedBy(detektReportMerge)
-      detektReportMerge.configure { input.from(this@detekt.xmlReportFile) }
+      reports { sarif.required = true }
     }
   }
+  detektReportMerge { input.from(tasks.withType<Detekt>().map { it.sarifReportFile }) }
   val lombokForSonarQube: Configuration by configurations.creating
   dependencies { lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION") }
   sonarqube {
