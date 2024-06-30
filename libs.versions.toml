@@ -9,7 +9,7 @@ hamcrest-date = "2.0.8"
 typeTools = "0.6.3"
 spotbugs = "6.0.1"
 assertj-vavr = "0.4.3"
-reflection-util = "2.14.0"
+reflection-util = "2.15.0" # 2.15.0 is Compatable with Java 11
 nexus-publish = "2.0.0-rc-1"
 apache-common-text-version = "1.11.0"
 

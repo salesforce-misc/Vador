@@ -16,6 +16,12 @@
       ],
       "groupName" : "all dependencies",
       "groupSlug" : "all"
+    },
+    {
+      "matchPackageNames": [
+        "de.cronn:reflection-util"
+      ],
+      "enabled": false
     }
   ]
 }
