@@ -1,28 +1,28 @@
 [versions]
 jdk = "11"
-kotlin = "2.0.0"
-java-vavr = "0.10.4"
+kotlin = "2.1.10"
+java-vavr = "0.10.6"
 kotlin-vavr = "0.10.2"
-lombok-gradle = "8.4"
+lombok-gradle = "8.12.1"
 hamcrest-core = "3.0"
 hamcrest-date = "2.0.8"
 typeTools = "0.6.3"
-spotbugs = "6.0.1"
+spotbugs = "6.1.3"
 assertj-vavr = "0.4.3"
 reflection-util = "2.15.0" # 2.15.0 is Compatable with Java 11
-nexus-publish = "2.0.0-rc-1"
-apache-common-text-version = "1.11.0"
+nexus-publish = "2.0.0"
+apache-common-text-version = "1.13.0"
 
 # Common dependencies
-junit = "5.10.2"
-kover = "0.8.1"
-kotest = "5.8.0"
-assertj-core = "3.24.2"
-detekt = "1.23.4"
-spotless = "6.23.2"
-apache-log4j = "2.22.0"
+junit = "5.11.4"
+kover = "0.9.1"
+kotest = "5.9.1"
+assertj-core = "3.27.3"
+detekt = "1.23.7"
+spotless = "6.25.0"
+apache-log4j = "2.24.3"
 testLogger = "4.0.0"
-jetbrains-annotations = "26.0.0"
+jetbrains-annotations = "26.0.2"
 
 [libraries]
 hamcrest-core = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest-core" }
