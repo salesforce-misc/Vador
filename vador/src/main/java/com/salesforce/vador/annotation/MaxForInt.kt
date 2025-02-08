@@ -13,7 +13,7 @@ class MaxForIntValidator<FailureT> : ValidatorAnnotation2<Int, FailureT> {
     value1: Int,
     value2: Int,
     failure: FailureT,
-    none: FailureT
+    none: FailureT,
   ): FailureT {
     if (value1 > value2) {
       return failure

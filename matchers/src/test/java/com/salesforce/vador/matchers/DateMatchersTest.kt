@@ -21,7 +21,7 @@ class DateMatchersTest :
         row(1, GregorianCalendar(2021, Calendar.FEBRUARY, 1).time, true),
         row(2, GregorianCalendar(2021, Calendar.FEBRUARY, 1).time, false),
         row(null, GregorianCalendar(2021, Calendar.FEBRUARY, 1).time, false),
-        row(null, null, false)
+        row(null, null, false),
       ) { day, date, result ->
         isEqualToDayOfDate.apply(day, date) shouldBe result
       }
@@ -41,18 +41,18 @@ class DateMatchersTest :
         row(
           GregorianCalendar(2021, Calendar.FEBRUARY, 2).time,
           GregorianCalendar(2021, Calendar.FEBRUARY, 1).time,
-          false
+          false,
         ),
         row(
           GregorianCalendar(2021, Calendar.FEBRUARY, 1).time,
           GregorianCalendar(2021, Calendar.FEBRUARY, 1).time,
-          true
+          true,
         ),
         row(
           GregorianCalendar(2021, Calendar.JANUARY, 31).time,
           GregorianCalendar(2021, Calendar.FEBRUARY, 1).time,
-          true
-        )
+          true,
+        ),
       ) { date1, date2, result ->
         isOnOrBeforeIfBothArePresent.apply(date1, date2) shouldBe result
       }

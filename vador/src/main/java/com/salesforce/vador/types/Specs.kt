@@ -12,11 +12,12 @@ import com.salesforce.vador.specs.specs.base.BaseSpec
 
 fun interface Spec<ValidatableT, FailureT> :
   Function1<
-    SpecFactory<ValidatableT, FailureT>, BaseSpec.BaseSpecBuilder<ValidatableT, FailureT, *, *>
+    SpecFactory<ValidatableT, FailureT>,
+    BaseSpec.BaseSpecBuilder<ValidatableT, FailureT, *, *>,
   >
 
 fun interface Specs<ValidatableT, FailureT> :
   Function1<
     SpecFactory<ValidatableT, FailureT>,
-    Collection<BaseSpec.BaseSpecBuilder<ValidatableT, FailureT, *, *>>
+    Collection<BaseSpec.BaseSpecBuilder<ValidatableT, FailureT, *, *>>,
   >

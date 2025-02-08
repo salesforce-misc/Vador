@@ -25,7 +25,7 @@ import com.salesforce.vador.types.ValidatorEtr
  */
 fun <ContainerT, MemberT, FailureT> liftToContainerValidatorType(
   memberValidator: ValidatorEtr<MemberT?, FailureT?>,
-  toMemberMapper: (ContainerT?) -> MemberT?
+  toMemberMapper: (ContainerT?) -> MemberT?,
 ): ValidatorEtr<ContainerT?, FailureT?> = ValidatorEtr { container ->
   val member = container?.map(toMemberMapper)
   memberValidator.unchecked().apply(member)
@@ -45,6 +45,6 @@ fun <ContainerT, MemberT, FailureT> liftToContainerValidatorType(
  */
 fun <ContainerT, MemberT, FailureT> liftAllToContainerValidatorType(
   memberValidatorEtrs: Collection<ValidatorEtr<MemberT?, FailureT?>>,
-  toMemberMapper: (ContainerT?) -> MemberT?
+  toMemberMapper: (ContainerT?) -> MemberT?,
 ): List<ValidatorEtr<ContainerT?, FailureT?>> =
   memberValidatorEtrs.map { liftToContainerValidatorType(it, toMemberMapper) }

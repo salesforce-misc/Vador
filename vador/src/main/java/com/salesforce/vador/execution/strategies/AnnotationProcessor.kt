@@ -31,7 +31,7 @@ object AnnotationProcessor {
   )
   fun <ValidatableT, FailureT> deriveValidators(
     bean: ValidatableT,
-    mapOfAnnotation: Tuple2<MutableMap<String, FailureT>, FailureT>?
+    mapOfAnnotation: Tuple2<MutableMap<String, FailureT>, FailureT>?,
   ): List<ValidatorEtr<ValidatableT?, FailureT?>> {
     val fields = bean!!::class.java.declaredFields
     val map = mapOfAnnotation?._1()

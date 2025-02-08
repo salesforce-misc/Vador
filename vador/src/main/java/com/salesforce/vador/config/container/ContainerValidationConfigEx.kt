@@ -16,7 +16,8 @@ import com.salesforce.vador.types.ValidatorEtr
 import de.cronn.reflection.util.PropertyUtils
 
 internal fun <ContainerValidatableT, FailureT> BaseContainerValidationConfig<
-  ContainerValidatableT?, FailureT?
+  ContainerValidatableT?,
+  FailureT?,
 >
   .getContainerValidatorsEx(): List<ValidatorEtr<ContainerValidatableT?, FailureT?>> =
   fromValidators1(withContainerValidators) +
@@ -24,19 +25,24 @@ internal fun <ContainerValidatableT, FailureT> BaseContainerValidationConfig<
     withContainerValidatorEtrs
 
 internal fun <ContainerValidatableT, FailureT> ContainerValidationConfig<
-  ContainerValidatableT?, FailureT?
+  ContainerValidatableT?,
+  FailureT?,
 >
   .getFieldNamesForBatchEx(validatableClazz: Class<ContainerValidatableT>): Set<String> =
   withBatchMembers.map { PropertyUtils.getPropertyName(validatableClazz, it) }.toSet()
 
 internal fun <ContainerValidatableT, FailureT> ContainerValidationConfigWith2Levels<
-  ContainerValidatableT?, *, FailureT?
+  ContainerValidatableT?,
+  *,
+  FailureT?,
 >
   .getFieldNamesForBatchEx(validatableClazz: Class<ContainerValidatableT>): Set<String> =
   withBatchMembers.map { PropertyUtils.getPropertyName(validatableClazz, it) }.toSet()
 
 internal fun <NestedContainerValidatableT, FailureT> ContainerValidationConfigWith2Levels<
-  *, NestedContainerValidatableT?, FailureT?
+  *,
+  NestedContainerValidatableT?,
+  FailureT?,
 >
   .getFieldNamesForBatchLevel1Ex(
   validatableClazz: Class<NestedContainerValidatableT>

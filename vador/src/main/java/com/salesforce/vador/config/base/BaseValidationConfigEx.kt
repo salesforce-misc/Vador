@@ -57,7 +57,7 @@ internal fun <ValidatableT> getValidatableType(
   }
   (config.shouldHaveFieldsOrFailWith.keys.firstOrNull()
       ?: config.shouldHaveFieldsOrFailWithFn?._1?.firstOrNull()
-        ?: config.shouldHaveFieldOrFailWithFn.keys.firstOrNull())
+      ?: config.shouldHaveFieldOrFailWithFn.keys.firstOrNull())
     ?.let {
       return TypeResolver.resolveRawArguments(TypedPropertyGetter::class.java, it.javaClass)[0]
     }

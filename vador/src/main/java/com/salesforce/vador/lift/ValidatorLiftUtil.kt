@@ -24,7 +24,7 @@ import io.vavr.kotlin.left
  */
 fun <FailureT, ValidatableT> liftToEtr(
   toBeLifted: Validator<in ValidatableT?, FailureT?>,
-  none: FailureT?
+  none: FailureT?,
 ): ValidatorEtr<ValidatableT?, FailureT?> = ValidatorEtr {
   it.flatMap { validatable ->
     val result = toBeLifted.unchecked().apply(validatable)
@@ -43,5 +43,5 @@ fun <FailureT, ValidatableT> liftToEtr(
  */
 fun <FailureT, ValidatableT> liftAllToEtr(
   toBeLiftedFns: Collection<Validator<in ValidatableT?, FailureT?>>,
-  none: FailureT
+  none: FailureT,
 ): List<ValidatorEtr<ValidatableT?, FailureT?>> = toBeLiftedFns.map { liftToEtr(it, none) }

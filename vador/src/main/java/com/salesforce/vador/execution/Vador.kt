@@ -27,7 +27,7 @@ object Vador {
   fun <FailureT : Any, ContainerValidatableT> validateAndFailFastForContainer(
     container: ContainerValidatableT,
     containerValidationConfig: ContainerValidationConfig<ContainerValidatableT, FailureT?>,
-    throwableMapper: (Throwable) -> FailureT? = { throw it }
+    throwableMapper: (Throwable) -> FailureT? = { throw it },
   ): Optional<FailureT> =
     failFastForContainer(containerValidationConfig, throwableMapper)(container)
 
@@ -36,13 +36,16 @@ object Vador {
   fun <
     FailureT : Any,
     ContainerValidatableT,
-    NestedContainerValidatableT> validateAndFailFastForContainer(
+    NestedContainerValidatableT,
+  > validateAndFailFastForContainer(
     container: ContainerValidatableT,
     containerValidationConfigWith2Levels:
       ContainerValidationConfigWith2Levels<
-        ContainerValidatableT, NestedContainerValidatableT, FailureT?
+        ContainerValidatableT,
+        NestedContainerValidatableT,
+        FailureT?,
       >,
-    throwableMapper: (Throwable) -> FailureT? = { throw it }
+    throwableMapper: (Throwable) -> FailureT? = { throw it },
   ): Optional<FailureT> =
     failFastForContainer(containerValidationConfigWith2Levels, throwableMapper)(container)
 
@@ -52,7 +55,7 @@ object Vador {
   fun <FailureT : Any, ValidatableT> validateAndFailFast(
     validatable: ValidatableT,
     validationConfig: ValidationConfig<ValidatableT, FailureT?>,
-    throwableMapper: (Throwable) -> FailureT? = { throw it }
+    throwableMapper: (Throwable) -> FailureT? = { throw it },
   ): Optional<FailureT> = failFast(validationConfig, throwableMapper)(validatable)
 
   // --- ERROR ACCUMULATION ---
@@ -72,7 +75,7 @@ object Vador {
     validatable: ValidatableT,
     validators: Collection<Validator<ValidatableT?, FailureT?>>,
     none: FailureT,
-    throwableMapper: (Throwable) -> FailureT? = { throw it }
+    throwableMapper: (Throwable) -> FailureT? = { throw it },
   ): List<FailureT?> =
     validateAndAccumulateErrors(validatable, liftAllToEtr(validators, none), none, throwableMapper)
 
@@ -94,7 +97,7 @@ object Vador {
     validatable: ValidatableT,
     validators: List<ValidatorEtr<ValidatableT?, FailureT?>>,
     none: FailureT,
-    throwableMapper: (Throwable) -> FailureT? = { throw it }
+    throwableMapper: (Throwable) -> FailureT? = { throw it },
   ): List<FailureT?> {
     val results =
       accumulationStrategy(validators, throwableMapper)(validatable).map { result ->

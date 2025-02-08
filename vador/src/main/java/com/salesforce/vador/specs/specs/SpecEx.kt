@@ -59,7 +59,11 @@ internal fun <ValidatableT, FailureT, WhenT, ThenT> Spec2<ValidatableT, FailureT
 }
 
 internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> Spec3<
-  ValidatableT, FailureT, WhenT, Then1T, Then2T
+  ValidatableT,
+  FailureT,
+  WhenT,
+  Then1T,
+  Then2T,
 >
   .toPredicateEx(): Predicate<ValidatableT?> = Predicate { validatable ->
   val whenValue = `when`.apply(validatable)
@@ -82,7 +86,11 @@ internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> Spec3<
 }
 
 internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> Spec3<
-  ValidatableT, FailureT, WhenT, Then1T, Then2T
+  ValidatableT,
+  FailureT,
+  WhenT,
+  Then1T,
+  Then2T,
 >
   .getFailureEx(validatable: ValidatableT?): FailureT? {
   require((orFailWith == null) != (orFailWithFn == null)) {
@@ -94,7 +102,7 @@ internal fun <ValidatableT, FailureT, WhenT, Then1T, Then2T> Spec3<
     orFailWithFn?.apply(
       `when`.apply(validatable),
       thenField1.apply(validatable),
-      thenField2.apply(validatable)
+      thenField2.apply(validatable),
     )
   }
 }
@@ -122,15 +130,13 @@ internal fun <ValidatableT, FailureT> Spec5<ValidatableT, FailureT>.toPredicateE
     val doesAllFieldsMatch =
       whenFieldMappers?.all { whenMapper ->
         whenMatcher?.matches(whenMapper?.apply(validatable)) ?: true
-      }
-        ?: false
+      } ?: false
     if (!doesAllFieldsMatch) {
       return@Predicate true
     }
     val (thenFieldMappers, thenMatcher) = thenAllThoseFieldsShouldMatch
     thenFieldMappers?.all { thenMapper ->
       thenMatcher?.matches(thenMapper?.apply(validatable)) ?: true
-    }
-      ?: false
+    } ?: false
   }
 }

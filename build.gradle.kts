@@ -58,15 +58,15 @@ sonarqube {
     property("sonar.modules", subprojects.joinToString(",") { it.name })
     property(
       "sonar.coverage.jacoco.xmlReportPaths",
-      rootProject.layout.buildDirectory.file("/build/reports/kover/report.xml")
+      rootProject.layout.buildDirectory.file("/build/reports/kover/report.xml"),
     )
     property(
       "detekt.sonar.kotlin.config.path",
-      rootProject.layout.buildDirectory.file("/detekt/config.yml")
+      rootProject.layout.buildDirectory.file("/detekt/config.yml"),
     )
     property(
       "sonar.kotlin.detekt.reportPaths",
-      rootProject.layout.buildDirectory.file("/build/reports/detekt/merge.xml")
+      rootProject.layout.buildDirectory.file("/build/reports/detekt/merge.xml"),
     )
   }
 }

@@ -26,6 +26,6 @@ fun interface ValidatorAnnotation2<FieldT, FailureT> {
     value1: FieldT,
     value2: FieldT,
     failure: FailureT,
-    none: FailureT
+    none: FailureT,
   ): FailureT
 }

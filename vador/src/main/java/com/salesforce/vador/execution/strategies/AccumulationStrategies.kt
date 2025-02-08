@@ -24,7 +24,7 @@ import io.vavr.kotlin.right
 @JvmSynthetic
 internal fun <FailureT, ValidatableT> accumulationStrategy(
   validators: List<ValidatorEtr<ValidatableT?, FailureT?>>,
-  throwableMapper: (Throwable) -> FailureT?
+  throwableMapper: (Throwable) -> FailureT?,
 ): Accumulation<ValidatableT, FailureT> = {
   fireValidators(right(it), validators, throwableMapper).toList()
 }
