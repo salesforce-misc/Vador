@@ -5,7 +5,7 @@
  * https://opensource.org/licenses/BSD-3-Clause
  * ****************************************************************************
  */
-plugins { id("com.gradle.develocity") version "3.19.1" }
+plugins { id("com.gradle.develocity") version "3.19.2" }
 
 dependencyResolutionManagement {
   versionCatalogs { create("libs") { from(files("libs.versions.toml")) } }
