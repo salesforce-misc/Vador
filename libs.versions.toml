@@ -14,11 +14,11 @@ nexus-publish = "2.0.0"
 apache-common-text-version = "1.13.0"
 
 # Common dependencies
-junit = "5.11.4"
+junit = "5.12.0"
 kover = "0.9.1"
 kotest = "5.9.1"
 assertj-core = "3.27.3"
-detekt = "1.23.7"
+detekt = "1.23.8"
 spotless = "7.0.2"
 apache-log4j = "2.24.3"
 testLogger = "4.0.0"
