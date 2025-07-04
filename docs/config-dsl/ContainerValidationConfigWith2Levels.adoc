@@ -52,6 +52,7 @@ endif::[]
 ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
+.link:{testdir}/com/salesforce/vador/execution/config/nested/ContainerValidationConfigWith2LevelsTest.java[ContainerValidationConfigWith2LevelsTest.java, tag=container-config-level-2]
 ----
 include::{testdir}/com/salesforce/vador/execution/config/nested/ContainerValidationConfigWith2LevelsTest.java[tag=container-config-level-2]
 ----
@@ -67,6 +68,7 @@ endif::[]
 ifdef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
+.link:{testdir}/com/salesforce/vador/execution/config/nested/ContainerValidationConfigWith2LevelsTest.java[ContainerValidationConfigWith2LevelsTest.java, tag=container-config-level-2]
 ----
 @DisplayName(
     "Container with 2 levels: (ContainerRoot -> ContainerLevel1 -> ContainerLevel2) + Container with next 1 level: (ContainerLevel1 -> ContainerLevel2)")

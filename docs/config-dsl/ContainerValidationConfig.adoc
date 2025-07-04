@@ -85,6 +85,7 @@ endif::[]
 ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
+.link:{testdir}/com/salesforce/vador/execution/config/ContainerValidationConfigTest.java[ContainerValidationConfigTest.java, tag=container-config-level-1-container-with-multi-batch-demo]
 ----
 include::{testdir}/com/salesforce/vador/execution/config/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-multi-batch-demo]
 ----
