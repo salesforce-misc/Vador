@@ -20,10 +20,10 @@ import sample.consumer.failure.ValidationFailure;
 /** gakshintala created on 4/13/20. */
 public abstract class BaseService<InputRepresentationT> {
 
-  List<ValidatorEtr<InputRepresentationT, ValidationFailure>> requestValidators;
+	List<ValidatorEtr<InputRepresentationT, ValidationFailure>> requestValidators;
 
-  public void setRequestValidators(
-      List<ValidatorEtr<InputRepresentationT, ValidationFailure>> requestValidators) {
-    this.requestValidators = requestValidators;
-  }
+	public void setRequestValidators(
+			List<ValidatorEtr<InputRepresentationT, ValidationFailure>> requestValidators) {
+		this.requestValidators = requestValidators;
+	}
 }

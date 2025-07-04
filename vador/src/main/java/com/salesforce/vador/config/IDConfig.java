@@ -34,93 +34,93 @@ import org.jetbrains.annotations.Nullable;
 @FieldDefaults(level = AccessLevel.PACKAGE)
 @Builder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 public class IDConfig<IDT, ValidatableT, FailureT, EntityIdInfoT> {
-  @Nullable Function2<IDT, EntityIdInfoT, @NonNull Boolean> withIdValidator;
+	@Nullable Function2<IDT, EntityIdInfoT, @NonNull Boolean> withIdValidator;
 
-  @Singular("shouldHaveValidSFIdFormatOrFailWith")
-  Map<
-          Tuple2<
-              @NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>, ? extends EntityIdInfoT>,
-          @Nullable FailureT>
-      shouldHaveValidSFIdFormatForAllOrFailWith;
+	@Singular("shouldHaveValidSFIdFormatOrFailWith")
+	Map<
+					Tuple2<
+							@NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>, ? extends EntityIdInfoT>,
+					@Nullable FailureT>
+			shouldHaveValidSFIdFormatForAllOrFailWith;
 
-  @Singular("shouldHaveValidSFPolymorphicIdFormatOrFailWith")
-  Map<
-          Tuple2<
-              @NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>,
-              ? extends Collection<? extends EntityIdInfoT>>,
-          @Nullable FailureT>
-      shouldHaveValidSFPolymorphicIdFormatForAllOrFailWith;
+	@Singular("shouldHaveValidSFPolymorphicIdFormatOrFailWith")
+	Map<
+					Tuple2<
+							@NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>,
+							? extends Collection<? extends EntityIdInfoT>>,
+					@Nullable FailureT>
+			shouldHaveValidSFPolymorphicIdFormatForAllOrFailWith;
 
-  @Nullable
-  Tuple2<
-          @NonNull Map<TypedPropertyGetter<ValidatableT, @Nullable IDT>, ? extends EntityIdInfoT>,
-          @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
-      shouldHaveValidSFIdFormatForAllOrFailWithFn;
+	@Nullable
+	Tuple2<
+					@NonNull Map<TypedPropertyGetter<ValidatableT, @Nullable IDT>, ? extends EntityIdInfoT>,
+					@NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
+			shouldHaveValidSFIdFormatForAllOrFailWithFn;
 
-  @Nullable
-  Tuple2<
-          @NonNull Map<
-              TypedPropertyGetter<ValidatableT, @Nullable IDT>,
-              ? extends Collection<? extends EntityIdInfoT>>,
-          @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
-      shouldHaveValidSFPolymorphicIdFormatForAllOrFailWithFn;
+	@Nullable
+	Tuple2<
+					@NonNull Map<
+							TypedPropertyGetter<ValidatableT, @Nullable IDT>,
+							? extends Collection<? extends EntityIdInfoT>>,
+					@NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
+			shouldHaveValidSFPolymorphicIdFormatForAllOrFailWithFn;
 
-  @Singular("shouldHaveValidSFIdFormatOrFailWithFn")
-  Map<
-          Tuple2<
-              @NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>, ? extends EntityIdInfoT>,
-          @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
-      shouldHaveValidSFIdFormatOrFailWithFn;
+	@Singular("shouldHaveValidSFIdFormatOrFailWithFn")
+	Map<
+					Tuple2<
+							@NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>, ? extends EntityIdInfoT>,
+					@NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
+			shouldHaveValidSFIdFormatOrFailWithFn;
 
-  @Singular("shouldHaveValidSFPolymorphicIdFormatOrFailWithFn")
-  Map<
-          Tuple2<
-              @NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>,
-              ? extends Collection<? extends EntityIdInfoT>>,
-          @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
-      shouldHaveValidSFPolymorphicIdFormatOrFailWithFn;
+	@Singular("shouldHaveValidSFPolymorphicIdFormatOrFailWithFn")
+	Map<
+					Tuple2<
+							@NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>,
+							? extends Collection<? extends EntityIdInfoT>>,
+					@NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
+			shouldHaveValidSFPolymorphicIdFormatOrFailWithFn;
 
-  @Singular("absentOrHaveValidSFIdFormatOrFailWith")
-  Map<
-          Tuple2<
-              @NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>, ? extends EntityIdInfoT>,
-          @Nullable FailureT>
-      absentOrHaveValidSFIdFormatForAllOrFailWith;
+	@Singular("absentOrHaveValidSFIdFormatOrFailWith")
+	Map<
+					Tuple2<
+							@NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>, ? extends EntityIdInfoT>,
+					@Nullable FailureT>
+			absentOrHaveValidSFIdFormatForAllOrFailWith;
 
-  @Singular("absentOrHaveValidSFPolymorphicIdFormatOrFailWith")
-  Map<
-          Tuple2<
-              @NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>,
-              ? extends Collection<? extends EntityIdInfoT>>,
-          @Nullable FailureT>
-      absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWith;
+	@Singular("absentOrHaveValidSFPolymorphicIdFormatOrFailWith")
+	Map<
+					Tuple2<
+							@NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>,
+							? extends Collection<? extends EntityIdInfoT>>,
+					@Nullable FailureT>
+			absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWith;
 
-  @Nullable
-  Tuple2<
-          @NonNull Map<TypedPropertyGetter<ValidatableT, IDT>, ? extends EntityIdInfoT>,
-          @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
-      absentOrHaveValidSFIdFormatForAllOrFailWithFn;
+	@Nullable
+	Tuple2<
+					@NonNull Map<TypedPropertyGetter<ValidatableT, IDT>, ? extends EntityIdInfoT>,
+					@NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
+			absentOrHaveValidSFIdFormatForAllOrFailWithFn;
 
-  @Nullable
-  Tuple2<
-          @NonNull Map<
-              TypedPropertyGetter<ValidatableT, @Nullable IDT>,
-              ? extends Collection<? extends EntityIdInfoT>>,
-          @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
-      absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWithFn;
+	@Nullable
+	Tuple2<
+					@NonNull Map<
+							TypedPropertyGetter<ValidatableT, @Nullable IDT>,
+							? extends Collection<? extends EntityIdInfoT>>,
+					@NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
+			absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWithFn;
 
-  @Singular("absentOrHaveValidSFIdFormatOrFailWithFn")
-  Map<
-          Tuple2<
-              @NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>, ? extends EntityIdInfoT>,
-          @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
-      absentOrHaveValidSFIdFormatOrFailWithFn;
+	@Singular("absentOrHaveValidSFIdFormatOrFailWithFn")
+	Map<
+					Tuple2<
+							@NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>, ? extends EntityIdInfoT>,
+					@NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
+			absentOrHaveValidSFIdFormatOrFailWithFn;
 
-  @Singular("absentOrHaveValidSFPolymorphicIdFormatOrFailWithFn")
-  Map<
-          Tuple2<
-              @NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>,
-              ? extends Collection<? extends EntityIdInfoT>>,
-          @NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
-      absentOrHaveValidSFPolymorphicIdFormatOrFailWithFn;
+	@Singular("absentOrHaveValidSFPolymorphicIdFormatOrFailWithFn")
+	Map<
+					Tuple2<
+							@NonNull TypedPropertyGetter<ValidatableT, @Nullable IDT>,
+							? extends Collection<? extends EntityIdInfoT>>,
+					@NonNull Function2<String, @Nullable IDT, @Nullable FailureT>>
+			absentOrHaveValidSFPolymorphicIdFormatOrFailWithFn;
 }

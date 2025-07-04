@@ -21,15 +21,15 @@ import sample.consumer.failure.ValidationFailureMessage;
 
 public class MemberValidatorEtr {
 
-  public static final ValidatorEtr<Member, ValidationFailure> validatorEtr1 =
-      member ->
-          member.filterOrElse(
-              Objects::nonNull,
-              ignore -> new ValidationFailure(ValidationFailureMessage.FIELD_NULL_OR_EMPTY));
+	public static final ValidatorEtr<Member, ValidationFailure> validatorEtr1 =
+			member ->
+					member.filterOrElse(
+							Objects::nonNull,
+							ignore -> new ValidationFailure(ValidationFailureMessage.FIELD_NULL_OR_EMPTY));
 
-  public static final ValidatorEtr<Member, ValidationFailure> validatorEtr2 =
-      member ->
-          member.filterOrElse(
-              Objects::nonNull,
-              ignore -> new ValidationFailure(ValidationFailureMessage.FIELD_NULL_OR_EMPTY));
+	public static final ValidatorEtr<Member, ValidationFailure> validatorEtr2 =
+			member ->
+					member.filterOrElse(
+							Objects::nonNull,
+							ignore -> new ValidationFailure(ValidationFailureMessage.FIELD_NULL_OR_EMPTY));
 }

@@ -23,4 +23,4 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 public class BatchValidationConfig<ValidatableT, FailureT>
-    extends BaseBatchValidationConfig<ValidatableT, FailureT> {}
+		extends BaseBatchValidationConfig<ValidatableT, FailureT> {}

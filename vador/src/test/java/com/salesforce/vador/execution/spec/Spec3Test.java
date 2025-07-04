@@ -23,131 +23,131 @@ import sample.consumer.failure.ValidationFailure;
 
 class Spec3Test {
 
-  @Test
-  void testDates() {
-    final var specName = "CompareDates";
-    final var validationConfig =
-        ValidationConfig.<DatesBean, ValidationFailure>toValidate()
-            .withSpec(
-                spec ->
-                    spec._3()
-                        .nameForTest(specName)
-                        .when(DatesBean::isCompareDates)
-                        .matches(is(true))
-                        .thenField1(DatesBean::getDate1)
-                        .thenField2(DatesBean::getDate2)
-                        .shouldRelateWithFn(DateMatchers.isBeforeIfBothArePresent()))
-            .prepare();
+	@Test
+	void testDates() {
+		final var specName = "CompareDates";
+		final var validationConfig =
+				ValidationConfig.<DatesBean, ValidationFailure>toValidate()
+						.withSpec(
+								spec ->
+										spec._3()
+												.nameForTest(specName)
+												.when(DatesBean::isCompareDates)
+												.matches(is(true))
+												.thenField1(DatesBean::getDate1)
+												.thenField2(DatesBean::getDate2)
+												.shouldRelateWithFn(DateMatchers.isBeforeIfBothArePresent()))
+						.prepare();
 
-    final var validBean =
-        new DatesBean(
-            true,
-            new GregorianCalendar(2021, Calendar.APRIL, 27).getTime(),
-            new GregorianCalendar(2021, Calendar.APRIL, 28).getTime());
-    assertTrue(
-        validationConfig
-            .getPredicateOfSpecForTest(specName)
-            .map(spec -> spec.test(validBean))
-            .orElse(false));
+		final var validBean =
+				new DatesBean(
+						true,
+						new GregorianCalendar(2021, Calendar.APRIL, 27).getTime(),
+						new GregorianCalendar(2021, Calendar.APRIL, 28).getTime());
+		assertTrue(
+				validationConfig
+						.getPredicateOfSpecForTest(specName)
+						.map(spec -> spec.test(validBean))
+						.orElse(false));
 
-    final var invalidBean =
-        new DatesBean(
-            true,
-            new GregorianCalendar(2021, Calendar.APRIL, 29).getTime(),
-            new GregorianCalendar(2021, Calendar.APRIL, 28).getTime());
-    assertFalse(
-        validationConfig
-            .getPredicateOfSpecForTest(specName)
-            .map(spec -> spec.test(invalidBean))
-            .orElse(true));
-  }
+		final var invalidBean =
+				new DatesBean(
+						true,
+						new GregorianCalendar(2021, Calendar.APRIL, 29).getTime(),
+						new GregorianCalendar(2021, Calendar.APRIL, 28).getTime());
+		assertFalse(
+				validationConfig
+						.getPredicateOfSpecForTest(specName)
+						.map(spec -> spec.test(invalidBean))
+						.orElse(true));
+	}
 
-  @Test
-  void testDatesWithNulls() {
-    final var specName = "CompareDates";
-    final var validationConfig =
-        ValidationConfig.<DatesBean, ValidationFailure>toValidate()
-            .withSpec(
-                spec ->
-                    spec._3()
-                        .nameForTest(specName)
-                        .when(DatesBean::isCompareDates)
-                        .matches(is(true))
-                        .thenField1(DatesBean::getDate1)
-                        .thenField2(DatesBean::getDate2)
-                        .shouldRelateWithFn(DateMatchers.isBeforeIfBothArePresent()))
-            .prepare();
-    final var invalidBean1 =
-        new DatesBean(true, null, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime());
-    assertFalse(
-        validationConfig
-            .getPredicateOfSpecForTest(specName)
-            .map(spec -> spec.test(invalidBean1))
-            .orElse(true));
+	@Test
+	void testDatesWithNulls() {
+		final var specName = "CompareDates";
+		final var validationConfig =
+				ValidationConfig.<DatesBean, ValidationFailure>toValidate()
+						.withSpec(
+								spec ->
+										spec._3()
+												.nameForTest(specName)
+												.when(DatesBean::isCompareDates)
+												.matches(is(true))
+												.thenField1(DatesBean::getDate1)
+												.thenField2(DatesBean::getDate2)
+												.shouldRelateWithFn(DateMatchers.isBeforeIfBothArePresent()))
+						.prepare();
+		final var invalidBean1 =
+				new DatesBean(true, null, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime());
+		assertFalse(
+				validationConfig
+						.getPredicateOfSpecForTest(specName)
+						.map(spec -> spec.test(invalidBean1))
+						.orElse(true));
 
-    final var invalidBean2 =
-        new DatesBean(true, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime(), null);
-    assertFalse(
-        validationConfig
-            .getPredicateOfSpecForTest(specName)
-            .map(spec -> spec.test(invalidBean2))
-            .orElse(true));
-  }
+		final var invalidBean2 =
+				new DatesBean(true, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime(), null);
+		assertFalse(
+				validationConfig
+						.getPredicateOfSpecForTest(specName)
+						.map(spec -> spec.test(invalidBean2))
+						.orElse(true));
+	}
 
-  @Test
-  void spec3WithFieldComparison() {
-    final var specName = "CompareFields";
-    final var validationConfig =
-        ValidationConfig.<Bean, ValidationFailure>toValidate()
-            .withSpec(
-                spec ->
-                    spec._3()
-                        .nameForTest(specName)
-                        .when(Bean::isCompareFields)
-                        .matches(is(true))
-                        .thenField1(Bean::getBdom)
-                        .thenField2(Bean::getStartDate)
-                        .shouldRelateWithFn(DateMatchers.isEqualToDayOfDate())
-                        .orField1ShouldMatch(nullValue()))
-            .prepare();
-    final var invalidBean =
-        new Bean(true, 2, new GregorianCalendar(2021, Calendar.APRIL, 1).getTime());
-    assertFalse(
-        validationConfig
-            .getPredicateOfSpecForTest(specName)
-            .map(spec -> spec.test(invalidBean))
-            .orElse(true));
+	@Test
+	void spec3WithFieldComparison() {
+		final var specName = "CompareFields";
+		final var validationConfig =
+				ValidationConfig.<Bean, ValidationFailure>toValidate()
+						.withSpec(
+								spec ->
+										spec._3()
+												.nameForTest(specName)
+												.when(Bean::isCompareFields)
+												.matches(is(true))
+												.thenField1(Bean::getBdom)
+												.thenField2(Bean::getStartDate)
+												.shouldRelateWithFn(DateMatchers.isEqualToDayOfDate())
+												.orField1ShouldMatch(nullValue()))
+						.prepare();
+		final var invalidBean =
+				new Bean(true, 2, new GregorianCalendar(2021, Calendar.APRIL, 1).getTime());
+		assertFalse(
+				validationConfig
+						.getPredicateOfSpecForTest(specName)
+						.map(spec -> spec.test(invalidBean))
+						.orElse(true));
 
-    final var validBean1 =
-        new Bean(true, null, new GregorianCalendar(2021, Calendar.APRIL, 1).getTime());
-    assertTrue(
-        validationConfig
-            .getPredicateOfSpecForTest(specName)
-            .map(spec -> spec.test(validBean1))
-            .orElse(false));
+		final var validBean1 =
+				new Bean(true, null, new GregorianCalendar(2021, Calendar.APRIL, 1).getTime());
+		assertTrue(
+				validationConfig
+						.getPredicateOfSpecForTest(specName)
+						.map(spec -> spec.test(validBean1))
+						.orElse(false));
 
-    final var validBean2 =
-        new Bean(true, 1, new GregorianCalendar(2021, Calendar.APRIL, 1).getTime());
-    assertTrue(
-        validationConfig
-            .getPredicateOfSpecForTest(specName)
-            .map(spec -> spec.test(validBean2))
-            .orElse(false));
-  }
+		final var validBean2 =
+				new Bean(true, 1, new GregorianCalendar(2021, Calendar.APRIL, 1).getTime());
+		assertTrue(
+				validationConfig
+						.getPredicateOfSpecForTest(specName)
+						.map(spec -> spec.test(validBean2))
+						.orElse(false));
+	}
 
-  @Value
-  private static class DatesBean {
+	@Value
+	private static class DatesBean {
 
-    boolean compareDates;
-    Date date1;
-    Date date2;
-  }
+		boolean compareDates;
+		Date date1;
+		Date date2;
+	}
 
-  @Value
-  private static class Bean {
+	@Value
+	private static class Bean {
 
-    boolean compareFields;
-    Integer bdom;
-    Date startDate;
-  }
+		boolean compareFields;
+		Integer bdom;
+		Date startDate;
+	}
 }

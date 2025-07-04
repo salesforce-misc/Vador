@@ -27,18 +27,18 @@ import org.jetbrains.annotations.Nullable;
 @FieldDefaults(level = AccessLevel.PACKAGE)
 @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
 public class Spec5<ValidatableT, FailureT> extends BaseSpec<ValidatableT, FailureT> {
-  @NonNull
-  Tuple2<@Nullable Collection<Function1<ValidatableT, ?>>, @Nullable Matcher<?>>
-      whenAllTheseFieldsMatch;
+	@NonNull
+	Tuple2<@Nullable Collection<Function1<ValidatableT, ?>>, @Nullable Matcher<?>>
+			whenAllTheseFieldsMatch;
 
-  @NonNull
-  Tuple2<@Nullable Collection<Function1<ValidatableT, ?>>, @Nullable Matcher<?>>
-      thenAllThoseFieldsShouldMatch;
+	@NonNull
+	Tuple2<@Nullable Collection<Function1<ValidatableT, ?>>, @Nullable Matcher<?>>
+			thenAllThoseFieldsShouldMatch;
 
-  @Nullable Function2<Collection<?>, Collection<?>, ? extends FailureT> orFailWithFn;
+	@Nullable Function2<Collection<?>, Collection<?>, ? extends FailureT> orFailWithFn;
 
-  @Override
-  public Predicate<@Nullable ValidatableT> toPredicate() {
-    return SpecEx.toPredicateEx(this);
-  }
+	@Override
+	public Predicate<@Nullable ValidatableT> toPredicate() {
+		return SpecEx.toPredicateEx(this);
+	}
 }

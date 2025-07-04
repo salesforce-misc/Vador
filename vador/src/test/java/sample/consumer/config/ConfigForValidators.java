@@ -28,19 +28,19 @@ import sample.consumer.validators.simple.ContainerValidator;
 @UtilityClass
 public class ConfigForValidators {
 
-  public static List<ValidatorEtr<Parent, ValidationFailure>> getServiceValidations() {
-    return List.of(BaseParentValidatorEtr.validatorEtr1, BaseParentValidatorEtr.validatorEtr2);
-  }
+	public static List<ValidatorEtr<Parent, ValidationFailure>> getServiceValidations() {
+		return List.of(BaseParentValidatorEtr.validatorEtr1, BaseParentValidatorEtr.validatorEtr2);
+	}
 
-  public static List<ValidatorEtr<Container, ValidationFailure>> getParentValidations() {
-    return null;
-  }
+	public static List<ValidatorEtr<Container, ValidationFailure>> getParentValidations() {
+		return null;
+	}
 
-  public static List<Validator<Container, ValidationFailure>> getParentSimpleValidations() {
-    return List.of(ContainerValidator.validator1, ContainerValidator.validator2);
-  }
+	public static List<Validator<Container, ValidationFailure>> getParentSimpleValidations() {
+		return List.of(ContainerValidator.validator1, ContainerValidator.validator2);
+	}
 
-  public static List<Validator<? extends Parent, ValidationFailure>> getSimpleServiceValidations() {
-    return List.of(BaseParentValidator.validator1, ContainerValidator.validator1);
-  }
+	public static List<Validator<? extends Parent, ValidationFailure>> getSimpleServiceValidations() {
+		return List.of(BaseParentValidator.validator1, ContainerValidator.validator1);
+	}
 }

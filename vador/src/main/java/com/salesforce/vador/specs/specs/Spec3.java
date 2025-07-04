@@ -30,37 +30,37 @@ import org.jetbrains.annotations.Nullable;
 @FieldDefaults(level = AccessLevel.PACKAGE)
 @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
 public class Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T>
-    extends BaseSpec<ValidatableT, FailureT> {
+		extends BaseSpec<ValidatableT, FailureT> {
 
-  @NonNull Function1<ValidatableT, ? extends WhenT> when;
+	@NonNull Function1<ValidatableT, ? extends WhenT> when;
 
-  @Singular("matches")
-  Collection<? extends Matcher<? extends WhenT>> matchesAnyOf;
+	@Singular("matches")
+	Collection<? extends Matcher<? extends WhenT>> matchesAnyOf;
 
-  @NonNull Function1<ValidatableT, ? extends Then1T> thenField1;
+	@NonNull Function1<ValidatableT, ? extends Then1T> thenField1;
 
-  @NonNull Function1<ValidatableT, ? extends Then2T> thenField2;
+	@NonNull Function1<ValidatableT, ? extends Then2T> thenField2;
 
-  @Singular("shouldRelateWithEntry")
-  Map<? extends Then1T, ? extends Set<? extends Then2T>> shouldRelateWith;
+	@Singular("shouldRelateWithEntry")
+	Map<? extends Then1T, ? extends Set<? extends Then2T>> shouldRelateWith;
 
-  @Nullable Function2<Then1T, Then2T, Boolean> shouldRelateWithFn;
+	@Nullable Function2<Then1T, Then2T, Boolean> shouldRelateWithFn;
 
-  @Singular("orField1ShouldMatch")
-  Collection<? extends Matcher<? extends Then1T>> orField1ShouldMatchAnyOf;
+	@Singular("orField1ShouldMatch")
+	Collection<? extends Matcher<? extends Then1T>> orField1ShouldMatchAnyOf;
 
-  @Singular("orField2ShouldMatch")
-  Collection<? extends Matcher<? extends Then2T>> orField2ShouldMatchAnyOf;
+	@Singular("orField2ShouldMatch")
+	Collection<? extends Matcher<? extends Then2T>> orField2ShouldMatchAnyOf;
 
-  @Nullable Function3<WhenT, Then1T, Then2T, ? extends FailureT> orFailWithFn;
+	@Nullable Function3<WhenT, Then1T, Then2T, ? extends FailureT> orFailWithFn;
 
-  @Override
-  public Predicate<@Nullable ValidatableT> toPredicate() {
-    return SpecEx.toPredicateEx(this);
-  }
+	@Override
+	public Predicate<@Nullable ValidatableT> toPredicate() {
+		return SpecEx.toPredicateEx(this);
+	}
 
-  @Override
-  public FailureT getFailure(@Nullable ValidatableT validatable) {
-    return SpecEx.getFailureEx(this, validatable);
-  }
+	@Override
+	public FailureT getFailure(@Nullable ValidatableT validatable) {
+		return SpecEx.getFailureEx(this, validatable);
+	}
 }

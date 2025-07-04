@@ -31,12 +31,12 @@ import org.jetbrains.annotations.Nullable;
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 public class ContainerValidationConfig<ContainerValidatableT, FailureT>
-    extends BaseContainerValidationConfig<ContainerValidatableT, FailureT> {
+		extends BaseContainerValidationConfig<ContainerValidatableT, FailureT> {
 
-  @Singular
-  Collection<TypedPropertyGetter<ContainerValidatableT, @Nullable Collection<?>>> withBatchMembers;
+	@Singular
+	Collection<TypedPropertyGetter<ContainerValidatableT, @Nullable Collection<?>>> withBatchMembers;
 
-  public Set<String> getFieldNamesForBatch(Class<ContainerValidatableT> validatableClazz) {
-    return ContainerValidationConfigEx.getFieldNamesForBatchEx(this, validatableClazz);
-  }
+	public Set<String> getFieldNamesForBatch(Class<ContainerValidatableT> validatableClazz) {
+		return ContainerValidationConfigEx.getFieldNamesForBatchEx(this, validatableClazz);
+	}
 }

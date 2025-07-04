@@ -17,5 +17,5 @@ import lombok.Value;
 
 @Value
 public class Member {
-  int id;
+	int id;
 }

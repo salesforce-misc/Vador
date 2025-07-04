@@ -23,9 +23,9 @@ import lombok.Data;
  */
 @Data
 public class ValidationFailure {
-  public static final ValidationFailure NONE = new ValidationFailure(ValidationFailureMessage.NONE);
-  public static final ValidationFailure INVALID_VALUE =
-      new ValidationFailure(ValidationFailureMessage.INVALID_VALUE);
-  private final ValidationFailureMessage validationFailureMessage;
-  private String exceptionMsg;
+	public static final ValidationFailure NONE = new ValidationFailure(ValidationFailureMessage.NONE);
+	public static final ValidationFailure INVALID_VALUE =
+			new ValidationFailure(ValidationFailureMessage.INVALID_VALUE);
+	private final ValidationFailureMessage validationFailureMessage;
+	private String exceptionMsg;
 }

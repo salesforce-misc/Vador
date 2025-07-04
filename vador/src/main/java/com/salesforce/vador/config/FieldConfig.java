@@ -32,31 +32,31 @@ import org.jetbrains.annotations.Nullable;
 @FieldDefaults(level = AccessLevel.PACKAGE)
 @Builder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 public class FieldConfig<FieldT, ValidatableT, FailureT> {
-  @Nullable Predicate<FieldT> withFieldValidator;
+	@Nullable Predicate<FieldT> withFieldValidator;
 
-  @Singular("shouldHaveValidFormatOrFailWith")
-  Map<TypedPropertyGetter<ValidatableT, FieldT>, FailureT> shouldHaveValidFormatForAllOrFailWith;
+	@Singular("shouldHaveValidFormatOrFailWith")
+	Map<TypedPropertyGetter<ValidatableT, FieldT>, FailureT> shouldHaveValidFormatForAllOrFailWith;
 
-  @Nullable
-  Tuple2<
-          @NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>>,
-          @NonNull Function2<String, @Nullable FieldT, @Nullable FailureT>>
-      shouldHaveValidFormatForAllOrFailWithFn;
+	@Nullable
+	Tuple2<
+					@NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>>,
+					@NonNull Function2<String, @Nullable FieldT, @Nullable FailureT>>
+			shouldHaveValidFormatForAllOrFailWithFn;
 
-  @Singular("shouldHaveValidFormatOrFailWithFn")
-  Map<TypedPropertyGetter<ValidatableT, FieldT>, Function2<String, FieldT, FailureT>>
-      shouldHaveValidFormatOrFailWithFn;
+	@Singular("shouldHaveValidFormatOrFailWithFn")
+	Map<TypedPropertyGetter<ValidatableT, FieldT>, Function2<String, FieldT, FailureT>>
+			shouldHaveValidFormatOrFailWithFn;
 
-  @Singular("absentOrHaveValidFormatOrFailWith")
-  Map<TypedPropertyGetter<ValidatableT, FieldT>, FailureT> absentOrHaveValidFormatForAllOrFailWith;
+	@Singular("absentOrHaveValidFormatOrFailWith")
+	Map<TypedPropertyGetter<ValidatableT, FieldT>, FailureT> absentOrHaveValidFormatForAllOrFailWith;
 
-  @Nullable
-  Tuple2<
-          @NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>>,
-          @NonNull Function2<String, @Nullable FieldT, @Nullable FailureT>>
-      absentOrHaveValidFormatForAllOrFailWithFn;
+	@Nullable
+	Tuple2<
+					@NonNull Collection<@NonNull TypedPropertyGetter<ValidatableT, @Nullable FieldT>>,
+					@NonNull Function2<String, @Nullable FieldT, @Nullable FailureT>>
+			absentOrHaveValidFormatForAllOrFailWithFn;
 
-  @Singular("absentOrHaveValidFormatOrFailWithFn")
-  Map<TypedPropertyGetter<ValidatableT, FieldT>, Function2<String, FieldT, FailureT>>
-      absentOrHaveValidFormatOrFailWithFn;
+	@Singular("absentOrHaveValidFormatOrFailWithFn")
+	Map<TypedPropertyGetter<ValidatableT, FieldT>, Function2<String, FieldT, FailureT>>
+			absentOrHaveValidFormatOrFailWithFn;
 }

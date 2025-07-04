@@ -29,18 +29,18 @@ import org.jetbrains.annotations.Nullable;
 @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
 public class Spec4<ValidatableT, FailureT> extends BaseSpec<ValidatableT, FailureT> {
 
-  @Singular("whenFieldMatches")
-  @NonNull
-  Map<Function1<ValidatableT, ?>, Matcher<?>> whenTheseFieldsMatch;
+	@Singular("whenFieldMatches")
+	@NonNull
+	Map<Function1<ValidatableT, ?>, Matcher<?>> whenTheseFieldsMatch;
 
-  @Singular("thenFieldShouldMatch")
-  @NonNull
-  Map<Function1<ValidatableT, ?>, Matcher<?>> thenThoseFieldsShouldMatch;
+	@Singular("thenFieldShouldMatch")
+	@NonNull
+	Map<Function1<ValidatableT, ?>, Matcher<?>> thenThoseFieldsShouldMatch;
 
-  @Nullable Function2<Collection<?>, Collection<?>, ? extends FailureT> orFailWithFn;
+	@Nullable Function2<Collection<?>, Collection<?>, ? extends FailureT> orFailWithFn;
 
-  @Override
-  public Predicate<@Nullable ValidatableT> toPredicate() {
-    return SpecEx.toPredicateEx(this);
-  }
+	@Override
+	public Predicate<@Nullable ValidatableT> toPredicate() {
+		return SpecEx.toPredicateEx(this);
+	}
 }

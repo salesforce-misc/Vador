@@ -21,21 +21,21 @@ import sample.consumer.failure.ValidationFailure;
 
 public class MemberValidator {
 
-  public static final Validator<Member, ValidationFailure> validator1 =
-      member -> {
-        if (member == null) {
-          return new ValidationFailure(FIELD_NULL_OR_EMPTY);
-        } else {
-          return ValidationFailure.NONE;
-        }
-      };
+	public static final Validator<Member, ValidationFailure> validator1 =
+			member -> {
+				if (member == null) {
+					return new ValidationFailure(FIELD_NULL_OR_EMPTY);
+				} else {
+					return ValidationFailure.NONE;
+				}
+			};
 
-  static final Validator<Member, ValidationFailure> validator2 =
-      member -> {
-        if (member == null) {
-          return new ValidationFailure(FIELD_NULL_OR_EMPTY);
-        } else {
-          return ValidationFailure.NONE;
-        }
-      };
+	static final Validator<Member, ValidationFailure> validator2 =
+			member -> {
+				if (member == null) {
+					return new ValidationFailure(FIELD_NULL_OR_EMPTY);
+				} else {
+					return ValidationFailure.NONE;
+				}
+			};
 }

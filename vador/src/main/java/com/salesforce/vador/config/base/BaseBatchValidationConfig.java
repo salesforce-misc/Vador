@@ -26,9 +26,9 @@ import org.jetbrains.annotations.Nullable;
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 public abstract class BaseBatchValidationConfig<ValidatableT, FailureT>
-    extends BaseValidationConfig<ValidatableT, FailureT> {
+		extends BaseValidationConfig<ValidatableT, FailureT> {
 
-  @Singular
-  protected Collection<FilterDuplicatesConfigBuilder<ValidatableT, @Nullable FailureT>>
-      findAndFilterDuplicatesConfigs;
+	@Singular
+	protected Collection<FilterDuplicatesConfigBuilder<ValidatableT, @Nullable FailureT>>
+			findAndFilterDuplicatesConfigs;
 }

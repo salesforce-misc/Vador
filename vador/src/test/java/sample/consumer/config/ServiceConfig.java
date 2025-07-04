@@ -23,9 +23,9 @@ import sample.consumer.failure.ValidationFailure;
 /** gakshintala created on 4/13/20. */
 public class ServiceConfig {
 
-  BaseService<Parent> getService(List<ValidatorEtr<Parent, ValidationFailure>> requestValidators) {
-    final Service service = new Service();
-    service.setRequestValidators(requestValidators);
-    return service;
-  }
+	BaseService<Parent> getService(List<ValidatorEtr<Parent, ValidationFailure>> requestValidators) {
+		final Service service = new Service();
+		service.setRequestValidators(requestValidators);
+		return service;
+	}
 }

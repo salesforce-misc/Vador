@@ -42,9 +42,9 @@ import org.jetbrains.annotations.Nullable;
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 public class BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT>
-    extends BaseBatchValidationConfig<ContainerValidatableT, FailureT> {
-  Tuple2<
-          Function1<ContainerValidatableT, Collection<MemberValidatableT>>,
-          BatchValidationConfig<MemberValidatableT, @Nullable FailureT>>
-      withMemberBatchValidationConfig;
+		extends BaseBatchValidationConfig<ContainerValidatableT, FailureT> {
+	Tuple2<
+					Function1<ContainerValidatableT, Collection<MemberValidatableT>>,
+					BatchValidationConfig<MemberValidatableT, @Nullable FailureT>>
+			withMemberBatchValidationConfig;
 }

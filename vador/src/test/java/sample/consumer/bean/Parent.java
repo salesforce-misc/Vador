@@ -27,13 +27,13 @@ import lombok.ToString;
 @ToString
 @Getter
 public class Parent {
-  final int id;
-  final String sfId;
-  final Member member;
+	final int id;
+	final String sfId;
+	final Member member;
 
-  Integer requiredField1;
-  String requiredField2;
-  String requiredField3;
-  String sfId1;
-  String sfId2;
+	Integer requiredField1;
+	String requiredField2;
+	String requiredField3;
+	String sfId1;
+	String sfId2;
 }

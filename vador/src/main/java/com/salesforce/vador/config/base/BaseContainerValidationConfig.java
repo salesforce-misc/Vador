@@ -30,23 +30,23 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 @SuperBuilder(buildMethodName = "prepare", builderMethodName = "toValidate", toBuilder = true)
 public abstract class BaseContainerValidationConfig<ContainerValidatableT, FailureT> {
-  @Nullable protected Tuple2<@NonNull Integer, @Nullable FailureT> shouldHaveMinBatchSizeOrFailWith;
-  @Nullable protected Tuple2<@NonNull Integer, @Nullable FailureT> shouldHaveMaxBatchSizeOrFailWith;
+	@Nullable protected Tuple2<@NonNull Integer, @Nullable FailureT> shouldHaveMinBatchSizeOrFailWith;
+	@Nullable protected Tuple2<@NonNull Integer, @Nullable FailureT> shouldHaveMaxBatchSizeOrFailWith;
 
-  @Singular
-  protected Collection<ValidatorEtr<ContainerValidatableT, FailureT>> withContainerValidatorEtrs;
+	@Singular
+	protected Collection<ValidatorEtr<ContainerValidatableT, FailureT>> withContainerValidatorEtrs;
 
-  @Nullable
-  protected Tuple2<
-          @NonNull Collection<Validator<? super ContainerValidatableT, @Nullable FailureT>>,
-          @Nullable FailureT>
-      withContainerValidators;
+	@Nullable
+	protected Tuple2<
+					@NonNull Collection<Validator<? super ContainerValidatableT, @Nullable FailureT>>,
+					@Nullable FailureT>
+			withContainerValidators;
 
-  @Singular("withContainerValidator")
-  protected Map<Validator<? super ContainerValidatableT, FailureT>, FailureT>
-      withContainerValidator;
+	@Singular("withContainerValidator")
+	protected Map<Validator<? super ContainerValidatableT, FailureT>, FailureT>
+			withContainerValidator;
 
-  public List<ValidatorEtr<ContainerValidatableT, @Nullable FailureT>> getContainerValidators() {
-    return ContainerValidationConfigEx.getContainerValidatorsEx(this);
-  }
+	public List<ValidatorEtr<ContainerValidatableT, @Nullable FailureT>> getContainerValidators() {
+		return ContainerValidationConfigEx.getContainerValidatorsEx(this);
+	}
 }

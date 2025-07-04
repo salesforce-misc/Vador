@@ -28,15 +28,15 @@ import lombok.ToString;
 @Getter
 @ToString
 public enum ValidationFailureMessage {
-  NONE(Section.COMMON_VALIDATION_FAILURE, "Success"),
-  INVALID_VALUE("", "InvalidValue"),
-  ;
+	NONE(Section.COMMON_VALIDATION_FAILURE, "Success"),
+	INVALID_VALUE("", "InvalidValue"),
+	;
 
-  private final String section;
-  private final String name;
-  @Setter private Object[] params;
+	private final String section;
+	private final String name;
+	@Setter private Object[] params;
 
-  private static final class Section {
-    static final String COMMON_VALIDATION_FAILURE = "CommonValidationFailure";
-  }
+	private static final class Section {
+		static final String COMMON_VALIDATION_FAILURE = "CommonValidationFailure";
+	}
 }

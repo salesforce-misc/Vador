@@ -21,21 +21,21 @@ import sample.consumer.failure.ValidationFailure;
 
 public class ContainerValidator {
 
-  public static final Validator<Container, ValidationFailure> validator1 =
-      container -> {
-        if (container.getMember() == null) {
-          return new ValidationFailure(FIELD_NULL_OR_EMPTY);
-        } else {
-          return ValidationFailure.NONE;
-        }
-      };
+	public static final Validator<Container, ValidationFailure> validator1 =
+			container -> {
+				if (container.getMember() == null) {
+					return new ValidationFailure(FIELD_NULL_OR_EMPTY);
+				} else {
+					return ValidationFailure.NONE;
+				}
+			};
 
-  public static final Validator<Container, ValidationFailure> validator2 =
-      container -> {
-        if (container.getMember() == null) {
-          return new ValidationFailure(FIELD_NULL_OR_EMPTY);
-        } else {
-          return ValidationFailure.NONE;
-        }
-      };
+	public static final Validator<Container, ValidationFailure> validator2 =
+			container -> {
+				if (container.getMember() == null) {
+					return new ValidationFailure(FIELD_NULL_OR_EMPTY);
+				} else {
+					return ValidationFailure.NONE;
+				}
+			};
 }

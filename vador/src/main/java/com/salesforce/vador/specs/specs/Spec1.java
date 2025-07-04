@@ -27,29 +27,29 @@ import org.jetbrains.annotations.Nullable;
 @SuperBuilder(buildMethodName = "done", builderMethodName = "check", toBuilder = true)
 public class Spec1<ValidatableT, FailureT, GivenT> extends BaseSpec<ValidatableT, FailureT> {
 
-  @NonNull Function1<ValidatableT, ? extends GivenT> given;
+	@NonNull Function1<ValidatableT, ? extends GivenT> given;
 
-  @Singular("shouldMatchField")
-  Collection<Function1<ValidatableT, ?>> shouldMatchAnyOfFields;
+	@Singular("shouldMatchField")
+	Collection<Function1<ValidatableT, ?>> shouldMatchAnyOfFields;
 
-  @Singular("shouldMatch")
-  Collection<? extends Matcher<? extends GivenT>> shouldMatchAnyOf;
+	@Singular("shouldMatch")
+	Collection<? extends Matcher<? extends GivenT>> shouldMatchAnyOf;
 
-  @Nullable Function1<GivenT, ? extends FailureT> orFailWithFn;
+	@Nullable Function1<GivenT, ? extends FailureT> orFailWithFn;
 
-  @Override
-  public Predicate<@NonNull ValidatableT> toPredicate() {
-    return SpecEx.toPredicateEx(this);
-  }
+	@Override
+	public Predicate<@NonNull ValidatableT> toPredicate() {
+		return SpecEx.toPredicateEx(this);
+	}
 
-  @Override
-  public FailureT getFailure(@Nullable ValidatableT validatable) {
-    if ((orFailWith == null) == (orFailWithFn == null)) {
-      throw new IllegalArgumentException(String.format(INVALID_FAILURE_CONFIG, nameForTest));
-    }
-    if (orFailWith != null) {
-      return orFailWith;
-    }
-    return orFailWithFn.apply(getGiven().apply(validatable));
-  }
+	@Override
+	public FailureT getFailure(@Nullable ValidatableT validatable) {
+		if ((orFailWith == null) == (orFailWithFn == null)) {
+			throw new IllegalArgumentException(String.format(INVALID_FAILURE_CONFIG, nameForTest));
+		}
+		if (orFailWith != null) {
+			return orFailWith;
+		}
+		return orFailWithFn.apply(getGiven().apply(validatable));
+	}
 }
