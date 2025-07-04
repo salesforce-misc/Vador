@@ -5,7 +5,12 @@
  * https://opensource.org/licenses/BSD-3-Clause
  * ****************************************************************************
  */
-plugins { alias(libs.plugins.lombok.gradle) }
+plugins {
+  id("vador.sub-conventions")
+  id("vador.kt-conventions")
+  id("vador.publishing-conventions")
+  alias(libs.plugins.lombok.gradle)
+}
 
 dependencies {
   implementation(libs.hamcrest.core)

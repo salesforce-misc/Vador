@@ -5,6 +5,12 @@
  * https://opensource.org/licenses/BSD-3-Clause
  * ****************************************************************************
  */
+plugins {
+  id("vador.sub-conventions")
+  id("vador.kt-conventions")
+  id("vador.publishing-conventions")
+}
+
 dependencies {
   implementation(libs.hamcrest.core)
   implementation(libs.hamcrest.date)

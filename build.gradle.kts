@@ -30,9 +30,6 @@ val detektReportMerge by
   }
 
 subprojects {
-  apply(plugin = "vador.sub-conventions")
-  apply(plugin = "vador.kt-conventions")
-  apply(plugin = "vador.publishing-conventions")
   tasks {
     withType<Detekt>().configureEach {
       finalizedBy(detektReportMerge)
