@@ -32,6 +32,7 @@ endif::[]
 ifndef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
+.link:{testdir}/com/salesforce/vador/execution/UtilsTest.java[UtilsTest.java,tag=batch-bean]
 ----
 include::{testdir}/com/salesforce/vador/execution/UtilsTest.java[tag=batch-bean]
 ----
@@ -48,6 +49,7 @@ endif::[]
 ifdef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
+.link:{testdir}/com/salesforce/vador/execution/UtilsTest.java[UtilsTest.java,tag=batch-bean]
 ----
 @DisplayName("FailForDuplicates configured. FAIL: NullValidatbles, FAIL: Duplicates")
 @Test
