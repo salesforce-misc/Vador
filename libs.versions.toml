@@ -1,5 +1,5 @@
 [versions]
-jdk = "11"
+jdk = "17"
 kotlin = "2.2.0"
 java-vavr = "0.10.6"
 kotlin-vavr = "0.10.2"
