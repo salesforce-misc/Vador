@@ -7,7 +7,7 @@ import org.gradle.plugin.use.PluginDependency
 val Provider<PluginDependency>.pluginId: String
   get() = get().pluginId
 
-infix fun <T> Property<T>.by(value: T) {
+infix fun <T : Any> Property<T>.by(value: T) {
   set(value)
 }
 
