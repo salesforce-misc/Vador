@@ -10,28 +10,29 @@ plugins {
 spotless {
   lineEndings = PLATFORM_NATIVE
   kotlin {
-    ktfmt().googleStyle()
     target("src/*/kotlin/**/*.kt", "src/*/java/**/*.kt")
+    targetExclude("build/**", ".gradle/**", "generated/**", "**/bin/**", "out/**", "tmp/**")
+    ktfmt().googleStyle()
     trimTrailingWhitespace()
     endWithNewline()
-    targetExclude("build/**", ".gradle/**", "generated/**", "bin/**", "out/**", "tmp/**")
   }
   kotlinGradle {
+    target("*.gradle.kts", "src/**/*.gradle.kts")
+    targetExclude("build/**", ".gradle/**", "generated/**", "**/bin/**", "out/**", "tmp/**")
     ktfmt().googleStyle()
     trimTrailingWhitespace()
     endWithNewline()
-    targetExclude("build/**", ".gradle/**", "generated/**", "bin/**", "out/**", "tmp/**")
   }
   java {
-    toggleOffOn()
     target("src/*/java/**/*.java")
+    targetExclude("build/**", ".gradle/**", "generated/**", "**/bin/**", "out/**", "tmp/**")
+    toggleOffOn()
     importOrder()
     removeUnusedImports()
     googleJavaFormat()
     trimTrailingWhitespace()
     leadingSpacesToTabs(2)
     endWithNewline()
-    targetExclude("build/**", ".gradle/**", "generated/**", "bin/**", "out/**", "tmp/**")
   }
   format("documentation") {
     target("*.md", "*.adoc")
@@ -43,7 +44,7 @@ spotless {
 
 testing {
   suites {
-    val test by getting(JvmTestSuite::class) { useJUnitJupiter("5.10.2") }
+    val test by getting(JvmTestSuite::class) { useJUnitJupiter("5.11.3") }
   }
 }
 

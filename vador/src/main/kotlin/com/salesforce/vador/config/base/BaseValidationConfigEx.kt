@@ -19,7 +19,7 @@ import de.cronn.reflection.util.PropertyUtils
 import de.cronn.reflection.util.TypedPropertyGetter
 import io.vavr.Function1
 import java.lang.reflect.Type
-import java.util.Optional
+import java.util.*
 import java.util.function.Predicate
 import net.jodah.typetools.TypeResolver
 

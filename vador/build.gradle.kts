@@ -27,14 +27,3 @@ dependencies {
   testImplementation(libs.assertj.core)
   testImplementation(libs.bundles.kotest)
 }
-
-if (!System.getProperty("idea.sync.active").toBoolean()) {
-  kotlin.sourceSets.main { kotlin.setSrcDirs(listOf(tasks.delombok)) }
-}
-
-tasks {
-  delombok {
-    quiet.set(true)
-    input.setFrom("src/main/java")
-  }
-}

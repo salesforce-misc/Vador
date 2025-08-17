@@ -24,7 +24,6 @@ repositories { mavenCentral() }
 java {
   withJavadocJar()
   withSourcesJar()
-  toolchain { languageVersion.set(JavaLanguageVersion.of(17)) }
 }
 
 publishing {

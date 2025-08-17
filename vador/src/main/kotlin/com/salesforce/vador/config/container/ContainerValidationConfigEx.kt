@@ -14,6 +14,7 @@ import com.salesforce.vador.execution.strategies.util.fromValidators1
 import com.salesforce.vador.execution.strategies.util.fromValidators2
 import com.salesforce.vador.types.ValidatorEtr
 import de.cronn.reflection.util.PropertyUtils
+import de.cronn.reflection.util.TypedPropertyGetter
 
 internal fun <ContainerValidatableT, FailureT> BaseContainerValidationConfig<
   ContainerValidatableT?,
@@ -29,7 +30,11 @@ internal fun <ContainerValidatableT, FailureT> ContainerValidationConfig<
   FailureT?,
 >
   .getFieldNamesForBatchEx(validatableClazz: Class<ContainerValidatableT>): Set<String> =
-  withBatchMembers.map { PropertyUtils.getPropertyName(validatableClazz, it) }.toSet()
+  withBatchMembers
+    .map { typedPropertyGetter: TypedPropertyGetter<ContainerValidatableT?, Collection<*>?>? ->
+      PropertyUtils.getPropertyName(validatableClazz, typedPropertyGetter)
+    }
+    .toSet()
 
 internal fun <ContainerValidatableT, FailureT> ContainerValidationConfigWith2Levels<
   ContainerValidatableT?,
@@ -37,7 +42,11 @@ internal fun <ContainerValidatableT, FailureT> ContainerValidationConfigWith2Lev
   FailureT?,
 >
   .getFieldNamesForBatchEx(validatableClazz: Class<ContainerValidatableT>): Set<String> =
-  withBatchMembers.map { PropertyUtils.getPropertyName(validatableClazz, it) }.toSet()
+  withBatchMembers
+    .map { typedPropertyGetter: TypedPropertyGetter<ContainerValidatableT, MutableCollection<*>?> ->
+      PropertyUtils.getPropertyName(validatableClazz, typedPropertyGetter)
+    }
+    .toSet()
 
 internal fun <NestedContainerValidatableT, FailureT> ContainerValidationConfigWith2Levels<
   *,
@@ -48,5 +57,9 @@ internal fun <NestedContainerValidatableT, FailureT> ContainerValidationConfigWi
   validatableClazz: Class<NestedContainerValidatableT>
 ): Set<String> =
   withScopeOf1LevelDeep.withBatchMembers
-    .map { PropertyUtils.getPropertyName(validatableClazz, it) }
+    .map {
+      typedPropertyGetter: TypedPropertyGetter<NestedContainerValidatableT, MutableCollection<*>?>
+      ->
+      PropertyUtils.getPropertyName(validatableClazz, typedPropertyGetter)
+    }
     .toSet()

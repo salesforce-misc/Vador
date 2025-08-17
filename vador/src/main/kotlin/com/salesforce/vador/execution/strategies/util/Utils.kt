@@ -92,6 +92,7 @@ internal fun <
         }
         .flatten()
     validateBatchSize(level2Batch, containerValidationConfig.withScopeOf1LevelDeep)
+      as Optional<out FailureT?>
   }
 }
 
@@ -171,7 +172,7 @@ private fun <ValidatableT, FailureT> segregateNullAndDuplicateKeysInOrder(
       Optional.ofNullable(validatable?.let { keyMapperForDuplicates.apply(it) })
     }
   val withNullKeys = groups[Optional.empty()]
-  val nullKeysWithFailures =
+  val nullKeysWithFailures: List<Triple<Index, ValidatableT, Either<FailureT?, ValidatableT>>> =
     associateValidatablesWithNullKeys(filterDuplicatesConfig.andFailNullKeysWith, withNullKeys)
 
   val (duplicates, nonDuplicates) =
@@ -181,10 +182,11 @@ private fun <ValidatableT, FailureT> segregateNullAndDuplicateKeysInOrder(
       .partition { it.size > 1 }
       .toList()
       .map { it.flatten() }
-  val duplicatesWithFailures =
+  val duplicatesWithFailures: List<Triple<Index, ValidatableT, Either<FailureT?, ValidatableT>>> =
     associateValidatablesWithDuplicateKeys(filterDuplicatesConfig.andFailDuplicatesWith, duplicates)
 
-  return duplicatesWithFailures + nullKeysWithFailures + nonDuplicates
+  return (duplicatesWithFailures + nullKeysWithFailures + nonDuplicates)
+    as List<Triple<Index, ValidatableT?, Either<FailureT?, ValidatableT?>>>
 }
 
 private fun <FailureT, ValidatableT> associateValidatablesWithNullKeys(
@@ -275,15 +277,17 @@ private fun <ValidatableT, FailureT, PairT> findFirstInvalid(
         pairForInvalidMapper(invalidsWithNullKeys.first()),
         filterDuplicatesConfig.andFailNullKeysWith,
       )
-    )
+    ) as Optional<Tuple2<PairT?, FailureT?>>
   }
   val failureForDuplicate = filterDuplicatesConfig.andFailDuplicatesWith
   if (duplicateFinder != null && failureForDuplicate != null) {
     val remaining = groups.filterKeys { it != null && it.isPresent }.values
     return remaining
       .find { it.size > 1 }
-      ?.let { Optional.of(Tuple.of(pairForInvalidMapper(it.first()), failureForDuplicate)) }
-      ?: Optional.empty()
+      ?.let {
+        Optional.of(Tuple.of(pairForInvalidMapper(it.first()), failureForDuplicate))
+          as Optional<Tuple2<PairT?, FailureT?>>?
+      } ?: Optional.empty()
   }
   return Optional.empty()
 }

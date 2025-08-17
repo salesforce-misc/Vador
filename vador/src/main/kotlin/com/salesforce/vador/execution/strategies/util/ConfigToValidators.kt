@@ -90,7 +90,11 @@ private fun <ValidatableT, FailureT, FieldT> toValidatorEtrs3(
 private fun <IDT, ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
   config: IDConfig<IDT, ValidatableT, FailureT, EntityInfoT>?
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
-  toValidators11(config?.shouldHaveValidSFIdFormatForAllOrFailWith, config?.withIdValidator, true) +
+  (toValidators11(
+    config?.shouldHaveValidSFIdFormatForAllOrFailWith,
+    config?.withIdValidator,
+    true,
+  ) +
     toValidators111(
       config?.shouldHaveValidSFPolymorphicIdFormatForAllOrFailWith,
       config?.withIdValidator,
@@ -123,7 +127,8 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
     toValidators131(
       config?.absentOrHaveValidSFPolymorphicIdFormatOrFailWithFn,
       config?.withIdValidator,
-    )
+    ))
+    as List<ValidatorEtr<ValidatableT, FailureT>>
 
 @JvmSynthetic
 private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators11(
@@ -297,7 +302,7 @@ private fun <FieldT> validateField(
 private fun <FieldT, ValidatableT, FailureT> fieldConfigToValidatorEtrs(
   config: FieldConfig<FieldT, ValidatableT, FailureT>?
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
-  toFieldValidatorEtrs1(
+  (toFieldValidatorEtrs1(
     config?.shouldHaveValidFormatForAllOrFailWith,
     config?.withFieldValidator,
     true,
@@ -320,7 +325,8 @@ private fun <FieldT, ValidatableT, FailureT> fieldConfigToValidatorEtrs(
       config?.absentOrHaveValidFormatForAllOrFailWithFn,
       config?.withFieldValidator,
     ) +
-    toFieldValidatorEtrs3(config?.absentOrHaveValidFormatOrFailWithFn, config?.withFieldValidator)
+    toFieldValidatorEtrs3(config?.absentOrHaveValidFormatOrFailWithFn, config?.withFieldValidator))
+    as List<ValidatorEtr<ValidatableT, FailureT>>
 
 @JvmSynthetic
 private fun <ValidatableT, FailureT, FieldT> toFieldValidatorEtrs1(

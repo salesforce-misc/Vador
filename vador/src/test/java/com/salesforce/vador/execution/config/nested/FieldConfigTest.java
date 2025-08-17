@@ -12,8 +12,6 @@ import static sample.consumer.failure.ValidationFailure.INVALID_UDD_ID;
 import static sample.consumer.failure.ValidationFailure.INVALID_UDD_ID_3;
 import static sample.consumer.failure.ValidationFailure.getFailureWithParams;
 
-import com.salesforce.vador.config.FieldConfig;
-import com.salesforce.vador.config.ValidationConfig;
 import com.salesforce.vador.execution.Vador;
 import io.vavr.Tuple;
 import java.util.List;

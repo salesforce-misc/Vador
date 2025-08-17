@@ -16,8 +16,6 @@ import static sample.consumer.failure.ValidationFailure.INVALID_COMBO_1;
 import static sample.consumer.failure.ValidationFailure.INVALID_ITEM;
 import static sample.consumer.failure.ValidationFailure.NONE;
 
-import com.salesforce.vador.config.BatchOfBatch1ValidationConfig;
-import com.salesforce.vador.config.BatchValidationConfig;
 import com.salesforce.vador.execution.VadorBatch;
 import io.vavr.Tuple;
 import java.util.List;

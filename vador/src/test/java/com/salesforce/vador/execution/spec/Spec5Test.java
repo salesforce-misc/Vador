@@ -15,7 +15,6 @@ import static sample.consumer.failure.ValidationFailure.INVALID_BEAN;
 import static sample.consumer.failure.ValidationFailure.INVALID_BEAN_1;
 import static sample.consumer.failure.ValidationFailure.INVALID_BEAN_2;
 
-import com.salesforce.vador.config.ValidationConfig;
 import com.salesforce.vador.execution.Vador;
 import io.vavr.Tuple;
 import java.util.List;
