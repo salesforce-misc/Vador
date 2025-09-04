@@ -153,20 +153,21 @@ class UtilsTest {
 						.findAndFilterDuplicatesConfig(
 								FilterDuplicatesConfig.<Bean, ValidationFailure>toValidate()
 										.findAndFilterDuplicatesWith(
-												container -> container.getId() == null ? null : container.getId()))
+												container -> container.getId() == null ? null : container.getId())
+										.andFailNullKeysWith(NOTHING_TO_VALIDATE))
 						.prepare();
 		final var results =
-				List.ofAll(
-						findAndFilterInvalids(
-								validatables.toJavaList(),
-								NOTHING_TO_VALIDATE,
-								batchValidationConfig.getFindAndFilterDuplicatesConfigs()));
+				VadorBatch.validateAndFailFastForEach(
+						validatables.toJavaList(),
+						bean -> bean == null ? "nullBean" : bean.getId(),
+						batchValidationConfig);
 
 		Assertions.assertThat(results).hasSize(5);
-		final var failedInvalids = results.take(2);
-		Assertions.assertThat(failedInvalids).allMatch(r -> r.getLeft() == NOTHING_TO_VALIDATE);
+		var vavrResults = List.ofAll(results);
+		final var failedInvalids = vavrResults.take(2);
+		Assertions.assertThat(failedInvalids).allMatch(r -> r.getLeft()._2 == NOTHING_TO_VALIDATE);
 
-		final var valids = results.drop(2);
+		final var valids = vavrResults.drop(2);
 		org.junit.jupiter.api.Assertions.assertTrue(valids.forAll(Either::isRight));
 		valids.forEachWithIndex(
 				(r, i) ->
@@ -174,7 +175,7 @@ class UtilsTest {
 	}
 
 	@DisplayName(
-			"FailForDuplicates NOT configured. FAIL: Null Validatables, FAIL: Null Keys, FILTER_ONLY: Duplicates")
+			"FailForDuplicates NOT configured. FAIL: NullValidatables, FAIL: Null Keys, FILTER_ONLY: Duplicates")
 	@Test
 	void failNullValidatablesAndNullKeysAndFilterDuplicates() {
 		final List<Bean> invalidValidatables = List.of(null, null);

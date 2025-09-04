@@ -129,15 +129,13 @@ internal fun <FailureT, ValidatableT> findAndFilterInvalids(
   failureForNullValidatable: FailureT?,
   filterConfigBuilders: Collection<FilterDuplicatesConfigBuilder<ValidatableT, FailureT?>>,
 ): Collection<Either<FailureT?, ValidatableT?>> {
-  val mapNullValidatables: Collection<Pair<ValidatableT?, Either<FailureT?, ValidatableT?>>> =
-    validatables.map {
-      if (it == null) Pair(null, left(failureForNullValidatable)) else Pair(it, right(it))
-    }
   return if (filterConfigBuilders.isEmpty()) {
-    mapNullValidatables.map { it.second }
+    validatables.map { if (it == null) left(failureForNullValidatable) else right(it) }
   } else {
+    val mapValidatables: Collection<Pair<ValidatableT?, Either<FailureT?, ValidatableT?>>> =
+      validatables.map { Pair(it, right(it)) }
     findAndFilterInvalids(
-        mapNullValidatables.withIndex().map {
+        mapValidatables.withIndex().map {
           Triple(Index(it.index), it.value.first, it.value.second)
         },
         filterConfigBuilders.iterator(),
