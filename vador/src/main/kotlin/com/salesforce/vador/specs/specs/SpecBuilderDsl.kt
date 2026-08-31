@@ -10,7 +10,7 @@ package com.salesforce.vador.specs.specs
 import io.vavr.Function1
 import org.hamcrest.Matcher
 
-interface Spec1BuilderDsl<ValidatableT, GivenT, SELF> {
+internal interface Spec1BuilderDsl<ValidatableT, GivenT, SELF> {
   fun shouldMatchAnyOfFields(element: Function1<ValidatableT, *>): SELF
 
   fun shouldMatchField(element: Function1<ValidatableT, *>): SELF = shouldMatchAnyOfFields(element)
@@ -20,7 +20,7 @@ interface Spec1BuilderDsl<ValidatableT, GivenT, SELF> {
   fun shouldMatch(element: Matcher<out GivenT>): SELF = shouldMatchAnyOf(element)
 }
 
-interface Spec2BuilderDsl<WhenT, ThenT, SELF> {
+internal interface Spec2BuilderDsl<WhenT, ThenT, SELF> {
   fun matchesAnyOf(element: Matcher<out WhenT>): SELF
 
   fun matches(element: Matcher<out WhenT>): SELF = matchesAnyOf(element)
@@ -29,35 +29,31 @@ interface Spec2BuilderDsl<WhenT, ThenT, SELF> {
 
   fun shouldMatch(element: Matcher<out ThenT>): SELF = shouldMatchAnyOf(element)
 
-  fun shouldRelateWith(key: WhenT, value: Set<@JvmSuppressWildcards ThenT>): SELF
+  fun relation(key: WhenT, value: Set<@JvmSuppressWildcards ThenT>): SELF
 
-  fun shouldRelateWithEntry(key: WhenT, value: Set<ThenT>): SELF = shouldRelateWith(key, value)
+  fun putAllRelations(entries: Map<out WhenT, Set<@JvmSuppressWildcards ThenT>>): SELF
 
-  fun putAllShouldRelateWith(entries: Map<out WhenT, Set<@JvmSuppressWildcards ThenT>>): SELF
+  fun shouldRelateWith(key: WhenT, value: Set<ThenT>): SELF = relation(key, value)
 
-  fun shouldRelateWith(vararg entries: Map<out WhenT, Set<ThenT>>): SELF {
-    val merged = linkedMapOf<WhenT, Set<ThenT>>()
-    entries.forEach(merged::putAll)
-    return putAllShouldRelateWith(merged)
-  }
+  fun shouldRelateWithEntry(key: WhenT, value: Set<ThenT>): SELF = relation(key, value)
+
+  fun shouldRelateWith(entries: Map<out WhenT, Set<ThenT>>): SELF = putAllRelations(entries)
 }
 
-interface Spec3BuilderDsl<WhenT, Then1T, Then2T, SELF> {
+internal interface Spec3BuilderDsl<WhenT, Then1T, Then2T, SELF> {
   fun matchesAnyOf(element: Matcher<out WhenT>): SELF
 
   fun matches(element: Matcher<out WhenT>): SELF = matchesAnyOf(element)
 
-  fun shouldRelateWith(key: Then1T, value: Set<@JvmSuppressWildcards Then2T>): SELF
+  fun relation(key: Then1T, value: Set<@JvmSuppressWildcards Then2T>): SELF
 
-  fun shouldRelateWithEntry(key: Then1T, value: Set<Then2T>): SELF = shouldRelateWith(key, value)
+  fun putAllRelations(entries: Map<out Then1T, Set<@JvmSuppressWildcards Then2T>>): SELF
 
-  fun putAllShouldRelateWith(entries: Map<out Then1T, Set<@JvmSuppressWildcards Then2T>>): SELF
+  fun shouldRelateWith(key: Then1T, value: Set<Then2T>): SELF = relation(key, value)
 
-  fun shouldRelateWith(vararg entries: Map<out Then1T, Set<Then2T>>): SELF {
-    val merged = linkedMapOf<Then1T, Set<Then2T>>()
-    entries.forEach(merged::putAll)
-    return putAllShouldRelateWith(merged)
-  }
+  fun shouldRelateWithEntry(key: Then1T, value: Set<Then2T>): SELF = relation(key, value)
+
+  fun shouldRelateWith(entries: Map<out Then1T, Set<Then2T>>): SELF = putAllRelations(entries)
 
   fun orField1ShouldMatchAnyOf(element: Matcher<out Then1T>): SELF
 
@@ -68,7 +64,7 @@ interface Spec3BuilderDsl<WhenT, Then1T, Then2T, SELF> {
   fun orField2ShouldMatch(element: Matcher<out Then2T>): SELF = orField2ShouldMatchAnyOf(element)
 }
 
-interface Spec4BuilderDsl<ValidatableT, SELF> {
+internal interface Spec4BuilderDsl<ValidatableT, SELF> {
   fun whenTheseFieldsMatch(key: Function1<ValidatableT, *>, value: Matcher<*>): SELF
 
   fun whenFieldMatches(key: Function1<ValidatableT, *>, value: Matcher<*>): SELF =

@@ -31,7 +31,7 @@ internal abstract class AbstractSpec5<ValidatableT, FailureT> : BaseSpec<Validat
 
   @Suppress("UNCHECKED_CAST")
   @Value.NonAttribute
-  override fun toPredicate(): Predicate<ValidatableT?> =
+  override fun toPredicate(): Predicate<@Nullable ValidatableT?> =
     (this as Spec5<ValidatableT, FailureT>).toPredicateEx()
 
   abstract class Builder<ValidatableT, FailureT> : SpecBuilder<ValidatableT, FailureT>

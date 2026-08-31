@@ -31,7 +31,12 @@ internal abstract class AbstractSpec2<ValidatableT, FailureT, WhenT, ThenT> :
   // TODO 28/04/21 gopala.akshintala: Think about having `or` prefix
   abstract val shouldMatchAnyOf: List<Matcher<out ThenT>>
 
-  abstract val shouldRelateWith: Map<WhenT, Set<ThenT>>
+  @get:Value.Auxiliary protected abstract val relations: Map<WhenT, Set<ThenT>>
+
+  @Suppress("REDUNDANT_PROJECTION")
+  @get:Value.Derived
+  open val shouldRelateWith: Map<out WhenT, out Set<out ThenT>>
+    get() = relations
 
   @get:Nullable abstract val shouldRelateWithFn: Function2<WhenT, ThenT, Boolean>?
 
@@ -39,7 +44,7 @@ internal abstract class AbstractSpec2<ValidatableT, FailureT, WhenT, ThenT> :
 
   @Suppress("UNCHECKED_CAST")
   @Value.NonAttribute
-  override fun toPredicate(): Predicate<ValidatableT?> =
+  override fun toPredicate(): Predicate<@Nullable ValidatableT?> =
     (this as Spec2<ValidatableT, FailureT, WhenT, ThenT>).toPredicateEx()
 
   @Value.NonAttribute

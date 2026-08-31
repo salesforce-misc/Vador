@@ -21,6 +21,7 @@ import com.salesforce.vador.config.base.BaseContainerValidationConfig;
 import com.salesforce.vador.config.base.BaseValidationConfig;
 import com.salesforce.vador.config.container.ContainerValidationConfig;
 import com.salesforce.vador.config.container.ContainerValidationConfigWith2Levels;
+import com.salesforce.vador.specs.factory.SpecFactory;
 import com.salesforce.vador.specs.specs.Spec1;
 import com.salesforce.vador.specs.specs.Spec2;
 import com.salesforce.vador.specs.specs.Spec3;
@@ -28,6 +29,8 @@ import com.salesforce.vador.specs.specs.Spec4;
 import com.salesforce.vador.specs.specs.base.BaseSpec;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 
@@ -126,6 +129,84 @@ class JavaDslCompatibilityTest {
 	}
 
 	@Test
+	void baseSpecFailureConfigurationMessageRemainsAJavaCompileTimeConstant() {
+		assertThat(isFailureConfigurationMessage(BaseSpec.INVALID_FAILURE_CONFIG)).isTrue();
+		assertThat(BaseSpec.INVALID_FAILURE_CONFIG)
+				.isEqualTo(
+						"For Spec with: %s Either 'orFailWith' or 'orFailWithFn' should be passed, but not both");
+	}
+
+	@Test
+	void spec2ExplicitTypeWitnessBulkRelationsAccumulate() {
+		final var spec =
+				new SpecFactory<Bean, String>()
+						.<String, String>_2()
+						.when(Bean::getText)
+						.then(Bean::getText)
+						.shouldRelateWith(Map.of("first", Set.of("one")))
+						.shouldRelateWith(Map.of("second", Set.of("two")))
+						.orFailWith("failure")
+						.done();
+
+		assertThat(spec.getShouldRelateWith())
+				.hasSize(2)
+				.isEqualTo(Map.of("first", Set.of("one"), "second", Set.of("two")));
+	}
+
+	@Test
+	void spec2NoTypeWitnessBulkRelationsAccumulate() {
+		final var spec =
+				new SpecFactory<Bean, String>()
+						._2()
+						.when(Bean::getText)
+						.then(Bean::getText)
+						.shouldRelateWith(Map.of("first", Set.of("one")))
+						.shouldRelateWith(Map.of("second", Set.of("two")))
+						.orFailWith("failure")
+						.done();
+
+		assertThat(spec.getShouldRelateWith())
+				.hasSize(2)
+				.isEqualTo(Map.of("first", Set.of("one"), "second", Set.of("two")));
+	}
+
+	@Test
+	void spec3ExplicitTypeWitnessBulkRelationsAccumulate() {
+		final var spec =
+				new SpecFactory<Bean, String>()
+						.<String, String, String>_3()
+						.when(Bean::getText)
+						.thenField1(Bean::getText)
+						.thenField2(Bean::getText)
+						.shouldRelateWith(Map.of("first", Set.of("one")))
+						.shouldRelateWith(Map.of("second", Set.of("two")))
+						.orFailWith("failure")
+						.done();
+
+		assertThat(spec.getShouldRelateWith())
+				.hasSize(2)
+				.isEqualTo(Map.of("first", Set.of("one"), "second", Set.of("two")));
+	}
+
+	@Test
+	void spec3NoTypeWitnessBulkRelationsAccumulate() {
+		final var spec =
+				new SpecFactory<Bean, String>()
+						._3()
+						.when(Bean::getText)
+						.thenField1(Bean::getText)
+						.thenField2(Bean::getText)
+						.shouldRelateWith(Map.of("first", Set.of("one")))
+						.shouldRelateWith(Map.of("second", Set.of("two")))
+						.orFailWith("failure")
+						.done();
+
+		assertThat(spec.getShouldRelateWith())
+				.hasSize(2)
+				.isEqualTo(Map.of("first", Set.of("one"), "second", Set.of("two")));
+	}
+
+	@Test
 	void concreteBuildersExposeEverySupportedSingularJavaDslMethod() {
 		assertBuilderHasSingularMethods(
 				FieldConfig.toValidate(),
@@ -179,6 +260,15 @@ class JavaDslCompatibilityTest {
 				Stream.of(builder.getClass().getMethods()).map(Method::getName).toList();
 
 		assertThat(methodNames).contains(expectedMethodNames);
+	}
+
+	private static boolean isFailureConfigurationMessage(String value) {
+		switch (value) {
+			case BaseSpec.INVALID_FAILURE_CONFIG:
+				return true;
+			default:
+				return false;
+		}
 	}
 
 	private static final class Bean {

@@ -12,6 +12,7 @@ import com.salesforce.vador.specs.specs.base.BaseSpec
 import com.salesforce.vador.specs.specs.base.SpecBuilder
 import io.vavr.Function1
 import java.util.function.Predicate
+import lombok.NonNull
 import org.hamcrest.Matcher
 import org.immutables.value.Value
 import org.jetbrains.annotations.Nullable
@@ -32,7 +33,7 @@ internal abstract class AbstractSpec1<ValidatableT, FailureT, GivenT> :
 
   @Suppress("UNCHECKED_CAST")
   @Value.NonAttribute
-  override fun toPredicate(): Predicate<ValidatableT?> =
+  override fun toPredicate(): Predicate<@NonNull ValidatableT?> =
     (this as Spec1<ValidatableT, FailureT, GivenT>).toPredicateEx()
 
   @Value.NonAttribute

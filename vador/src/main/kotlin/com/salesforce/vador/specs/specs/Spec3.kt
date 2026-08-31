@@ -31,7 +31,12 @@ internal abstract class AbstractSpec3<ValidatableT, FailureT, WhenT, Then1T, The
 
   abstract val thenField2: Function1<ValidatableT, out Then2T>
 
-  abstract val shouldRelateWith: Map<Then1T, Set<Then2T>>
+  @get:Value.Auxiliary protected abstract val relations: Map<Then1T, Set<Then2T>>
+
+  @Suppress("REDUNDANT_PROJECTION")
+  @get:Value.Derived
+  open val shouldRelateWith: Map<out Then1T, out Set<out Then2T>>
+    get() = relations
 
   @get:Nullable abstract val shouldRelateWithFn: Function2<Then1T, Then2T, Boolean>?
 
@@ -43,7 +48,7 @@ internal abstract class AbstractSpec3<ValidatableT, FailureT, WhenT, Then1T, The
 
   @Suppress("UNCHECKED_CAST")
   @Value.NonAttribute
-  override fun toPredicate(): Predicate<ValidatableT?> =
+  override fun toPredicate(): Predicate<@Nullable ValidatableT?> =
     (this as Spec3<ValidatableT, FailureT, WhenT, Then1T, Then2T>).toPredicateEx()
 
   @Suppress("UNCHECKED_CAST")

@@ -13,6 +13,8 @@ plugins {
   alias(libs.plugins.lombok.gradle)
 }
 
+kotlin { compilerOptions { freeCompilerArgs.add("-Xemit-jvm-type-annotations") } }
+
 dependencies {
   kapt(libs.immutables.value)
   implementation(libs.hamcrest.core)

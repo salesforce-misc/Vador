@@ -17,7 +17,7 @@ abstract class BaseSpec<ValidatableT, FailureT> {
 
   @get:Nullable abstract val orFailWith: FailureT?
 
-  abstract fun toPredicate(): Predicate<ValidatableT?>
+  abstract fun toPredicate(): Predicate<@Nullable ValidatableT?>
 
   // TODO 05/06/21 gopala.akshintala: Replace with `when` expression checking instanceOf
   @Suppress("unused")
@@ -25,8 +25,7 @@ abstract class BaseSpec<ValidatableT, FailureT> {
   open fun getFailure(validatable: ValidatableT?): FailureT? = orFailWith
 
   companion object {
-    @JvmField
-    val INVALID_FAILURE_CONFIG: String =
+    const val INVALID_FAILURE_CONFIG: String =
       "For Spec with: %s Either 'orFailWith' or 'orFailWithFn' should be passed, but not both"
   }
 }
