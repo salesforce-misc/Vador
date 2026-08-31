@@ -50,7 +50,7 @@ endif::[]
 ifdef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
-.link:{testdir-kotlin}/com/salesforce/vador/execution/UtilsTestFixtures.kt[UtilsTestFixtures.kt,tag=batch-bean]
+.link:{testdir}/com/salesforce/vador/execution/UtilsTest.java[UtilsTest.java,tag=batch-bean-demo]
 ----
 @DisplayName("FailForDuplicates configured. FAIL: NullValidatbles, FAIL: Duplicates")
 @Test
