@@ -11,10 +11,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.equalTo;
 
+import com.salesforce.vador.config.BatchConfigBuilder;
+import com.salesforce.vador.config.BatchOfBatch1ValidationConfig;
 import com.salesforce.vador.config.BatchValidationConfig;
 import com.salesforce.vador.config.FieldConfig;
+import com.salesforce.vador.config.FieldConfigBuilder;
 import com.salesforce.vador.config.FilterDuplicatesConfig;
+import com.salesforce.vador.config.FilterDuplicatesConfigBuilder;
 import com.salesforce.vador.config.IDConfig;
+import com.salesforce.vador.config.IDConfigBuilder;
 import com.salesforce.vador.config.ValidationConfig;
 import com.salesforce.vador.config.base.BaseBatchValidationConfig;
 import com.salesforce.vador.config.base.BaseContainerValidationConfig;
@@ -27,7 +32,11 @@ import com.salesforce.vador.specs.specs.Spec2;
 import com.salesforce.vador.specs.specs.Spec3;
 import com.salesforce.vador.specs.specs.Spec4;
 import com.salesforce.vador.specs.specs.base.BaseSpec;
+import com.salesforce.vador.types.Spec;
+import com.salesforce.vador.types.Validator;
+import com.salesforce.vador.types.ValidatorEtr;
 import de.cronn.reflection.util.TypedPropertyGetter;
+import io.vavr.Function1;
 import io.vavr.Function2;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
@@ -124,6 +133,81 @@ class JavaDslCompatibilityTest {
 				.containsValue("optional-format");
 		assertThat(copied).isNotEqualTo(fieldConfig);
 		assertThat(copied.toString()).isNotBlank().contains("FieldConfig");
+	}
+
+	@Test
+	void generatedChildBuildersStayLazyThroughThePublicConfigBuilderProtocol() {
+		final var idBuilder = IDConfig.<String, Bean, String, String>toValidate();
+		final var fieldBuilder = FieldConfig.<String, Bean, String>toValidate();
+		final var duplicatesBuilder = FilterDuplicatesConfig.<Bean, String>toValidate();
+		final var validationConfig =
+				ValidationConfig.<Bean, String>toValidate()
+						.withIdConfig(idBuilder)
+						.withFieldConfig(fieldBuilder)
+						.prepare();
+		final var batchConfig =
+				BatchValidationConfig.<Bean, String>toValidate()
+						.findAndFilterDuplicatesConfig(duplicatesBuilder)
+						.prepare();
+
+		final IDConfigBuilder<Bean, String> storedIdBuilder =
+				validationConfig.getWithIdConfigs().iterator().next();
+		final FieldConfigBuilder<Bean, String> storedFieldBuilder =
+				validationConfig.getWithFieldConfigs().iterator().next();
+		final FilterDuplicatesConfigBuilder<Bean, String> storedDuplicatesBuilder =
+				batchConfig.getFindAndFilterDuplicatesConfigs().iterator().next();
+
+		assertThat(storedIdBuilder).isSameAs(idBuilder);
+		assertThat(storedIdBuilder.prepare()).isInstanceOf(IDConfig.class);
+		assertThat(storedFieldBuilder).isSameAs(fieldBuilder);
+		assertThat(storedFieldBuilder.prepare()).isInstanceOf(FieldConfig.class);
+		assertThat(storedDuplicatesBuilder).isSameAs(duplicatesBuilder);
+		assertThat(storedDuplicatesBuilder.prepare()).isInstanceOf(FilterDuplicatesConfig.class);
+	}
+
+	@Test
+	void batchOfBatchStoresItsGeneratedNestedBuilderAndCopiesIndependently() {
+		final var memberConfig = BatchValidationConfig.<Bean, String>toValidate().prepare();
+		final Function1<Container, java.util.Collection<Bean>> members = Container::getBeans;
+		final var config =
+				BatchOfBatch1ValidationConfig.<Container, Bean, String>toValidate()
+						.withMemberBatchValidationConfig(Tuple.of(members, memberConfig))
+						.prepare();
+
+		final var copied =
+				config.toBuilder().shouldHaveFieldOrFailWith(Container::getBeans, "required").prepare();
+
+		assertThat(config.getWithMemberBatchValidationConfig()._2).isEqualTo(memberConfig);
+		assertThat(config.getWithMemberBatchValidationConfigBuilder()._2.prepare())
+				.isInstanceOf(BatchValidationConfig.class)
+				.isEqualTo(memberConfig);
+		assertThat(config.getShouldHaveFieldsOrFailWith()).isEmpty();
+		assertThat(copied.getShouldHaveFieldsOrFailWith()).hasSize(1);
+		assertThat(copied).isNotEqualTo(config);
+	}
+
+	@Test
+	void childBuilderMethodsExposeSealedCategorySpecificProtocols() {
+		assertBuilderMethodParameter(
+				ValidationConfig.toValidate(), "withIdConfig", IDConfigBuilder.class);
+		assertBuilderMethodParameter(
+				ValidationConfig.toValidate(), "withFieldConfig", FieldConfigBuilder.class);
+		assertBuilderMethodParameter(
+				BatchValidationConfig.toValidate(),
+				"findAndFilterDuplicatesConfig",
+				FilterDuplicatesConfigBuilder.class);
+
+		final var nestedStorageMethod =
+				Stream.of(BatchOfBatch1ValidationConfig.toValidate().getClass().getMethods())
+						.filter(method -> method.getName().equals("withMemberBatchValidationConfigBuilder"))
+						.findFirst()
+						.orElseThrow();
+		assertThat(nestedStorageMethod.getGenericParameterTypes()[0].getTypeName())
+				.contains(BatchConfigBuilder.class.getName());
+		assertThat(IDConfigBuilder.class.isSealed()).isTrue();
+		assertThat(FieldConfigBuilder.class.isSealed()).isTrue();
+		assertThat(FilterDuplicatesConfigBuilder.class.isSealed()).isTrue();
+		assertThat(BatchConfigBuilder.class.isSealed()).isTrue();
 	}
 
 	@Test
@@ -289,6 +373,56 @@ class JavaDslCompatibilityTest {
 	}
 
 	@Test
+	void inheritedConfigConsecutiveBulkSingularInputsAccumulate() {
+		final TypedPropertyGetter<Bean, String> firstField = Bean::getText;
+		final TypedPropertyGetter<Bean, String> secondField = bean -> bean.getText();
+		final Function2<String, Object, String> firstFailure = (name, value) -> "first";
+		final Function2<String, Object, String> secondFailure = (name, value) -> "second";
+		final Validator<Bean, String> firstValidator = bean -> "first";
+		final Validator<Bean, String> secondValidator = bean -> "second";
+		final ValidatorEtr<Bean, String> firstValidatorEtr = value -> value;
+		final ValidatorEtr<Bean, String> secondValidatorEtr = value -> value;
+		final Spec<Bean, String> firstSpec =
+				factory -> factory.<String>_1().given(Bean::getText).orFailWith("first");
+		final Spec<Bean, String> secondSpec =
+				factory -> factory.<String>_1().given(Bean::getText).orFailWith("second");
+
+		final var validationConfig =
+				ValidationConfig.<Bean, String>toValidate()
+						.shouldHaveFieldsOrFailWith(Map.of(firstField, "first"))
+						.shouldHaveFieldsOrFailWith(Map.of(secondField, "second"))
+						.shouldHaveFieldOrFailWithFn(Map.of(firstField, firstFailure))
+						.shouldHaveFieldOrFailWithFn(Map.of(secondField, secondFailure))
+						.withIdConfigs(List.of(IDConfig.<String, Bean, String, String>toValidate()))
+						.withIdConfigs(List.of(IDConfig.<String, Bean, String, String>toValidate()))
+						.withFieldConfigs(List.of(FieldConfig.<String, Bean, String>toValidate()))
+						.withFieldConfigs(List.of(FieldConfig.<String, Bean, String>toValidate()))
+						.withSpecs(List.of(firstSpec))
+						.withSpecs(List.of(secondSpec))
+						.withValidatorEtrs(List.of(firstValidatorEtr))
+						.withValidatorEtrs(List.of(secondValidatorEtr))
+						.withValidator(Map.of(firstValidator, "first"))
+						.withValidator(Map.of(secondValidator, "second"))
+						.prepare();
+		final var batchConfig =
+				BatchValidationConfig.<Bean, String>toValidate()
+						.findAndFilterDuplicatesConfigs(
+								List.of(FilterDuplicatesConfig.<Bean, String>toValidate()))
+						.findAndFilterDuplicatesConfigs(
+								List.of(FilterDuplicatesConfig.<Bean, String>toValidate()))
+						.prepare();
+
+		assertThat(validationConfig.getShouldHaveFieldsOrFailWith()).hasSize(2);
+		assertThat(validationConfig.getShouldHaveFieldOrFailWithFn()).hasSize(2);
+		assertThat(validationConfig.getWithIdConfigs()).hasSize(2);
+		assertThat(validationConfig.getWithFieldConfigs()).hasSize(2);
+		assertThat(validationConfig.getWithSpecs()).hasSize(2);
+		assertThat(validationConfig.getWithValidatorEtrs()).hasSize(2);
+		assertThat(validationConfig.getWithValidator()).hasSize(2);
+		assertThat(batchConfig.getFindAndFilterDuplicatesConfigs()).hasSize(2);
+	}
+
+	@Test
 	void concreteBuildersExposeEverySupportedSingularJavaDslMethod() {
 		assertBuilderHasSingularMethods(
 				FieldConfig.toValidate(),
@@ -342,6 +476,18 @@ class JavaDslCompatibilityTest {
 				Stream.of(builder.getClass().getMethods()).map(Method::getName).toList();
 
 		assertThat(methodNames).contains(expectedMethodNames);
+	}
+
+	private static void assertBuilderMethodParameter(
+			Object builder, String methodName, Class<?> expectedParameterType) {
+		final var method =
+				Stream.of(builder.getClass().getMethods())
+						.filter(candidate -> candidate.getName().equals(methodName))
+						.filter(candidate -> candidate.getParameterCount() == 1)
+						.findFirst()
+						.orElseThrow();
+
+		assertThat(method.getParameterTypes()).containsExactly(expectedParameterType);
 	}
 
 	private static boolean isFailureConfigurationMessage(String value) {

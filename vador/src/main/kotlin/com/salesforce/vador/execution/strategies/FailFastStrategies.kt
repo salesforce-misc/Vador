@@ -63,7 +63,7 @@ internal fun <ValidatableT, FailureT : Any> failFast(
   findFirstFailureRecursively(validatable, validationConfig, throwableMapper).toFailureOptional()
 }
 
-private fun <ValidatableT, FailureT : Any> findFirstFailureRecursively(
+private fun <ValidatableT, FailureT> findFirstFailureRecursively(
   validatable: ValidatableT,
   validationConfig: BaseValidationConfig<ValidatableT, FailureT?>,
   throwableMapper: (Throwable) -> FailureT?,
@@ -249,7 +249,12 @@ internal fun <ValidatableT, FailureT, PairT> failFastForAny(
       validatables
         .asSequence()
         .map { validatable ->
-          findFirstFailureRecursively(validatable, batchValidationConfig, throwableMapper)
+          @Suppress("UNCHECKED_CAST")
+          findFirstFailureRecursively(
+              validatable,
+              batchValidationConfig as BaseValidationConfig<ValidatableT?, FailureT?>,
+              throwableMapper,
+            )
             ?.mapLeft { failure -> Tuple.of(pairForInvalidMapper(validatable), failure) }
         }
         .firstOrNull { it?.isLeft == true }

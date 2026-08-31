@@ -71,6 +71,7 @@ internal abstract class AbstractFieldConfig<FieldT, ValidatableT, FailureT> {
     get() = absentOrHaveValidFormatOrFailWithFns
 
   abstract class Builder<FieldT, ValidatableT, FailureT> :
+    FieldConfigBuilder<ValidatableT, FailureT>,
     FieldConfigBuilderDsl<
       FieldT,
       ValidatableT,

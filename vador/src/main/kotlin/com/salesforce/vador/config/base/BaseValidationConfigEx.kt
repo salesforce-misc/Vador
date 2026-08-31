@@ -9,6 +9,7 @@
 
 package com.salesforce.vador.config.base
 
+import com.salesforce.vador.config.IDConfig
 import com.salesforce.vador.specs.factory.SpecFactory
 import com.salesforce.vador.specs.specs.Spec1
 import com.salesforce.vador.specs.specs.Spec2
@@ -25,7 +26,7 @@ import net.jodah.typetools.TypeResolver
 
 internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.getSpecsEx():
   List<BaseSpec<ValidatableT, FailureT>> {
-  val specFactory = SpecFactory<ValidatableT, FailureT?>()
+  val specFactory = SpecFactory<ValidatableT, FailureT>()
   return (specify?.invoke(specFactory)?.map { it.done() as BaseSpec<ValidatableT, FailureT> }
     ?: emptyList()) +
     withSpecs.map { it.invoke(specFactory).done() as BaseSpec<ValidatableT, FailureT> }
@@ -63,8 +64,12 @@ internal fun <ValidatableT> getValidatableType(
     }
   // ! TODO gopala.akshintala 14/08/22: For other fields and FieldConfig
   config.withIdConfigs
-    ?.firstOrNull()
+    .firstOrNull()
     ?.prepare()
+    ?.let {
+      @Suppress("UNCHECKED_CAST")
+      it as IDConfig<*, ValidatableT, *, *>
+    }
     ?.shouldHaveValidSFIdFormatForAllOrFailWith
     ?.keys
     ?.firstOrNull()

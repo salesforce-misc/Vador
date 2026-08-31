@@ -169,6 +169,7 @@ internal abstract class AbstractIDConfig<IDT, ValidatableT, FailureT, EntityIdIn
     get() = absentOrHaveValidSFPolymorphicIdFormatOrFailWithFns
 
   abstract class Builder<IDT, ValidatableT, FailureT, EntityIdInfoT> :
+    IDConfigBuilder<ValidatableT, FailureT>,
     IDConfigBuilderDsl<
       IDT,
       ValidatableT,

@@ -8,7 +8,9 @@
 package com.salesforce.vador.execution.strategies.util
 
 import com.salesforce.vador.config.FieldConfig
+import com.salesforce.vador.config.FieldConfigBuilder
 import com.salesforce.vador.config.IDConfig
+import com.salesforce.vador.config.IDConfigBuilder
 import com.salesforce.vador.config.base.BaseValidationConfig
 import com.salesforce.vador.specs.component1
 import com.salesforce.vador.specs.component2
@@ -24,6 +26,7 @@ import java.util.function.Predicate
 
 // ! TODO 16/04/22: Break this file into smaller files.
 @JvmSynthetic
+@Suppress("UNCHECKED_CAST")
 internal fun <ValidatableT, FailureT> configToValidators(
   config: BaseValidationConfig<ValidatableT, FailureT>
 ): List<ValidatorEtr<ValidatableT?, FailureT?>> =
@@ -34,6 +37,7 @@ internal fun <ValidatableT, FailureT> configToValidators(
     toValidatorEtrs5(config.withFieldConfigs) +
     config.specs.map { it.toValidator() } +
     config.toValidatorsEtr())
+    as List<ValidatorEtr<ValidatableT?, FailureT?>>
 
 // * NOTE gopala.akshintala 14/08/22: Using Extension functions coz, names are almost same for all
 // these
@@ -375,14 +379,20 @@ private fun <FieldT, ValidatableT, FailureT> toFieldValidatorEtrs3(
   } ?: emptyList()
 
 private fun <FailureT, ValidatableT> toValidatorEtrs4(
-  configs: Collection<IDConfig.Builder<*, ValidatableT, FailureT, *>>?
+  configs: Collection<IDConfigBuilder<ValidatableT, FailureT>>?
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
-  configs?.flatMap { idConfigToValidatorEtrs(it.prepare()) } ?: emptyList()
+  configs?.flatMap {
+    @Suppress("UNCHECKED_CAST")
+    idConfigToValidatorEtrs(it.prepare() as IDConfig<Any?, ValidatableT, FailureT, Any?>)
+  } ?: emptyList()
 
 private fun <FailureT, ValidatableT> toValidatorEtrs5(
-  configs: Collection<FieldConfig.Builder<*, ValidatableT, FailureT>>?
+  configs: Collection<FieldConfigBuilder<ValidatableT, FailureT>>?
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
-  configs?.flatMap { fieldConfigToValidatorEtrs(it.prepare()) } ?: emptyList()
+  configs?.flatMap {
+    @Suppress("UNCHECKED_CAST")
+    fieldConfigToValidatorEtrs(it.prepare() as FieldConfig<Any?, ValidatableT, FailureT>)
+  } ?: emptyList()
 
 private fun <ValidatableT, FailureT, FieldT> applyFailureFn(
   failureFn: Function2<String, FieldT, FailureT>?,
