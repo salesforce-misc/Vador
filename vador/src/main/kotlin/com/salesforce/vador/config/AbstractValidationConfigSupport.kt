@@ -37,17 +37,17 @@ internal abstract class AbstractValidationConfigSupport<ValidatableT, FailureT> 
     get() = shouldHaveFieldOrFailWithFns
 
   @get:Value.Auxiliary
-  protected abstract val idConfigBuilders: List<IDConfigBuilder<ValidatableT, FailureT>>
+  protected abstract val idConfigBuilders: List<IDConfigBuilder<*, ValidatableT, FailureT, *>>
 
   @get:Value.Derived
-  override val withIdConfigs: Collection<IDConfigBuilder<ValidatableT, FailureT>>
+  override val withIdConfigs: Collection<IDConfigBuilder<*, ValidatableT, FailureT, *>>
     get() = idConfigBuilders
 
   @get:Value.Auxiliary
-  protected abstract val fieldConfigBuilders: List<FieldConfigBuilder<ValidatableT, FailureT>>
+  protected abstract val fieldConfigBuilders: List<FieldConfigBuilder<*, ValidatableT, FailureT>>
 
   @get:Value.Derived
-  override val withFieldConfigs: Collection<FieldConfigBuilder<ValidatableT, FailureT>>
+  override val withFieldConfigs: Collection<FieldConfigBuilder<*, ValidatableT, FailureT>>
     get() = fieldConfigBuilders
 
   @get:Value.Auxiliary protected abstract val validationSpecs: List<Spec<ValidatableT, FailureT>>
@@ -57,18 +57,17 @@ internal abstract class AbstractValidationConfigSupport<ValidatableT, FailureT> 
     get() = validationSpecs
 
   @get:Value.Auxiliary
-  protected abstract val validationValidatorEtrs: List<ValidatorEtr<ValidatableT?, FailureT?>>
+  protected abstract val validationValidatorEtrs: List<ValidatorEtr<ValidatableT, FailureT>>
 
   @get:Value.Derived
-  override val withValidatorEtrs: Collection<ValidatorEtr<ValidatableT?, FailureT?>>
+  override val withValidatorEtrs: Collection<ValidatorEtr<ValidatableT, FailureT>>
     get() = validationValidatorEtrs
 
   @get:Value.Auxiliary
-  protected abstract val withValidatorMappings:
-    Map<Validator<in ValidatableT?, FailureT?>, FailureT?>
+  protected abstract val withValidatorMappings: Map<Validator<in ValidatableT, FailureT>, FailureT>
 
   @get:Value.Derived
-  override val withValidator: Map<Validator<in ValidatableT?, FailureT?>, FailureT?>
+  override val withValidator: Map<Validator<in ValidatableT, FailureT>, FailureT>
     get() = withValidatorMappings
 }
 
@@ -93,17 +92,17 @@ internal abstract class AbstractBatchValidationConfigSupport<ValidatableT, Failu
     get() = shouldHaveFieldOrFailWithFns
 
   @get:Value.Auxiliary
-  protected abstract val idConfigBuilders: List<IDConfigBuilder<ValidatableT, FailureT>>
+  protected abstract val idConfigBuilders: List<IDConfigBuilder<*, ValidatableT, FailureT, *>>
 
   @get:Value.Derived
-  override val withIdConfigs: Collection<IDConfigBuilder<ValidatableT, FailureT>>
+  override val withIdConfigs: Collection<IDConfigBuilder<*, ValidatableT, FailureT, *>>
     get() = idConfigBuilders
 
   @get:Value.Auxiliary
-  protected abstract val fieldConfigBuilders: List<FieldConfigBuilder<ValidatableT, FailureT>>
+  protected abstract val fieldConfigBuilders: List<FieldConfigBuilder<*, ValidatableT, FailureT>>
 
   @get:Value.Derived
-  override val withFieldConfigs: Collection<FieldConfigBuilder<ValidatableT, FailureT>>
+  override val withFieldConfigs: Collection<FieldConfigBuilder<*, ValidatableT, FailureT>>
     get() = fieldConfigBuilders
 
   @get:Value.Auxiliary protected abstract val validationSpecs: List<Spec<ValidatableT, FailureT>>
@@ -113,18 +112,17 @@ internal abstract class AbstractBatchValidationConfigSupport<ValidatableT, Failu
     get() = validationSpecs
 
   @get:Value.Auxiliary
-  protected abstract val validationValidatorEtrs: List<ValidatorEtr<ValidatableT?, FailureT?>>
+  protected abstract val validationValidatorEtrs: List<ValidatorEtr<ValidatableT, FailureT>>
 
   @get:Value.Derived
-  override val withValidatorEtrs: Collection<ValidatorEtr<ValidatableT?, FailureT?>>
+  override val withValidatorEtrs: Collection<ValidatorEtr<ValidatableT, FailureT>>
     get() = validationValidatorEtrs
 
   @get:Value.Auxiliary
-  protected abstract val withValidatorMappings:
-    Map<Validator<in ValidatableT?, FailureT?>, FailureT?>
+  protected abstract val withValidatorMappings: Map<Validator<in ValidatableT, FailureT>, FailureT>
 
   @get:Value.Derived
-  override val withValidator: Map<Validator<in ValidatableT?, FailureT?>, FailureT?>
+  override val withValidator: Map<Validator<in ValidatableT, FailureT>, FailureT>
     get() = withValidatorMappings
 
   @get:Value.Auxiliary

@@ -16,7 +16,7 @@ internal abstract class AbstractBatchValidationConfig<ValidatableT, FailureT> :
   AbstractBatchValidationConfigSupport<ValidatableT, FailureT>() {
 
   abstract class Builder<ValidatableT, FailureT> :
-    BatchConfigBuilder<ValidatableT, FailureT>,
+    ConfigBuilder<BatchValidationConfig<ValidatableT, FailureT>>,
     ValidationBuilderDsl<
       ValidatableT,
       FailureT,

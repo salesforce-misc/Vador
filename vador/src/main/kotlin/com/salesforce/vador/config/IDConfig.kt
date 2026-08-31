@@ -7,6 +7,7 @@
  */
 package com.salesforce.vador.config
 
+import com.salesforce.vador.config.base.BaseIDConfig
 import com.salesforce.vador.immutables.AllowNulls
 import com.salesforce.vador.immutables.ConfigStyle
 import de.cronn.reflection.util.TypedPropertyGetter
@@ -17,8 +18,9 @@ import org.jetbrains.annotations.Nullable
 
 @ConfigStyle
 @Value.Immutable(copy = false)
-internal abstract class AbstractIDConfig<IDT, ValidatableT, FailureT, EntityIdInfoT> {
-  @get:Nullable abstract val withIdValidator: Function2<IDT, EntityIdInfoT, Boolean>?
+internal abstract class AbstractIDConfig<IDT, ValidatableT, FailureT, EntityIdInfoT> :
+  BaseIDConfig<IDT, ValidatableT, FailureT, EntityIdInfoT>() {
+  @get:Nullable abstract override val withIdValidator: Function2<IDT, EntityIdInfoT, Boolean>?
 
   @get:AllowNulls
   @get:Value.Auxiliary
@@ -26,7 +28,7 @@ internal abstract class AbstractIDConfig<IDT, ValidatableT, FailureT, EntityIdIn
     Map<Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out EntityIdInfoT>, FailureT?>
 
   @get:Value.Derived
-  open val shouldHaveValidSFIdFormatForAllOrFailWith:
+  override val shouldHaveValidSFIdFormatForAllOrFailWith:
     Map<Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out EntityIdInfoT>, FailureT?>
     get() = shouldHaveValidSFIdFormatForAllOrFailWiths
 
@@ -39,7 +41,7 @@ internal abstract class AbstractIDConfig<IDT, ValidatableT, FailureT, EntityIdIn
     >
 
   @get:Value.Derived
-  open val shouldHaveValidSFPolymorphicIdFormatForAllOrFailWith:
+  override val shouldHaveValidSFPolymorphicIdFormatForAllOrFailWith:
     Map<
       Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out Collection<@JvmWildcard EntityIdInfoT>>,
       FailureT?,
@@ -47,14 +49,14 @@ internal abstract class AbstractIDConfig<IDT, ValidatableT, FailureT, EntityIdIn
     get() = shouldHaveValidSFPolymorphicIdFormatForAllOrFailWiths
 
   @get:Nullable
-  abstract val shouldHaveValidSFIdFormatForAllOrFailWithFn:
+  abstract override val shouldHaveValidSFIdFormatForAllOrFailWithFn:
     Tuple2<
       Map<TypedPropertyGetter<ValidatableT, IDT?>, @JvmWildcard EntityIdInfoT>,
       Function2<String, IDT?, FailureT?>,
     >?
 
   @get:Nullable
-  abstract val shouldHaveValidSFPolymorphicIdFormatForAllOrFailWithFn:
+  abstract override val shouldHaveValidSFPolymorphicIdFormatForAllOrFailWithFn:
     Tuple2<
       Map<
         TypedPropertyGetter<ValidatableT, IDT?>,
@@ -72,7 +74,7 @@ internal abstract class AbstractIDConfig<IDT, ValidatableT, FailureT, EntityIdIn
     >
 
   @get:Value.Derived
-  open val shouldHaveValidSFIdFormatOrFailWithFn:
+  override val shouldHaveValidSFIdFormatOrFailWithFn:
     Map<
       Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out EntityIdInfoT>,
       Function2<String, IDT?, FailureT?>,
@@ -87,7 +89,7 @@ internal abstract class AbstractIDConfig<IDT, ValidatableT, FailureT, EntityIdIn
     >
 
   @get:Value.Derived
-  open val shouldHaveValidSFPolymorphicIdFormatOrFailWithFn:
+  override val shouldHaveValidSFPolymorphicIdFormatOrFailWithFn:
     Map<
       Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out Collection<@JvmWildcard EntityIdInfoT>>,
       Function2<String, IDT?, FailureT?>,
@@ -100,7 +102,7 @@ internal abstract class AbstractIDConfig<IDT, ValidatableT, FailureT, EntityIdIn
     Map<Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out EntityIdInfoT>, FailureT?>
 
   @get:Value.Derived
-  open val absentOrHaveValidSFIdFormatForAllOrFailWith:
+  override val absentOrHaveValidSFIdFormatForAllOrFailWith:
     Map<Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out EntityIdInfoT>, FailureT?>
     get() = absentOrHaveValidSFIdFormatForAllOrFailWiths
 
@@ -113,7 +115,7 @@ internal abstract class AbstractIDConfig<IDT, ValidatableT, FailureT, EntityIdIn
     >
 
   @get:Value.Derived
-  open val absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWith:
+  override val absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWith:
     Map<
       Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out Collection<@JvmWildcard EntityIdInfoT>>,
       FailureT?,
@@ -121,14 +123,14 @@ internal abstract class AbstractIDConfig<IDT, ValidatableT, FailureT, EntityIdIn
     get() = absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWiths
 
   @get:Nullable
-  abstract val absentOrHaveValidSFIdFormatForAllOrFailWithFn:
+  abstract override val absentOrHaveValidSFIdFormatForAllOrFailWithFn:
     Tuple2<
       Map<TypedPropertyGetter<ValidatableT, IDT>, @JvmWildcard EntityIdInfoT>,
       Function2<String, IDT?, FailureT?>,
     >?
 
   @get:Nullable
-  abstract val absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWithFn:
+  abstract override val absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWithFn:
     Tuple2<
       Map<
         TypedPropertyGetter<ValidatableT, IDT?>,
@@ -146,7 +148,7 @@ internal abstract class AbstractIDConfig<IDT, ValidatableT, FailureT, EntityIdIn
     >
 
   @get:Value.Derived
-  open val absentOrHaveValidSFIdFormatOrFailWithFn:
+  override val absentOrHaveValidSFIdFormatOrFailWithFn:
     Map<
       Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out EntityIdInfoT>,
       Function2<String, IDT?, FailureT?>,
@@ -161,7 +163,7 @@ internal abstract class AbstractIDConfig<IDT, ValidatableT, FailureT, EntityIdIn
     >
 
   @get:Value.Derived
-  open val absentOrHaveValidSFPolymorphicIdFormatOrFailWithFn:
+  override val absentOrHaveValidSFPolymorphicIdFormatOrFailWithFn:
     Map<
       Tuple2<TypedPropertyGetter<ValidatableT, IDT?>, out Collection<@JvmWildcard EntityIdInfoT>>,
       Function2<String, IDT?, FailureT?>,
@@ -169,7 +171,7 @@ internal abstract class AbstractIDConfig<IDT, ValidatableT, FailureT, EntityIdIn
     get() = absentOrHaveValidSFPolymorphicIdFormatOrFailWithFns
 
   abstract class Builder<IDT, ValidatableT, FailureT, EntityIdInfoT> :
-    IDConfigBuilder<ValidatableT, FailureT>,
+    IDConfigBuilder<IDT, ValidatableT, FailureT, EntityIdInfoT>,
     IDConfigBuilderDsl<
       IDT,
       ValidatableT,

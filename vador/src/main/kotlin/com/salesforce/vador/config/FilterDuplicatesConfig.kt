@@ -7,6 +7,7 @@
  */
 package com.salesforce.vador.config
 
+import com.salesforce.vador.config.base.BaseFilterDuplicatesConfig
 import com.salesforce.vador.immutables.ConfigStyle
 import io.vavr.Function1
 import org.immutables.value.Value
@@ -14,14 +15,15 @@ import org.jetbrains.annotations.Nullable
 
 @ConfigStyle
 @Value.Immutable(copy = false)
-internal abstract class AbstractFilterDuplicatesConfig<ValidatableT, FailureT> {
+internal abstract class AbstractFilterDuplicatesConfig<ValidatableT, FailureT> :
+  BaseFilterDuplicatesConfig<ValidatableT, FailureT>() {
   // `andFailDuplicatesWith` is not mandatory for `findAndFilterDuplicatesWith`.
   // You may want to just filter without failing duplicates. So they are separated
-  @get:Nullable abstract val findAndFilterDuplicatesWith: Function1<ValidatableT, *>?
+  @get:Nullable abstract override val findAndFilterDuplicatesWith: Function1<ValidatableT, *>?
 
-  @get:Nullable abstract val andFailDuplicatesWith: FailureT?
+  @get:Nullable abstract override val andFailDuplicatesWith: FailureT?
 
-  @get:Nullable abstract val andFailNullKeysWith: FailureT?
+  @get:Nullable abstract override val andFailNullKeysWith: FailureT?
 
   abstract class Builder<ValidatableT, FailureT> :
     FilterDuplicatesConfigBuilder<ValidatableT, FailureT>

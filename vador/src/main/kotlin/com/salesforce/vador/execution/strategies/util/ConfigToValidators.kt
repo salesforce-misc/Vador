@@ -7,14 +7,17 @@
  */
 package com.salesforce.vador.execution.strategies.util
 
-import com.salesforce.vador.config.FieldConfig
 import com.salesforce.vador.config.FieldConfigBuilder
-import com.salesforce.vador.config.IDConfig
 import com.salesforce.vador.config.IDConfigBuilder
+import com.salesforce.vador.config.base.BaseFieldConfig
+import com.salesforce.vador.config.base.BaseIDConfig
 import com.salesforce.vador.config.base.BaseValidationConfig
+import com.salesforce.vador.lift.liftAllToEtr
+import com.salesforce.vador.lift.liftToEtr
 import com.salesforce.vador.specs.component1
 import com.salesforce.vador.specs.component2
 import com.salesforce.vador.specs.specs.base.BaseSpec
+import com.salesforce.vador.types.Validator
 import com.salesforce.vador.types.ValidatorEtr
 import de.cronn.reflection.util.PropertyUtils
 import de.cronn.reflection.util.TypedPropertyGetter
@@ -26,25 +29,58 @@ import java.util.function.Predicate
 
 // ! TODO 16/04/22: Break this file into smaller files.
 @JvmSynthetic
-@Suppress("UNCHECKED_CAST")
 internal fun <ValidatableT, FailureT> configToValidators(
   config: BaseValidationConfig<ValidatableT, FailureT>
 ): List<ValidatorEtr<ValidatableT?, FailureT?>> =
-  (toValidatorEtrs1(config.shouldHaveFieldsOrFailWith, isFieldPresent) +
-    toValidatorEtrs2(config.shouldHaveFieldsOrFailWithFn, isFieldPresent) +
-    toValidatorEtrs3(config.shouldHaveFieldOrFailWithFn, isFieldPresent) +
-    toValidatorEtrs4(config.withIdConfigs) +
-    toValidatorEtrs5(config.withFieldConfigs) +
+  toValidatorEtrs1(config.shouldHaveFieldsOrFailWith, isFieldPresent).asExecutionValidatorEtrs() +
+    toValidatorEtrs2(config.shouldHaveFieldsOrFailWithFn, isFieldPresent)
+      .asExecutionValidatorEtrs() +
+    toValidatorEtrs3(config.shouldHaveFieldOrFailWithFn, isFieldPresent)
+      .asExecutionValidatorEtrs() +
+    toValidatorEtrs4(config.withIdConfigs).asExecutionValidatorEtrs() +
+    toValidatorEtrs5(config.withFieldConfigs).asExecutionValidatorEtrs() +
     config.specs.map { it.toValidator() } +
-    config.toValidatorsEtr())
-    as List<ValidatorEtr<ValidatableT?, FailureT?>>
+    config.toValidatorsEtr()
+
+private fun <ValidatableT, FailureT> Collection<ValidatorEtr<ValidatableT, FailureT>>
+  .asExecutionValidatorEtrs(): List<ValidatorEtr<ValidatableT?, FailureT?>> = map { validatorEtr ->
+  ValidatorEtr { validatorEtr.apply(it) }
+}
 
 // * NOTE gopala.akshintala 14/08/22: Using Extension functions coz, names are almost same for all
 // these
 @JvmSynthetic
 private fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.toValidatorsEtr():
   List<ValidatorEtr<ValidatableT?, FailureT?>> =
-  fromValidators1(withValidators) + fromValidators2(withValidator) + withValidatorEtrs
+  fromConfiguredValidators(withValidators) +
+    fromConfiguredValidators(withValidator) +
+    withValidatorEtrs.map { validatorEtr -> ValidatorEtr { validatorEtr.apply(it) } }
+
+@JvmSynthetic
+private fun <ValidatableT, FailureT> fromConfiguredValidators(
+  validators: Tuple2<Collection<@JvmWildcard Validator<in ValidatableT, FailureT?>>, FailureT>?
+): List<ValidatorEtr<ValidatableT?, FailureT?>> =
+  validators?.let { (configuredValidators, none) ->
+    liftAllToEtr(configuredValidators.map { it.asNullableValidatableValidator() }, none)
+  } ?: emptyList()
+
+@JvmSynthetic
+private fun <ValidatableT, FailureT> fromConfiguredValidators(
+  validators: Map<out Validator<in ValidatableT, FailureT>, FailureT>
+): List<ValidatorEtr<ValidatableT?, FailureT?>> =
+  validators.mapNotNull { (validator, none) ->
+    liftToEtr(validator.asNullableExecutionValidator(), none)
+  }
+
+@Suppress("UNCHECKED_CAST")
+private fun <ValidatableT, FailureT> Validator<in ValidatableT, FailureT?>
+  .asNullableValidatableValidator(): Validator<in ValidatableT?, FailureT?> =
+  this as Validator<in ValidatableT?, FailureT?>
+
+@Suppress("UNCHECKED_CAST")
+private fun <ValidatableT, FailureT> Validator<in ValidatableT, FailureT>
+  .asNullableExecutionValidator(): Validator<in ValidatableT?, FailureT?> =
+  this as Validator<in ValidatableT?, FailureT?>
 
 @JvmSynthetic
 private fun <ValidatableT, FailureT, FieldT> toValidatorEtrs1(
@@ -90,7 +126,7 @@ private fun <ValidatableT, FailureT, FieldT> toValidatorEtrs3(
 
 @JvmSynthetic
 private fun <IDT, ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
-  config: IDConfig<IDT, ValidatableT, FailureT, EntityInfoT>?
+  config: BaseIDConfig<IDT, ValidatableT, FailureT, EntityInfoT>?
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   toValidators11(config?.shouldHaveValidSFIdFormatForAllOrFailWith, config?.withIdValidator, true) +
     toValidators111(
@@ -116,7 +152,10 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> idConfigToValidatorEtrs(
     ) +
     toValidators11(config?.absentOrHaveValidSFIdFormatForAllOrFailWith, config?.withIdValidator) +
     toValidators11(config?.absentOrHaveValidSFIdFormatForAllOrFailWith, config?.withIdValidator) +
-    toValidators12(config?.absentOrHaveValidSFIdFormatForAllOrFailWithFn, config?.withIdValidator) +
+    toValidators122(
+      config?.absentOrHaveValidSFIdFormatForAllOrFailWithFn,
+      config?.withIdValidator,
+    ) +
     toValidators121(
       config?.absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWithFn,
       config?.withIdValidator,
@@ -166,7 +205,7 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators111(
 private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators12(
   config:
     Tuple2<
-      Map<TypedPropertyGetter<ValidatableT, IDT?>, EntityInfoT>,
+      Map<TypedPropertyGetter<ValidatableT, IDT?>, @JvmWildcard EntityInfoT>,
       Function2<String, IDT?, FailureT?>,
     >?,
   idValidator: Function2<IDT, EntityInfoT, Boolean>?,
@@ -179,6 +218,28 @@ private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators12(
           .map(idFieldMapper::get)
           .filterOrElse(
             validateId(idValidator, entityInfo, optionalId),
+            applyFailureFn(failureFn, validatable, idFieldMapper),
+          )
+      }
+    }
+  } ?: emptyList()
+
+@JvmSynthetic
+private fun <IDT, ValidatableT, FailureT, EntityInfoT> toValidators122(
+  config:
+    Tuple2<
+      Map<TypedPropertyGetter<ValidatableT, IDT>, @JvmWildcard EntityInfoT>,
+      Function2<String, IDT?, FailureT?>,
+    >?,
+  idValidator: Function2<IDT, EntityInfoT, Boolean>?,
+): List<ValidatorEtr<ValidatableT, FailureT>> =
+  config?.let { (idFieldMapperToEntityInfo, failureFn) ->
+    idFieldMapperToEntityInfo.map { (idFieldMapper, entityInfo) ->
+      ValidatorEtr { validatable ->
+        validatable
+          .map(idFieldMapper::get)
+          .filterOrElse(
+            validateId(idValidator, entityInfo, false),
             applyFailureFn(failureFn, validatable, idFieldMapper),
           )
       }
@@ -297,7 +358,7 @@ private fun <FieldT> validateField(
 
 @JvmSynthetic
 private fun <FieldT, ValidatableT, FailureT> fieldConfigToValidatorEtrs(
-  config: FieldConfig<FieldT, ValidatableT, FailureT>?
+  config: BaseFieldConfig<FieldT, ValidatableT, FailureT>?
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   toFieldValidatorEtrs1(
     config?.shouldHaveValidFormatForAllOrFailWith,
@@ -326,7 +387,7 @@ private fun <FieldT, ValidatableT, FailureT> fieldConfigToValidatorEtrs(
 
 @JvmSynthetic
 private fun <ValidatableT, FailureT, FieldT> toFieldValidatorEtrs1(
-  fieldMapperToFailure: Map<out TypedPropertyGetter<in ValidatableT, out FieldT>, FailureT?>?,
+  fieldMapperToFailure: Map<out TypedPropertyGetter<in ValidatableT, out FieldT>, FailureT>?,
   fieldValidator: Predicate<FieldT>?,
   optionalField: Boolean = false,
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
@@ -342,7 +403,7 @@ private fun <ValidatableT, FailureT, FieldT> toFieldValidatorEtrs1(
 private fun <ValidatableT, FailureT, FieldT> toFieldValidatorEtrs2(
   config:
     Tuple2<
-      Collection<TypedPropertyGetter<ValidatableT, FieldT>>,
+      Collection<TypedPropertyGetter<ValidatableT, FieldT?>>,
       Function2<String, FieldT?, FailureT?>,
     >?,
   fieldValidator: Predicate<FieldT>?,
@@ -363,7 +424,7 @@ private fun <ValidatableT, FailureT, FieldT> toFieldValidatorEtrs2(
 
 @JvmSynthetic
 private fun <FieldT, ValidatableT, FailureT> toFieldValidatorEtrs3(
-  config: Map<TypedPropertyGetter<ValidatableT, FieldT>, Function2<String, FieldT?, FailureT?>>?,
+  config: Map<TypedPropertyGetter<ValidatableT, FieldT>, Function2<String, FieldT, FailureT>>?,
   fieldValidator: Predicate<FieldT>?,
   optionalField: Boolean = false,
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
@@ -379,20 +440,14 @@ private fun <FieldT, ValidatableT, FailureT> toFieldValidatorEtrs3(
   } ?: emptyList()
 
 private fun <FailureT, ValidatableT> toValidatorEtrs4(
-  configs: Collection<IDConfigBuilder<ValidatableT, FailureT>>?
+  configs: Collection<IDConfigBuilder<*, ValidatableT, FailureT, *>>?
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
-  configs?.flatMap {
-    @Suppress("UNCHECKED_CAST")
-    idConfigToValidatorEtrs(it.prepare() as IDConfig<Any?, ValidatableT, FailureT, Any?>)
-  } ?: emptyList()
+  configs?.flatMap { idConfigToValidatorEtrs(it.prepare()) } ?: emptyList()
 
 private fun <FailureT, ValidatableT> toValidatorEtrs5(
-  configs: Collection<FieldConfigBuilder<ValidatableT, FailureT>>?
+  configs: Collection<FieldConfigBuilder<*, ValidatableT, FailureT>>?
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
-  configs?.flatMap {
-    @Suppress("UNCHECKED_CAST")
-    fieldConfigToValidatorEtrs(it.prepare() as FieldConfig<Any?, ValidatableT, FailureT>)
-  } ?: emptyList()
+  configs?.flatMap { fieldConfigToValidatorEtrs(it.prepare()) } ?: emptyList()
 
 private fun <ValidatableT, FailureT, FieldT> applyFailureFn(
   failureFn: Function2<String, FieldT, FailureT>?,

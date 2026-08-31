@@ -7,7 +7,6 @@
  */
 package com.salesforce.vador.compatibility
 
-import com.salesforce.vador.config.BatchConfigBuilder
 import com.salesforce.vador.config.BatchOfBatch1ValidationConfig
 import com.salesforce.vador.config.BatchValidationConfig
 import com.salesforce.vador.config.FieldConfig
@@ -17,12 +16,16 @@ import com.salesforce.vador.config.FilterDuplicatesConfigBuilder
 import com.salesforce.vador.config.IDConfig
 import com.salesforce.vador.config.IDConfigBuilder
 import com.salesforce.vador.config.ValidationConfig
+import com.salesforce.vador.config.base.BaseFilterDuplicatesConfig
 import com.salesforce.vador.specs.specs.Spec1
+import com.salesforce.vador.types.Validator
+import com.salesforce.vador.types.ValidatorEtr
 import de.cronn.reflection.util.TypedPropertyGetter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.vavr.Function1
 import io.vavr.Tuple
+import io.vavr.Tuple2
 import org.hamcrest.Matchers.equalTo
 
 class KotlinDslCompatibilityTest :
@@ -80,21 +83,47 @@ class KotlinDslCompatibilityTest :
           .findAndFilterDuplicatesConfig(duplicatesBuilder)
           .prepare()
 
-      val storedIdBuilder: IDConfigBuilder<Bean, String> = validationConfig.withIdConfigs.single()
-      val storedFieldBuilder: FieldConfigBuilder<Bean, String> =
+      val storedIdBuilder: IDConfigBuilder<*, Bean, String, *> =
+        validationConfig.withIdConfigs.single()
+      val storedFieldBuilder: FieldConfigBuilder<*, Bean, String> =
         validationConfig.withFieldConfigs.single()
       val storedDuplicatesBuilder: FilterDuplicatesConfigBuilder<Bean, String?> =
         batchConfig.findAndFilterDuplicatesConfigs.single()
+      val preparedDuplicates: BaseFilterDuplicatesConfig<Bean, String?> =
+        storedDuplicatesBuilder.prepare()
 
       (storedIdBuilder === idBuilder) shouldBe true
       (storedIdBuilder.prepare() is IDConfig<*, *, *, *>) shouldBe true
       (storedFieldBuilder === fieldBuilder) shouldBe true
       (storedFieldBuilder.prepare() is FieldConfig<*, *, *>) shouldBe true
       (storedDuplicatesBuilder === duplicatesBuilder) shouldBe true
-      (storedDuplicatesBuilder.prepare() is FilterDuplicatesConfig<*, *>) shouldBe true
+      (preparedDuplicates is FilterDuplicatesConfig<*, *>) shouldBe true
     }
 
-    test("batch-of-batch stores its generated nested builder and copies independently") {
+    test("validation DSL accepts natural nonnullable validator types") {
+      val validator = Validator<Bean, String> { "bad-validator" }
+      val validatorEtr = ValidatorEtr<Bean, String> { it }
+      val nullableFailureValidator = Validator<Bean, String?> { null }
+      val validatorChain: Tuple2<Collection<Validator<in Bean, String?>>, String> =
+        Tuple.of(listOf(nullableFailureValidator), "none")
+      val annotationFailures = Tuple.of(mapOf<String, String?>("required" to null), null as String?)
+      val config =
+        ValidationConfig.toValidate<Bean, String>()
+          .withValidator(validator, "bad-validator")
+          .withValidatorEtr(validatorEtr)
+          .withValidators(validatorChain)
+          .forAnnotations(annotationFailures)
+          .prepare()
+
+      config.withValidator[validator] shouldBe "bad-validator"
+      config.withValidatorEtrs.single() shouldBe validatorEtr
+      config.withValidators shouldBe validatorChain
+      config.withValidators?._2 shouldBe "none"
+      config.forAnnotations shouldBe annotationFailures
+      config.forAnnotations?._1?.get("required") shouldBe null
+    }
+
+    test("batch-of-batch stores its supplied nested value and copies independently") {
       val memberConfig = BatchValidationConfig.toValidate<Bean, String?>().prepare()
       val members = Function1<Container, Collection<Bean>> { it.beans }
       val config =
@@ -108,10 +137,8 @@ class KotlinDslCompatibilityTest :
           .shouldHaveFieldOrFailWith(TypedPropertyGetter { it.beans }, "required")
           .prepare()
 
-      config.withMemberBatchValidationConfig._2 shouldBe memberConfig
-      val storedMemberBuilder: BatchConfigBuilder<Bean, String?> =
-        config.withMemberBatchValidationConfigBuilder._2
-      storedMemberBuilder.prepare() shouldBe memberConfig
+      (config.withMemberBatchValidationConfig._2 === memberConfig) shouldBe true
+      (copied.withMemberBatchValidationConfig._2 === memberConfig) shouldBe true
       config.shouldHaveFieldsOrFailWith.size shouldBe 0
       copied.shouldHaveFieldsOrFailWith.size shouldBe 1
       (copied === config) shouldBe false

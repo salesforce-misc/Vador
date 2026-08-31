@@ -7,18 +7,22 @@
  */
 package com.salesforce.vador.config
 
+import com.salesforce.vador.config.base.BaseFieldConfig
+import com.salesforce.vador.config.base.BaseFilterDuplicatesConfig
+import com.salesforce.vador.config.base.BaseIDConfig
+
 interface ConfigBuilder<out ConfigT> {
   fun prepare(): ConfigT
 }
 
 /** Generator-neutral builder protocol for ID validation child configurations. */
-sealed interface IDConfigBuilder<ValidatableT, FailureT> : ConfigBuilder<Any>
+sealed interface IDConfigBuilder<IDT, ValidatableT, FailureT, EntityIdInfoT> :
+  ConfigBuilder<BaseIDConfig<IDT, ValidatableT, FailureT, EntityIdInfoT>>
 
 /** Generator-neutral builder protocol for field validation child configurations. */
-sealed interface FieldConfigBuilder<ValidatableT, FailureT> : ConfigBuilder<Any>
+sealed interface FieldConfigBuilder<FieldT, ValidatableT, FailureT> :
+  ConfigBuilder<BaseFieldConfig<FieldT, ValidatableT, FailureT>>
 
 /** Generator-neutral builder protocol for duplicate-filter child configurations. */
-sealed interface FilterDuplicatesConfigBuilder<ValidatableT, FailureT> : ConfigBuilder<Any>
-
-/** Generator-neutral builder protocol for a nested batch validation configuration. */
-sealed interface BatchConfigBuilder<ValidatableT, FailureT> : ConfigBuilder<Any>
+sealed interface FilterDuplicatesConfigBuilder<ValidatableT, FailureT> :
+  ConfigBuilder<BaseFilterDuplicatesConfig<ValidatableT, FailureT>>

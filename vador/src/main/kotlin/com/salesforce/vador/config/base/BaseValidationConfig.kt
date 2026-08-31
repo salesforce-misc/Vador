@@ -36,21 +36,21 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
   abstract val shouldHaveFieldOrFailWithFn:
     Map<TypedPropertyGetter<ValidatableT, *>, Function2<String, Any, FailureT>>
 
-  abstract val withIdConfigs: Collection<IDConfigBuilder<ValidatableT, FailureT>>
+  abstract val withIdConfigs: Collection<IDConfigBuilder<*, ValidatableT, FailureT, *>>
 
-  abstract val withFieldConfigs: Collection<FieldConfigBuilder<ValidatableT, FailureT>>
+  abstract val withFieldConfigs: Collection<FieldConfigBuilder<*, ValidatableT, FailureT>>
 
   @get:Nullable abstract val specify: Specs<ValidatableT, FailureT>?
 
   abstract val withSpecs: Collection<Spec<ValidatableT, FailureT>>
 
-  abstract val withValidatorEtrs: Collection<ValidatorEtr<ValidatableT?, FailureT?>>
+  abstract val withValidatorEtrs: Collection<ValidatorEtr<ValidatableT, FailureT>>
 
   @get:Nullable
   abstract val withValidators:
-    Tuple2<Collection<@JvmWildcard Validator<in ValidatableT?, FailureT?>>, FailureT?>?
+    Tuple2<Collection<@JvmWildcard Validator<in ValidatableT, FailureT?>>, FailureT>?
 
-  @get:Nullable abstract val forAnnotations: Tuple2<MutableMap<String, FailureT>, FailureT>?
+  @get:Nullable abstract val forAnnotations: Tuple2<Map<String, FailureT?>, FailureT?>?
 
   /**
    * `withValidators` is used for the above combination. `withValidator` is meant to be used when
@@ -59,7 +59,7 @@ abstract class BaseValidationConfig<ValidatableT, FailureT> {
    * ValidationConfig.<Bean, ValidationFailure>toValidate() .withValidator(validator1, failure1)
    * .withValidator(validator2, failure2)
    */
-  abstract val withValidator: Map<Validator<in ValidatableT?, FailureT?>, FailureT?>
+  abstract val withValidator: Map<out Validator<in ValidatableT, FailureT>, FailureT>
 
   @get:Nullable abstract val withRecursiveMapper: Function1<ValidatableT, List<ValidatableT>>?
 

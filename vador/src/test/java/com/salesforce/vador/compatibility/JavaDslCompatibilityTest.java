@@ -11,9 +11,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.equalTo;
 
-import com.salesforce.vador.config.BatchConfigBuilder;
 import com.salesforce.vador.config.BatchOfBatch1ValidationConfig;
 import com.salesforce.vador.config.BatchValidationConfig;
+import com.salesforce.vador.config.ConfigBuilder;
 import com.salesforce.vador.config.FieldConfig;
 import com.salesforce.vador.config.FieldConfigBuilder;
 import com.salesforce.vador.config.FilterDuplicatesConfig;
@@ -23,6 +23,9 @@ import com.salesforce.vador.config.IDConfigBuilder;
 import com.salesforce.vador.config.ValidationConfig;
 import com.salesforce.vador.config.base.BaseBatchValidationConfig;
 import com.salesforce.vador.config.base.BaseContainerValidationConfig;
+import com.salesforce.vador.config.base.BaseFieldConfig;
+import com.salesforce.vador.config.base.BaseFilterDuplicatesConfig;
+import com.salesforce.vador.config.base.BaseIDConfig;
 import com.salesforce.vador.config.base.BaseValidationConfig;
 import com.salesforce.vador.config.container.ContainerValidationConfig;
 import com.salesforce.vador.config.container.ContainerValidationConfigWith2Levels;
@@ -150,23 +153,27 @@ class JavaDslCompatibilityTest {
 						.findAndFilterDuplicatesConfig(duplicatesBuilder)
 						.prepare();
 
-		final IDConfigBuilder<Bean, String> storedIdBuilder =
+		final IDConfigBuilder<?, Bean, String, ?> storedIdBuilder =
 				validationConfig.getWithIdConfigs().iterator().next();
-		final FieldConfigBuilder<Bean, String> storedFieldBuilder =
+		final FieldConfigBuilder<?, Bean, String> storedFieldBuilder =
 				validationConfig.getWithFieldConfigs().iterator().next();
 		final FilterDuplicatesConfigBuilder<Bean, String> storedDuplicatesBuilder =
 				batchConfig.getFindAndFilterDuplicatesConfigs().iterator().next();
+		final BaseIDConfig<?, Bean, String, ?> preparedId = storedIdBuilder.prepare();
+		final BaseFieldConfig<?, Bean, String> preparedField = storedFieldBuilder.prepare();
+		final BaseFilterDuplicatesConfig<Bean, String> preparedDuplicates =
+				storedDuplicatesBuilder.prepare();
 
 		assertThat(storedIdBuilder).isSameAs(idBuilder);
-		assertThat(storedIdBuilder.prepare()).isInstanceOf(IDConfig.class);
+		assertThat(preparedId).isInstanceOf(IDConfig.class);
 		assertThat(storedFieldBuilder).isSameAs(fieldBuilder);
-		assertThat(storedFieldBuilder.prepare()).isInstanceOf(FieldConfig.class);
+		assertThat(preparedField).isInstanceOf(FieldConfig.class);
 		assertThat(storedDuplicatesBuilder).isSameAs(duplicatesBuilder);
-		assertThat(storedDuplicatesBuilder.prepare()).isInstanceOf(FilterDuplicatesConfig.class);
+		assertThat(preparedDuplicates).isInstanceOf(FilterDuplicatesConfig.class);
 	}
 
 	@Test
-	void batchOfBatchStoresItsGeneratedNestedBuilderAndCopiesIndependently() {
+	void batchOfBatchStoresItsSuppliedNestedValueAndCopiesIndependently() {
 		final var memberConfig = BatchValidationConfig.<Bean, String>toValidate().prepare();
 		final Function1<Container, java.util.Collection<Bean>> members = Container::getBeans;
 		final var config =
@@ -177,17 +184,15 @@ class JavaDslCompatibilityTest {
 		final var copied =
 				config.toBuilder().shouldHaveFieldOrFailWith(Container::getBeans, "required").prepare();
 
-		assertThat(config.getWithMemberBatchValidationConfig()._2).isEqualTo(memberConfig);
-		assertThat(config.getWithMemberBatchValidationConfigBuilder()._2.prepare())
-				.isInstanceOf(BatchValidationConfig.class)
-				.isEqualTo(memberConfig);
+		assertThat(config.getWithMemberBatchValidationConfig()._2).isSameAs(memberConfig);
+		assertThat(copied.getWithMemberBatchValidationConfig()._2).isSameAs(memberConfig);
 		assertThat(config.getShouldHaveFieldsOrFailWith()).isEmpty();
 		assertThat(copied.getShouldHaveFieldsOrFailWith()).hasSize(1);
 		assertThat(copied).isNotEqualTo(config);
 	}
 
 	@Test
-	void childBuilderMethodsExposeSealedCategorySpecificProtocols() {
+	void childBuilderMethodsExposeSealedCategorySpecificTypedProtocols() {
 		assertBuilderMethodParameter(
 				ValidationConfig.toValidate(), "withIdConfig", IDConfigBuilder.class);
 		assertBuilderMethodParameter(
@@ -197,17 +202,17 @@ class JavaDslCompatibilityTest {
 				"findAndFilterDuplicatesConfig",
 				FilterDuplicatesConfigBuilder.class);
 
-		final var nestedStorageMethod =
-				Stream.of(BatchOfBatch1ValidationConfig.toValidate().getClass().getMethods())
-						.filter(method -> method.getName().equals("withMemberBatchValidationConfigBuilder"))
-						.findFirst()
-						.orElseThrow();
-		assertThat(nestedStorageMethod.getGenericParameterTypes()[0].getTypeName())
-				.contains(BatchConfigBuilder.class.getName());
+		assertCategoryProtocolResult(IDConfigBuilder.class, "BaseIDConfig");
+		assertCategoryProtocolResult(FieldConfigBuilder.class, "BaseFieldConfig");
+		assertCategoryProtocolResult(FilterDuplicatesConfigBuilder.class, "BaseFilterDuplicatesConfig");
+		assertThat(
+						Stream.of(BatchOfBatch1ValidationConfig.toValidate().getClass().getMethods())
+								.noneMatch(
+										method -> method.getName().equals("withMemberBatchValidationConfigBuilder")))
+				.isTrue();
 		assertThat(IDConfigBuilder.class.isSealed()).isTrue();
 		assertThat(FieldConfigBuilder.class.isSealed()).isTrue();
 		assertThat(FilterDuplicatesConfigBuilder.class.isSealed()).isTrue();
-		assertThat(BatchConfigBuilder.class.isSealed()).isTrue();
 	}
 
 	@Test
@@ -488,6 +493,20 @@ class JavaDslCompatibilityTest {
 						.orElseThrow();
 
 		assertThat(method.getParameterTypes()).containsExactly(expectedParameterType);
+	}
+
+	private static void assertCategoryProtocolResult(
+			Class<?> protocol, String expectedBaseSimpleName) {
+		final var configBuilderType =
+				Stream.of(protocol.getGenericInterfaces())
+						.map(java.lang.reflect.Type::getTypeName)
+						.filter(typeName -> typeName.startsWith(ConfigBuilder.class.getName()))
+						.findFirst()
+						.orElseThrow();
+
+		assertThat(configBuilderType)
+				.contains("com.salesforce.vador.config.base." + expectedBaseSimpleName + "<")
+				.doesNotContain("java.lang.Object");
 	}
 
 	private static boolean isFailureConfigurationMessage(String value) {

@@ -9,7 +9,6 @@
 
 package com.salesforce.vador.config.base
 
-import com.salesforce.vador.config.IDConfig
 import com.salesforce.vador.specs.factory.SpecFactory
 import com.salesforce.vador.specs.specs.Spec1
 import com.salesforce.vador.specs.specs.Spec2
@@ -66,10 +65,6 @@ internal fun <ValidatableT> getValidatableType(
   config.withIdConfigs
     .firstOrNull()
     ?.prepare()
-    ?.let {
-      @Suppress("UNCHECKED_CAST")
-      it as IDConfig<*, ValidatableT, *, *>
-    }
     ?.shouldHaveValidSFIdFormatForAllOrFailWith
     ?.keys
     ?.firstOrNull()

@@ -11,7 +11,6 @@ import com.salesforce.vador.types.Spec
 import com.salesforce.vador.types.Validator
 import com.salesforce.vador.types.ValidatorEtr
 import de.cronn.reflection.util.TypedPropertyGetter
-import io.vavr.Function1
 import io.vavr.Function2
 import io.vavr.Tuple2
 
@@ -42,23 +41,26 @@ internal interface ValidationBuilderDsl<ValidatableT, FailureT, SELF> {
     entries: Map<out TypedPropertyGetter<ValidatableT, *>, Function2<String, Any, FailureT>>
   ): SELF = putAllShouldHaveFieldOrFailWithFns(entries)
 
-  fun idConfigBuilder(value: IDConfigBuilder<ValidatableT, FailureT>): SELF
+  fun idConfigBuilder(value: IDConfigBuilder<*, ValidatableT, FailureT, *>): SELF
 
-  fun addAllIdConfigBuilders(values: Iterable<IDConfigBuilder<ValidatableT, FailureT>>): SELF
+  fun addAllIdConfigBuilders(values: Iterable<IDConfigBuilder<*, ValidatableT, FailureT, *>>): SELF
 
-  fun withIdConfig(value: IDConfigBuilder<ValidatableT, FailureT>): SELF = idConfigBuilder(value)
+  fun withIdConfig(value: IDConfigBuilder<*, ValidatableT, FailureT, *>): SELF =
+    idConfigBuilder(value)
 
-  fun withIdConfigs(values: Iterable<IDConfigBuilder<ValidatableT, FailureT>>): SELF =
+  fun withIdConfigs(values: Iterable<IDConfigBuilder<*, ValidatableT, FailureT, *>>): SELF =
     addAllIdConfigBuilders(values)
 
-  fun fieldConfigBuilder(value: FieldConfigBuilder<ValidatableT, FailureT>): SELF
+  fun fieldConfigBuilder(value: FieldConfigBuilder<*, ValidatableT, FailureT>): SELF
 
-  fun addAllFieldConfigBuilders(values: Iterable<FieldConfigBuilder<ValidatableT, FailureT>>): SELF
+  fun addAllFieldConfigBuilders(
+    values: Iterable<FieldConfigBuilder<*, ValidatableT, FailureT>>
+  ): SELF
 
-  fun withFieldConfig(value: FieldConfigBuilder<ValidatableT, FailureT>): SELF =
+  fun withFieldConfig(value: FieldConfigBuilder<*, ValidatableT, FailureT>): SELF =
     fieldConfigBuilder(value)
 
-  fun withFieldConfigs(values: Iterable<FieldConfigBuilder<ValidatableT, FailureT>>): SELF =
+  fun withFieldConfigs(values: Iterable<FieldConfigBuilder<*, ValidatableT, FailureT>>): SELF =
     addAllFieldConfigBuilders(values)
 
   fun validationSpec(value: Spec<ValidatableT, FailureT>): SELF
@@ -70,27 +72,33 @@ internal interface ValidationBuilderDsl<ValidatableT, FailureT, SELF> {
   fun withSpecs(values: Iterable<Spec<ValidatableT, FailureT>>): SELF =
     addAllValidationSpecs(values)
 
-  fun validationValidatorEtr(value: ValidatorEtr<ValidatableT?, FailureT?>): SELF
+  fun validationValidatorEtr(value: ValidatorEtr<ValidatableT, FailureT>): SELF
 
-  fun addAllValidationValidatorEtrs(values: Iterable<ValidatorEtr<ValidatableT?, FailureT?>>): SELF
+  fun addAllValidationValidatorEtrs(values: Iterable<ValidatorEtr<ValidatableT, FailureT>>): SELF
 
-  fun withValidatorEtr(value: ValidatorEtr<ValidatableT?, FailureT?>): SELF =
+  fun withValidatorEtr(value: ValidatorEtr<ValidatableT, FailureT>): SELF =
     validationValidatorEtr(value)
 
-  fun withValidatorEtrs(values: Iterable<ValidatorEtr<ValidatableT?, FailureT?>>): SELF =
+  fun withValidatorEtrs(values: Iterable<ValidatorEtr<ValidatableT, FailureT>>): SELF =
     addAllValidationValidatorEtrs(values)
 
-  fun withValidatorMapping(key: Validator<in ValidatableT?, FailureT?>, value: FailureT?): SELF
+  fun withValidatorMapping(key: Validator<in ValidatableT, FailureT>, value: FailureT): SELF
 
   fun putAllWithValidatorMappings(
-    entries: Map<out Validator<in ValidatableT?, FailureT?>, FailureT?>
+    entries: Map<out Validator<in ValidatableT, FailureT>, FailureT>
   ): SELF
 
-  fun withValidator(key: Validator<in ValidatableT?, FailureT?>, value: FailureT?): SELF =
+  fun withValidator(key: Validator<in ValidatableT, FailureT>, value: FailureT): SELF =
     withValidatorMapping(key, value)
 
-  fun withValidator(entries: Map<out Validator<in ValidatableT?, FailureT?>, FailureT?>): SELF =
+  fun withValidator(entries: Map<out Validator<in ValidatableT, FailureT>, FailureT>): SELF =
     putAllWithValidatorMappings(entries)
+
+  fun withValidators(
+    value: Tuple2<Collection<@JvmWildcard Validator<in ValidatableT, FailureT?>>, FailureT>?
+  ): SELF
+
+  fun forAnnotations(value: Tuple2<Map<String, FailureT?>, FailureT?>?): SELF
 }
 
 internal interface BatchValidationBuilderDsl<ValidatableT, FailureT, SELF> {
@@ -109,29 +117,6 @@ internal interface BatchValidationBuilderDsl<ValidatableT, FailureT, SELF> {
   fun findAndFilterDuplicatesConfigs(
     values: Iterable<FilterDuplicatesConfigBuilder<ValidatableT, FailureT?>>
   ): SELF = addAllFilterDuplicatesConfigBuilders(values)
-}
-
-internal interface BatchOfBatch1BuilderDsl<
-  ContainerValidatableT,
-  MemberValidatableT,
-  FailureT,
-  SELF,
-> {
-  fun withMemberBatchValidationConfigBuilder(
-    value:
-      Tuple2<
-        Function1<ContainerValidatableT, Collection<MemberValidatableT>>,
-        BatchConfigBuilder<MemberValidatableT, FailureT?>,
-      >
-  ): SELF
-
-  fun withMemberBatchValidationConfig(
-    value:
-      Tuple2<
-        Function1<ContainerValidatableT, Collection<MemberValidatableT>>,
-        BatchValidationConfig<MemberValidatableT, FailureT?>,
-      >
-  ): SELF = withMemberBatchValidationConfigBuilder(value.map2 { it.toBuilder() })
 }
 
 @Suppress("REDUNDANT_PROJECTION")

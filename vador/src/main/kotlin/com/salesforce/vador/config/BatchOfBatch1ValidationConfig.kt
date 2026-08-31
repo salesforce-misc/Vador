@@ -33,24 +33,11 @@ internal abstract class AbstractBatchOfBatch1ValidationConfig<
   FailureT,
 > : AbstractBatchValidationConfigSupport<ContainerValidatableT, FailureT>() {
 
-  @get:Value.Auxiliary
-  protected abstract val withMemberBatchValidationConfigBuilder:
+  abstract val withMemberBatchValidationConfig:
     Tuple2<
       Function1<ContainerValidatableT, Collection<MemberValidatableT>>,
-      BatchConfigBuilder<MemberValidatableT, FailureT?>,
+      out BaseBatchValidationConfig<MemberValidatableT, FailureT?>,
     >
-
-  @Suppress("UNCHECKED_CAST")
-  @get:Value.Derived
-  open val withMemberBatchValidationConfig:
-    Tuple2<
-      Function1<ContainerValidatableT, Collection<MemberValidatableT>>,
-      BaseBatchValidationConfig<MemberValidatableT, FailureT?>,
-    >
-    get() =
-      withMemberBatchValidationConfigBuilder.map2 {
-        it.prepare() as BaseBatchValidationConfig<MemberValidatableT, FailureT?>
-      }
 
   abstract class Builder<ContainerValidatableT, MemberValidatableT, FailureT> :
     ConfigBuilder<
@@ -63,12 +50,6 @@ internal abstract class AbstractBatchOfBatch1ValidationConfig<
     >,
     BatchValidationBuilderDsl<
       ContainerValidatableT,
-      FailureT,
-      BatchOfBatch1ValidationConfig.Builder<ContainerValidatableT, MemberValidatableT, FailureT>,
-    >,
-    BatchOfBatch1BuilderDsl<
-      ContainerValidatableT,
-      MemberValidatableT,
       FailureT,
       BatchOfBatch1ValidationConfig.Builder<ContainerValidatableT, MemberValidatableT, FailureT>,
     >
