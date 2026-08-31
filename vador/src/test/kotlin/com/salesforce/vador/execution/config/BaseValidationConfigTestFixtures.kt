@@ -27,6 +27,8 @@ internal open class BaseValidationConfigBeanWithIdStrFields(
       "requiredField=$requiredField, accountId=$accountId, contactId=$contactId)"
 }
 
+// tag::nested-bean[]
+// tag::flat-bean[]
 internal open class BaseValidationConfigBean(
   open val requiredField1: Int?,
   open val requiredField2: String?,
@@ -60,10 +62,16 @@ internal open class BaseValidationConfigBean(
       "sfId1=$sfId1, sfId2=$sfId2, requiredList=$requiredList)"
 }
 
+// end::flat-bean[]
+// end::nested-bean[]
+
+// tag::nested-bean[]
 internal data class BaseValidationConfigContainerBean(
   val requiredField: String?,
   val bean: BaseValidationConfigBean?,
 )
+
+// end::nested-bean[]
 
 internal open class BaseValidationConfigBean1(open val str: Optional<String>?) {
   object Fields {

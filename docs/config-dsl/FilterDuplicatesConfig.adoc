@@ -12,6 +12,7 @@ endif::[]
 :toc-placement: preamble
 :sourcedir: ../../vador/src/main/java
 :testdir: ../../vador/src/test/java
+:testdir-kotlin: ../../vador/src/test/kotlin
 :imagesdir: ../images/config-dsl
 :prewrap!:
 
@@ -31,10 +32,10 @@ class Bean {
 endif::[]
 ifndef::env-github[]
 
-[source,java,indent=0,options="nowrap"]
-.link:{testdir}/com/salesforce/vador/execution/UtilsTest.java[UtilsTest.java,tag=batch-bean]
+[source,kotlin,indent=0,options="nowrap"]
+.link:{testdir-kotlin}/com/salesforce/vador/execution/UtilsTestFixtures.kt[UtilsTestFixtures.kt,tag=batch-bean]
 ----
-include::{testdir}/com/salesforce/vador/execution/UtilsTest.java[tag=batch-bean]
+include::{testdir-kotlin}/com/salesforce/vador/execution/UtilsTestFixtures.kt[tag=batch-bean]
 ----
 
 endif::[]
@@ -49,7 +50,7 @@ endif::[]
 ifdef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
-.link:{testdir}/com/salesforce/vador/execution/UtilsTest.java[UtilsTest.java,tag=batch-bean]
+.link:{testdir-kotlin}/com/salesforce/vador/execution/UtilsTestFixtures.kt[UtilsTestFixtures.kt,tag=batch-bean]
 ----
 @DisplayName("FailForDuplicates configured. FAIL: NullValidatbles, FAIL: Duplicates")
 @Test
@@ -121,9 +122,9 @@ class MultiKeyBean {
 endif::[]
 ifndef::env-github[]
 
-[source,java,indent=0,options="nowrap"]
+[source,kotlin,indent=0,options="nowrap"]
 ----
-include::{testdir}/com/salesforce/vador/execution/UtilsTest.java[tag=batch-bean-multikey]
+include::{testdir-kotlin}/com/salesforce/vador/execution/UtilsTestFixtures.kt[tag=batch-bean-multikey]
 ----
 
 endif::[]

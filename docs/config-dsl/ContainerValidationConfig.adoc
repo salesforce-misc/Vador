@@ -12,6 +12,7 @@ endif::[]
 :toc-placement: preamble
 :sourcedir: ../../vador/src/main/java
 :testdir: ../../vador/src/test/java
+:testdir-kotlin: ../../vador/src/test/kotlin
 :imagesdir: ../images/config-dsl
 
 This is handy when validation on a _Batch_ member beans need to run from the context of its container, say `ContainerT`.
@@ -45,9 +46,9 @@ class ContainerWithMultiBatch {
 endif::[]
 ifndef::env-github[]
 
-[source,java,indent=0,options="nowrap"]
+[source,kotlin,indent=0,options="nowrap"]
 ----
-include::{testdir}/com/salesforce/vador/execution/config/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-multi-batch]
+include::{testdir-kotlin}/com/salesforce/vador/execution/config/ContainerValidationConfigTestFixtures.kt[tag=container-config-level-1-container-with-multi-batch]
 ----
 
 endif::[]
@@ -112,9 +113,9 @@ class ContainerRoot {
 endif::[]
 ifndef::env-github[]
 
-[source,java,indent=0,options="nowrap"]
+[source,kotlin,indent=0,options="nowrap"]
 ----
-include::{testdir}/com/salesforce/vador/execution/config/ContainerValidationConfigTest.java[tag=container-config-level-1-container-with-container-batch]
+include::{testdir-kotlin}/com/salesforce/vador/execution/config/ContainerValidationConfigTestFixtures.kt[tag=container-config-level-1-container-with-container-batch]
 ----
 
 endif::[]

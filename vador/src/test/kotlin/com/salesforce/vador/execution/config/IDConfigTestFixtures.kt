@@ -1,5 +1,6 @@
 package com.salesforce.vador.execution.config
 
+// tag::bean-with-id-fields[]
 internal open class IDConfigBeanWithIdFields2(
   open val accountId: IDConfigID?,
   open val contactId: IDConfigID?,
@@ -36,6 +37,8 @@ internal class IDConfigContactEntityId : IDConfigTest.EntityId {
 
   override fun toString(): String = "IDConfigContactEntityId()"
 }
+
+// end::bean-with-id-fields[]
 
 internal class IDConfigProductEntityId : IDConfigTest.EntityId {
   override fun equals(other: Any?): Boolean = other is IDConfigProductEntityId

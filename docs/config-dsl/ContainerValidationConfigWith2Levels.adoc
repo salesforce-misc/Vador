@@ -12,6 +12,7 @@ endif::[]
 :toc-placement: preamble
 :sourcedir: ../../vador/src/main/java
 :testdir: ../../vador/src/test/java
+:testdir-kotlin: ../../vador/src/test/kotlin
 :imagesdir: ../images/config-dsl
 
 You need this when your container needs to peek 2 levels deep for validations related to one of its batch Container. 
@@ -51,10 +52,10 @@ class ContainerRoot {
 endif::[]
 ifndef::env-github[]
 
-[source,java,indent=0,options="nowrap"]
-.link:{testdir}/com/salesforce/vador/execution/config/nested/ContainerValidationConfigWith2LevelsTest.java[ContainerValidationConfigWith2LevelsTest.java, tag=container-config-level-2]
+[source,kotlin,indent=0,options="nowrap"]
+.link:{testdir-kotlin}/com/salesforce/vador/execution/config/nested/ContainerValidationConfigWith2LevelsTestFixtures.kt[ContainerValidationConfigWith2LevelsTestFixtures.kt, tag=container-config-level-2]
 ----
-include::{testdir}/com/salesforce/vador/execution/config/nested/ContainerValidationConfigWith2LevelsTest.java[tag=container-config-level-2]
+include::{testdir-kotlin}/com/salesforce/vador/execution/config/nested/ContainerValidationConfigWith2LevelsTestFixtures.kt[tag=container-config-level-2]
 ----
 
 endif::[]
@@ -68,7 +69,7 @@ endif::[]
 ifdef::env-github[]
 
 [source,java,indent=0,options="nowrap"]
-.link:{testdir}/com/salesforce/vador/execution/config/nested/ContainerValidationConfigWith2LevelsTest.java[ContainerValidationConfigWith2LevelsTest.java, tag=container-config-level-2]
+.link:{testdir-kotlin}/com/salesforce/vador/execution/config/nested/ContainerValidationConfigWith2LevelsTestFixtures.kt[ContainerValidationConfigWith2LevelsTestFixtures.kt, tag=container-config-level-2]
 ----
 @DisplayName(
     "Container with 2 levels: (ContainerRoot -> ContainerLevel1 -> ContainerLevel2) + Container with next 1 level: (ContainerLevel1 -> ContainerLevel2)")

@@ -13,6 +13,7 @@ endif::[]
 :prewrap!:
 :sourcedir: ../../vador/src/main/java
 :testdir: ../../vador/src/test/java
+:testdir-kotlin: ../../vador/src/test/kotlin
 :imagesdir: ../images/config-dsl
 
 == Flat
@@ -39,9 +40,9 @@ public static class Bean {
 endif::[]
 ifndef::env-github[]
 
-[source,java,indent=0,options="nowrap"]
+[source,kotlin,indent=0,options="nowrap"]
 ----
-include::{testdir}/com/salesforce/vador/execution/config/BaseValidationConfigTest.java[tag=flat-bean]
+include::{testdir-kotlin}/com/salesforce/vador/execution/config/BaseValidationConfigTestFixtures.kt[tag=flat-bean]
 ----
 
 endif::[]
@@ -126,9 +127,9 @@ class ContainerBean {
 endif::[]
 ifndef::env-github[]
 
-[source,java,indent=0,options="nowrap"]
+[source,kotlin,indent=0,options="nowrap"]
 ----
-include::{testdir}/com/salesforce/vador/execution/config/BaseValidationConfigTest.java[tag=nested-bean]
+include::{testdir-kotlin}/com/salesforce/vador/execution/config/BaseValidationConfigTestFixtures.kt[tag=nested-bean]
 ----
 
 endif::[]
