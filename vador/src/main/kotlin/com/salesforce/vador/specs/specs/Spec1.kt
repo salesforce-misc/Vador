@@ -8,20 +8,19 @@
 package com.salesforce.vador.specs.specs
 
 import com.salesforce.vador.immutables.SpecStyle
-import com.salesforce.vador.specs.specs.base.BaseSpec
 import com.salesforce.vador.specs.specs.base.SpecBuilder
 import io.vavr.Function1
 import java.util.function.Predicate
-import lombok.NonNull
 import org.hamcrest.Matcher
 import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 
 @SpecStyle
 @Value.Style.Depluralize(dictionary = ["fields"])
 @Value.Immutable(copy = false)
 internal abstract class AbstractSpec1<ValidatableT, FailureT, GivenT> :
-  BaseSpec<ValidatableT, FailureT>() {
+  NonNullPredicateSpec<ValidatableT, FailureT>() {
 
   abstract val given: Function1<ValidatableT, out GivenT>
 
@@ -33,7 +32,7 @@ internal abstract class AbstractSpec1<ValidatableT, FailureT, GivenT> :
 
   @Suppress("UNCHECKED_CAST")
   @Value.NonAttribute
-  override fun toPredicate(): Predicate<@NonNull ValidatableT?> =
+  override fun toPredicate(): Predicate<@NotNull ValidatableT> =
     (this as Spec1<ValidatableT, FailureT, GivenT>).toPredicateEx()
 
   @Value.NonAttribute
