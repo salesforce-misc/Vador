@@ -21,9 +21,9 @@ import org.immutables.value.Value
  *
  * For other Simple fields, please use `liftUtil` to lift corresponding validators.
  *
- * @param ContainerValidatableT Container data type
- * @param MemberValidatableT Batch Member data type
- * @param FailureT Failure data type
+ * @param <ContainerValidatableT> Container data type
+ * @param <MemberValidatableT> Batch Member data type
+ * @param <FailureT> Failure data type
  */
 @ConfigStyle
 @Value.Immutable(copy = false)
