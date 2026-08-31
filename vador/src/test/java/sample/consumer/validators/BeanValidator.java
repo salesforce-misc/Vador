@@ -11,7 +11,7 @@ import static sample.consumer.failure.ValidationFailureMessage.FIELD_NULL_OR_EMP
 
 import com.salesforce.vador.types.Validator;
 import com.salesforce.vador.types.ValidatorEtr;
-import lombok.Value;
+import java.util.Objects;
 import sample.consumer.failure.ValidationFailure;
 
 /** Sample Validators for some random Bean */
@@ -31,8 +31,30 @@ public class BeanValidator {
 					beanEtr.filterOrElse(
 							bean -> bean.id != null, badBean -> new ValidationFailure(FIELD_NULL_OR_EMPTY));
 
-	@Value
-	private static class Bean {
-		String id;
+	private static final class Bean {
+		private final String id;
+
+		public Bean(String id) {
+			this.id = id;
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			return this == other || other instanceof Bean bean && Objects.equals(getId(), bean.getId());
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(getId());
+		}
+
+		@Override
+		public String toString() {
+			return "BeanValidator.Bean(id=" + id + ")";
+		}
 	}
 }

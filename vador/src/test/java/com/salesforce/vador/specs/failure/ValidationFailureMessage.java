@@ -13,10 +13,7 @@
 
 package com.salesforce.vador.specs.failure;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.Arrays;
 
 /**
  * This enum holds all localized representations of all Service validation Failures.
@@ -24,9 +21,6 @@ import lombok.ToString;
  * @author gakshintala
  * @since 220
  */
-@RequiredArgsConstructor
-@Getter
-@ToString
 public enum ValidationFailureMessage {
 	NONE(Section.COMMON_VALIDATION_FAILURE, "Success"),
 	INVALID_VALUE("", "InvalidValue"),
@@ -34,7 +28,40 @@ public enum ValidationFailureMessage {
 
 	private final String section;
 	private final String name;
-	@Setter private Object[] params;
+	private Object[] params;
+
+	ValidationFailureMessage(String section, String name) {
+		this.section = section;
+		this.name = name;
+	}
+
+	public String getSection() {
+		return section;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Object[] getParams() {
+		return params;
+	}
+
+	public void setParams(Object[] params) {
+		this.params = params;
+	}
+
+	@Override
+	public String toString() {
+		return name()
+				+ "(section="
+				+ section
+				+ ", name="
+				+ name
+				+ ", params="
+				+ Arrays.deepToString(params)
+				+ ")";
+	}
 
 	private static final class Section {
 		static final String COMMON_VALIDATION_FAILURE = "CommonValidationFailure";

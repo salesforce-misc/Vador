@@ -16,7 +16,6 @@ package sample.consumer.config;
 import com.salesforce.vador.types.Validator;
 import com.salesforce.vador.types.ValidatorEtr;
 import io.vavr.collection.List;
-import lombok.experimental.UtilityClass;
 import sample.consumer.bean.Container;
 import sample.consumer.bean.Parent;
 import sample.consumer.failure.ValidationFailure;
@@ -25,8 +24,11 @@ import sample.consumer.validators.simple.BaseParentValidator;
 import sample.consumer.validators.simple.ContainerValidator;
 
 /** gakshintala created on 4/13/20. */
-@UtilityClass
-public class ConfigForValidators {
+public final class ConfigForValidators {
+
+	private ConfigForValidators() {
+		throw new AssertionError("No instances");
+	}
 
 	public static List<ValidatorEtr<Parent, ValidationFailure>> getServiceValidations() {
 		return List.of(BaseParentValidatorEtr.validatorEtr1, BaseParentValidatorEtr.validatorEtr2);

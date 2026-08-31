@@ -13,8 +13,7 @@
 
 package sample.consumer.failure;
 
-import lombok.Setter;
-import lombok.ToString;
+import java.util.Arrays;
 
 /**
  * This enum holds all localized representations of all Service validation Failures.
@@ -22,7 +21,6 @@ import lombok.ToString;
  * @author gakshintala
  * @since 220
  */
-@ToString
 public enum ValidationFailureMessage {
 	NONE(Section.COMMON_VALIDATION_FAILURE, "Success"),
 	FIELD_NULL_OR_EMPTY("", ""),
@@ -71,7 +69,7 @@ public enum ValidationFailureMessage {
 
 	private final String section;
 	private final String name;
-	@Setter private Object[] params;
+	private Object[] params;
 
 	ValidationFailureMessage(String commonValidationFailure, String success) {
 		this.section = commonValidationFailure;
@@ -80,6 +78,22 @@ public enum ValidationFailureMessage {
 
 	public Object[] getParams() {
 		return params;
+	}
+
+	public void setParams(Object[] params) {
+		this.params = params;
+	}
+
+	@Override
+	public String toString() {
+		return name()
+				+ "(section="
+				+ section
+				+ ", name="
+				+ name
+				+ ", params="
+				+ Arrays.deepToString(params)
+				+ ")";
 	}
 
 	private static final class Section {

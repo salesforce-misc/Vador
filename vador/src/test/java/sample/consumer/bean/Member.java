@@ -13,9 +13,31 @@
 
 package sample.consumer.bean;
 
-import lombok.Value;
+import java.util.Objects;
 
-@Value
-public class Member {
-	int id;
+public final class Member {
+	private final int id;
+
+	public Member(int id) {
+		this.id = id;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		return this == other || other instanceof Member member && getId() == member.getId();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId());
+	}
+
+	@Override
+	public String toString() {
+		return "Member(id=" + id + ")";
+	}
 }

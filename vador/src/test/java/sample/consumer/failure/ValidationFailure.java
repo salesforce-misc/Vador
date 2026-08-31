@@ -13,7 +13,7 @@
 
 package sample.consumer.failure;
 
-import lombok.Data;
+import java.util.Objects;
 
 /**
  * Reference Validation Failure
@@ -21,7 +21,6 @@ import lombok.Data;
  * @author gakshintala
  * @since 228
  */
-@Data
 public class ValidationFailure {
 
 	public static final ValidationFailure NONE = new ValidationFailure(ValidationFailureMessage.NONE);
@@ -102,6 +101,53 @@ public class ValidationFailure {
 
 	private final ValidationFailureMessage validationFailureMessage;
 	private String exceptionMsg;
+
+	public ValidationFailure(ValidationFailureMessage validationFailureMessage) {
+		this.validationFailureMessage = validationFailureMessage;
+	}
+
+	public ValidationFailureMessage getValidationFailureMessage() {
+		return validationFailureMessage;
+	}
+
+	public String getExceptionMsg() {
+		return exceptionMsg;
+	}
+
+	public void setExceptionMsg(String exceptionMsg) {
+		this.exceptionMsg = exceptionMsg;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		}
+		if (!(other instanceof ValidationFailure validationFailure)
+				|| !validationFailure.canEqual(this)) {
+			return false;
+		}
+		return getValidationFailureMessage() == validationFailure.getValidationFailureMessage()
+				&& Objects.equals(getExceptionMsg(), validationFailure.getExceptionMsg());
+	}
+
+	protected boolean canEqual(Object other) {
+		return other instanceof ValidationFailure;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getValidationFailureMessage(), getExceptionMsg());
+	}
+
+	@Override
+	public String toString() {
+		return "ValidationFailure(validationFailureMessage="
+				+ validationFailureMessage
+				+ ", exceptionMsg="
+				+ exceptionMsg
+				+ ")";
+	}
 
 	/**
 	 * Static factory method used to generate Validation failures out of an Exception.

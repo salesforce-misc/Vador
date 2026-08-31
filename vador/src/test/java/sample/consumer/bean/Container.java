@@ -15,9 +15,6 @@ package sample.consumer.bean;
 
 // import com.force.swag.id.ID;
 
-import lombok.ToString;
-
-@ToString(callSuper = true)
 public class Container extends Parent {
 
 	public Container(int id, Member member) {
@@ -30,5 +27,10 @@ public class Container extends Parent {
 
 	public Container(String sfId1) {
 		super(0, sfId1, null);
+	}
+
+	@Override
+	public String toString() {
+		return "Container(super=" + super.toString() + ")";
 	}
 }
