@@ -27,6 +27,10 @@ import com.salesforce.vador.specs.specs.Spec2;
 import com.salesforce.vador.specs.specs.Spec3;
 import com.salesforce.vador.specs.specs.Spec4;
 import com.salesforce.vador.specs.specs.base.BaseSpec;
+import de.cronn.reflection.util.TypedPropertyGetter;
+import io.vavr.Function2;
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
@@ -204,6 +208,84 @@ class JavaDslCompatibilityTest {
 		assertThat(spec.getShouldRelateWith())
 				.hasSize(2)
 				.isEqualTo(Map.of("first", Set.of("one"), "second", Set.of("two")));
+	}
+
+	@Test
+	void fieldConfigConsecutiveBulkMapsAccumulate() {
+		final TypedPropertyGetter<Bean, String> firstField = Bean::getText;
+		final TypedPropertyGetter<Bean, String> secondField = bean -> bean.getText();
+		final Function2<String, String, String> firstFailure = (name, value) -> "first";
+		final Function2<String, String, String> secondFailure = (name, value) -> "second";
+
+		final var fieldConfig =
+				FieldConfig.<String, Bean, String>toValidate()
+						.shouldHaveValidFormatForAllOrFailWith(Map.of(firstField, "first"))
+						.shouldHaveValidFormatForAllOrFailWith(Map.of(secondField, "second"))
+						.shouldHaveValidFormatOrFailWithFn(Map.of(firstField, firstFailure))
+						.shouldHaveValidFormatOrFailWithFn(Map.of(secondField, secondFailure))
+						.absentOrHaveValidFormatForAllOrFailWith(Map.of(firstField, "first"))
+						.absentOrHaveValidFormatForAllOrFailWith(Map.of(secondField, "second"))
+						.absentOrHaveValidFormatOrFailWithFn(Map.of(firstField, firstFailure))
+						.absentOrHaveValidFormatOrFailWithFn(Map.of(secondField, secondFailure))
+						.prepare();
+
+		assertThat(fieldConfig.getShouldHaveValidFormatForAllOrFailWith()).hasSize(2);
+		assertThat(fieldConfig.getShouldHaveValidFormatOrFailWithFn()).hasSize(2);
+		assertThat(fieldConfig.getAbsentOrHaveValidFormatForAllOrFailWith()).hasSize(2);
+		assertThat(fieldConfig.getAbsentOrHaveValidFormatOrFailWithFn()).hasSize(2);
+	}
+
+	@Test
+	void idConfigConsecutiveBulkMapsAccumulate() {
+		final TypedPropertyGetter<Bean, String> firstField = Bean::getText;
+		final TypedPropertyGetter<Bean, String> secondField = bean -> bean.getText();
+		final Tuple2<TypedPropertyGetter<Bean, String>, String> firstId =
+				Tuple.of(firstField, "first-entity");
+		final Tuple2<TypedPropertyGetter<Bean, String>, String> secondId =
+				Tuple.of(secondField, "second-entity");
+		final Tuple2<TypedPropertyGetter<Bean, String>, List<String>> firstPolymorphicId =
+				Tuple.of(firstField, List.of("first-entity"));
+		final Tuple2<TypedPropertyGetter<Bean, String>, List<String>> secondPolymorphicId =
+				Tuple.of(secondField, List.of("second-entity"));
+		final Function2<String, String, String> firstFailure = (name, value) -> "first";
+		final Function2<String, String, String> secondFailure = (name, value) -> "second";
+
+		final var idConfig =
+				IDConfig.<String, Bean, String, String>toValidate()
+						.shouldHaveValidSFIdFormatForAllOrFailWith(Map.of(firstId, "first"))
+						.shouldHaveValidSFIdFormatForAllOrFailWith(Map.of(secondId, "second"))
+						.shouldHaveValidSFPolymorphicIdFormatForAllOrFailWith(
+								Map.of(firstPolymorphicId, "first"))
+						.shouldHaveValidSFPolymorphicIdFormatForAllOrFailWith(
+								Map.of(secondPolymorphicId, "second"))
+						.shouldHaveValidSFIdFormatOrFailWithFn(Map.of(firstId, firstFailure))
+						.shouldHaveValidSFIdFormatOrFailWithFn(Map.of(secondId, secondFailure))
+						.shouldHaveValidSFPolymorphicIdFormatOrFailWithFn(
+								Map.of(firstPolymorphicId, firstFailure))
+						.shouldHaveValidSFPolymorphicIdFormatOrFailWithFn(
+								Map.of(secondPolymorphicId, secondFailure))
+						.absentOrHaveValidSFIdFormatForAllOrFailWith(Map.of(firstId, "first"))
+						.absentOrHaveValidSFIdFormatForAllOrFailWith(Map.of(secondId, "second"))
+						.absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWith(
+								Map.of(firstPolymorphicId, "first"))
+						.absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWith(
+								Map.of(secondPolymorphicId, "second"))
+						.absentOrHaveValidSFIdFormatOrFailWithFn(Map.of(firstId, firstFailure))
+						.absentOrHaveValidSFIdFormatOrFailWithFn(Map.of(secondId, secondFailure))
+						.absentOrHaveValidSFPolymorphicIdFormatOrFailWithFn(
+								Map.of(firstPolymorphicId, firstFailure))
+						.absentOrHaveValidSFPolymorphicIdFormatOrFailWithFn(
+								Map.of(secondPolymorphicId, secondFailure))
+						.prepare();
+
+		assertThat(idConfig.getShouldHaveValidSFIdFormatForAllOrFailWith()).hasSize(2);
+		assertThat(idConfig.getShouldHaveValidSFPolymorphicIdFormatForAllOrFailWith()).hasSize(2);
+		assertThat(idConfig.getShouldHaveValidSFIdFormatOrFailWithFn()).hasSize(2);
+		assertThat(idConfig.getShouldHaveValidSFPolymorphicIdFormatOrFailWithFn()).hasSize(2);
+		assertThat(idConfig.getAbsentOrHaveValidSFIdFormatForAllOrFailWith()).hasSize(2);
+		assertThat(idConfig.getAbsentOrHaveValidSFPolymorphicIdFormatForAllOrFailWith()).hasSize(2);
+		assertThat(idConfig.getAbsentOrHaveValidSFIdFormatOrFailWithFn()).hasSize(2);
+		assertThat(idConfig.getAbsentOrHaveValidSFPolymorphicIdFormatOrFailWithFn()).hasSize(2);
 	}
 
 	@Test

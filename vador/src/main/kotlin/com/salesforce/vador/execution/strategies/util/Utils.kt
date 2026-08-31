@@ -9,7 +9,7 @@
 
 package com.salesforce.vador.execution.strategies.util
 
-import com.salesforce.vador.config.FilterDuplicatesConfig.FilterDuplicatesConfigBuilder
+import com.salesforce.vador.config.FilterDuplicatesConfig
 import com.salesforce.vador.config.base.BaseContainerValidationConfig
 import com.salesforce.vador.config.container.ContainerValidationConfig
 import com.salesforce.vador.config.container.ContainerValidationConfigWith2Levels
@@ -127,7 +127,7 @@ private fun <FailureT : Any> validateBatchSize(
 internal fun <FailureT, ValidatableT> findAndFilterInvalids(
   validatables: Collection<ValidatableT>,
   failureForNullValidatable: FailureT?,
-  filterConfigBuilders: Collection<FilterDuplicatesConfigBuilder<ValidatableT, FailureT?>>,
+  filterConfigBuilders: Collection<FilterDuplicatesConfig.Builder<ValidatableT, FailureT?>>,
 ): Collection<Either<FailureT?, ValidatableT?>> {
   return if (filterConfigBuilders.isEmpty()) {
     validatables.map { if (it == null) left(failureForNullValidatable) else right(it) }
@@ -147,7 +147,7 @@ internal fun <FailureT, ValidatableT> findAndFilterInvalids(
 
 private tailrec fun <ValidatableT, FailureT> findAndFilterInvalids(
   validatables: List<Triple<Index, ValidatableT?, Either<FailureT?, ValidatableT?>>>,
-  filterConfigs: Iterator<FilterDuplicatesConfigBuilder<ValidatableT, FailureT?>>,
+  filterConfigs: Iterator<FilterDuplicatesConfig.Builder<ValidatableT, FailureT?>>,
 ): List<Triple<Index, ValidatableT?, Either<FailureT?, ValidatableT?>>> =
   if (!filterConfigs.hasNext()) {
     validatables
@@ -158,7 +158,7 @@ private tailrec fun <ValidatableT, FailureT> findAndFilterInvalids(
 
 private fun <ValidatableT, FailureT> segregateNullAndDuplicateKeysInOrder(
   validatables: List<Triple<Index, ValidatableT?, Either<FailureT?, ValidatableT?>>>,
-  filterDuplicatesConfigBuilder: FilterDuplicatesConfigBuilder<ValidatableT, FailureT?>,
+  filterDuplicatesConfigBuilder: FilterDuplicatesConfig.Builder<ValidatableT, FailureT?>,
 ): List<Triple<Index, ValidatableT?, Either<FailureT?, ValidatableT?>>> {
   val filterDuplicatesConfig = filterDuplicatesConfigBuilder.prepare()
   val duplicateFinder = filterDuplicatesConfig.findAndFilterDuplicatesWith
@@ -215,7 +215,8 @@ private fun <FailureT, ValidatableT> associateWithFailure(failure: FailureT?) =
 internal fun <ValidatableT, FailureT> findFirstInvalid(
   validatables: Collection<ValidatableT?>,
   failureForNullValidatable: FailureT?,
-  filterDuplicatesConfigBuilders: Collection<FilterDuplicatesConfigBuilder<ValidatableT, FailureT?>>,
+  filterDuplicatesConfigBuilders:
+    Collection<FilterDuplicatesConfig.Builder<ValidatableT, FailureT?>>,
 ): Optional<FailureT> =
   findFirstInvalid<ValidatableT, FailureT, Nothing>(
       validatables,
@@ -227,7 +228,7 @@ internal fun <ValidatableT, FailureT> findFirstInvalid(
 internal fun <ValidatableT, FailureT, PairT> findFirstInvalid(
   validatables: Collection<ValidatableT?>,
   filterDuplicatesConfigBuilders:
-    Collection<FilterDuplicatesConfigBuilder<ValidatableT, FailureT?>>,
+    Collection<FilterDuplicatesConfig.Builder<ValidatableT, FailureT?>>,
   failureForNullValidatable: FailureT? = null,
   pairForInvalidMapper: (ValidatableT?) -> PairT? = { null },
 ): Optional<Tuple2<PairT?, FailureT?>> =
@@ -238,7 +239,7 @@ internal fun <ValidatableT, FailureT, PairT> findFirstInvalid(
 
 private fun <ValidatableT, FailureT, PairT> findFirstInvalid(
   validatables: Collection<ValidatableT?>,
-  filterDuplicatesConfigBuilder: FilterDuplicatesConfigBuilder<ValidatableT, FailureT?>,
+  filterDuplicatesConfigBuilder: FilterDuplicatesConfig.Builder<ValidatableT, FailureT?>,
   failureForNullValidatable: FailureT? = null,
   pairForInvalidMapper: (ValidatableT?) -> PairT? = { null },
 ): Optional<Tuple2<PairT?, FailureT?>> {

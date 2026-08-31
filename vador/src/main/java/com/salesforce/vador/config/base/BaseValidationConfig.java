@@ -14,8 +14,8 @@
 
 package com.salesforce.vador.config.base;
 
-import com.salesforce.vador.config.FieldConfig.FieldConfigBuilder;
-import com.salesforce.vador.config.IDConfig.IDConfigBuilder;
+import com.salesforce.vador.config.FieldConfig;
+import com.salesforce.vador.config.IDConfig;
 import com.salesforce.vador.specs.specs.base.BaseSpec;
 import com.salesforce.vador.types.Spec;
 import com.salesforce.vador.types.Specs;
@@ -57,10 +57,10 @@ public abstract class BaseValidationConfig<ValidatableT, FailureT> {
 
 	/** --- ID ---> */
 	@Singular @Nullable
-	protected Collection<IDConfigBuilder<?, ValidatableT, FailureT, ?>> withIdConfigs;
+	protected Collection<IDConfig.Builder<?, ValidatableT, FailureT, ?>> withIdConfigs;
 
 	@Singular @Nullable
-	protected Collection<FieldConfigBuilder<?, ValidatableT, FailureT>> withFieldConfigs;
+	protected Collection<FieldConfig.Builder<?, ValidatableT, FailureT>> withFieldConfigs;
 
 	@Nullable protected Specs<ValidatableT, FailureT> specify;
 

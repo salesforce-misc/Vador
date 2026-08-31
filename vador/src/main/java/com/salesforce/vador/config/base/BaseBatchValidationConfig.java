@@ -14,7 +14,7 @@
 
 package com.salesforce.vador.config.base;
 
-import com.salesforce.vador.config.FilterDuplicatesConfig.FilterDuplicatesConfigBuilder;
+import com.salesforce.vador.config.FilterDuplicatesConfig;
 import java.util.Collection;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,6 +29,6 @@ public abstract class BaseBatchValidationConfig<ValidatableT, FailureT>
 		extends BaseValidationConfig<ValidatableT, FailureT> {
 
 	@Singular
-	protected Collection<FilterDuplicatesConfigBuilder<ValidatableT, @Nullable FailureT>>
+	protected Collection<FilterDuplicatesConfig.Builder<ValidatableT, @Nullable FailureT>>
 			findAndFilterDuplicatesConfigs;
 }

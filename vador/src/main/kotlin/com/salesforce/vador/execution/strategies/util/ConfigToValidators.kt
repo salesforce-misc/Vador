@@ -8,9 +8,7 @@
 package com.salesforce.vador.execution.strategies.util
 
 import com.salesforce.vador.config.FieldConfig
-import com.salesforce.vador.config.FieldConfig.FieldConfigBuilder
 import com.salesforce.vador.config.IDConfig
-import com.salesforce.vador.config.IDConfig.IDConfigBuilder
 import com.salesforce.vador.config.base.BaseValidationConfig
 import com.salesforce.vador.specs.component1
 import com.salesforce.vador.specs.component2
@@ -377,12 +375,12 @@ private fun <FieldT, ValidatableT, FailureT> toFieldValidatorEtrs3(
   } ?: emptyList()
 
 private fun <FailureT, ValidatableT> toValidatorEtrs4(
-  configs: Collection<IDConfigBuilder<*, ValidatableT, FailureT, *>>?
+  configs: Collection<IDConfig.Builder<*, ValidatableT, FailureT, *>>?
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   configs?.flatMap { idConfigToValidatorEtrs(it.prepare()) } ?: emptyList()
 
 private fun <FailureT, ValidatableT> toValidatorEtrs5(
-  configs: Collection<FieldConfigBuilder<*, ValidatableT, FailureT>>?
+  configs: Collection<FieldConfig.Builder<*, ValidatableT, FailureT>>?
 ): List<ValidatorEtr<ValidatableT, FailureT>> =
   configs?.flatMap { fieldConfigToValidatorEtrs(it.prepare()) } ?: emptyList()
 
