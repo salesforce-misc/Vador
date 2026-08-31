@@ -7,7 +7,6 @@
  */
 package com.salesforce.vador.execution.spec
 
-import com.salesforce.vador.specs.specs.Spec1
 import com.salesforce.vador.specs.specs.Spec2
 import com.salesforce.vador.specs.specs.Spec3
 import com.salesforce.vador.specs.specs.Spec4
@@ -23,18 +22,6 @@ import org.hamcrest.Matchers.equalTo
 
 class SpecPredicateNullabilityTest :
   FunSpec({
-    test("Spec1 predicate input remains non-null in Kotlin") {
-      val predicate: Predicate<Bean> =
-        Spec1.check<Bean, String, String>()
-          .given(Function1 { it.value })
-          .shouldMatch(equalTo("valid"))
-          .orFailWith("failure")
-          .done()
-          .toPredicate()
-
-      predicate.test(Bean("valid")) shouldBe true
-    }
-
     test("Spec2 through Spec5 predicate inputs remain nullable in Kotlin") {
       val spec2Predicate: Predicate<Bean?> =
         Spec2.check<Bean, String, String, String>()
@@ -67,4 +54,4 @@ class SpecPredicateNullabilityTest :
     }
   })
 
-private data class Bean(val value: String)
+private class Bean

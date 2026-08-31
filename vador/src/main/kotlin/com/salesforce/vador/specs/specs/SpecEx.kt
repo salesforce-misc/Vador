@@ -15,7 +15,7 @@ import com.salesforce.vador.specs.specs.base.BaseSpec
 import java.util.function.Predicate
 
 internal fun <ValidatableT, FailureT, GivenT> Spec1<ValidatableT, FailureT, GivenT>.toPredicateEx():
-  Predicate<ValidatableT> = Predicate { validatable ->
+  Predicate<ValidatableT?> = Predicate { validatable ->
   val givenValue: GivenT = given.apply(validatable)
   shouldMatchAnyOf.any { it.matches(givenValue) } ||
     shouldMatchAnyOfFields.any { it.apply(validatable) == givenValue }
