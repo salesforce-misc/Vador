@@ -57,10 +57,10 @@ class UtilsTest {
 								NOTHING_TO_VALIDATE,
 								batchValidationConfig.getFindAndFilterDuplicatesConfigs()));
 
-		final var failedInvalids = results.take(2);
-		Assertions.assertThat(failedInvalids)
-				.allMatch(Either::isLeft)
-				.allMatch(r -> r.getLeft() == NOTHING_TO_VALIDATE);
+		final var skippedNullValidatables = results.take(2);
+		Assertions.assertThat(skippedNullValidatables)
+				.allMatch(Either::isRight)
+				.allMatch(r -> r.get() == null);
 		final var failedDuplicates = results.drop(2).take(3);
 		Assertions.assertThat(failedDuplicates)
 				.allMatch(Either::isLeft)
@@ -117,8 +117,10 @@ class UtilsTest {
 								NOTHING_TO_VALIDATE,
 								batchValidationConfig.getFindAndFilterDuplicatesConfigs()));
 
-		final var failedInvalids = results.take(2);
-		Assertions.assertThat(failedInvalids).allMatch(r -> r.getLeft() == NOTHING_TO_VALIDATE);
+		final var skippedNullValidatables = results.take(2);
+		Assertions.assertThat(skippedNullValidatables)
+				.allMatch(Either::isRight)
+				.allMatch(r -> r.get() == null);
 		final var failedDuplicates1 = results.drop(2).take(2);
 		Assertions.assertThat(failedDuplicates1).allMatch(r -> r.getLeft() == DUPLICATE_ITEM_1);
 
@@ -208,7 +210,7 @@ class UtilsTest {
 
 		Assertions.assertThat(results).hasSize(validatables.size() - duplicateValidatables.size());
 		final var failedInvalids = results.take(2);
-		Assertions.assertThat(failedInvalids).allMatch(r -> r.getLeft() == NOTHING_TO_VALIDATE);
+		Assertions.assertThat(failedInvalids).allMatch(r -> r.getLeft() == NULL_KEY);
 
 		final var nullKeyInvalids = results.drop(2).take(2);
 		Assertions.assertThat(nullKeyInvalids).allMatch(r -> r.getLeft() == NULL_KEY);
@@ -252,8 +254,10 @@ class UtilsTest {
 								batchValidationConfig.getFindAndFilterDuplicatesConfigs()));
 
 		Assertions.assertThat(results).hasSize(validatables.size() - duplicateValidatables.size());
-		final var failedInvalids = results.take(2);
-		Assertions.assertThat(failedInvalids).allMatch(r -> r.getLeft() == NOTHING_TO_VALIDATE);
+		final var skippedNullValidatables = results.take(2);
+		Assertions.assertThat(skippedNullValidatables)
+				.allMatch(Either::isRight)
+				.allMatch(r -> r.get() == null);
 
 		final var nullKeyInvalids = results.drop(2).take(2);
 		Assertions.assertThat(nullKeyInvalids).allMatch(r -> r.get().equals(new Bean(null)));
