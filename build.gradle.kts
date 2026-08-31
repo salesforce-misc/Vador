@@ -5,14 +5,12 @@
  * https://opensource.org/licenses/BSD-3-Clause
  * ****************************************************************************
  */
-import io.freefair.gradle.plugins.lombok.LombokExtension.LOMBOK_VERSION
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 
 plugins {
   `java-library`
   id(libs.plugins.detekt.pluginId) apply false
-  alias(libs.plugins.lombok.gradle) apply false
   id(libs.plugins.kover.pluginId)
   alias(libs.plugins.nexus.publish)
   id("org.sonarqube") version "6.0.1.5171"
@@ -20,7 +18,12 @@ plugins {
 
 allprojects { apply(plugin = "vador.root-conventions") }
 
-kover { reports { total { html { onCheck = true } } } }
+kover {
+  reports {
+    filters { excludes { annotatedBy("org.immutables.value.Generated") } }
+    total { html { onCheck = true } }
+  }
+}
 
 dependencies { subprojects.forEach { kover(project(":${it.name}")) } }
 
@@ -37,14 +40,11 @@ subprojects {
     }
   }
   detektReportMerge { input.from(tasks.withType<Detekt>().map { it.sarifReportFile }) }
-  val lombokForSonarQube: Configuration by configurations.creating
-  dependencies { lombokForSonarQube("org.projectlombok:lombok:$LOMBOK_VERSION") }
   sonarqube {
     properties {
       property("sonar.projectName", name)
       property("sonar.sources", "src/main")
       property("sonar.tests", "src/test")
-      property("sonar.java.libraries", lombokForSonarQube.files.last().toString())
       property("sonar.java.binaries", "build/classes")
     }
   }

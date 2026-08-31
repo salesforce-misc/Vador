@@ -5,12 +5,14 @@
  * https://opensource.org/licenses/BSD-3-Clause
  * ****************************************************************************
  */
+import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.javadoc.Javadoc
+
 plugins {
   id(libs.plugins.kotlin.kapt.get().pluginId)
   id("vador.sub-conventions")
   id("vador.kt-conventions")
   id("vador.publishing-conventions")
-  alias(libs.plugins.lombok.gradle)
 }
 
 kotlin { compilerOptions { freeCompilerArgs.add("-Xemit-jvm-type-annotations") } }
@@ -33,23 +35,14 @@ dependencies {
   testImplementation(libs.bundles.kotest)
 }
 
-if (!System.getProperty("idea.sync.active").toBoolean()) {
-  kotlin.sourceSets.main { kotlin.setSrcDirs(listOf("src/main/kotlin", tasks.delombok)) }
+val generatedKaptMain = layout.buildDirectory.dir("generated/source/kapt/main")
+
+tasks.named<Jar>("sourcesJar") {
+  dependsOn("kaptKotlin")
+  from(generatedKaptMain)
 }
 
-tasks {
-  compileJava {
-    dependsOn(delombok)
-    source = fileTree(layout.buildDirectory.dir("generated/sources/delombok/java/main"))
-  }
-
-  compileTestJava {
-    dependsOn(delombokTest)
-    source = fileTree(layout.buildDirectory.dir("generated/sources/delombok/java/test"))
-  }
-
-  delombok {
-    quiet.set(true)
-    input.setFrom("src/main/java")
-  }
+tasks.named<Javadoc>("javadoc") {
+  dependsOn("kaptKotlin")
+  source(generatedKaptMain)
 }

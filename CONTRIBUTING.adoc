@@ -50,10 +50,7 @@ sdk install java 17.0.14-amzn
 
 * This is a simple Gradle project and has its own Gradle wrapper. So nothing to install. Just run this command
 
-CAUTION: You may see some build errors related to the delombok task.
-They shouldn't fail your build, and you may ignore them.
-They will be addressed once Kotlin Lombok compiler supports Lombok `@Builders`.
-There is an https://youtrack.jetbrains.com/issue/KT-46959[Active Issue] filed for this as well.
+Gradle uses the standard `src/main/kotlin` production source layout and automatically generates the public Java API.
 
 [source,bash]
 ----
@@ -62,14 +59,11 @@ There is an https://youtrack.jetbrains.com/issue/KT-46959[Active Issue] filed fo
 
 TIP: You *don't* need a local Gradle installation as the `gradlew` (Gradle wrapper) takes care of everything. But if you wish to install gradle locally, the recommendation is to  do it via https://sdkman.io/install[SDKMAN]. After you install SDKMAN, run `sdk install gradle` to install Gradle
 
-* For source code navigation, you need to have https://projectlombok.org/[*Lombok*] plugin, which is used to generate boilerplate code.
-There are plugins available for all popular IDEs, which you need to install.
-The latest version of the plugin should work.
 * You can run/debug the existing unit tests or write your own to play with Vador.
 
 === Kotlin
 
-* The code-base is a mix of Java and Kotlin.
+* Handwritten production source is Kotlin, while Java consumers remain supported.
 If you're a Java developer and new to Kotlin, don't worry, Kotlin is a JVM language and can be used anywhere Java is used.
 In fact, it has got the reputation of *"Better Java!"*.
 * A typical Java developer can ramp up on Kotlin in less than a week. These resources can help catalyze your ramp-up:
