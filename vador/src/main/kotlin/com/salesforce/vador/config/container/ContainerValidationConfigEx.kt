@@ -15,34 +15,38 @@ import com.salesforce.vador.execution.strategies.util.fromValidators2
 import com.salesforce.vador.types.ValidatorEtr
 import de.cronn.reflection.util.PropertyUtils
 
+@Suppress("UNCHECKED_CAST")
 internal fun <ContainerValidatableT, FailureT> BaseContainerValidationConfig<
-  ContainerValidatableT?,
-  FailureT?,
+  ContainerValidatableT,
+  FailureT,
 >
-  .getContainerValidatorsEx(): List<ValidatorEtr<ContainerValidatableT?, FailureT?>> =
-  fromValidators1(withContainerValidators) +
-    fromValidators2(withContainerValidator) +
-    withContainerValidatorEtrs
+  .getContainerValidatorsEx(): List<ValidatorEtr<ContainerValidatableT, FailureT?>> {
+  val executionView = this as BaseContainerValidationConfig<ContainerValidatableT?, FailureT?>
+  return (fromValidators1(executionView.withContainerValidators) +
+    fromValidators2(executionView.withContainerValidator) +
+    executionView.withContainerValidatorEtrs)
+    as List<ValidatorEtr<ContainerValidatableT, FailureT?>>
+}
 
-internal fun <ContainerValidatableT, FailureT> ContainerValidationConfig<
-  ContainerValidatableT?,
-  FailureT?,
->
-  .getFieldNamesForBatchEx(validatableClazz: Class<ContainerValidatableT>): Set<String> =
-  withBatchMembers.map { PropertyUtils.getPropertyName(validatableClazz, it) }.toSet()
-
-internal fun <ContainerValidatableT, FailureT> ContainerValidationConfigWith2Levels<
-  ContainerValidatableT?,
-  *,
-  FailureT?,
+internal fun <ContainerValidatableT, FailureT> BaseSingleLevelContainerValidationConfig<
+  ContainerValidatableT,
+  FailureT,
 >
   .getFieldNamesForBatchEx(validatableClazz: Class<ContainerValidatableT>): Set<String> =
   withBatchMembers.map { PropertyUtils.getPropertyName(validatableClazz, it) }.toSet()
 
-internal fun <NestedContainerValidatableT, FailureT> ContainerValidationConfigWith2Levels<
+internal fun <ContainerValidatableT, FailureT> AbstractContainerValidationConfigWith2Levels<
+  ContainerValidatableT,
   *,
-  NestedContainerValidatableT?,
-  FailureT?,
+  FailureT,
+>
+  .getFieldNamesForBatchEx(validatableClazz: Class<ContainerValidatableT>): Set<String> =
+  withBatchMembers.map { PropertyUtils.getPropertyName(validatableClazz, it) }.toSet()
+
+internal fun <NestedContainerValidatableT, FailureT> AbstractContainerValidationConfigWith2Levels<
+  *,
+  NestedContainerValidatableT,
+  FailureT,
 >
   .getFieldNamesForBatchLevel1Ex(
   validatableClazz: Class<NestedContainerValidatableT>

@@ -27,6 +27,7 @@ import com.salesforce.vador.config.base.BaseFieldConfig;
 import com.salesforce.vador.config.base.BaseFilterDuplicatesConfig;
 import com.salesforce.vador.config.base.BaseIDConfig;
 import com.salesforce.vador.config.base.BaseValidationConfig;
+import com.salesforce.vador.config.container.BaseSingleLevelContainerValidationConfig;
 import com.salesforce.vador.config.container.ContainerValidationConfig;
 import com.salesforce.vador.config.container.ContainerValidationConfigWith2Levels;
 import com.salesforce.vador.specs.factory.SpecFactory;
@@ -44,6 +45,7 @@ import io.vavr.Function2;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -425,6 +427,73 @@ class JavaDslCompatibilityTest {
 		assertThat(validationConfig.getWithValidatorEtrs()).hasSize(2);
 		assertThat(validationConfig.getWithValidator()).hasSize(2);
 		assertThat(batchConfig.getFindAndFilterDuplicatesConfigs()).hasSize(2);
+	}
+
+	@Test
+	void containerConsecutiveBulkSingularInputsAccumulate() {
+		final Validator<Container, String> firstValidator = container -> "first";
+		final Validator<Container, String> secondValidator = container -> "second";
+		final ValidatorEtr<Container, String> firstValidatorEtr = value -> value;
+		final ValidatorEtr<Container, String> secondValidatorEtr = value -> value;
+		final TypedPropertyGetter<Container, Collection<?>> firstBatch = Container::getBeans;
+		final TypedPropertyGetter<Container, Collection<?>> secondBatch =
+				container -> container.getBeans();
+		final TypedPropertyGetter<Container, Collection<Container>> firstNestedBatch =
+				container -> List.of(container);
+		final TypedPropertyGetter<Container, Collection<Container>> secondNestedBatch =
+				container -> List.copyOf(List.of(container));
+
+		final var oneLevel =
+				ContainerValidationConfig.<Container, String>toValidate()
+						.withContainerValidatorEtrs(List.of(firstValidatorEtr))
+						.withContainerValidatorEtrs(List.of(secondValidatorEtr))
+						.withContainerValidator(Map.of(firstValidator, "first"))
+						.withContainerValidator(Map.of(secondValidator, "second"))
+						.withBatchMembers(List.of(firstBatch))
+						.withBatchMembers(List.of(secondBatch))
+						.prepare();
+		final var twoLevels =
+				ContainerValidationConfigWith2Levels.<Container, Container, String>toValidate()
+						.withContainerValidatorEtrs(List.of(firstValidatorEtr))
+						.withContainerValidatorEtrs(List.of(secondValidatorEtr))
+						.withContainerValidator(Map.of(firstValidator, "first"))
+						.withContainerValidator(Map.of(secondValidator, "second"))
+						.withBatchMembers(List.of(firstNestedBatch))
+						.withBatchMembers(List.of(secondNestedBatch))
+						.withScopeOf1LevelDeep(oneLevel)
+						.prepare();
+
+		assertThat(oneLevel.getWithContainerValidatorEtrs()).hasSize(2);
+		assertThat(oneLevel.getWithContainerValidator()).hasSize(2);
+		assertThat(oneLevel.getWithBatchMembers()).hasSize(2);
+		assertThat(twoLevels.getWithContainerValidatorEtrs()).hasSize(2);
+		assertThat(twoLevels.getWithContainerValidator()).hasSize(2);
+		assertThat(twoLevels.getWithBatchMembers()).hasSize(2);
+	}
+
+	@Test
+	void twoLevelContainerStoresItsSuppliedOneLevelValueAndCopiesIndependently() {
+		final var oneLevel =
+				ContainerValidationConfig.<Container, String>toValidate()
+						.withBatchMember(Container::getBeans)
+						.prepare();
+		final TypedPropertyGetter<Container, Collection<Container>> nestedBatch =
+				container -> List.of(container);
+		final var twoLevels =
+				ContainerValidationConfigWith2Levels.<Container, Container, String>toValidate()
+						.withBatchMember(nestedBatch)
+						.withScopeOf1LevelDeep(oneLevel)
+						.prepare();
+		final var copied =
+				twoLevels.toBuilder().withContainerValidator(container -> "copied", "copied").prepare();
+		final BaseSingleLevelContainerValidationConfig<Container, String> storedScope =
+				twoLevels.getWithScopeOf1LevelDeep();
+
+		assertThat(storedScope).isSameAs(oneLevel);
+		assertThat(copied.getWithScopeOf1LevelDeep()).isSameAs(oneLevel);
+		assertThat(twoLevels.getWithContainerValidator()).isEmpty();
+		assertThat(copied.getWithContainerValidator()).hasSize(1);
+		assertThat(copied).isNotEqualTo(twoLevels);
 	}
 
 	@Test

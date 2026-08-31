@@ -17,6 +17,7 @@ import com.salesforce.vador.config.IDConfig
 import com.salesforce.vador.config.IDConfigBuilder
 import com.salesforce.vador.config.ValidationConfig
 import com.salesforce.vador.config.base.BaseFilterDuplicatesConfig
+import com.salesforce.vador.config.container.ContainerValidationConfig
 import com.salesforce.vador.specs.specs.Spec1
 import com.salesforce.vador.types.Validator
 import com.salesforce.vador.types.ValidatorEtr
@@ -121,6 +122,36 @@ class KotlinDslCompatibilityTest :
       config.withValidators?._2 shouldBe "none"
       config.forAnnotations shouldBe annotationFailures
       config.forAnnotations?._1?.get("required") shouldBe null
+    }
+
+    test("container DSL preserves its validator and tuple nullability") {
+      val validator = Validator<Container, String> { "bad-validator" }
+      val validatorEtr = ValidatorEtr<Container, String> { it }
+      val nullableFailureValidator = Validator<Container, String?> { null }
+      val validatorChain: Tuple2<Collection<Validator<in Container, String?>>, String?> =
+        Tuple.of(listOf(nullableFailureValidator), null as String?)
+      val batchMember = TypedPropertyGetter<Container, Collection<*>?> { it.beans }
+      val config =
+        ContainerValidationConfig.toValidate<Container, String>()
+          .withContainerValidator(validator, "bad-validator")
+          .withContainerValidatorEtr(validatorEtr)
+          .withContainerValidators(validatorChain)
+          .withBatchMember(batchMember)
+          .prepare()
+
+      val validatorEtrs: Collection<ValidatorEtr<Container, String>> =
+        config.withContainerValidatorEtrs
+      val validators: Tuple2<Collection<Validator<in Container, String?>>, String?>? =
+        config.withContainerValidators
+      val validatorMap: Map<Validator<in Container, String>, String> = config.withContainerValidator
+      val executionValidators: List<ValidatorEtr<Container, String?>> = config.containerValidators
+
+      validatorEtrs.single() shouldBe validatorEtr
+      validators shouldBe validatorChain
+      validators?._2 shouldBe null
+      validatorMap[validator] shouldBe "bad-validator"
+      executionValidators.size shouldBe 3
+      (executionValidators.last() === validatorEtr) shouldBe true
     }
 
     test("batch-of-batch stores its supplied nested value and copies independently") {
