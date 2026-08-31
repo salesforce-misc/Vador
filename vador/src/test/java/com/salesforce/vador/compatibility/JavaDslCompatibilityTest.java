@@ -53,7 +53,8 @@ class JavaDslCompatibilityTest {
 						.shouldHaveFieldOrFailWith(Bean::getText, "required")
 						.withSpec(
 								factory ->
-										factory.<String>_1()
+										factory
+												.<String>_1()
 												.given(Bean::getText)
 												.shouldMatch(equalTo("valid"))
 												.orFailWith("bad-spec"))
@@ -169,11 +170,11 @@ class JavaDslCompatibilityTest {
 				"shouldRelateWithEntry",
 				"orField1ShouldMatch",
 				"orField2ShouldMatch");
-		assertBuilderHasSingularMethods(
-				Spec4.check(), "whenFieldMatches", "thenFieldShouldMatch");
+		assertBuilderHasSingularMethods(Spec4.check(), "whenFieldMatches", "thenFieldShouldMatch");
 	}
 
-	private static void assertBuilderHasSingularMethods(Object builder, String... expectedMethodNames) {
+	private static void assertBuilderHasSingularMethods(
+			Object builder, String... expectedMethodNames) {
 		final var methodNames =
 				Stream.of(builder.getClass().getMethods()).map(Method::getName).toList();
 
