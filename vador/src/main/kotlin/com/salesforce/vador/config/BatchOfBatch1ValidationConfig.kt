@@ -40,9 +40,6 @@ internal abstract class AbstractBatchOfBatch1ValidationConfig<
     >
 
   abstract class Builder<ContainerValidatableT, MemberValidatableT, FailureT> :
-    ConfigBuilder<
-      BatchOfBatch1ValidationConfig<ContainerValidatableT, MemberValidatableT, FailureT>
-    >,
     ValidationBuilderDsl<
       ContainerValidatableT,
       FailureT,

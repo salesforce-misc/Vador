@@ -16,6 +16,5 @@ internal abstract class AbstractValidationConfig<ValidatableT, FailureT> :
   AbstractValidationConfigSupport<ValidatableT, FailureT>() {
 
   abstract class Builder<ValidatableT, FailureT> :
-    ConfigBuilder<ValidationConfig<ValidatableT, FailureT>>,
     ValidationBuilderDsl<ValidatableT, FailureT, ValidationConfig.Builder<ValidatableT, FailureT>>
 }
