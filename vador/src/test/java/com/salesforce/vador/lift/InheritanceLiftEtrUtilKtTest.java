@@ -22,7 +22,10 @@ import io.vavr.control.Either;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import sample.consumer.bean.Container;
 import sample.consumer.bean.Member;
 import sample.consumer.config.ConfigForValidators;
@@ -84,25 +87,42 @@ class InheritanceLiftEtrUtilKtTest {
 		assertThat(requiredOnlyParent.getSfId1()).isNull();
 		assertThat(requiredOnlyParent.getSfId2()).isNull();
 		assertThat(member).isEqualTo(new Member(7)).hasSameHashCodeAs(new Member(7));
+		assertThat(member).isNotEqualTo(new Member(8));
 		assertThat(member.getId()).isEqualTo(7);
 		assertThat(member.toString()).contains("7");
 
-		assertThat(new Container(3, member).getMember()).isSameAs(member);
+		final var container = new Container(3, member);
+		final var equivalentParent = new sample.consumer.bean.Parent(3, null, new Member(7));
+		assertThat(container.getMember()).isSameAs(member);
 		assertThat(new Container(3).getId()).isEqualTo(3);
 		assertThat(new Container("container-sf-id").getSfId()).isEqualTo("container-sf-id");
-		assertThat(new Container(3, member).toString()).contains("Parent", "3", "7");
+		assertThat(container.toString()).contains("Parent", "3", "7");
+		assertThat(equivalentParent).isEqualTo(container).hasSameHashCodeAs(container);
+		assertThat(container).isEqualTo(equivalentParent).hasSameHashCodeAs(equivalentParent);
+	}
+
+	@ParameterizedTest
+	@MethodSource("parentsWithOneDifferentField")
+	void parentValueEqualityCoversEveryField(sample.consumer.bean.Parent differentParent) {
+		final var parent =
+				new sample.consumer.bean.Parent(
+						1, "sf-id", new Member(7), 2, "required-2", "required-3", "sf-id-1", "sf-id-2");
+
+		assertThat(parent).isNotEqualTo(differentParent);
+		assertThat(differentParent).isNotEqualTo(parent);
 	}
 
 	@Test
 	void mutableValidationFailuresRetainReferenceAndValueSemantics() {
 		final var sampleMessage = ValidationFailureMessage.MSG_WITH_PARAMS;
 		final var sampleParams = new Object[] {"before"};
-		final var sampleFailure = new ValidationFailure(sampleMessage);
-		final var sameSampleFailure = new ValidationFailure(sampleMessage);
+		final var sampleFailure = sampleFailure(sampleMessage, "exception");
+		final var sameSampleFailure = sampleFailure(sampleMessage, "exception");
+		final var sampleFailureWithDifferentMessage =
+				sampleFailure(ValidationFailureMessage.INVALID_VALUE, "exception");
+		final var sampleFailureWithDifferentException = sampleFailure(sampleMessage, "different");
 
 		sampleMessage.setParams(sampleParams);
-		sampleFailure.setExceptionMsg("exception");
-		sameSampleFailure.setExceptionMsg("exception");
 		final var sampleHashBeforeArrayMutation = sampleFailure.hashCode();
 		sampleParams[0] = "after";
 
@@ -110,20 +130,23 @@ class InheritanceLiftEtrUtilKtTest {
 		assertThat(sampleFailure.getValidationFailureMessage()).isSameAs(sampleMessage);
 		assertThat(sampleFailure.getExceptionMsg()).isEqualTo("exception");
 		assertThat(sampleFailure).isEqualTo(sameSampleFailure).hasSameHashCodeAs(sameSampleFailure);
+		assertThat(sampleFailure).isNotEqualTo(sampleFailureWithDifferentMessage);
+		assertThat(sampleFailure).isNotEqualTo(sampleFailureWithDifferentException);
 		assertThat(sampleFailure.hashCode()).isEqualTo(sampleHashBeforeArrayMutation);
 		assertThat(sampleFailure.toString()).contains("MSG_WITH_PARAMS", "exception");
 		sampleMessage.setParams(null);
+		assertThat(sampleMessage.getParams()).isNull();
 
 		final var specMessage =
 				com.salesforce.vador.specs.failure.ValidationFailureMessage.INVALID_VALUE;
 		final var specParams = new Object[] {"before"};
-		final var specFailure = new com.salesforce.vador.specs.failure.ValidationFailure(specMessage);
-		final var sameSpecFailure =
-				new com.salesforce.vador.specs.failure.ValidationFailure(specMessage);
+		final var specFailure = specFailure(specMessage, "exception");
+		final var sameSpecFailure = specFailure(specMessage, "exception");
+		final var specFailureWithDifferentMessage =
+				specFailure(com.salesforce.vador.specs.failure.ValidationFailureMessage.NONE, "exception");
+		final var specFailureWithDifferentException = specFailure(specMessage, "different");
 
 		specMessage.setParams(specParams);
-		specFailure.setExceptionMsg("exception");
-		sameSpecFailure.setExceptionMsg("exception");
 		final var specHashBeforeArrayMutation = specFailure.hashCode();
 		specParams[0] = "after";
 
@@ -133,9 +156,12 @@ class InheritanceLiftEtrUtilKtTest {
 		assertThat(specFailure.getValidationFailureMessage()).isSameAs(specMessage);
 		assertThat(specFailure.getExceptionMsg()).isEqualTo("exception");
 		assertThat(specFailure).isEqualTo(sameSpecFailure).hasSameHashCodeAs(sameSpecFailure);
+		assertThat(specFailure).isNotEqualTo(specFailureWithDifferentMessage);
+		assertThat(specFailure).isNotEqualTo(specFailureWithDifferentException);
 		assertThat(specFailure.hashCode()).isEqualTo(specHashBeforeArrayMutation);
 		assertThat(specFailure.toString()).contains("INVALID_VALUE", "exception");
 		specMessage.setParams(null);
+		assertThat(specMessage.getParams()).isNull();
 	}
 
 	@Test
@@ -147,6 +173,7 @@ class InheritanceLiftEtrUtilKtTest {
 		getId.setAccessible(true);
 		final var bean = constructor.newInstance("id");
 		final var sameBean = constructor.newInstance("id");
+		final var beanWithDifferentId = constructor.newInstance("different-id");
 
 		assertThat(Modifier.isPrivate(beanClass.getModifiers())).isTrue();
 		assertThat(Modifier.isStatic(beanClass.getModifiers())).isTrue();
@@ -154,6 +181,7 @@ class InheritanceLiftEtrUtilKtTest {
 		assertThat(Modifier.isPublic(constructor.getModifiers())).isTrue();
 		assertThat(getId.invoke(bean)).isEqualTo("id");
 		assertThat(bean).isEqualTo(sameBean).hasSameHashCodeAs(sameBean);
+		assertThat(bean).isNotEqualTo(beanWithDifferentId);
 	}
 
 	@Test
@@ -169,7 +197,8 @@ class InheritanceLiftEtrUtilKtTest {
 
 		constructor.setAccessible(true);
 		assertThat(catchThrowable(constructor::newInstance))
-				.isInstanceOf(InvocationTargetException.class);
+				.isInstanceOf(InvocationTargetException.class)
+				.hasCauseInstanceOf(AssertionError.class);
 	}
 
 	@Test
@@ -179,6 +208,77 @@ class InheritanceLiftEtrUtilKtTest {
 		assertThat(child).isEqualTo(child);
 		assertThat(child).isNotEqualTo(new Child());
 		assertThat(child.toString()).contains("Child");
+	}
+
+	private static Stream<sample.consumer.bean.Parent> parentsWithOneDifferentField() {
+		return Stream.of(
+				new sample.consumer.bean.Parent(
+						2, "sf-id", new Member(7), 2, "required-2", "required-3", "sf-id-1", "sf-id-2"),
+				new sample.consumer.bean.Parent(
+						1,
+						"different-sf-id",
+						new Member(7),
+						2,
+						"required-2",
+						"required-3",
+						"sf-id-1",
+						"sf-id-2"),
+				new sample.consumer.bean.Parent(
+						1, "sf-id", new Member(8), 2, "required-2", "required-3", "sf-id-1", "sf-id-2"),
+				new sample.consumer.bean.Parent(
+						1, "sf-id", new Member(7), 3, "required-2", "required-3", "sf-id-1", "sf-id-2"),
+				new sample.consumer.bean.Parent(
+						1,
+						"sf-id",
+						new Member(7),
+						2,
+						"different-required-2",
+						"required-3",
+						"sf-id-1",
+						"sf-id-2"),
+				new sample.consumer.bean.Parent(
+						1,
+						"sf-id",
+						new Member(7),
+						2,
+						"required-2",
+						"different-required-3",
+						"sf-id-1",
+						"sf-id-2"),
+				new sample.consumer.bean.Parent(
+						1,
+						"sf-id",
+						new Member(7),
+						2,
+						"required-2",
+						"required-3",
+						"different-sf-id-1",
+						"sf-id-2"),
+				new sample.consumer.bean.Parent(
+						1,
+						"sf-id",
+						new Member(7),
+						2,
+						"required-2",
+						"required-3",
+						"sf-id-1",
+						"different-sf-id-2"));
+	}
+
+	private static ValidationFailure sampleFailure(
+			ValidationFailureMessage validationFailureMessage, String exceptionMsg) {
+		final var validationFailure = new ValidationFailure(validationFailureMessage);
+		validationFailure.setExceptionMsg(exceptionMsg);
+		return validationFailure;
+	}
+
+	private static com.salesforce.vador.specs.failure.ValidationFailure specFailure(
+			com.salesforce.vador.specs.failure.ValidationFailureMessage validationFailureMessage,
+			String exceptionMsg) {
+		final var validationFailure =
+				new com.salesforce.vador.specs.failure.ValidationFailure(validationFailureMessage);
+		validationFailure.setExceptionMsg(exceptionMsg);
+		return validationFailure;
 	}
 
 	private abstract class Parent {}
