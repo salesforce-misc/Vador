@@ -21,7 +21,6 @@ import com.salesforce.vador.config.BatchValidationConfig;
 import com.salesforce.vador.execution.VadorBatch;
 import io.vavr.Tuple;
 import java.util.List;
-import lombok.Value;
 import org.assertj.core.api.Assertions;
 import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -36,33 +35,42 @@ class BatchOfBatch1ValidationConfigTest {
 	@Test
 	void batchOfBatch1FailFastForEach() {
 		final var memberBatchValidationConfig =
-				BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+				BatchValidationConfig.<BatchOfBatch1ValidationConfigBean, ValidationFailure>toValidate()
 						.withSpec(
 								spec ->
 										spec._2()
-												.when(Bean::getValue)
+												.when(BatchOfBatch1ValidationConfigBean::getValue)
 												.matches(is(1))
-												.then(Bean::getLabel)
+												.then(BatchOfBatch1ValidationConfigBean::getLabel)
 												.shouldMatch(anyOf("1", "one"))
 												.orFailWith(INVALID_COMBO_1))
 						.prepare();
 		final var itemBatchValidationConfig =
-				BatchOfBatch1ValidationConfig.<Item, Bean, ValidationFailure>toValidate()
-						.shouldHaveFieldOrFailWith(Item::getId, INVALID_ITEM)
+				BatchOfBatch1ValidationConfig
+						.<BatchOfBatch1ValidationConfigItem, BatchOfBatch1ValidationConfigBean,
+								ValidationFailure>
+								toValidate()
+						.shouldHaveFieldOrFailWith(BatchOfBatch1ValidationConfigItem::getId, INVALID_ITEM)
 						.withMemberBatchValidationConfig(
-								Tuple.of(Item::getBeanBatch, memberBatchValidationConfig))
+								Tuple.of(
+										BatchOfBatch1ValidationConfigItem::getBeanBatch, memberBatchValidationConfig))
 						.prepare();
 
-		final var invalidBean1 = new Bean(1, "a");
-		final var beanBatch1 = List.of(invalidBean1, new Bean(1, "1"));
-		final var invalidBean2 = new Bean(2, "b");
-		final var beanBatch2 = List.of(invalidBean2, new Bean(2, "2"));
-		final var allValidBeanBatch3 = List.of(new Bean(3, "three"), new Bean(3, "3"));
-		final var invalidItem = new Item("", beanBatch2);
+		final var invalidBean1 = new BatchOfBatch1ValidationConfigBean(1, "a");
+		final var beanBatch1 = List.of(invalidBean1, new BatchOfBatch1ValidationConfigBean(1, "1"));
+		final var invalidBean2 = new BatchOfBatch1ValidationConfigBean(2, "b");
+		final var beanBatch2 = List.of(invalidBean2, new BatchOfBatch1ValidationConfigBean(2, "2"));
+		final var allValidBeanBatch3 =
+				List.of(
+						new BatchOfBatch1ValidationConfigBean(3, "three"),
+						new BatchOfBatch1ValidationConfigBean(3, "3"));
+		final var invalidItem = new BatchOfBatch1ValidationConfigItem("", beanBatch2);
 		final var itemsBatch =
 				List.of(
-						new Item("item-1", beanBatch1), invalidItem, new Item("item-3", allValidBeanBatch3));
-		final var root = new Root(itemsBatch);
+						new BatchOfBatch1ValidationConfigItem("item-1", beanBatch1),
+						invalidItem,
+						new BatchOfBatch1ValidationConfigItem("item-3", allValidBeanBatch3));
+		final var root = new BatchOfBatch1ValidationConfigRoot(itemsBatch);
 
 		final var results =
 				validateAndFailFastForEach(root.getItemsBatch(), itemBatchValidationConfig, NONE);
@@ -91,37 +99,49 @@ class BatchOfBatch1ValidationConfigTest {
 	@Test
 	void batchOfBatch1FailFastForEachWithPair() {
 		final var memberBatchValidationConfig =
-				BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+				BatchValidationConfig.<BatchOfBatch1ValidationConfigBean, ValidationFailure>toValidate()
 						.withSpec(
 								spec ->
 										spec._2()
-												.when(Bean::getValue)
+												.when(BatchOfBatch1ValidationConfigBean::getValue)
 												.matches(is(1))
-												.then(Bean::getLabel)
+												.then(BatchOfBatch1ValidationConfigBean::getLabel)
 												.shouldMatch(anyOf("1", "one"))
 												.orFailWith(INVALID_COMBO_1))
 						.prepare();
 		final var itemBatchValidationConfig =
-				BatchOfBatch1ValidationConfig.<Item, Bean, ValidationFailure>toValidate()
-						.shouldHaveFieldOrFailWith(Item::getId, INVALID_ITEM)
+				BatchOfBatch1ValidationConfig
+						.<BatchOfBatch1ValidationConfigItem, BatchOfBatch1ValidationConfigBean,
+								ValidationFailure>
+								toValidate()
+						.shouldHaveFieldOrFailWith(BatchOfBatch1ValidationConfigItem::getId, INVALID_ITEM)
 						.withMemberBatchValidationConfig(
-								Tuple.of(Item::getBeanBatch, memberBatchValidationConfig))
+								Tuple.of(
+										BatchOfBatch1ValidationConfigItem::getBeanBatch, memberBatchValidationConfig))
 						.prepare();
 
-		final var invalidBean1 = new Bean(1, "a");
-		final var beanBatch1 = List.of(invalidBean1, new Bean(1, "1"));
-		final var invalidBean2 = new Bean(2, "b");
-		final var beanBatch2 = List.of(invalidBean2, new Bean(2, "2"));
-		final var allValidBeanBatch3 = List.of(new Bean(3, "three"), new Bean(3, "3"));
-		final var invalidItem = new Item("", beanBatch2);
+		final var invalidBean1 = new BatchOfBatch1ValidationConfigBean(1, "a");
+		final var beanBatch1 = List.of(invalidBean1, new BatchOfBatch1ValidationConfigBean(1, "1"));
+		final var invalidBean2 = new BatchOfBatch1ValidationConfigBean(2, "b");
+		final var beanBatch2 = List.of(invalidBean2, new BatchOfBatch1ValidationConfigBean(2, "2"));
+		final var allValidBeanBatch3 =
+				List.of(
+						new BatchOfBatch1ValidationConfigBean(3, "three"),
+						new BatchOfBatch1ValidationConfigBean(3, "3"));
+		final var invalidItem = new BatchOfBatch1ValidationConfigItem("", beanBatch2);
 		final var itemsBatch =
 				List.of(
-						new Item("item-1", beanBatch1), invalidItem, new Item("item-3", allValidBeanBatch3));
-		final var root = new Root(itemsBatch);
+						new BatchOfBatch1ValidationConfigItem("item-1", beanBatch1),
+						invalidItem,
+						new BatchOfBatch1ValidationConfigItem("item-3", allValidBeanBatch3));
+		final var root = new BatchOfBatch1ValidationConfigRoot(itemsBatch);
 
 		final var results =
 				VadorBatch.validateAndFailFastForEach(
-						root.getItemsBatch(), itemBatchValidationConfig, Item::getId, Bean::getValue);
+						root.getItemsBatch(),
+						itemBatchValidationConfig,
+						BatchOfBatch1ValidationConfigItem::getId,
+						BatchOfBatch1ValidationConfigBean::getValue);
 		assertThat(results).hasSize(3);
 
 		final var result1 = results.get(0);
@@ -145,33 +165,43 @@ class BatchOfBatch1ValidationConfigTest {
 	@Test
 	void batchOfBatch1FailFastForAnyWithInvalidContainer() {
 		final var memberBatchValidationConfig =
-				BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+				BatchValidationConfig.<BatchOfBatch1ValidationConfigBean, ValidationFailure>toValidate()
 						.withSpec(
 								spec ->
 										spec._2()
-												.when(Bean::getValue)
+												.when(BatchOfBatch1ValidationConfigBean::getValue)
 												.matches(is(1))
-												.then(Bean::getLabel)
+												.then(BatchOfBatch1ValidationConfigBean::getLabel)
 												.shouldMatch(anyOf("1", "one"))
 												.orFailWith(INVALID_COMBO_1))
 						.prepare();
 		final var itemBatchValidationConfig =
-				BatchOfBatch1ValidationConfig.<Item, Bean, ValidationFailure>toValidate()
-						.shouldHaveFieldOrFailWith(Item::getId, INVALID_ITEM)
+				BatchOfBatch1ValidationConfig
+						.<BatchOfBatch1ValidationConfigItem, BatchOfBatch1ValidationConfigBean,
+								ValidationFailure>
+								toValidate()
+						.shouldHaveFieldOrFailWith(BatchOfBatch1ValidationConfigItem::getId, INVALID_ITEM)
 						.withMemberBatchValidationConfig(
-								Tuple.of(Item::getBeanBatch, memberBatchValidationConfig))
+								Tuple.of(
+										BatchOfBatch1ValidationConfigItem::getBeanBatch, memberBatchValidationConfig))
 						.prepare();
 
-		final var bean1 = new Bean(1, "one");
-		final var beanBatch1 = List.of(bean1, new Bean(1, "1"));
-		final var invalidBean = new Bean(1, "a");
-		final var beanBatchWithInvalidBean = List.of(invalidBean, new Bean(2, "2"));
-		final var allValidBeanBatch3 = List.of(new Bean(3, "three"), new Bean(3, "3"));
-		final var invalidItem = new Item("", beanBatchWithInvalidBean);
+		final var bean1 = new BatchOfBatch1ValidationConfigBean(1, "one");
+		final var beanBatch1 = List.of(bean1, new BatchOfBatch1ValidationConfigBean(1, "1"));
+		final var invalidBean = new BatchOfBatch1ValidationConfigBean(1, "a");
+		final var beanBatchWithInvalidBean =
+				List.of(invalidBean, new BatchOfBatch1ValidationConfigBean(2, "2"));
+		final var allValidBeanBatch3 =
+				List.of(
+						new BatchOfBatch1ValidationConfigBean(3, "three"),
+						new BatchOfBatch1ValidationConfigBean(3, "3"));
+		final var invalidItem = new BatchOfBatch1ValidationConfigItem("", beanBatchWithInvalidBean);
 		final var itemsBatch =
 				List.of(
-						new Item("item-1", beanBatch1), invalidItem, new Item("item-3", allValidBeanBatch3));
-		final var root = new Root(itemsBatch);
+						new BatchOfBatch1ValidationConfigItem("item-1", beanBatch1),
+						invalidItem,
+						new BatchOfBatch1ValidationConfigItem("item-3", allValidBeanBatch3));
+		final var root = new BatchOfBatch1ValidationConfigRoot(itemsBatch);
 
 		final var result = validateAndFailFastForAny(root.getItemsBatch(), itemBatchValidationConfig);
 		Assertions.assertThat(result).isPresent();
@@ -183,33 +213,44 @@ class BatchOfBatch1ValidationConfigTest {
 	@Test
 	void batchOfBatch1FailFastForAnyWithInvalidMember() {
 		final var memberBatchValidationConfig =
-				BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+				BatchValidationConfig.<BatchOfBatch1ValidationConfigBean, ValidationFailure>toValidate()
 						.withSpec(
 								spec ->
 										spec._2()
-												.when(Bean::getValue)
+												.when(BatchOfBatch1ValidationConfigBean::getValue)
 												.matches(is(1))
-												.then(Bean::getLabel)
+												.then(BatchOfBatch1ValidationConfigBean::getLabel)
 												.shouldMatch(anyOf("1", "one"))
 												.orFailWith(INVALID_COMBO_1))
 						.prepare();
 		final var itemBatchValidationConfig =
-				BatchOfBatch1ValidationConfig.<Item, Bean, ValidationFailure>toValidate()
-						.shouldHaveFieldOrFailWith(Item::getId, INVALID_ITEM)
+				BatchOfBatch1ValidationConfig
+						.<BatchOfBatch1ValidationConfigItem, BatchOfBatch1ValidationConfigBean,
+								ValidationFailure>
+								toValidate()
+						.shouldHaveFieldOrFailWith(BatchOfBatch1ValidationConfigItem::getId, INVALID_ITEM)
 						.withMemberBatchValidationConfig(
-								Tuple.of(Item::getBeanBatch, memberBatchValidationConfig))
+								Tuple.of(
+										BatchOfBatch1ValidationConfigItem::getBeanBatch, memberBatchValidationConfig))
 						.prepare();
 
-		final var beanBatch1 = List.of(new Bean(1, "one"), new Bean(1, "1"));
-		final var invalidBean = new Bean(1, "a");
-		final var beanBatchWithInvalidBean = List.of(invalidBean, new Bean(2, "2"));
-		final var beanBatch3 = List.of(new Bean(3, "three"), new Bean(3, "t"));
+		final var beanBatch1 =
+				List.of(
+						new BatchOfBatch1ValidationConfigBean(1, "one"),
+						new BatchOfBatch1ValidationConfigBean(1, "1"));
+		final var invalidBean = new BatchOfBatch1ValidationConfigBean(1, "a");
+		final var beanBatchWithInvalidBean =
+				List.of(invalidBean, new BatchOfBatch1ValidationConfigBean(2, "2"));
+		final var beanBatch3 =
+				List.of(
+						new BatchOfBatch1ValidationConfigBean(3, "three"),
+						new BatchOfBatch1ValidationConfigBean(3, "t"));
 		final var itemsBatch =
 				List.of(
-						new Item("item-1", beanBatch1),
-						new Item("item-2", beanBatchWithInvalidBean),
-						new Item("item-3", beanBatch3));
-		final var root = new Root(itemsBatch);
+						new BatchOfBatch1ValidationConfigItem("item-1", beanBatch1),
+						new BatchOfBatch1ValidationConfigItem("item-2", beanBatchWithInvalidBean),
+						new BatchOfBatch1ValidationConfigItem("item-3", beanBatch3));
+		final var root = new BatchOfBatch1ValidationConfigRoot(itemsBatch);
 
 		final var result = validateAndFailFastForAny(root.getItemsBatch(), itemBatchValidationConfig);
 		Assertions.assertThat(result).isPresent();
@@ -221,35 +262,52 @@ class BatchOfBatch1ValidationConfigTest {
 	@Test
 	void batchOfBatch1FailFastForAnyWithPairWithInvalidContainer() {
 		final var memberBatchValidationConfig =
-				BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+				BatchValidationConfig.<BatchOfBatch1ValidationConfigBean, ValidationFailure>toValidate()
 						.withSpec(
 								spec ->
 										spec._2()
-												.when(Bean::getValue)
+												.when(BatchOfBatch1ValidationConfigBean::getValue)
 												.matches(is(1))
-												.then(Bean::getLabel)
+												.then(BatchOfBatch1ValidationConfigBean::getLabel)
 												.shouldMatch(anyOf("1", "one"))
 												.orFailWith(INVALID_COMBO_1))
 						.prepare();
 		final var itemBatchValidationConfig =
-				BatchOfBatch1ValidationConfig.<Item, Bean, ValidationFailure>toValidate()
-						.shouldHaveFieldOrFailWith(Item::getId, INVALID_ITEM)
+				BatchOfBatch1ValidationConfig
+						.<BatchOfBatch1ValidationConfigItem, BatchOfBatch1ValidationConfigBean,
+								ValidationFailure>
+								toValidate()
+						.shouldHaveFieldOrFailWith(BatchOfBatch1ValidationConfigItem::getId, INVALID_ITEM)
 						.withMemberBatchValidationConfig(
-								Tuple.of(Item::getBeanBatch, memberBatchValidationConfig))
+								Tuple.of(
+										BatchOfBatch1ValidationConfigItem::getBeanBatch, memberBatchValidationConfig))
 						.prepare();
 
-		final var beanBatch1 = List.of(new Bean(1, "one"), new Bean(1, "1"));
-		final var invalidBean = new Bean(1, "a");
-		final var beanBatchWithInvalidBean = List.of(invalidBean, new Bean(2, "2"));
-		final var beanBatch3 = List.of(new Bean(3, "three"), new Bean(3, "t"));
-		final var invalidItem = new Item("", beanBatchWithInvalidBean);
+		final var beanBatch1 =
+				List.of(
+						new BatchOfBatch1ValidationConfigBean(1, "one"),
+						new BatchOfBatch1ValidationConfigBean(1, "1"));
+		final var invalidBean = new BatchOfBatch1ValidationConfigBean(1, "a");
+		final var beanBatchWithInvalidBean =
+				List.of(invalidBean, new BatchOfBatch1ValidationConfigBean(2, "2"));
+		final var beanBatch3 =
+				List.of(
+						new BatchOfBatch1ValidationConfigBean(3, "three"),
+						new BatchOfBatch1ValidationConfigBean(3, "t"));
+		final var invalidItem = new BatchOfBatch1ValidationConfigItem("", beanBatchWithInvalidBean);
 		final var itemsBatch =
-				List.of(new Item("item-1", beanBatch1), invalidItem, new Item("item-3", beanBatch3));
-		final var root = new Root(itemsBatch);
+				List.of(
+						new BatchOfBatch1ValidationConfigItem("item-1", beanBatch1),
+						invalidItem,
+						new BatchOfBatch1ValidationConfigItem("item-3", beanBatch3));
+		final var root = new BatchOfBatch1ValidationConfigRoot(itemsBatch);
 
 		final var result =
 				VadorBatch.validateAndFailFastForAny(
-						root.getItemsBatch(), Item::getId, Bean::getLabel, itemBatchValidationConfig);
+						root.getItemsBatch(),
+						BatchOfBatch1ValidationConfigItem::getId,
+						BatchOfBatch1ValidationConfigBean::getLabel,
+						itemBatchValidationConfig);
 		assertThat(result).isPresent();
 
 		assertThat(result.get().isContainerValid()).isFalse();
@@ -263,66 +321,55 @@ class BatchOfBatch1ValidationConfigTest {
 	@Test
 	void batchOfBatch1FailFastForAnyWithPairWithInvalidMember() {
 		final var memberBatchValidationConfig =
-				BatchValidationConfig.<Bean, ValidationFailure>toValidate()
+				BatchValidationConfig.<BatchOfBatch1ValidationConfigBean, ValidationFailure>toValidate()
 						.withSpec(
 								spec ->
 										spec._2()
-												.when(Bean::getValue)
+												.when(BatchOfBatch1ValidationConfigBean::getValue)
 												.matches(is(1))
-												.then(Bean::getLabel)
+												.then(BatchOfBatch1ValidationConfigBean::getLabel)
 												.shouldMatch(anyOf("1", "one"))
 												.orFailWith(INVALID_COMBO_1))
 						.prepare();
 		final var itemBatchValidationConfig =
-				BatchOfBatch1ValidationConfig.<Item, Bean, ValidationFailure>toValidate()
-						.shouldHaveFieldOrFailWith(Item::getId, INVALID_ITEM)
+				BatchOfBatch1ValidationConfig
+						.<BatchOfBatch1ValidationConfigItem, BatchOfBatch1ValidationConfigBean,
+								ValidationFailure>
+								toValidate()
+						.shouldHaveFieldOrFailWith(BatchOfBatch1ValidationConfigItem::getId, INVALID_ITEM)
 						.withMemberBatchValidationConfig(
-								Tuple.of(Item::getBeanBatch, memberBatchValidationConfig))
+								Tuple.of(
+										BatchOfBatch1ValidationConfigItem::getBeanBatch, memberBatchValidationConfig))
 						.prepare();
 
-		final var beanBatch1 = List.of(new Bean(1, "one"), new Bean(1, "1"));
-		final var invalidBean = new Bean(1, "a");
-		final var beanBatchWithInvalidBean = List.of(invalidBean, new Bean(2, "2"));
-		final var beanBatch3 = List.of(new Bean(3, "three"), new Bean(3, "t"));
+		final var beanBatch1 =
+				List.of(
+						new BatchOfBatch1ValidationConfigBean(1, "one"),
+						new BatchOfBatch1ValidationConfigBean(1, "1"));
+		final var invalidBean = new BatchOfBatch1ValidationConfigBean(1, "a");
+		final var beanBatchWithInvalidBean =
+				List.of(invalidBean, new BatchOfBatch1ValidationConfigBean(2, "2"));
+		final var beanBatch3 =
+				List.of(
+						new BatchOfBatch1ValidationConfigBean(3, "three"),
+						new BatchOfBatch1ValidationConfigBean(3, "t"));
 		final var itemsBatch =
 				List.of(
-						new Item("item-2", beanBatch1),
-						new Item("item-2", beanBatchWithInvalidBean),
-						new Item("item-3", beanBatch3));
-		final var root = new Root(itemsBatch);
+						new BatchOfBatch1ValidationConfigItem("item-2", beanBatch1),
+						new BatchOfBatch1ValidationConfigItem("item-2", beanBatchWithInvalidBean),
+						new BatchOfBatch1ValidationConfigItem("item-3", beanBatch3));
+		final var root = new BatchOfBatch1ValidationConfigRoot(itemsBatch);
 
 		final var result =
 				VadorBatch.validateAndFailFastForAny(
-						root.getItemsBatch(), Item::getId, Bean::getValue, itemBatchValidationConfig);
+						root.getItemsBatch(),
+						BatchOfBatch1ValidationConfigItem::getId,
+						BatchOfBatch1ValidationConfigBean::getValue,
+						itemBatchValidationConfig);
 		assertThat(result).isPresent();
 		assertThat(result.get().isContainerValid()).isTrue();
 		assertThat(result.get().getContainerFailure()).isEmpty();
 		assertThat(result.get().isBatchMemberValid()).isFalse();
 		assertThat(result.get().getBatchMemberFailure()).contains(Tuple.of(1, INVALID_COMBO_1));
 	}
-
-	@Value
-	// tag::batch-of-batch-1[]
-	private static class Bean {
-		int value;
-		String label;
-	}
-
-	// end::batch-of-batch-1[]
-
-	@Value
-	// tag::batch-of-batch-1[]
-	private static class Item {
-		String id;
-		List<Bean> beanBatch;
-	}
-
-	// end::batch-of-batch-1[]
-
-	@Value
-	// tag::batch-of-batch-1[]
-	private static class Root {
-		List<Item> itemsBatch;
-	}
-	// end::batch-of-batch-1[]
 }

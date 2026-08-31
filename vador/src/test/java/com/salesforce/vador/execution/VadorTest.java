@@ -22,27 +22,26 @@ import io.vavr.Tuple;
 import io.vavr.control.Either;
 import java.util.Collections;
 import java.util.List;
-import lombok.Value;
 import org.junit.jupiter.api.Test;
 import sample.consumer.failure.ValidationFailure;
 import sample.consumer.failure.ValidationFailureMessage;
 
 class VadorTest {
 
-	private static final Bean VALIDATABLE = new Bean(0);
+	private static final VadorBean VALIDATABLE = new VadorBean(0);
 
 	// tag::failFastDemo[]
 	@Test
 	void failFastWithFirstFailureWithValidator() {
 		// tag::withValidators[]
-		final List<Validator<Bean, ValidationFailure>> validatorChain =
+		final List<Validator<VadorBean, ValidationFailure>> validatorChain =
 				List.of(validator(1, 9), validator(3, 7), validator(5, 5));
 		final var validationConfig =
-				ValidationConfig.<Bean, ValidationFailure>toValidate()
+				ValidationConfig.<VadorBean, ValidationFailure>toValidate()
 						.withValidators(Tuple.of(validatorChain, NONE))
 						.prepare();
 		// end::withValidators[]
-		final var result = Vador.validateAndFailFast(new Bean(0), validationConfig);
+		final var result = Vador.validateAndFailFast(new VadorBean(0), validationConfig);
 		assertThat(result).contains(OUT_OF_BOUND);
 	}
 
@@ -50,8 +49,9 @@ class VadorTest {
 	 * You can pass any number of arguments (like lowerLimit, upperLimit), to write your validator
 	 * closure
 	 */
-	Validator<Bean, ValidationFailure> validator(int lowerLimit, int upperLimit) {
-		return bean -> bean.value >= lowerLimit && bean.value <= upperLimit ? NONE : OUT_OF_BOUND;
+	Validator<VadorBean, ValidationFailure> validator(int lowerLimit, int upperLimit) {
+		return bean ->
+				bean.getValue() >= lowerLimit && bean.getValue() <= upperLimit ? NONE : OUT_OF_BOUND;
 	}
 
 	// end::failFastDemo[]
@@ -59,11 +59,12 @@ class VadorTest {
 	@Test
 	void noFailure() {
 		// tag::withValidators[]
-		final Validator<Bean, ValidationFailure> validator1 = bean -> NONE;
-		final Validator<Bean, ValidationFailure> validator2 = bean -> NONE;
-		final List<Validator<Bean, ValidationFailure>> validatorChain = List.of(validator1, validator2);
+		final Validator<VadorBean, ValidationFailure> validator1 = bean -> NONE;
+		final Validator<VadorBean, ValidationFailure> validator2 = bean -> NONE;
+		final List<Validator<VadorBean, ValidationFailure>> validatorChain =
+				List.of(validator1, validator2);
 		final var validationConfig =
-				ValidationConfig.<Bean, ValidationFailure>toValidate()
+				ValidationConfig.<VadorBean, ValidationFailure>toValidate()
 						.withValidators(Tuple.of(validatorChain, NONE))
 						.prepare();
 		// end::withValidators[]
@@ -73,19 +74,19 @@ class VadorTest {
 
 	@Test
 	void failFastRecursively() {
-		final Validator<RecursiveBean, ValidationFailure> validator =
-				recursiveBean -> recursiveBean.id == -1 ? UNKNOWN_EXCEPTION : NONE;
+		final Validator<VadorRecursiveBean, ValidationFailure> validator =
+				recursiveBean -> recursiveBean.getId() == -1 ? UNKNOWN_EXCEPTION : NONE;
 		final var recursiveBean =
-				new RecursiveBean(
+				new VadorRecursiveBean(
 						1,
 						List.of(
-								new RecursiveBean(11, Collections.emptyList()),
-								new RecursiveBean(-1, Collections.emptyList()),
-								new RecursiveBean(13, Collections.emptyList())));
+								new VadorRecursiveBean(11, Collections.emptyList()),
+								new VadorRecursiveBean(-1, Collections.emptyList()),
+								new VadorRecursiveBean(13, Collections.emptyList())));
 		final var validationConfig =
-				ValidationConfig.<RecursiveBean, ValidationFailure>toValidate()
+				ValidationConfig.<VadorRecursiveBean, ValidationFailure>toValidate()
 						.withValidator(validator, NONE)
-						.withRecursiveMapper(RecursiveBean::getRecursiveBeans)
+						.withRecursiveMapper(VadorRecursiveBean::getRecursiveBeans)
 						.prepare();
 		final var result = Vador.validateAndFailFast(recursiveBean, validationConfig);
 		assertThat(result).contains(UNKNOWN_EXCEPTION);
@@ -93,13 +94,14 @@ class VadorTest {
 
 	@Test
 	void failFastWithFirstFailureWithValidatorEtr() {
-		final ValidatorEtr<Bean, ValidationFailure> validator1 = bean -> Either.right(NONE);
-		final ValidatorEtr<Bean, ValidationFailure> validator2 = bean -> Either.right(NONE);
-		final ValidatorEtr<Bean, ValidationFailure> validator3 = bean -> Either.left(UNKNOWN_EXCEPTION);
-		final List<ValidatorEtr<Bean, ValidationFailure>> validatorChain =
+		final ValidatorEtr<VadorBean, ValidationFailure> validator1 = bean -> Either.right(NONE);
+		final ValidatorEtr<VadorBean, ValidationFailure> validator2 = bean -> Either.right(NONE);
+		final ValidatorEtr<VadorBean, ValidationFailure> validator3 =
+				bean -> Either.left(UNKNOWN_EXCEPTION);
+		final List<ValidatorEtr<VadorBean, ValidationFailure>> validatorChain =
 				List.of(validator1, validator2, validator3);
 		final var validationConfig =
-				ValidationConfig.<Bean, ValidationFailure>toValidate()
+				ValidationConfig.<VadorBean, ValidationFailure>toValidate()
 						.withValidatorEtrs(validatorChain)
 						.prepare();
 		final var result = Vador.validateAndFailFast(VALIDATABLE, validationConfig);
@@ -108,7 +110,7 @@ class VadorTest {
 
 	@Test
 	void errorAccumulationWithValidators() {
-		final List<Validator<Bean, ValidationFailure>> validators =
+		final List<Validator<VadorBean, ValidationFailure>> validators =
 				List.of(bean -> NONE, bean -> VALIDATION_FAILURE_1, bean -> VALIDATION_FAILURE_2);
 		final var result =
 				Vador.validateAndAccumulateErrors(
@@ -118,7 +120,7 @@ class VadorTest {
 
 	@Test
 	void errorAccumulationWithValidatorEtrs() {
-		final List<ValidatorEtr<Bean, ValidationFailure>> validatorEtrs =
+		final List<ValidatorEtr<VadorBean, ValidationFailure>> validatorEtrs =
 				List.of(
 						bean -> Either.right(NONE),
 						bean -> Either.left(VALIDATION_FAILURE_1),
@@ -133,7 +135,7 @@ class VadorTest {
 	void throwableMapperTest() {
 		final var expMsg = "expMsg";
 		final var validationConfig =
-				ValidationConfig.<Bean, ValidationFailure>toValidate()
+				ValidationConfig.<VadorBean, ValidationFailure>toValidate()
 						.withValidator(
 								ignore -> {
 									throw new RuntimeException(expMsg);
@@ -142,22 +144,13 @@ class VadorTest {
 						.prepare();
 		final var result =
 				Vador.validateAndFailFast(
-						new Bean(0), validationConfig, ValidationFailure::getValidationFailureForException);
+						new VadorBean(0),
+						validationConfig,
+						ValidationFailure::getValidationFailureForException);
 
 		assertThat(result).isPresent();
 		assertThat(result.get().getValidationFailureMessage())
 				.isEqualTo(ValidationFailureMessage.UNKNOWN_EXCEPTION);
 		assertThat(result.get().getExceptionMsg()).isEqualTo(expMsg);
-	}
-
-	@Value
-	private static class Bean {
-		int value;
-	}
-
-	@Value
-	private static class RecursiveBean {
-		int id;
-		List<RecursiveBean> recursiveBeans;
 	}
 }

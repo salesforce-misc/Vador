@@ -27,11 +27,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Value;
-import lombok.experimental.FieldNameConstants;
-import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,25 +41,28 @@ class BaseValidationConfigTest {
 	@Test
 	void failFastWithRequiredFieldsMissing() {
 		final var validationConfig =
-				ValidationConfig.<Bean, ValidationFailure>toValidate()
+				ValidationConfig.<BaseValidationConfigBean, ValidationFailure>toValidate()
 						.shouldHaveFieldsOrFailWith(
 								Map.of(
-										Bean::getRequiredField1, REQUIRED_FIELD_MISSING_1,
-										Bean::getRequiredField2, REQUIRED_FIELD_MISSING_2,
-										Bean::getRequiredList, REQUIRED_LIST_MISSING))
+										BaseValidationConfigBean::getRequiredField1, REQUIRED_FIELD_MISSING_1,
+										BaseValidationConfigBean::getRequiredField2, REQUIRED_FIELD_MISSING_2,
+										BaseValidationConfigBean::getRequiredList, REQUIRED_LIST_MISSING))
 						.withValidatorEtr(
 								beanEtr -> beanEtr.filterOrElse(Objects::nonNull, ignore -> NOTHING_TO_VALIDATE))
 						.prepare();
 
-		final var validatableWithBlankReqField = new Bean(0, "", null, null, List.of("1"));
+		final var validatableWithBlankReqField =
+				new BaseValidationConfigBean(0, "", null, null, List.of("1"));
 		final var result1 = validateAndFailFast(validatableWithBlankReqField, validationConfig);
 		assertThat(result1).contains(REQUIRED_FIELD_MISSING_2);
 
-		final var validatableWithNullReqField = new Bean(null, "2", null, null, List.of("1"));
+		final var validatableWithNullReqField =
+				new BaseValidationConfigBean(null, "2", null, null, List.of("1"));
 		final var result2 = validateAndFailFast(validatableWithNullReqField, validationConfig);
 		assertThat(result2).contains(REQUIRED_FIELD_MISSING_1);
 
-		final var validatableWithEmptyReqList = new Bean(1, "2", null, null, emptyList());
+		final var validatableWithEmptyReqList =
+				new BaseValidationConfigBean(1, "2", null, null, emptyList());
 		final var result3 = validateAndFailFast(validatableWithEmptyReqList, validationConfig);
 		assertThat(result3).contains(REQUIRED_LIST_MISSING);
 	}
@@ -74,11 +72,13 @@ class BaseValidationConfigTest {
 	@Test
 	void failFastWithRequiredFieldMissingFailWithFn() {
 		final var validationConfig =
-				ValidationConfig.<Bean, ValidationFailure>toValidate()
+				ValidationConfig.<BaseValidationConfigBean, ValidationFailure>toValidate()
 						.shouldHaveFieldsOrFailWithFn(
 								Tuple.of(
 										List.of(
-												Bean::getRequiredField1, Bean::getRequiredField2, Bean::getRequiredList),
+												BaseValidationConfigBean::getRequiredField1,
+												BaseValidationConfigBean::getRequiredField2,
+												BaseValidationConfigBean::getRequiredList),
 										(missingFieldName, missingFieldValue) ->
 												getFailureWithParams(
 														REQUIRED_FIELD_MISSING,
@@ -86,48 +86,52 @@ class BaseValidationConfigTest {
 														missingFieldValue + "missing")))
 						.prepare();
 		final var expectedFieldNames =
-				Set.of(Bean.Fields.requiredField1, Bean.Fields.requiredField2, Bean.Fields.requiredList);
-		assertThat(validationConfig.getRequiredFieldNames(Bean.class)).isEqualTo(expectedFieldNames);
-		final var withRequiredFieldNull = new Bean(1, "", null, null, emptyList());
+				Set.of(
+						BaseValidationConfigBean.Fields.requiredField1,
+						BaseValidationConfigBean.Fields.requiredField2,
+						BaseValidationConfigBean.Fields.requiredList);
+		assertThat(validationConfig.getRequiredFieldNames(BaseValidationConfigBean.class))
+				.isEqualTo(expectedFieldNames);
+		final var withRequiredFieldNull = new BaseValidationConfigBean(1, "", null, null, emptyList());
 
 		final var result = validateAndFailFast(withRequiredFieldNull, validationConfig);
 		assertThat(result).isPresent();
 		assertThat(result.get().getValidationFailureMessage().getParams())
-				.containsExactly(Bean.Fields.requiredField2, "missing");
+				.containsExactly(BaseValidationConfigBean.Fields.requiredField2, "missing");
 	}
 
 	@DisplayName("Cases covered - Optional field missing")
 	@Test
 	void failFastWithRequiredFieldMissingFailWithFn2() {
 		final var validationConfig =
-				ValidationConfig.<Bean1, ValidationFailure>toValidate()
+				ValidationConfig.<BaseValidationConfigBean1, ValidationFailure>toValidate()
 						.shouldHaveFieldOrFailWithFn(
-								Bean1::getStr,
+								BaseValidationConfigBean1::getStr,
 								(fieldName, value) -> {
-									assertThat(fieldName).isEqualTo(Bean1.Fields.str);
+									assertThat(fieldName).isEqualTo(BaseValidationConfigBean1.Fields.str);
 									return REQUIRED_FIELD_MISSING;
 								})
 						.prepare();
-		var bean1 = new Bean1(Optional.empty());
+		var bean1 = new BaseValidationConfigBean1(Optional.empty());
 		final var result = validateAndFailFast(bean1, validationConfig);
 		assertThat(result).contains(REQUIRED_FIELD_MISSING);
 	}
 
 	@Test
 	void getSpecWithNameWithDuplicateNames() {
-		val duplicateSpecName = "DuplicateSpecName";
+		final var duplicateSpecName = "DuplicateSpecName";
 		final var specsForConfig =
-				(Specs<BeanWithIdStrFields, ValidationFailure>)
+				(Specs<BaseValidationConfigBeanWithIdStrFields, ValidationFailure>)
 						spec ->
 								List.of(
 										spec._1()
 												.nameForTest(duplicateSpecName)
-												.given(BeanWithIdStrFields::getRequiredField),
+												.given(BaseValidationConfigBeanWithIdStrFields::getRequiredField),
 										spec._1()
 												.nameForTest(duplicateSpecName)
-												.given(BeanWithIdStrFields::getContactId));
+												.given(BaseValidationConfigBeanWithIdStrFields::getContactId));
 		final var validationConfig =
-				ValidationConfig.<BeanWithIdStrFields, ValidationFailure>toValidate()
+				ValidationConfig.<BaseValidationConfigBeanWithIdStrFields, ValidationFailure>toValidate()
 						.specify(specsForConfig)
 						.prepare();
 		Assertions.assertThrows(
@@ -138,112 +142,74 @@ class BaseValidationConfigTest {
 	@Test
 	void getFieldNames() {
 		final var validationConfig =
-				ValidationConfig.<BeanWithIdStrFields, ValidationFailure>toValidate()
-						.shouldHaveFieldOrFailWith(BeanWithIdStrFields::getRequiredField, NONE)
+				ValidationConfig.<BaseValidationConfigBeanWithIdStrFields, ValidationFailure>toValidate()
+						.shouldHaveFieldOrFailWith(
+								BaseValidationConfigBeanWithIdStrFields::getRequiredField, NONE)
 						.prepare();
-		assertThat(validationConfig.getRequiredFieldNames(BeanWithIdStrFields.class))
-				.contains(BeanWithIdStrFields.Fields.requiredField);
+		assertThat(
+						validationConfig.getRequiredFieldNames(BaseValidationConfigBeanWithIdStrFields.class))
+				.contains(BaseValidationConfigBeanWithIdStrFields.Fields.requiredField);
 	}
 
 	@Test
 	@DisplayName("Validator Types")
 	void validatorTypes() {
 		final var validationConfig1 =
-				ValidationConfig.<Bean, ValidationFailure>toValidate()
+				ValidationConfig.<BaseValidationConfigBean, ValidationFailure>toValidate()
 						.withValidator(
 								bean -> bean.getRequiredField1() == null ? REQUIRED_FIELD_MISSING_1 : NONE,
 								REQUIRED_FIELD_MISSING_1)
 						.prepare();
-		assertThat(validationConfig1.getValidatableType()).isEqualTo(Bean.class);
+		assertThat(validationConfig1.getValidatableType()).isEqualTo(BaseValidationConfigBean.class);
 
 		final var validationConfig2 =
-				ValidationConfig.<Bean, ValidationFailure>toValidate()
+				ValidationConfig.<BaseValidationConfigBean, ValidationFailure>toValidate()
 						.shouldHaveFieldOrFailWithFn(
-								Bean::getRequiredField1,
+								BaseValidationConfigBean::getRequiredField1,
 								(fieldName, value) -> {
-									assertThat(fieldName).isEqualTo(Bean.Fields.requiredField1);
+									assertThat(fieldName).isEqualTo(BaseValidationConfigBean.Fields.requiredField1);
 									return REQUIRED_FIELD_MISSING_1;
 								})
 						.prepare();
-		assertThat(validationConfig2.getValidatableType()).isEqualTo(Bean.class);
+		assertThat(validationConfig2.getValidatableType()).isEqualTo(BaseValidationConfigBean.class);
 	}
 
 	// tag::validationConfig-for-nested-bean-demo[]
 	@Test
 	void nestedBeanValidationWithInvalidMember() {
 		final var memberValidationConfig =
-				ValidationConfig.<Bean, ValidationFailure>toValidate()
+				ValidationConfig.<BaseValidationConfigBean, ValidationFailure>toValidate()
 						.withFieldConfig(
-								FieldConfig.<String, Bean, ValidationFailure>toValidate()
+								FieldConfig.<String, BaseValidationConfigBean, ValidationFailure>toValidate()
 										.withFieldValidator(fieldStr -> !"invalidSfId".equals(fieldStr))
 										.shouldHaveValidFormatOrFailWithFn(
-												Bean::getSfId2,
+												BaseValidationConfigBean::getSfId2,
 												(name, value) ->
 														getFailureWithParams(
 																ValidationFailureMessage.MSG_WITH_PARAMS, name, value)))
 						.prepare();
 		final var containerValidationConfig =
-				ValidationConfig.<ContainerBean, ValidationFailure>toValidate()
+				ValidationConfig.<BaseValidationConfigContainerBean, ValidationFailure>toValidate()
 						.shouldHaveFieldOrFailWithFn(
-								ContainerBean::getRequiredField,
+								BaseValidationConfigContainerBean::getRequiredField,
 								(name, value) ->
 										getFailureWithParams(ValidationFailureMessage.MSG_WITH_PARAMS, name, value))
 						.prepare();
 
 		final String invalidSfId = "invalidSfId";
 		final var memberWithInvalidSfId =
-				new Bean(null, null, "1ttxx00000000hZAAQ", invalidSfId, emptyList());
-		final var validContainer = new ContainerBean("requiredField", memberWithInvalidSfId);
+				new BaseValidationConfigBean(null, null, "1ttxx00000000hZAAQ", invalidSfId, emptyList());
+		final var validContainer =
+				new BaseValidationConfigContainerBean("requiredField", memberWithInvalidSfId);
 		final var result =
 				validateAndFailFast(validContainer, containerValidationConfig)
 						.or(() -> validateAndFailFast(memberWithInvalidSfId, memberValidationConfig));
 
 		assertThat(result).isPresent();
 		assertThat(result.get().getValidationFailureMessage().getParams())
-				.containsExactly(Bean.Fields.sfId2, invalidSfId);
+				.containsExactly(BaseValidationConfigBean.Fields.sfId2, invalidSfId);
 	}
 
 	// end::validationConfig-for-nested-bean-demo[]
 
-	@Data
-	@AllArgsConstructor
-	@FieldNameConstants
-	public static class BeanWithIdStrFields {
-		String requiredField;
-		String accountId;
-		String contactId;
-	}
-
-	@Data
-	@FieldNameConstants
-	@AllArgsConstructor
-	// tag::nested-bean[]
-	// tag::flat-bean[]
-	public static class Bean {
-		private final Integer requiredField1;
-		private final String requiredField2;
-		private final String sfId1;
-		private final String sfId2;
-		private final List<String> requiredList;
-	}
-
-	// end::flat-bean[]
-	// end::nested-bean[]
-
-	@Value
-	// tag::nested-bean[]
-	public static class ContainerBean {
-		String requiredField;
-		Bean bean;
-	}
-
-	// end::nested-bean[]
-
-	@Data
-	@FieldNameConstants
-	@AllArgsConstructor
-	public static class Bean1 {
-		@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-		Optional<String> str;
-	}
 }

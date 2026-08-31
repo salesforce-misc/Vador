@@ -22,14 +22,9 @@ import com.salesforce.vador.config.IDConfig;
 import com.salesforce.vador.config.ValidationConfig;
 import com.salesforce.vador.execution.Vador;
 import com.salesforce.vador.execution.VadorBatch;
-import com.salesforce.vador.execution.config.BaseValidationConfigTest.BeanWithIdStrFields;
 import io.vavr.Tuple;
 import java.util.List;
 import java.util.Map;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Value;
-import lombok.experimental.FieldNameConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sample.consumer.failure.ValidationFailure;
@@ -45,29 +40,34 @@ class IDConfigTest {
 	private static final String INVALID_SF_POLYMORPHIC_ID = "invalidSFPolymorphicId";
 	private static final Map<String, Class<? extends EntityId>> ID_TO_ENTITY_ID =
 			Map.of(
-					VALID_ACCOUNT_ID, AccountEntityId.class,
-					VALID_CONTACT_ID, ContactEntityId.class);
+					VALID_ACCOUNT_ID, IDConfigAccountEntityId.class,
+					VALID_CONTACT_ID, IDConfigContactEntityId.class);
 
 	@Test
 	void idConfigWithShouldHaveValidSFIdFormatForAllOrFailWithFn() {
 		final var config =
-				ValidationConfig.<BeanWithIdFields2, ValidationFailure>toValidate()
+				ValidationConfig.<IDConfigBeanWithIdFields2, ValidationFailure>toValidate()
 						.withIdConfig(
-								IDConfig.<ID, BeanWithIdFields2, ValidationFailure, EntityId>toValidate()
+								IDConfig
+										.<IDConfigID, IDConfigBeanWithIdFields2, ValidationFailure, EntityId>
+												toValidate()
 										.withIdValidator(ValidIdUtil::isThisEntity)
 										.shouldHaveValidSFIdFormatForAllOrFailWithFn(
 												Tuple.of(
 														Map.of(
-																BeanWithIdFields2::getAccountId, AccountUddConstants.EntityId,
-																BeanWithIdFields2::getContactId, ContactUddConstants.EntityId),
+																IDConfigBeanWithIdFields2::getAccountId,
+																		AccountUddConstants.EntityId,
+																IDConfigBeanWithIdFields2::getContactId,
+																		ContactUddConstants.EntityId),
 														(invalidIdFieldName, invalidIdFieldValue) ->
 																getFailureWithParams(
 																		INVALID_UDD_ID, invalidIdFieldName, invalidIdFieldValue))))
 						.prepare();
-		final var invalidContactId = new ID(INVALID_SF_ID);
+		final var invalidContactId = new IDConfigID(INVALID_SF_ID);
 		final var result =
 				Vador.validateAndFailFast(
-						new BeanWithIdFields2(new ID(VALID_ACCOUNT_ID), invalidContactId), config);
+						new IDConfigBeanWithIdFields2(new IDConfigID(VALID_ACCOUNT_ID), invalidContactId),
+						config);
 		assertThat(result).isPresent().contains(INVALID_UDD_ID);
 		assertThat(result.get().getValidationFailureMessage().getParams())
 				.containsExactly(CONTACT_ID, invalidContactId);
@@ -76,22 +76,29 @@ class IDConfigTest {
 	@Test
 	void idConfigWithShouldHaveValidSFIdFormatForAllOrFailWith() {
 		final var config =
-				ValidationConfig.<BeanWithIdFields2, ValidationFailure>toValidate()
+				ValidationConfig.<IDConfigBeanWithIdFields2, ValidationFailure>toValidate()
 						.withIdConfig(
-								IDConfig.<ID, BeanWithIdFields2, ValidationFailure, EntityId>toValidate()
+								IDConfig
+										.<IDConfigID, IDConfigBeanWithIdFields2, ValidationFailure, EntityId>
+												toValidate()
 										.withIdValidator(ValidIdUtil::isThisEntity)
 										.shouldHaveValidSFIdFormatForAllOrFailWith(
 												Map.of(
-														Tuple.of(BeanWithIdFields2::getAccountId, AccountUddConstants.EntityId),
+														Tuple.of(
+																IDConfigBeanWithIdFields2::getAccountId,
+																AccountUddConstants.EntityId),
 														getFailureWithParams(INVALID_UDD_ID, ACCOUNT_ID),
-														Tuple.of(BeanWithIdFields2::getContactId, ContactUddConstants.EntityId),
+														Tuple.of(
+																IDConfigBeanWithIdFields2::getContactId,
+																ContactUddConstants.EntityId),
 														getFailureWithParams(INVALID_UDD_ID_2, CONTACT_ID))))
 						.prepare();
-		final var invalidContactId = new ID(INVALID_SF_ID);
+		final var invalidContactId = new IDConfigID(INVALID_SF_ID);
 
 		final var result =
 				Vador.validateAndFailFast(
-						new BeanWithIdFields2(new ID(VALID_ACCOUNT_ID), invalidContactId), config);
+						new IDConfigBeanWithIdFields2(new IDConfigID(VALID_ACCOUNT_ID), invalidContactId),
+						config);
 		assertThat(result).isPresent().contains(INVALID_UDD_ID_2);
 		assertThat(result.get().getValidationFailureMessage().getParams()).containsExactly(CONTACT_ID);
 	}
@@ -101,25 +108,34 @@ class IDConfigTest {
 	@Test
 	void idConfigWithMultipleConditions() {
 		final var config =
-				ValidationConfig.<BeanWithIdFields3, ValidationFailure>toValidate()
+				ValidationConfig.<IDConfigBeanWithIdFields3, ValidationFailure>toValidate()
 						.withIdConfig(
-								IDConfig.<ID, BeanWithIdFields3, ValidationFailure, EntityId>toValidate()
+								IDConfig
+										.<IDConfigID, IDConfigBeanWithIdFields3, ValidationFailure, EntityId>
+												toValidate()
 										.withIdValidator(ValidIdUtil::isThisEntity)
 										.shouldHaveValidSFIdFormatForAllOrFailWith(
 												Map.of(
-														Tuple.of(BeanWithIdFields3::getAccountId, AccountUddConstants.EntityId),
+														Tuple.of(
+																IDConfigBeanWithIdFields3::getAccountId,
+																AccountUddConstants.EntityId),
 														getFailureWithParams(INVALID_UDD_ID, ACCOUNT_ID),
-														Tuple.of(BeanWithIdFields3::getContactId, ContactUddConstants.EntityId),
+														Tuple.of(
+																IDConfigBeanWithIdFields3::getContactId,
+																ContactUddConstants.EntityId),
 														getFailureWithParams(INVALID_UDD_ID_2, CONTACT_ID)))
 										.absentOrHaveValidSFIdFormatOrFailWith(
-												Tuple.of(BeanWithIdFields3::getProductId, ProductUddConstants.EntityId),
+												Tuple.of(
+														IDConfigBeanWithIdFields3::getProductId, ProductUddConstants.EntityId),
 												getFailureWithParams(INVALID_UDD_ID_3, PRODUCT_ID)))
 						.prepare();
-		final var invalidProductId = new ID(INVALID_SF_ID);
+		final var invalidProductId = new IDConfigID(INVALID_SF_ID);
 		final var result =
 				Vador.validateAndFailFast(
-						new BeanWithIdFields3(
-								new ID(VALID_ACCOUNT_ID), new ID(VALID_CONTACT_ID), invalidProductId),
+						new IDConfigBeanWithIdFields3(
+								new IDConfigID(VALID_ACCOUNT_ID),
+								new IDConfigID(VALID_CONTACT_ID),
+								invalidProductId),
 						config);
 		assertThat(result).isPresent().contains(INVALID_UDD_ID_3);
 		assertThat(result.get().getValidationFailureMessage().getParams()).containsExactly(PRODUCT_ID);
@@ -128,44 +144,56 @@ class IDConfigTest {
 	@Test
 	void idConfigWithStrIds() {
 		final var config =
-				ValidationConfig.<BeanWithIdStrFields, ValidationFailure>toValidate()
+				ValidationConfig.<BaseValidationConfigBeanWithIdStrFields, ValidationFailure>toValidate()
 						.withIdConfig(
-								IDConfig.<String, BeanWithIdStrFields, ValidationFailure, EntityId>toValidate()
+								IDConfig
+										.<String, BaseValidationConfigBeanWithIdStrFields, ValidationFailure, EntityId>
+												toValidate()
 										.withIdValidator(ValidIdUtil::isThisEntity)
 										.shouldHaveValidSFIdFormatForAllOrFailWithFn(
 												Tuple.of(
 														Map.of(
-																BeanWithIdStrFields::getAccountId, AccountUddConstants.EntityId,
-																BeanWithIdStrFields::getContactId, ContactUddConstants.EntityId),
+																BaseValidationConfigBeanWithIdStrFields::getAccountId,
+																		AccountUddConstants.EntityId,
+																BaseValidationConfigBeanWithIdStrFields::getContactId,
+																		ContactUddConstants.EntityId),
 														(invalidIdFieldName, invalidIdFieldValue) ->
 																getFailureWithParams(
 																		INVALID_UDD_ID, invalidIdFieldName, invalidIdFieldValue))))
 						.prepare();
 		final var result =
-				Vador.validateAndFailFast(new BeanWithIdStrFields(null, INVALID_SF_ID, null), config);
+				Vador.validateAndFailFast(
+						new BaseValidationConfigBeanWithIdStrFields(null, INVALID_SF_ID, null), config);
 		assertThat(result).contains(INVALID_UDD_ID);
 	}
 
 	@Test
 	void idConfigWithMixOfIdsAndStrIds() {
 		final var config =
-				ValidationConfig.<BeanWithMixIdFields, ValidationFailure>toValidate()
+				ValidationConfig.<IDConfigBeanWithMixIdFields, ValidationFailure>toValidate()
 						.withIdConfig(
-								IDConfig.<ID, BeanWithMixIdFields, ValidationFailure, EntityId>toValidate()
+								IDConfig
+										.<IDConfigID, IDConfigBeanWithMixIdFields, ValidationFailure, EntityId>
+												toValidate()
 										.withIdValidator(ValidIdUtil::isThisEntity)
 										.shouldHaveValidSFIdFormatOrFailWith(
-												Tuple.of(BeanWithMixIdFields::getAccountId, AccountUddConstants.EntityId),
+												Tuple.of(
+														IDConfigBeanWithMixIdFields::getAccountId,
+														AccountUddConstants.EntityId),
 												INVALID_UDD_ID))
 						.withIdConfig(
-								IDConfig.<String, BeanWithMixIdFields, ValidationFailure, EntityId>toValidate()
+								IDConfig
+										.<String, IDConfigBeanWithMixIdFields, ValidationFailure, EntityId>toValidate()
 										.withIdValidator(ValidIdUtil::isThisEntity)
 										.absentOrHaveValidSFIdFormatOrFailWith(
-												Tuple.of(BeanWithMixIdFields::getContactId, ContactUddConstants.EntityId),
+												Tuple.of(
+														IDConfigBeanWithMixIdFields::getContactId,
+														ContactUddConstants.EntityId),
 												INVALID_OPTIONAL_UDD_ID))
 						.prepare();
 		final var result =
 				Vador.validateAndFailFast(
-						new BeanWithMixIdFields(null, new ID(INVALID_SF_ID), null), config);
+						new IDConfigBeanWithMixIdFields(null, new IDConfigID(INVALID_SF_ID), null), config);
 		assertThat(result).contains(INVALID_UDD_ID);
 	}
 
@@ -173,33 +201,39 @@ class IDConfigTest {
 	@DisplayName("Validator types with IdConfig")
 	void validatorTypesWithIdConfig() {
 		final var config =
-				ValidationConfig.<BeanWithMixIdFields, ValidationFailure>toValidate()
+				ValidationConfig.<IDConfigBeanWithMixIdFields, ValidationFailure>toValidate()
 						.withIdConfig(
-								IDConfig.<ID, BeanWithMixIdFields, ValidationFailure, EntityId>toValidate()
+								IDConfig
+										.<IDConfigID, IDConfigBeanWithMixIdFields, ValidationFailure, EntityId>
+												toValidate()
 										.withIdValidator(ValidIdUtil::isThisEntity)
 										.shouldHaveValidSFIdFormatOrFailWith(
-												Tuple.of(BeanWithMixIdFields::getAccountId, AccountUddConstants.EntityId),
+												Tuple.of(
+														IDConfigBeanWithMixIdFields::getAccountId,
+														AccountUddConstants.EntityId),
 												INVALID_UDD_ID))
 						.prepare();
-		assertThat(config.getValidatableType()).isEqualTo(BeanWithMixIdFields.class);
+		assertThat(config.getValidatableType()).isEqualTo(IDConfigBeanWithMixIdFields.class);
 	}
 
 	@Test
 	void idConfigWithShouldHaveValidSFPolymorphicIdFormatForAllOrFailWith() {
 		final var config =
-				ValidationConfig.<BeanWithPolymorphicIdFields, ValidationFailure>toValidate()
+				ValidationConfig.<IDConfigBeanWithPolymorphicIdFields, ValidationFailure>toValidate()
 						.withIdConfig(
-								IDConfig.<ID, BeanWithPolymorphicIdFields, ValidationFailure, EntityId>toValidate()
+								IDConfig
+										.<IDConfigID, IDConfigBeanWithPolymorphicIdFields, ValidationFailure, EntityId>
+												toValidate()
 										.withIdValidator(ValidIdUtil::isThisEntity)
 										.shouldHaveValidSFPolymorphicIdFormatOrFailWith(
 												Tuple.of(
-														BeanWithPolymorphicIdFields::getAccountOrContactId,
+														IDConfigBeanWithPolymorphicIdFields::getAccountOrContactId,
 														PolymorphicUddFactory.DOMAIN_SET),
 												INVALID_POLYMORPHIC_UDD_ID))
 						.prepare();
 		final var result =
 				Vador.validateAndFailFast(
-						new BeanWithPolymorphicIdFields(new ID(VALID_CONTACT_ID)), config);
+						new IDConfigBeanWithPolymorphicIdFields(new IDConfigID(VALID_CONTACT_ID)), config);
 		assertThat(result).isEmpty();
 	}
 
@@ -207,19 +241,21 @@ class IDConfigTest {
 	@Test
 	void idConfigWithShouldHaveValidSFPolymorphicIdFormatForAllOrFailWith2() {
 		final var config =
-				ValidationConfig.<BeanWithPolymorphicIdFields, ValidationFailure>toValidate()
+				ValidationConfig.<IDConfigBeanWithPolymorphicIdFields, ValidationFailure>toValidate()
 						.withIdConfig(
-								IDConfig.<ID, BeanWithPolymorphicIdFields, ValidationFailure, EntityId>toValidate()
+								IDConfig
+										.<IDConfigID, IDConfigBeanWithPolymorphicIdFields, ValidationFailure, EntityId>
+												toValidate()
 										.withIdValidator(ValidIdUtil::isThisEntity)
 										.shouldHaveValidSFPolymorphicIdFormatOrFailWith(
 												Tuple.of(
-														BeanWithPolymorphicIdFields::getAccountOrContactId,
+														IDConfigBeanWithPolymorphicIdFields::getAccountOrContactId,
 														List.of(AccountUddConstants.EntityId)),
 												INVALID_POLYMORPHIC_UDD_ID))
 						.prepare();
 		final var result =
 				Vador.validateAndFailFast(
-						new BeanWithPolymorphicIdFields(new ID(VALID_CONTACT_ID)), config);
+						new IDConfigBeanWithPolymorphicIdFields(new IDConfigID(VALID_CONTACT_ID)), config);
 		assertThat(result).isPresent().contains(INVALID_POLYMORPHIC_UDD_ID);
 	}
 
@@ -241,23 +277,28 @@ class IDConfigTest {
 	@Test
 	void idConfigForBatch() {
 		final var config =
-				BatchValidationConfig.<BeanWithIdFields2, ValidationFailure>toValidate()
+				BatchValidationConfig.<IDConfigBeanWithIdFields2, ValidationFailure>toValidate()
 						.withIdConfig(
-								IDConfig.<ID, BeanWithIdFields2, ValidationFailure, EntityId>toValidate()
+								IDConfig
+										.<IDConfigID, IDConfigBeanWithIdFields2, ValidationFailure, EntityId>
+												toValidate()
 										.withIdValidator(ValidIdUtil::isThisEntity)
 										.shouldHaveValidSFIdFormatOrFailWith(
-												Tuple.of(BeanWithIdFields2::getAccountId, AccountUddConstants.EntityId),
+												Tuple.of(
+														IDConfigBeanWithIdFields2::getAccountId, AccountUddConstants.EntityId),
 												INVALID_UDD_ID)
 										.absentOrHaveValidSFIdFormatOrFailWith(
-												Tuple.of(BeanWithIdFields2::getContactId, ContactUddConstants.EntityId),
+												Tuple.of(
+														IDConfigBeanWithIdFields2::getContactId, ContactUddConstants.EntityId),
 												INVALID_OPTIONAL_UDD_ID))
 						.prepare();
-		final var validBean = new BeanWithIdFields2(new ID(VALID_ACCOUNT_ID), null);
+		final var validBean = new IDConfigBeanWithIdFields2(new IDConfigID(VALID_ACCOUNT_ID), null);
 		final var validatables =
 				List.of(
 						validBean,
-						new BeanWithIdFields2(new ID(INVALID_SF_ID), null),
-						new BeanWithIdFields2(new ID(VALID_ACCOUNT_ID), new ID(INVALID_SF_ID)));
+						new IDConfigBeanWithIdFields2(new IDConfigID(INVALID_SF_ID), null),
+						new IDConfigBeanWithIdFields2(
+								new IDConfigID(VALID_ACCOUNT_ID), new IDConfigID(INVALID_SF_ID)));
 		final var results = VadorBatch.validateAndFailFastForEach(validatables, config);
 		assertThat(results)
 				.containsExactly(right(validBean), left(INVALID_UDD_ID), left(INVALID_OPTIONAL_UDD_ID));
@@ -268,8 +309,8 @@ class IDConfigTest {
 		// ! NOTE: These should be implemented by the client and passed through `withIdValidator`
 
 		/** Dummy implementation */
-		private static boolean isThisEntity(ID idToValidate, EntityId entityId) {
-			final var id = idToValidate.value;
+		private static boolean isThisEntity(IDConfigID idToValidate, EntityId entityId) {
+			final var id = idToValidate.getValue();
 			return !(INVALID_SF_ID.equalsIgnoreCase(id) || INVALID_SF_POLYMORPHIC_ID.equalsIgnoreCase(id))
 					&& ID_TO_ENTITY_ID.get(id) != null
 					&& ID_TO_ENTITY_ID.get(id).isInstance(entityId);
@@ -286,71 +327,21 @@ class IDConfigTest {
 
 	// end::bean-strict-id-validation[]
 
-	@Data
-	@AllArgsConstructor
-	@FieldNameConstants
-	// tag::bean-with-id-fields[]
-	public static class BeanWithIdFields2 {
-		ID accountId;
-		ID contactId;
-	}
-
 	/**
 	 * This imitates `common.udd.EntityId` interface from core which is implemented by all Entities
 	 */
-	private interface EntityId {}
-
-	@Value
-	private static class AccountEntityId implements EntityId {}
-
-	@Value
-	private static class ContactEntityId implements EntityId {}
+	interface EntityId {}
 
 	/** This imitates entity UddConstants */
 	private static class AccountUddConstants {
-		public static final EntityId EntityId = new AccountEntityId();
+		public static final EntityId EntityId = new IDConfigAccountEntityId();
 	}
 
 	private static class ContactUddConstants {
-		public static final EntityId EntityId = new ContactEntityId();
+		public static final EntityId EntityId = new IDConfigContactEntityId();
 	}
-
-	// end::bean-with-id-fields[]
-
-	@Value
-	private static class ProductEntityId implements EntityId {}
 
 	private static class ProductUddConstants {
-		public static final EntityId EntityId = new ProductEntityId();
-	}
-
-	@Data
-	@AllArgsConstructor
-	@FieldNameConstants
-	public static class BeanWithIdFields3 {
-		ID accountId;
-		ID contactId;
-		ID productId;
-	}
-
-	@Data
-	@AllArgsConstructor
-	@FieldNameConstants
-	public static class BeanWithPolymorphicIdFields {
-		ID accountOrContactId;
-	}
-
-	@Data
-	@AllArgsConstructor
-	@FieldNameConstants
-	public static class BeanWithMixIdFields {
-		String requiredField;
-		ID accountId;
-		String contactId;
-	}
-
-	@Value
-	private static class ID {
-		String value;
+		public static final EntityId EntityId = new IDConfigProductEntityId();
 	}
 }

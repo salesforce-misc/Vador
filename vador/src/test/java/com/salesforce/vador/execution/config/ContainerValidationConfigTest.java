@@ -19,14 +19,10 @@ import static sample.consumer.failure.ValidationFailure.UNKNOWN_EXCEPTION;
 import com.salesforce.vador.config.container.ContainerValidationConfig;
 import com.salesforce.vador.execution.Vador;
 import com.salesforce.vador.execution.VadorBatch;
-import com.salesforce.vador.execution.config.ContainerValidationConfigTest.ContainerWithMultiBatch.Fields;
+import com.salesforce.vador.execution.config.ContainerValidationConfigContainerWithMultiBatch.Fields;
 import io.vavr.Tuple;
 import io.vavr.control.Either;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Value;
-import lombok.experimental.FieldNameConstants;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,12 +33,13 @@ class ContainerValidationConfigTest {
 	@Test
 	void failFastForHeaderConfigWithValidators() {
 		final var containerValidationConfig =
-				ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
-						.withBatchMember(ContainerLevel1::getBeanBatch)
+				ContainerValidationConfig
+						.<ContainerValidationConfigContainerLevel1, ValidationFailure>toValidate()
+						.withBatchMember(ContainerValidationConfigContainerLevel1::getBeanBatch)
 						.withContainerValidator(ignore -> UNKNOWN_EXCEPTION, NONE)
 						.prepare();
-		final var batch = List.of(new Bean());
-		final var containerBean = new ContainerLevel1(batch);
+		final var batch = List.of(new ContainerValidationConfigBean());
+		final var containerBean = new ContainerValidationConfigContainerLevel1(batch);
 		final var result =
 				Vador.validateAndFailFastForContainer(containerBean, containerValidationConfig);
 		assertThat(result).contains(UNKNOWN_EXCEPTION);
@@ -51,8 +48,9 @@ class ContainerValidationConfigTest {
 	@Test
 	void failFastForHeaderConfigValidatorsCount() {
 		final var containerValidationConfig =
-				ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
-						.withBatchMember(ContainerLevel1::getBeanBatch)
+				ContainerValidationConfig
+						.<ContainerValidationConfigContainerLevel1, ValidationFailure>toValidate()
+						.withBatchMember(ContainerValidationConfigContainerLevel1::getBeanBatch)
 						.withContainerValidator(ignore -> UNKNOWN_EXCEPTION, NONE)
 						.withContainerValidator(ignore -> UNKNOWN_EXCEPTION, NONE)
 						.withContainerValidator(ignore -> UNKNOWN_EXCEPTION, NONE)
@@ -63,12 +61,13 @@ class ContainerValidationConfigTest {
 	@Test
 	void failFastForHeaderConfigWithValidators2() {
 		final var containerValidationConfig =
-				ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
-						.withBatchMember(ContainerLevel1::getBeanBatch)
+				ContainerValidationConfig
+						.<ContainerValidationConfigContainerLevel1, ValidationFailure>toValidate()
+						.withBatchMember(ContainerValidationConfigContainerLevel1::getBeanBatch)
 						.withContainerValidator(ignore -> NONE, NONE)
 						.prepare();
-		final var batch = List.of(new Bean());
-		final var containerBean = new ContainerLevel1(batch);
+		final var batch = List.of(new ContainerValidationConfigBean());
+		final var containerBean = new ContainerValidationConfigContainerLevel1(batch);
 		final var result =
 				Vador.validateAndFailFastForContainer(containerBean, containerValidationConfig);
 		assertThat(result).isEmpty();
@@ -77,12 +76,13 @@ class ContainerValidationConfigTest {
 	@Test
 	void failFastForHeaderConfigMinBatchSize() {
 		final var containerValidationConfig =
-				ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
-						.withBatchMember(ContainerLevel1::getBeanBatch)
+				ContainerValidationConfig
+						.<ContainerValidationConfigContainerLevel1, ValidationFailure>toValidate()
+						.withBatchMember(ContainerValidationConfigContainerLevel1::getBeanBatch)
 						.shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET))
 						.withContainerValidator(ignore -> NONE, NONE)
 						.prepare();
-		final var containerBean = new ContainerLevel1(emptyList());
+		final var containerBean = new ContainerValidationConfigContainerLevel1(emptyList());
 		final var result =
 				Vador.validateAndFailFastForContainer(containerBean, containerValidationConfig);
 		assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
@@ -91,17 +91,21 @@ class ContainerValidationConfigTest {
 	@Test
 	void failFastForHeaderConfigMinBatchSizeForBatch() {
 		final var containerValidationConfig =
-				ContainerValidationConfig.<ContainerWithPair, ValidationFailure>toValidate()
-						.withBatchMember(ContainerWithPair::getBeanBatch)
+				ContainerValidationConfig
+						.<ContainerValidationConfigContainerWithPair, ValidationFailure>toValidate()
+						.withBatchMember(ContainerValidationConfigContainerWithPair::getBeanBatch)
 						.shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET))
 						.withContainerValidator(ignore -> NONE, NONE)
 						.prepare();
-		final var containerWithInvalidMember = new ContainerWithPair(2, emptyList());
+		final var containerWithInvalidMember =
+				new ContainerValidationConfigContainerWithPair(2, emptyList());
 		final var containerBeanBatch =
 				List.of(
-						new ContainerWithPair(1, List.of(new Bean())),
+						new ContainerValidationConfigContainerWithPair(
+								1, List.of(new ContainerValidationConfigBean())),
 						containerWithInvalidMember,
-						new ContainerWithPair(3, List.of(new Bean())));
+						new ContainerValidationConfigContainerWithPair(
+								3, List.of(new ContainerValidationConfigBean())));
 		final var result =
 				VadorBatch.validateAndFailFastForContainer(containerBeanBatch, containerValidationConfig);
 		assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
@@ -110,20 +114,26 @@ class ContainerValidationConfigTest {
 	@Test
 	void failFastForContainerConfigMinBatchSizeForBatchWithPair() {
 		final var containerValidationConfig =
-				ContainerValidationConfig.<ContainerWithPair, ValidationFailure>toValidate()
-						.withBatchMember(ContainerWithPair::getBeanBatch)
+				ContainerValidationConfig
+						.<ContainerValidationConfigContainerWithPair, ValidationFailure>toValidate()
+						.withBatchMember(ContainerValidationConfigContainerWithPair::getBeanBatch)
 						.shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET))
 						.withContainerValidator(ignore -> NONE, NONE)
 						.prepare();
-		final var containerWithInvalidMember = new ContainerWithPair(2, emptyList());
+		final var containerWithInvalidMember =
+				new ContainerValidationConfigContainerWithPair(2, emptyList());
 		final var containerBatch =
 				List.of(
-						new ContainerWithPair(1, List.of(new Bean())),
+						new ContainerValidationConfigContainerWithPair(
+								1, List.of(new ContainerValidationConfigBean())),
 						containerWithInvalidMember,
-						new ContainerWithPair(3, List.of(new Bean())));
+						new ContainerValidationConfigContainerWithPair(
+								3, List.of(new ContainerValidationConfigBean())));
 		final var result =
 				VadorBatch.validateAndFailFastForContainer(
-						containerBatch, ContainerWithPair::getId, containerValidationConfig);
+						containerBatch,
+						ContainerValidationConfigContainerWithPair::getId,
+						containerValidationConfig);
 		assertThat(result).contains(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET));
 	}
 
@@ -131,13 +141,18 @@ class ContainerValidationConfigTest {
 	@Test
 	void failFastForHeaderConfigBatchSizeForMultiBatch() {
 		final var containerValidationConfig =
-				ContainerValidationConfig.<ContainerWithMultiBatch, ValidationFailure>toValidate()
+				ContainerValidationConfig
+						.<ContainerValidationConfigContainerWithMultiBatch, ValidationFailure>toValidate()
 						.withBatchMembers(
-								List.of(ContainerWithMultiBatch::getBatch1, ContainerWithMultiBatch::getBatch2))
+								List.of(
+										ContainerValidationConfigContainerWithMultiBatch::getBatch1,
+										ContainerValidationConfigContainerWithMultiBatch::getBatch2))
 						.shouldHaveMinBatchSizeOrFailWith(Tuple.of(2, MIN_BATCH_SIZE_NOT_MET))
 						.shouldHaveMaxBatchSizeOrFailWith(Tuple.of(3, MAX_BATCH_SIZE_EXCEEDED))
 						.prepare();
-		final var containerBean = new ContainerWithMultiBatch(emptyList(), List.of(new Bean2()));
+		final var containerBean =
+				new ContainerValidationConfigContainerWithMultiBatch(
+						emptyList(), List.of(new ContainerValidationConfigBean2()));
 		final var result =
 				Vador.validateAndFailFastForContainer(containerBean, containerValidationConfig);
 		assertThat(result).contains(MIN_BATCH_SIZE_NOT_MET);
@@ -148,11 +163,13 @@ class ContainerValidationConfigTest {
 	@Test
 	void failFastForHeaderConfigMaxBatchSize() {
 		final var containerValidationConfig =
-				ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
-						.withBatchMember(ContainerLevel1::getBeanBatch)
+				ContainerValidationConfig
+						.<ContainerValidationConfigContainerLevel1, ValidationFailure>toValidate()
+						.withBatchMember(ContainerValidationConfigContainerLevel1::getBeanBatch)
 						.shouldHaveMaxBatchSizeOrFailWith(Tuple.of(0, MAX_BATCH_SIZE_EXCEEDED))
 						.prepare();
-		final var containerBean = new ContainerLevel1(List.of(new Bean()));
+		final var containerBean =
+				new ContainerValidationConfigContainerLevel1(List.of(new ContainerValidationConfigBean()));
 		final var result =
 				Vador.validateAndFailFastForContainer(containerBean, containerValidationConfig);
 		assertThat(result).contains(MAX_BATCH_SIZE_EXCEEDED);
@@ -161,28 +178,34 @@ class ContainerValidationConfigTest {
 	@Test
 	void headerWithFailure() {
 		final var containerValidationConfig =
-				ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
+				ContainerValidationConfig
+						.<ContainerValidationConfigContainerLevel1, ValidationFailure>toValidate()
 						.withContainerValidatorEtrs(
 								List.of(
 										containerBean -> Either.right(NONE),
 										containerBean -> Either.left(UNKNOWN_EXCEPTION),
 										containerBean -> Either.right(NONE)))
-						.withBatchMember(ContainerLevel1::getBeanBatch)
+						.withBatchMember(ContainerValidationConfigContainerLevel1::getBeanBatch)
 						.prepare();
 		final var result =
 				Vador.validateAndFailFastForContainer(
-						new ContainerLevel1(emptyList()), containerValidationConfig);
+						new ContainerValidationConfigContainerLevel1(emptyList()), containerValidationConfig);
 		assertThat(result).contains(UNKNOWN_EXCEPTION);
 	}
 
 	@Test
 	void getFieldNamesForBatch() {
 		final var validationConfig =
-				ContainerValidationConfig.<ContainerWithMultiBatch, ValidationFailure>toValidate()
+				ContainerValidationConfig
+						.<ContainerValidationConfigContainerWithMultiBatch, ValidationFailure>toValidate()
 						.withBatchMembers(
-								List.of(ContainerWithMultiBatch::getBatch1, ContainerWithMultiBatch::getBatch2))
+								List.of(
+										ContainerValidationConfigContainerWithMultiBatch::getBatch1,
+										ContainerValidationConfigContainerWithMultiBatch::getBatch2))
 						.prepare();
-		assertThat(validationConfig.getFieldNamesForBatch(ContainerWithMultiBatch.class))
+		assertThat(
+						validationConfig.getFieldNamesForBatch(
+								ContainerValidationConfigContainerWithMultiBatch.class))
 				.containsExactly(Fields.batch1, Fields.batch2);
 	}
 
@@ -192,20 +215,24 @@ class ContainerValidationConfigTest {
 	@Test
 	void composeContainerValidationResults() {
 		final var containerRootValidationConfig =
-				ContainerValidationConfig.<ContainerRoot, ValidationFailure>toValidate()
-						.withBatchMember(ContainerRoot::getContainerLevel1Batch)
+				ContainerValidationConfig
+						.<ContainerValidationConfigContainerRoot, ValidationFailure>toValidate()
+						.withBatchMember(ContainerValidationConfigContainerRoot::getContainerLevel1Batch)
 						.shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_ROOT_LEVEL))
 						.prepare();
 		final var containerValidationConfig =
-				ContainerValidationConfig.<ContainerLevel1, ValidationFailure>toValidate()
-						.withBatchMember(ContainerLevel1::getBeanBatch)
+				ContainerValidationConfig
+						.<ContainerValidationConfigContainerLevel1, ValidationFailure>toValidate()
+						.withBatchMember(ContainerValidationConfigContainerLevel1::getBeanBatch)
 						.shouldHaveMinBatchSizeOrFailWith(Tuple.of(1, MIN_BATCH_SIZE_NOT_MET_LEVEL_1))
 						.prepare();
 
-		final var beanBatch = List.of(new Bean());
+		final var beanBatch = List.of(new ContainerValidationConfigBean());
 		final var container2Batch =
-				List.of(new ContainerLevel1(beanBatch), new ContainerLevel1(emptyList()));
-		final var container1 = new ContainerRoot(container2Batch);
+				List.of(
+						new ContainerValidationConfigContainerLevel1(beanBatch),
+						new ContainerValidationConfigContainerLevel1(emptyList()));
+		final var container1 = new ContainerValidationConfigContainerRoot(container2Batch);
 
 		final var result =
 				Vador.validateAndFailFastForContainer(container1, containerRootValidationConfig)
@@ -219,48 +246,4 @@ class ContainerValidationConfigTest {
 
 	// end::container-config-level-1-container-with-container-batch-demo[]
 
-	@Value
-	private static class Bean1 {}
-
-	@Value
-	private static class Bean2 {}
-
-	@Data
-	@FieldNameConstants
-	@AllArgsConstructor
-	// tag::container-config-level-1-container-with-multi-batch[]
-	public static class ContainerWithMultiBatch {
-		List<Bean1> batch1;
-		List<Bean2> batch2;
-	}
-
-	// end::container-config-level-1-container-with-multi-batch[]
-
-	@Value
-	// tag::container-config-level-1-container-with-container-batch[]
-	private static class Bean {}
-
-	// end::container-config-level-1-container-with-container-batch[]
-
-	@Value
-	// tag::container-config-level-1-container-with-container-batch[]
-	private static class ContainerLevel1 {
-		List<Bean> beanBatch;
-	}
-
-	// end::container-config-level-1-container-with-container-batch[]
-
-	@Value
-	// tag::container-config-level-1-container-with-container-batch[]
-	public static class ContainerRoot {
-		List<ContainerLevel1> containerLevel1Batch;
-	}
-
-	// end::container-config-level-1-container-with-container-batch[]
-
-	@Value
-	private static class ContainerWithPair {
-		int id;
-		List<Bean> beanBatch;
-	}
 }

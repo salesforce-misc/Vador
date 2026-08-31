@@ -15,9 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.salesforce.vador.config.ValidationConfig;
 import com.salesforce.vador.matchers.DateMatchers;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
-import lombok.Value;
 import org.junit.jupiter.api.Test;
 import sample.consumer.failure.ValidationFailure;
 
@@ -27,20 +25,20 @@ class Spec3Test {
 	void testDates() {
 		final var specName = "CompareDates";
 		final var validationConfig =
-				ValidationConfig.<DatesBean, ValidationFailure>toValidate()
+				ValidationConfig.<Spec3DatesBean, ValidationFailure>toValidate()
 						.withSpec(
 								spec ->
 										spec._3()
 												.nameForTest(specName)
-												.when(DatesBean::isCompareDates)
+												.when(Spec3DatesBean::isCompareDates)
 												.matches(is(true))
-												.thenField1(DatesBean::getDate1)
-												.thenField2(DatesBean::getDate2)
+												.thenField1(Spec3DatesBean::getDate1)
+												.thenField2(Spec3DatesBean::getDate2)
 												.shouldRelateWithFn(DateMatchers.isBeforeIfBothArePresent()))
 						.prepare();
 
 		final var validBean =
-				new DatesBean(
+				new Spec3DatesBean(
 						true,
 						new GregorianCalendar(2021, Calendar.APRIL, 27).getTime(),
 						new GregorianCalendar(2021, Calendar.APRIL, 28).getTime());
@@ -51,7 +49,7 @@ class Spec3Test {
 						.orElse(false));
 
 		final var invalidBean =
-				new DatesBean(
+				new Spec3DatesBean(
 						true,
 						new GregorianCalendar(2021, Calendar.APRIL, 29).getTime(),
 						new GregorianCalendar(2021, Calendar.APRIL, 28).getTime());
@@ -66,19 +64,19 @@ class Spec3Test {
 	void testDatesWithNulls() {
 		final var specName = "CompareDates";
 		final var validationConfig =
-				ValidationConfig.<DatesBean, ValidationFailure>toValidate()
+				ValidationConfig.<Spec3DatesBean, ValidationFailure>toValidate()
 						.withSpec(
 								spec ->
 										spec._3()
 												.nameForTest(specName)
-												.when(DatesBean::isCompareDates)
+												.when(Spec3DatesBean::isCompareDates)
 												.matches(is(true))
-												.thenField1(DatesBean::getDate1)
-												.thenField2(DatesBean::getDate2)
+												.thenField1(Spec3DatesBean::getDate1)
+												.thenField2(Spec3DatesBean::getDate2)
 												.shouldRelateWithFn(DateMatchers.isBeforeIfBothArePresent()))
 						.prepare();
 		final var invalidBean1 =
-				new DatesBean(true, null, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime());
+				new Spec3DatesBean(true, null, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime());
 		assertFalse(
 				validationConfig
 						.getPredicateOfSpecForTest(specName)
@@ -86,7 +84,7 @@ class Spec3Test {
 						.orElse(true));
 
 		final var invalidBean2 =
-				new DatesBean(true, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime(), null);
+				new Spec3DatesBean(true, new GregorianCalendar(2021, Calendar.APRIL, 29).getTime(), null);
 		assertFalse(
 				validationConfig
 						.getPredicateOfSpecForTest(specName)
@@ -98,20 +96,20 @@ class Spec3Test {
 	void spec3WithFieldComparison() {
 		final var specName = "CompareFields";
 		final var validationConfig =
-				ValidationConfig.<Bean, ValidationFailure>toValidate()
+				ValidationConfig.<Spec3Bean, ValidationFailure>toValidate()
 						.withSpec(
 								spec ->
 										spec._3()
 												.nameForTest(specName)
-												.when(Bean::isCompareFields)
+												.when(Spec3Bean::isCompareFields)
 												.matches(is(true))
-												.thenField1(Bean::getBdom)
-												.thenField2(Bean::getStartDate)
+												.thenField1(Spec3Bean::getBdom)
+												.thenField2(Spec3Bean::getStartDate)
 												.shouldRelateWithFn(DateMatchers.isEqualToDayOfDate())
 												.orField1ShouldMatch(nullValue()))
 						.prepare();
 		final var invalidBean =
-				new Bean(true, 2, new GregorianCalendar(2021, Calendar.APRIL, 1).getTime());
+				new Spec3Bean(true, 2, new GregorianCalendar(2021, Calendar.APRIL, 1).getTime());
 		assertFalse(
 				validationConfig
 						.getPredicateOfSpecForTest(specName)
@@ -119,7 +117,7 @@ class Spec3Test {
 						.orElse(true));
 
 		final var validBean1 =
-				new Bean(true, null, new GregorianCalendar(2021, Calendar.APRIL, 1).getTime());
+				new Spec3Bean(true, null, new GregorianCalendar(2021, Calendar.APRIL, 1).getTime());
 		assertTrue(
 				validationConfig
 						.getPredicateOfSpecForTest(specName)
@@ -127,27 +125,11 @@ class Spec3Test {
 						.orElse(false));
 
 		final var validBean2 =
-				new Bean(true, 1, new GregorianCalendar(2021, Calendar.APRIL, 1).getTime());
+				new Spec3Bean(true, 1, new GregorianCalendar(2021, Calendar.APRIL, 1).getTime());
 		assertTrue(
 				validationConfig
 						.getPredicateOfSpecForTest(specName)
 						.map(spec -> spec.test(validBean2))
 						.orElse(false));
-	}
-
-	@Value
-	private static class DatesBean {
-
-		boolean compareDates;
-		Date date1;
-		Date date2;
-	}
-
-	@Value
-	private static class Bean {
-
-		boolean compareFields;
-		Integer bdom;
-		Date startDate;
 	}
 }

@@ -19,7 +19,6 @@ import com.salesforce.vador.config.ValidationConfig;
 import com.salesforce.vador.execution.Vador;
 import io.vavr.Tuple;
 import java.util.List;
-import lombok.Value;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sample.consumer.failure.ValidationFailure;
@@ -28,28 +27,28 @@ class Spec5Test {
 	@Test
 	void spec5TestWithValidBean() {
 		final var config =
-				ValidationConfig.<Bean1, ValidationFailure>toValidate()
+				ValidationConfig.<Spec5Bean1, ValidationFailure>toValidate()
 						.withSpec(
 								spec ->
 										spec._5()
 												.whenAllTheseFieldsMatch(
 														Tuple.of(
 																List.of(
-																		Bean1::getWhenField1,
-																		Bean1::getWhenField2,
-																		Bean1::getWhenField3),
+																		Spec5Bean1::getWhenField1,
+																		Spec5Bean1::getWhenField2,
+																		Spec5Bean1::getWhenField3),
 																notNullValue()))
 												.thenAllThoseFieldsShouldMatch(
 														Tuple.of(
 																List.of(
-																		Bean1::getThenField1,
-																		Bean1::getThenField2,
-																		Bean1::getThenField3),
+																		Spec5Bean1::getThenField1,
+																		Spec5Bean1::getThenField2,
+																		Spec5Bean1::getThenField3),
 																nullValue()))
 												.orFailWith(INVALID_BEAN))
 						.prepare();
 
-		final var validBean = new Bean1(1, "2", new Field(3), null, null, null);
+		final var validBean = new Spec5Bean1(1, "2", new Spec5Field(3), null, null, null);
 		final var result = Vador.validateAndFailFast(validBean, config);
 		assertThat(result).isEmpty();
 	}
@@ -58,28 +57,28 @@ class Spec5Test {
 	@DisplayName("One Then field doesn't match")
 	void spec5TestWithInValidBean() {
 		final var config =
-				ValidationConfig.<Bean1, ValidationFailure>toValidate()
+				ValidationConfig.<Spec5Bean1, ValidationFailure>toValidate()
 						.withSpec(
 								spec ->
 										spec._5()
 												.whenAllTheseFieldsMatch(
 														Tuple.of(
 																List.of(
-																		Bean1::getWhenField1,
-																		Bean1::getWhenField2,
-																		Bean1::getWhenField3),
+																		Spec5Bean1::getWhenField1,
+																		Spec5Bean1::getWhenField2,
+																		Spec5Bean1::getWhenField3),
 																notNullValue()))
 												.thenAllThoseFieldsShouldMatch(
 														Tuple.of(
 																List.of(
-																		Bean1::getThenField1,
-																		Bean1::getThenField2,
-																		Bean1::getThenField3),
+																		Spec5Bean1::getThenField1,
+																		Spec5Bean1::getThenField2,
+																		Spec5Bean1::getThenField3),
 																nullValue()))
 												.orFailWith(INVALID_BEAN))
 						.prepare();
 
-		final var validBean = new Bean1(1, "2", new Field(3), null, "doesn't match", null);
+		final var validBean = new Spec5Bean1(1, "2", new Spec5Field(3), null, "doesn't match", null);
 		final var result = Vador.validateAndFailFast(validBean, config);
 		assertThat(result).contains(INVALID_BEAN);
 	}
@@ -88,28 +87,28 @@ class Spec5Test {
 	@DisplayName("One When field doesn't match criteria")
 	void spec5TestBeanDoesNotMeetWhenCriteria() {
 		final var config =
-				ValidationConfig.<Bean1, ValidationFailure>toValidate()
+				ValidationConfig.<Spec5Bean1, ValidationFailure>toValidate()
 						.withSpec(
 								spec ->
 										spec._5()
 												.whenAllTheseFieldsMatch(
 														Tuple.of(
 																List.of(
-																		Bean1::getWhenField1,
-																		Bean1::getWhenField2,
-																		Bean1::getWhenField3),
+																		Spec5Bean1::getWhenField1,
+																		Spec5Bean1::getWhenField2,
+																		Spec5Bean1::getWhenField3),
 																notNullValue()))
 												.thenAllThoseFieldsShouldMatch(
 														Tuple.of(
 																List.of(
-																		Bean1::getThenField1,
-																		Bean1::getThenField2,
-																		Bean1::getThenField3),
+																		Spec5Bean1::getThenField1,
+																		Spec5Bean1::getThenField2,
+																		Spec5Bean1::getThenField3),
 																nullValue()))
 												.orFailWith(INVALID_BEAN))
 						.prepare();
 
-		final var validBean = new Bean1(1, null, new Field(3), null, "doesn't match", null);
+		final var validBean = new Spec5Bean1(1, null, new Spec5Field(3), null, "doesn't match", null);
 		final var result = Vador.validateAndFailFast(validBean, config);
 		assertThat(result).isEmpty();
 	}
@@ -117,58 +116,33 @@ class Spec5Test {
 	@Test
 	void spec5TestInvalidBeanWithMultiSpec5() {
 		final var config =
-				ValidationConfig.<Bean2, ValidationFailure>toValidate()
+				ValidationConfig.<Spec5Bean2, ValidationFailure>toValidate()
 						.specify(
 								spec ->
 										List.of(
 												spec._5()
 														.whenAllTheseFieldsMatch(
 																Tuple.of(
-																		List.of(Bean2::getWhenField1, Bean2::getWhenField2),
+																		List.of(Spec5Bean2::getWhenField1, Spec5Bean2::getWhenField2),
 																		equalTo(1)))
 														.thenAllThoseFieldsShouldMatch(
 																Tuple.of(
-																		List.of(Bean2::getThenField1, Bean2::getThenField2),
+																		List.of(Spec5Bean2::getThenField1, Spec5Bean2::getThenField2),
 																		equalTo("1")))
 														.orFailWith(INVALID_BEAN_1),
 												spec._5()
 														.whenAllTheseFieldsMatch(
 																Tuple.of(
-																		List.of(Bean2::getWhenField1, Bean2::getWhenField2),
+																		List.of(Spec5Bean2::getWhenField1, Spec5Bean2::getWhenField2),
 																		equalTo(1)))
 														.thenAllThoseFieldsShouldMatch(
 																Tuple.of(
-																		List.of(Bean2::getThenField1, Bean2::getThenField2),
+																		List.of(Spec5Bean2::getThenField1, Spec5Bean2::getThenField2),
 																		nullValue()))
 														.orFailWith(INVALID_BEAN_2)))
 						.prepare();
-		final var invalidBean = new Bean2(1, 1, "1", "1");
+		final var invalidBean = new Spec5Bean2(1, 1, "1", "1");
 		final var result = Vador.validateAndFailFast(invalidBean, config);
 		assertThat(result).contains(INVALID_BEAN_2);
-	}
-
-	@Value
-	private static class Bean1 {
-		int whenField1;
-		String whenField2;
-		Field whenField3;
-
-		Integer thenField1;
-		String thenField2;
-		Field thenField3;
-	}
-
-	@Value
-	private static class Bean2 {
-		int whenField1;
-		int whenField2;
-
-		String thenField1;
-		String thenField2;
-	}
-
-	@Value
-	private static class Field {
-		int id;
 	}
 }

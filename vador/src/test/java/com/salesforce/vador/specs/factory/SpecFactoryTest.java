@@ -10,7 +10,6 @@ package com.salesforce.vador.specs.factory;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.salesforce.vador.specs.failure.ValidationFailure;
-import lombok.Value;
 import org.junit.jupiter.api.Test;
 
 class SpecFactoryTest {
@@ -18,47 +17,42 @@ class SpecFactoryTest {
 	@Test
 	void provideBothFailWithForSpec1() {
 		final var spec1 =
-				new SpecFactory<Bean, ValidationFailure>()
+				new SpecFactory<SpecFactoryBean, ValidationFailure>()
 						._1()
-						.given(Bean::getValue)
+						.given(SpecFactoryBean::getValue)
 						.orFailWith(ValidationFailure.INVALID_VALUE)
 						.orFailWithFn(ignore -> ValidationFailure.NONE)
 						.done();
-		final var bean = new Bean("");
+		final var bean = new SpecFactoryBean("");
 		assertThrows(IllegalArgumentException.class, () -> spec1.getFailure(bean));
 	}
 
 	@Test
 	void provideBothFailWithForSpec2() {
 		final var spec2 =
-				new SpecFactory<Bean, ValidationFailure>()
+				new SpecFactory<SpecFactoryBean, ValidationFailure>()
 						._2()
-						.when(Bean::getValue)
-						.then(Bean::getValue)
+						.when(SpecFactoryBean::getValue)
+						.then(SpecFactoryBean::getValue)
 						.orFailWith(ValidationFailure.INVALID_VALUE)
 						.orFailWithFn((ignore1, ignore2) -> ValidationFailure.NONE)
 						.done();
-		final var bean = new Bean("");
+		final var bean = new SpecFactoryBean("");
 		assertThrows(IllegalArgumentException.class, () -> spec2.getFailure(bean));
 	}
 
 	@Test
 	void provideBothFailWithForSpec3() {
 		final var spec3 =
-				new SpecFactory<Bean, ValidationFailure>()
+				new SpecFactory<SpecFactoryBean, ValidationFailure>()
 						._3()
-						.when(Bean::getValue)
-						.thenField1(Bean::getValue)
-						.thenField2(Bean::getValue)
+						.when(SpecFactoryBean::getValue)
+						.thenField1(SpecFactoryBean::getValue)
+						.thenField2(SpecFactoryBean::getValue)
 						.orFailWith(ValidationFailure.INVALID_VALUE)
 						.orFailWithFn((ignore1, ignore2, ignore3) -> ValidationFailure.NONE)
 						.done();
-		final var bean = new Bean("");
+		final var bean = new SpecFactoryBean("");
 		assertThrows(IllegalArgumentException.class, () -> spec3.getFailure(bean));
-	}
-
-	@Value
-	private static class Bean {
-		String value;
 	}
 }

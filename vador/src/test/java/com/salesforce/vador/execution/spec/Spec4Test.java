@@ -17,7 +17,6 @@ import com.salesforce.vador.config.ValidationConfig;
 import com.salesforce.vador.execution.Vador;
 import java.util.List;
 import java.util.Map;
-import lombok.Value;
 import org.junit.jupiter.api.Test;
 import sample.consumer.failure.ValidationFailure;
 
@@ -25,23 +24,23 @@ class Spec4Test {
 	@Test
 	void spec4TestWithValidBean() {
 		final var config =
-				ValidationConfig.<Bean, ValidationFailure>toValidate()
+				ValidationConfig.<Spec4Bean, ValidationFailure>toValidate()
 						.withSpec(
 								spec ->
 										spec._4()
 												.whenTheseFieldsMatch(
 														Map.of(
-																Bean::getWhenField1, is(1),
-																Bean::getWhenField2, is("2"),
-																Bean::getWhenField3, is(new Field(3))))
+																Spec4Bean::getWhenField1, is(1),
+																Spec4Bean::getWhenField2, is("2"),
+																Spec4Bean::getWhenField3, is(new Spec4Field(3))))
 												.thenThoseFieldsShouldMatch(
 														Map.of(
-																Bean::getThenField1, is(2),
-																Bean::getThenField2, is("3"),
-																Bean::getThenField3, is(new Field(4))))
+																Spec4Bean::getThenField1, is(2),
+																Spec4Bean::getThenField2, is("3"),
+																Spec4Bean::getThenField3, is(new Spec4Field(4))))
 												.orFailWith(INVALID_BEAN))
 						.prepare();
-		final var validBean = new Bean(1, "2", new Field(3), 2, "3", new Field(4));
+		final var validBean = new Spec4Bean(1, "2", new Spec4Field(3), 2, "3", new Spec4Field(4));
 		final var result = Vador.validateAndFailFast(validBean, config);
 		assertThat(result).isEmpty();
 	}
@@ -49,23 +48,23 @@ class Spec4Test {
 	@Test
 	void spec4TestInvalidBeanWithNonMatchingThenFields() {
 		final var config =
-				ValidationConfig.<Bean, ValidationFailure>toValidate()
+				ValidationConfig.<Spec4Bean, ValidationFailure>toValidate()
 						.withSpec(
 								spec ->
 										spec._4()
 												.whenTheseFieldsMatch(
 														Map.of(
-																Bean::getWhenField1, is(1),
-																Bean::getWhenField2, is("2"),
-																Bean::getWhenField3, is(new Field(3))))
+																Spec4Bean::getWhenField1, is(1),
+																Spec4Bean::getWhenField2, is("2"),
+																Spec4Bean::getWhenField3, is(new Spec4Field(3))))
 												.thenThoseFieldsShouldMatch(
 														Map.of(
-																Bean::getThenField1, is(2),
-																Bean::getThenField2, is("3"),
-																Bean::getThenField3, is(new Field(4))))
+																Spec4Bean::getThenField1, is(2),
+																Spec4Bean::getThenField2, is("3"),
+																Spec4Bean::getThenField3, is(new Spec4Field(4))))
 												.orFailWith(INVALID_BEAN))
 						.prepare();
-		final var invalidBean = new Bean(1, "2", new Field(3), 2, "3", new Field(1));
+		final var invalidBean = new Spec4Bean(1, "2", new Spec4Field(3), 2, "3", new Spec4Field(1));
 		final var result = Vador.validateAndFailFast(invalidBean, config);
 		assertThat(result).contains(INVALID_BEAN);
 	}
@@ -73,23 +72,23 @@ class Spec4Test {
 	@Test
 	void spec4TestBeanDoesNotMeetWhenCriteria() {
 		final var config =
-				ValidationConfig.<Bean, ValidationFailure>toValidate()
+				ValidationConfig.<Spec4Bean, ValidationFailure>toValidate()
 						.withSpec(
 								spec ->
 										spec._4()
 												.whenTheseFieldsMatch(
 														Map.of(
-																Bean::getWhenField1, is(1),
-																Bean::getWhenField2, is("2"),
-																Bean::getWhenField3, is(new Field(3))))
+																Spec4Bean::getWhenField1, is(1),
+																Spec4Bean::getWhenField2, is("2"),
+																Spec4Bean::getWhenField3, is(new Spec4Field(3))))
 												.thenThoseFieldsShouldMatch(
 														Map.of(
-																Bean::getThenField1, is(2),
-																Bean::getThenField2, is("3"),
-																Bean::getThenField3, is(new Field(4))))
+																Spec4Bean::getThenField1, is(2),
+																Spec4Bean::getThenField2, is("3"),
+																Spec4Bean::getThenField3, is(new Spec4Field(4))))
 												.orFailWith(INVALID_BEAN))
 						.prepare();
-		final var invalidBean = new Bean(1, "4", new Field(3), 2, "3", new Field(1));
+		final var invalidBean = new Spec4Bean(1, "4", new Spec4Field(3), 2, "3", new Spec4Field(1));
 		final var result = Vador.validateAndFailFast(invalidBean, config);
 		assertThat(result).isEmpty();
 	}
@@ -97,53 +96,37 @@ class Spec4Test {
 	@Test
 	void spec4TestInvalidBeanWithMultiSpec4() {
 		final var config =
-				ValidationConfig.<Bean, ValidationFailure>toValidate()
+				ValidationConfig.<Spec4Bean, ValidationFailure>toValidate()
 						.specify(
 								spec ->
 										List.of(
 												spec._4()
 														.whenTheseFieldsMatch(
 																Map.of(
-																		Bean::getWhenField1, is(1),
-																		Bean::getWhenField2, is("2"),
-																		Bean::getWhenField3, is(new Field(3))))
+																		Spec4Bean::getWhenField1, is(1),
+																		Spec4Bean::getWhenField2, is("2"),
+																		Spec4Bean::getWhenField3, is(new Spec4Field(3))))
 														.thenThoseFieldsShouldMatch(
 																Map.of(
-																		Bean::getThenField1, is(2),
-																		Bean::getThenField2, is("3"),
-																		Bean::getThenField3, is(new Field(1))))
+																		Spec4Bean::getThenField1, is(2),
+																		Spec4Bean::getThenField2, is("3"),
+																		Spec4Bean::getThenField3, is(new Spec4Field(1))))
 														.orFailWith(INVALID_BEAN_1),
 												spec._4()
 														.whenTheseFieldsMatch(
 																Map.of(
-																		Bean::getWhenField1, is(1),
-																		Bean::getWhenField2, is("2"),
-																		Bean::getWhenField3, is(new Field(3))))
+																		Spec4Bean::getWhenField1, is(1),
+																		Spec4Bean::getWhenField2, is("2"),
+																		Spec4Bean::getWhenField3, is(new Spec4Field(3))))
 														.thenThoseFieldsShouldMatch(
 																Map.of(
-																		Bean::getThenField1, is(2),
-																		Bean::getThenField2, is("3"),
-																		Bean::getThenField3, is(new Field(4))))
+																		Spec4Bean::getThenField1, is(2),
+																		Spec4Bean::getThenField2, is("3"),
+																		Spec4Bean::getThenField3, is(new Spec4Field(4))))
 														.orFailWith(INVALID_BEAN_2)))
 						.prepare();
-		final var invalidBean = new Bean(1, "2", new Field(3), 2, "3", new Field(1));
+		final var invalidBean = new Spec4Bean(1, "2", new Spec4Field(3), 2, "3", new Spec4Field(1));
 		final var result = Vador.validateAndFailFast(invalidBean, config);
 		assertThat(result).contains(INVALID_BEAN_2);
-	}
-
-	@Value
-	private static class Bean {
-		int whenField1;
-		String whenField2;
-		Field whenField3;
-
-		int thenField1;
-		String thenField2;
-		Field thenField3;
-	}
-
-	@Value
-	private static class Field {
-		int id;
 	}
 }
