@@ -46,6 +46,7 @@ import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -377,6 +378,51 @@ class JavaDslCompatibilityTest {
 		assertThat(idConfig.getAbsentOrHaveValidSFPolymorphicIdFormatForAllOrFailWith()).hasSize(2);
 		assertThat(idConfig.getAbsentOrHaveValidSFIdFormatOrFailWithFn()).hasSize(2);
 		assertThat(idConfig.getAbsentOrHaveValidSFPolymorphicIdFormatOrFailWithFn()).hasSize(2);
+	}
+
+	@Test
+	void idConfigBulkFailureMapsPreserveNullValuesAcrossCopies() {
+		final var field = (TypedPropertyGetter<Bean, String>) Bean::getText;
+		final var id = Tuple.of(field, "entity");
+		final var polymorphicId = Tuple.of(field, List.of("entity"));
+		final var requiredIdToFailure =
+				new HashMap<Tuple2<TypedPropertyGetter<Bean, String>, String>, String>();
+		final var requiredPolymorphicIdToFailure =
+				new HashMap<Tuple2<TypedPropertyGetter<Bean, String>, List<String>>, String>();
+		final var optionalIdToFailure =
+				new HashMap<Tuple2<TypedPropertyGetter<Bean, String>, String>, String>();
+		final var optionalPolymorphicIdToFailure =
+				new HashMap<Tuple2<TypedPropertyGetter<Bean, String>, List<String>>, String>();
+		requiredIdToFailure.put(id, null);
+		requiredPolymorphicIdToFailure.put(polymorphicId, null);
+		optionalIdToFailure.put(id, null);
+		optionalPolymorphicIdToFailure.put(polymorphicId, null);
+
+		final var idConfig =
+				IDConfig.<String, Bean, String, String>toValidate()
+						.shouldHaveValidSFIdFormatForAllOrFailWith(requiredIdToFailure)
+						.shouldHaveValidSFPolymorphicIdFormatForAllOrFailWith(requiredPolymorphicIdToFailure)
+						.absentOrHaveValidSFIdFormatForAllOrFailWith(optionalIdToFailure)
+						.absentOrHaveValidSFPolymorphicIdFormatForAllOrFailWith(optionalPolymorphicIdToFailure)
+						.prepare();
+		final var copiedIdConfig = idConfig.toBuilder().prepare();
+
+		assertThat(idConfig.getShouldHaveValidSFIdFormatForAllOrFailWith())
+				.isEqualTo(requiredIdToFailure);
+		assertThat(idConfig.getShouldHaveValidSFPolymorphicIdFormatForAllOrFailWith())
+				.isEqualTo(requiredPolymorphicIdToFailure);
+		assertThat(idConfig.getAbsentOrHaveValidSFIdFormatForAllOrFailWith())
+				.isEqualTo(optionalIdToFailure);
+		assertThat(idConfig.getAbsentOrHaveValidSFPolymorphicIdFormatForAllOrFailWith())
+				.isEqualTo(optionalPolymorphicIdToFailure);
+		assertThat(copiedIdConfig.getShouldHaveValidSFIdFormatForAllOrFailWith())
+				.isEqualTo(requiredIdToFailure);
+		assertThat(copiedIdConfig.getShouldHaveValidSFPolymorphicIdFormatForAllOrFailWith())
+				.isEqualTo(requiredPolymorphicIdToFailure);
+		assertThat(copiedIdConfig.getAbsentOrHaveValidSFIdFormatForAllOrFailWith())
+				.isEqualTo(optionalIdToFailure);
+		assertThat(copiedIdConfig.getAbsentOrHaveValidSFPolymorphicIdFormatForAllOrFailWith())
+				.isEqualTo(optionalPolymorphicIdToFailure);
 	}
 
 	@Test
