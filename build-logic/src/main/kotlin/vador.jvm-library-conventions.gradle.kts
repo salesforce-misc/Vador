@@ -1,6 +1,5 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA
 import com.diffplug.spotless.LineEnding.PLATFORM_NATIVE
-import com.diffplug.gradle.spotless.SpotlessTask
 import dev.detekt.gradle.Detekt
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.plugins.jvm.JvmTestSuite
@@ -22,12 +21,6 @@ val junitVersion = libs.findVersion("junit").get().requiredVersion
 java { toolchain { languageVersion.set(JavaLanguageVersion.of(jdkVersion)) } }
 
 tasks.withType<JavaCompile>().configureEach { options.encoding = "UTF-8" }
-
-tasks.withType<SpotlessTask>().configureEach {
-  notCompatibleWithConfigurationCache(
-    "Pinned Spotless formatter classloader state fails after configuration-cache restoration.",
-  )
-}
 
 testing {
   suites { named<JvmTestSuite>("test") { useJUnitJupiter(junitVersion) } }

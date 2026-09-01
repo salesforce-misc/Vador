@@ -303,7 +303,7 @@ testlogger.theme = MOCHA
 spotless {
   lineEndings = PLATFORM_NATIVE
   kotlin {
-    target("src/*/kotlin/**/*.kt")
+    target("src/*/kotlin/**/*.kt", "src/*/java/**/*.kt")
     targetExclude("build/**", ".gradle/**", "generated/**", "**/bin/**", "out/**", "tmp/**")
     ktfmt("0.53").googleStyle()
     trimTrailingWhitespace()
@@ -1075,10 +1075,6 @@ tasks.withType<SpotlessTask>().configureEach {
   )
 }
 ```
-
-Apply the same typed declaration in the root convention because it independently owns the root
-Spotless tasks. This keeps the opt-out limited to the reproduced formatter classloader failure
-without weakening the global configuration-cache policy.
 
 Then rerun the clean build. Do not change formatter/toolchain versions or global cache policy for
 that failure.

@@ -1,5 +1,4 @@
 import com.diffplug.spotless.LineEnding.PLATFORM_NATIVE
-import com.diffplug.gradle.spotless.SpotlessTask
 import dev.detekt.gradle.report.ReportMergeTask
 import org.gradle.api.tasks.TaskProvider
 
@@ -14,12 +13,6 @@ plugins {
 dependencies {
   kover(project(":matchers"))
   kover(project(":vador"))
-}
-
-tasks.withType<SpotlessTask>().configureEach {
-  notCompatibleWithConfigurationCache(
-    "Pinned Spotless formatter classloader state fails after configuration-cache restoration.",
-  )
 }
 
 kover {
