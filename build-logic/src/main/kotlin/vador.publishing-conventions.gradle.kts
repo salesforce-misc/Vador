@@ -1,7 +1,7 @@
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.`java-library`
@@ -13,24 +13,22 @@ plugins {
   `java-library`
 }
 
-group = GROUP_ID
+val groupId = providers.gradleProperty("vador.group")
+val releaseVersion = providers.gradleProperty("vador.version")
 
-version = VERSION
+group = groupId.get()
+version = releaseVersion.get()
 
 description = "Vador - A framework for POJO/Data Structure/Bean validation"
-
-repositories { mavenCentral() }
 
 java {
   withJavadocJar()
   withSourcesJar()
-  toolchain { languageVersion.set(JavaLanguageVersion.of(17)) }
 }
 
 publishing {
   publications.create<MavenPublication>("vador") {
-    val subprojectJarName = tasks.jar.get().archiveBaseName.get()
-    artifactId = if (subprojectJarName == "vador") "vador" else "vador-$subprojectJarName"
+    artifactId = if (project.name == "vador") "vador" else "vador-${project.name}"
     from(components["java"])
     pom {
       name.set(artifactId)
@@ -60,6 +58,18 @@ publishing {
 }
 
 signing { sign(publishing.publications["vador"]) }
+
+pluginManager.withPlugin("org.jetbrains.kotlin.kapt") {
+  val generatedKaptMain = layout.buildDirectory.dir("generated/source/kapt/main")
+  tasks.named<Jar>("sourcesJar") {
+    dependsOn("kaptKotlin")
+    from(generatedKaptMain)
+  }
+  tasks.named<Javadoc>("javadoc") {
+    dependsOn("kaptKotlin")
+    source(generatedKaptMain)
+  }
+}
 
 tasks {
   withType<Jar> { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }

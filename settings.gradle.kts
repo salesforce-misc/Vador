@@ -5,10 +5,16 @@
  * https://opensource.org/licenses/BSD-3-Clause
  * ****************************************************************************
  */
-plugins { id("com.gradle.develocity") version "4.0" }
+pluginManagement { includeBuild("build-logic") }
+
+plugins {
+  id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+  id("com.gradle.develocity") version "4.0"
+}
 
 dependencyResolutionManagement {
-  versionCatalogs { create("libs") { from(files("libs.versions.toml")) } }
+  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+  repositories { mavenCentral() }
 }
 
 val isCI = !System.getenv("CI").isNullOrEmpty()

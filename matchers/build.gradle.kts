@@ -6,8 +6,7 @@
  * ****************************************************************************
  */
 plugins {
-  id("vador.sub-conventions")
-  id("vador.kt-conventions")
+  id("vador.kotlin-library-conventions")
   id("vador.publishing-conventions")
 }
 
