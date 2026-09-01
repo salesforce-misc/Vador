@@ -282,3 +282,6 @@ fabric.properties
 
 .vscode/
 .kotlin
+
+# Qodana linter cache. Scan results are written under the ignored root build directory.
+.qodana/

@@ -111,18 +111,18 @@ internal fun <ValidatableT, FailureT> Spec4<ValidatableT, FailureT>.toPredicateE
   Predicate<ValidatableT?> {
   return Predicate { validatable ->
     val whenAllFieldsMatch =
-      whenTheseFieldsMatch.all { (mapper, matcher) ->
-        matcher?.matches(mapper?.apply(validatable)) ?: true
-      }
+      whenTheseFieldsMatch.all { (mapper, matcher) -> matcher.matches(mapper.apply(validatable)) }
     if (!whenAllFieldsMatch) {
       return@Predicate true
     }
     thenThoseFieldsShouldMatch.all { (mapper, matcher) ->
-      matcher?.matches(mapper?.apply(validatable)) ?: true
+      matcher.matches(mapper.apply(validatable))
     }
   }
 }
 
+// Java collections can contain null mappers despite the Kotlin generic declaration.
+@Suppress("KotlinDeprecation", "UNNECESSARY_SAFE_CALL")
 internal fun <ValidatableT, FailureT> Spec5<ValidatableT, FailureT>.toPredicateEx():
   Predicate<ValidatableT?> {
   return Predicate { validatable ->

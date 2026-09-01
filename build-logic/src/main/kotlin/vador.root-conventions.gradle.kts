@@ -1,6 +1,7 @@
 import com.diffplug.spotless.LineEnding.PLATFORM_NATIVE
 import dev.detekt.gradle.report.ReportMergeTask
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.qodana.tasks.QodanaScanTask
 
 plugins {
   base
@@ -8,6 +9,21 @@ plugins {
   id("com.diffplug.spotless")
   id("org.sonarqube")
   id("io.github.gradle-nexus.publish-plugin")
+  id("org.jetbrains.qodana")
+}
+
+val qodanaImage =
+  "jetbrains/qodana-jvm-community:2026.2@sha256:8ff36b5cebc0a6d720f77dcf3e0a94a03c39b4c42c3724a99ce5f7e462e42f99"
+
+qodana {
+  projectPath.set(layout.projectDirectory.asFile.absolutePath)
+  resultsPath.set(layout.buildDirectory.dir("qodana/results").get().asFile.absolutePath)
+  cachePath.set(layout.projectDirectory.dir(".qodana/cache").asFile.absolutePath)
+}
+
+tasks.named<QodanaScanTask>("qodanaScan") {
+  arguments.addAll("--image", qodanaImage)
+  dependsOn(":vador:kaptKotlin", ":vador:classes", ":matchers:classes")
 }
 
 dependencies {

@@ -26,9 +26,8 @@ import net.jodah.typetools.TypeResolver
 internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>.getSpecsEx():
   List<BaseSpec<ValidatableT, FailureT>> {
   val specFactory = SpecFactory<ValidatableT, FailureT>()
-  return (specify?.invoke(specFactory)?.map { it.done() as BaseSpec<ValidatableT, FailureT> }
-    ?: emptyList()) +
-    withSpecs.map { it.invoke(specFactory).done() as BaseSpec<ValidatableT, FailureT> }
+  return (specify?.invoke(specFactory)?.map { it.done() } ?: emptyList()) +
+    withSpecs.map { it.invoke(specFactory).done() }
 }
 
 internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, FailureT>
@@ -37,7 +36,7 @@ internal fun <ValidatableT, FailureT> BaseValidationConfig<ValidatableT, Failure
   val specNameToSpecs =
     specs.groupingBy { it.nameForTest }.eachCount().filter { it.value > 1 }.keys.filterNotNull()
   require(specNameToSpecs.isEmpty()) { "Specs with Duplicate NamesForTest found: $specNameToSpecs" }
-  return Optional.ofNullable(specs.first { it.nameForTest == nameForTest }?.toPredicate())
+  return Optional.ofNullable(specs.first { it.nameForTest == nameForTest }.toPredicate())
 }
 
 internal fun <ValidatableT> BaseValidationConfig<ValidatableT, *>.getRequiredFieldNamesEx(

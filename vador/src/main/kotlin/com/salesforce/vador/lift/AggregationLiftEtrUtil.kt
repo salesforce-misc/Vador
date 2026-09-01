@@ -16,8 +16,6 @@ import com.salesforce.vador.types.ValidatorEtr
  *
  * @param memberValidator
  * @param toMemberMapper Mapper function to extract member from container
- * @param nullContainer Failure to return if container is null
- * @param nullMember Failure to return if member is null
  * @param <ContainerT>
  * @param <MemberT>
  * @param <FailureT>
@@ -35,9 +33,7 @@ fun <ContainerT, MemberT, FailureT> liftToContainerValidatorType(
  * Lifts a list of member validations to container type.
  *
  * @param memberValidatorEtrs List of member validations
- * @param toChildMapper Mapper function to extract member from container
- * @param invalidParent Failure to return if container is null
- * @param invalidChild Failure to return if member is null
+ * @param toMemberMapper Mapper function to extract member from container
  * @param <ContainerT>
  * @param <MemberT>
  * @param <FailureT>

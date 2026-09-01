@@ -22,6 +22,7 @@ Requires JDK 25; always use the checked-in Gradle wrapper.
 ./gradlew :vador:test --tests "com.salesforce.vador.compatibility.JavaDslCompatibilityTest"
 ./gradlew spotlessApply
 ./gradlew koverHtmlReport koverXmlReport
+./gradlew qodanaScan
 ```
 
 Run `./gradlew clean build --warning-mode all --console=plain` before handing off a change.
@@ -45,5 +46,6 @@ Run `./gradlew clean build --warning-mode all --console=plain` before handing of
 ## Gradle and Publishing
 
 - Configuration-cache problems fail the build. Use a typed task-level incompatibility declaration only for a reproduced third-party limitation.
+- Qodana is an opt-in Docker-backed gate; keep `qodanaScan` separate from `build` and `check`.
 - Validate publications with `generatePomFileForVadorPublication` and `generateMetadataFileForVadorPublication` tasks.
 - Do not run Maven Central publishing, signing, Maven Local publication, or Sonar upload tasks without explicit authorization and the required credentials.

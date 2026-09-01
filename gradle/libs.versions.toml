@@ -20,6 +20,7 @@ kotest = "5.9.1"
 assertj-core = "3.27.7"
 detekt = "2.0.0-alpha.6"
 spotless = "8.10.1"
+qodana = "2026.2.0"
 apache-log4j = "2.26.1"
 testLogger = "4.0.0"
 jetbrains-annotations = "26.1.0"
@@ -51,6 +52,7 @@ kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.
 detekt-gradle = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 kover-gradle = { module = "org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.gradle.plugin", version.ref = "kover" }
 spotless-gradle = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
+qodana-gradle = { module = "org.jetbrains.qodana:plugin", version.ref = "qodana" }
 nexus-publish-gradle = { module = "io.github.gradle-nexus.publish-plugin:io.github.gradle-nexus.publish-plugin.gradle.plugin", version.ref = "nexus-publish" }
 sonarqube-gradle = { module = "org.sonarqube:org.sonarqube.gradle.plugin", version.ref = "sonarqube" }
 

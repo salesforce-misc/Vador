@@ -74,12 +74,9 @@ private fun <ValidatableT, FailureT> findFirstFailureRecursively(
   val combinedListOfValidators: List<ValidatorEtr<ValidatableT?, FailureT?>> =
     validatorsFromAnnotationNew + configToValidators(validationConfig)
   return findFirstFailure(right(validatable), combinedListOfValidators, throwableMapper)
-    ?: validationConfig.withRecursiveMapper
-      ?.apply(validatable)
-      ?.asSequence()
-      ?.map { findFirstFailureRecursively(it, validationConfig, throwableMapper) }
-      ?.filterNotNull()
-      ?.firstOrNull()
+    ?: validationConfig.withRecursiveMapper?.apply(validatable)?.firstNotNullOfOrNull {
+      findFirstFailureRecursively(it, validationConfig, throwableMapper)
+    }
 }
 
 /**
@@ -168,7 +165,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForAn
         throwableMapper,
       )(containerValidatables)
       .flatMap { it.containerFailure.or { it.batchMemberFailure } }
-      .map { it?._2 }
+      .map { it._2 }
   }
 
 @JvmSynthetic

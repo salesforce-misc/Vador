@@ -79,6 +79,22 @@ Similar development aids should be present for other code editors too.
 TIP: If you're on Intellij, replace your kbd:[Cmd+Shift+L] habit with kbd:[Ctrl]-kbd:[Ctrl] and run `./gradlew spotlessApply` (Or the respective action if you're on Eclipse).
 It may be slow for the first run, but later runs should be faster.
 
+== Static Analysis
+
+Vador uses https://www.jetbrains.com/qodana/[JetBrains Qodana] with the free JVM Community linter.
+The scan is opt-in because it runs in Docker and is not part of `build` or `check`.
+Docker must be running with at least 4 GB of memory available.
+
+[source,bash]
+----
+./gradlew qodanaScan
+----
+
+The Gradle task generates Vador's KAPT sources and both modules' classes before analysis.
+Results, including `qodana.sarif.json`, are written to `build/qodana/results`; the reusable linter cache is stored in `.qodana/cache`.
+GitHub Actions runs pull-request scans without secrets or write permissions and retains the report as a seven-day artifact.
+Trusted `master` pushes may additionally send results to Qodana Cloud and GitHub code scanning when `QODANA_TOKEN` is configured.
+
 == Manual publishing
 
 === Gradle Nexus Publish Plugin

@@ -17,13 +17,36 @@ import static sample.consumer.failure.ValidationFailure.INVALID_BEAN_2;
 
 import com.salesforce.vador.config.ValidationConfig;
 import com.salesforce.vador.execution.Vador;
+import io.vavr.Function1;
 import io.vavr.Tuple;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sample.consumer.failure.ValidationFailure;
 
 class Spec5Test {
+	@Test
+	void nullJavaMapperElementsRemainNullValues() {
+		final var nullMappers = new ArrayList<Function1<Spec5Bean1, ?>>();
+		nullMappers.add(null);
+		final var config =
+				ValidationConfig.<Spec5Bean1, ValidationFailure>toValidate()
+						.withSpec(
+								spec ->
+										spec._5()
+												.whenAllTheseFieldsMatch(Tuple.of(nullMappers, nullValue()))
+												.thenAllThoseFieldsShouldMatch(Tuple.of(nullMappers, nullValue()))
+												.orFailWith(INVALID_BEAN))
+						.prepare();
+
+		final var result =
+				Vador.validateAndFailFast(
+						new Spec5Bean1(1, "2", new Spec5Field(3), null, null, null), config);
+
+		assertThat(result).isEmpty();
+	}
+
 	@Test
 	void spec5TestWithValidBean() {
 		final var config =

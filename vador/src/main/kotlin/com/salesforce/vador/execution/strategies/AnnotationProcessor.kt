@@ -70,7 +70,7 @@ object AnnotationProcessor {
               Validator {
                 negativeValidator.validate(
                   field,
-                  FieldUtils.readField(field, bean, true) as Any?,
+                  FieldUtils.readField(field, bean, true),
                   map?.get(field.getAnnotation(Negative::class.java).failureKey),
                   none,
                 )
@@ -83,7 +83,7 @@ object AnnotationProcessor {
               Validator {
                 nonNegativeValidator.validate(
                   field,
-                  FieldUtils.readField(field, bean, true) as Any?,
+                  FieldUtils.readField(field, bean, true),
                   map?.get(field.getAnnotation(NonNegative::class.java).failureKey),
                   none,
                 )
@@ -96,7 +96,7 @@ object AnnotationProcessor {
               Validator {
                 positiveValidator.validate(
                   field,
-                  FieldUtils.readField(field, bean, true) as Any?,
+                  FieldUtils.readField(field, bean, true),
                   map?.get(field.getAnnotation(Positive::class.java).failureKey),
                   none,
                 )
@@ -140,7 +140,7 @@ object AnnotationProcessor {
               Validator {
                 requiredValidator.validate(
                   field,
-                  FieldUtils.readField(field, bean, true) as Any?,
+                  FieldUtils.readField(field, bean, true),
                   map?.get(annotation.failureKey),
                   none,
                 )

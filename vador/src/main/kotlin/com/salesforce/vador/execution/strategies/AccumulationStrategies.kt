@@ -16,7 +16,7 @@ import io.vavr.kotlin.right
  * Higher-order function to compose list of validators into Accumulation Strategy.
  *
  * @param validators
- * @param invalidValidatable
+ * @param throwableMapper
  * @param <FailureT>
  * @param <ValidatableT>
  * @return Composed Accumulation Strategy

@@ -1,0 +1,45 @@
+#-------------------------------------------------------------------------------#
+#               Qodana analysis is configured by qodana.yaml file               #
+#             https://www.jetbrains.com/help/qodana/qodana-yaml.html            #
+#-------------------------------------------------------------------------------#
+version: "1.0"
+
+# Gradle and GitHub Actions pass the Qodana JVM Community 2026.2 image by immutable digest.
+projectJDK: "25"
+
+profile:
+  name: qodana.recommended
+
+exclude:
+  # These functions form the published DSL and are intentionally consumed outside this repository.
+  - name: UnusedSymbol
+    paths:
+      - matchers/src/main/kotlin/com/salesforce/vador/relates/Relates.kt
+      - vador/src/main/kotlin/com/salesforce/vador/config/ConfigBuilderDsl.kt
+      - vador/src/main/kotlin/com/salesforce/vador/lift/AggregationLiftEtrUtil.kt
+      - vador/src/main/kotlin/com/salesforce/vador/specs/specs/SpecBuilderDsl.kt
+  # Gradle's type-safe project accessors and toolchain resolver APIs are intentionally incubating.
+  - name: UnstableApiUsage
+    paths:
+      - build-logic/settings.gradle.kts
+      - build-logic/src/main/kotlin/vador.jvm-library-conventions.gradle.kts
+      - settings.gradle.kts
+  # Vavr Either defaults operate through the four primitives delegated by these public wrappers.
+  - name: JavaDefaultMethodsNotOverriddenByDelegation
+    paths:
+      - vador/src/main/kotlin/com/salesforce/vador/types/failures/FFABatchOfBatchFailureWithPair.kt
+      - vador/src/main/kotlin/com/salesforce/vador/types/failures/FFEBatchOfBatchFailure.kt
+      - vador/src/main/kotlin/com/salesforce/vador/types/failures/FFEBatchOfBatchFailureWithPair.kt
+  - name: All
+    paths:
+      - .gradle
+      - .qodana
+      - build
+      - build-logic/build
+      - matchers/build
+      - vador/build
+      - "**/generated/**"
+
+failureConditions:
+  severityThresholds:
+    any: 0

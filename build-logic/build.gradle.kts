@@ -11,6 +11,7 @@ dependencies {
   implementation(libs.detekt.gradle)
   implementation(libs.kover.gradle)
   implementation(libs.nexus.publish.gradle)
+  implementation(libs.qodana.gradle)
   implementation(libs.sonarqube.gradle)
   implementation(libs.testLogger.gradle)
 }
