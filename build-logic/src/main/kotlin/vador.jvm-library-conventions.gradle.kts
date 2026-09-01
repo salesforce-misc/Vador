@@ -98,6 +98,6 @@ tasks.withType<Detekt>().configureEach {
   reports {
     xml.required.set(true)
     xml.outputLocation.set(layout.buildDirectory.file("reports/detekt/detekt.xml"))
-    sarif.required.set(false)
+    sarif.required.set(true)
   }
 }
