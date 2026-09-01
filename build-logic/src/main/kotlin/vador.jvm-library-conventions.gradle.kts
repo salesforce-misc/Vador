@@ -1,5 +1,6 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA
 import com.diffplug.spotless.LineEnding.PLATFORM_NATIVE
+import com.diffplug.gradle.spotless.SpotlessTask
 import dev.detekt.gradle.Detekt
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.plugins.jvm.JvmTestSuite
@@ -22,6 +23,12 @@ java { toolchain { languageVersion.set(JavaLanguageVersion.of(jdkVersion)) } }
 
 tasks.withType<JavaCompile>().configureEach { options.encoding = "UTF-8" }
 
+tasks.withType<SpotlessTask>().configureEach {
+  notCompatibleWithConfigurationCache(
+    "Pinned Spotless formatter classloader state fails after configuration-cache restoration.",
+  )
+}
+
 testing {
   suites { named<JvmTestSuite>("test") { useJUnitJupiter(junitVersion) } }
 }
@@ -31,7 +38,7 @@ testlogger.theme = MOCHA
 spotless {
   lineEndings = PLATFORM_NATIVE
   kotlin {
-    target("src/*/kotlin/**/*.kt")
+    target("src/*/kotlin/**/*.kt", "src/*/java/**/*.kt")
     targetExclude("build/**", ".gradle/**", "generated/**", "**/bin/**", "out/**", "tmp/**")
     ktfmt("0.53").googleStyle()
     trimTrailingWhitespace()

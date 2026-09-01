@@ -557,6 +557,7 @@ Replace `vador.root-conventions.gradle.kts` with this shape:
 ```kotlin
 import com.diffplug.spotless.LineEnding.PLATFORM_NATIVE
 import dev.detekt.gradle.report.ReportMergeTask
+import org.gradle.api.tasks.TaskProvider
 
 plugins {
   base
@@ -597,14 +598,15 @@ spotless {
   }
 }
 
-val detektReportMerge by tasks.registering(ReportMergeTask::class) {
-  output.set(layout.buildDirectory.file("reports/detekt/merge.xml"))
-  input.from(
-    layout.projectDirectory.file("matchers/build/reports/detekt/detekt.xml"),
-    layout.projectDirectory.file("vador/build/reports/detekt/detekt.xml"),
-  )
-  dependsOn(":matchers:detekt", ":vador:detekt")
-}
+val detektReportMerge: TaskProvider<ReportMergeTask> =
+  tasks.register<ReportMergeTask>("detektReportMerge") {
+    output.set(layout.buildDirectory.file("reports/detekt/merge.xml"))
+    input.from(
+      layout.projectDirectory.file("matchers/build/reports/detekt/detekt.xml"),
+      layout.projectDirectory.file("vador/build/reports/detekt/detekt.xml"),
+    )
+    dependsOn(":matchers:detekt", ":vador:detekt")
+  }
 
 tasks.named("check") { dependsOn(detektReportMerge) }
 
@@ -1074,6 +1076,10 @@ tasks.withType<SpotlessTask>().configureEach {
 }
 ```
 
+Apply the same typed declaration in the root convention because it independently owns the root
+Spotless tasks. This keeps the opt-out limited to the reproduced formatter classloader failure
+without weakening the global configuration-cache policy.
+
 Then rerun the clean build. Do not change formatter/toolchain versions or global cache policy for
 that failure.
 
@@ -1131,11 +1137,16 @@ test -s vador/build/libs/vador-1.1.1-SNAPSHOT.jar
 test -s vador/build/libs/vador-1.1.1-SNAPSHOT-sources.jar
 test -s vador/build/libs/vador-1.1.1-SNAPSHOT-javadoc.jar
 jar tf vador/build/libs/vador-1.1.1-SNAPSHOT-sources.jar | rg 'com/salesforce/vador/config/IDConfig\.(kt|java)'
+jar tf matchers/build/libs/matchers-1.1.1-SNAPSHOT-sources.jar | rg 'com/salesforce/vador/matchers/DateMatchers\.kt'
+jar tf matchers/build/libs/matchers-1.1.1-SNAPSHOT-javadoc.jar | rg '^META-INF/MANIFEST\.MF$'
+jar tf vador/build/libs/vador-1.1.1-SNAPSHOT-javadoc.jar | rg 'com/salesforce/vador/config/IDConfig\.html'
 javap -verbose -classpath vador/build/libs/vador-1.1.1-SNAPSHOT.jar com.salesforce.vador.execution.Vador | rg 'major version: 69'
 ```
 
 Expected: all six artifacts exist; the sources JAR contains handwritten and generated forms; JVM
-major version is 69.
+major version is 69. The matchers sources JAR contains Kotlin matcher sources and its preserved
+manifest-only Javadoc JAR contains `META-INF/MANIFEST.MF`; the Vador Javadoc JAR contains the
+generated `IDConfig.html` page.
 
 - [ ] **Step 7: Run final structural and Git checks**
 

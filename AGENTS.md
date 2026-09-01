@@ -32,7 +32,8 @@ Run `./gradlew clean build --warning-mode all --console=plain` before handing of
 - Prefer expression-oriented Kotlin and collection combinators where they keep intent clear.
 - Preserve Java-callable public APIs and the Java compatibility tests when changing the Kotlin DSL.
 - Let Spotless/ktfmt and Google Java Format own formatting; do not hand-format around them.
-- Keep dependency and plugin versions in `gradle/libs.versions.toml`.
+- Keep dependency versions and project-plugin versions in `gradle/libs.versions.toml`.
+- Settings-bootstrap plugins may remain explicitly pinned in `settings.gradle.kts`.
 - Keep shared build policy in the focused convention under `build-logic`; module scripts own only module-specific configuration.
 
 ## Generated Sources

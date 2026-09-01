@@ -1,5 +1,7 @@
 import com.diffplug.spotless.LineEnding.PLATFORM_NATIVE
+import com.diffplug.gradle.spotless.SpotlessTask
 import dev.detekt.gradle.report.ReportMergeTask
+import org.gradle.api.tasks.TaskProvider
 
 plugins {
   base
@@ -12,6 +14,12 @@ plugins {
 dependencies {
   kover(project(":matchers"))
   kover(project(":vador"))
+}
+
+tasks.withType<SpotlessTask>().configureEach {
+  notCompatibleWithConfigurationCache(
+    "Pinned Spotless formatter classloader state fails after configuration-cache restoration.",
+  )
 }
 
 kover {
@@ -40,14 +48,15 @@ spotless {
   }
 }
 
-val detektReportMerge by tasks.registering(ReportMergeTask::class) {
-  output.set(layout.buildDirectory.file("reports/detekt/merge.xml"))
-  input.from(
-    layout.projectDirectory.file("matchers/build/reports/detekt/detekt.xml"),
-    layout.projectDirectory.file("vador/build/reports/detekt/detekt.xml"),
-  )
-  dependsOn(":matchers:detekt", ":vador:detekt")
-}
+val detektReportMerge: TaskProvider<ReportMergeTask> =
+  tasks.register<ReportMergeTask>("detektReportMerge") {
+    output.set(layout.buildDirectory.file("reports/detekt/merge.xml"))
+    input.from(
+      layout.projectDirectory.file("matchers/build/reports/detekt/detekt.xml"),
+      layout.projectDirectory.file("vador/build/reports/detekt/detekt.xml"),
+    )
+    dependsOn(":matchers:detekt", ":vador:detekt")
+  }
 
 tasks.named("check") { dependsOn(detektReportMerge) }
 
