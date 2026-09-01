@@ -6,7 +6,8 @@ Modernize Vador's Gradle build around Gradle 9.7.1 and Java 25, replace the lega
 `buildSrc` build with Gradle's recommended included `build-logic` build, correct known
 configuration drift, and add repository-specific agent guidance. Preserve the library's
 modules, public artifacts, source layout, build behavior, and pinned dependency and plugin
-versions unless Gradle 9.7.1 or Java 25 compatibility requires a narrow plugin upgrade.
+versions except for the Kotlin compatibility upgrade and any other narrow upgrade demonstrated
+necessary by Gradle 9.7.1 or Java 25.
 
 ## Current State
 
@@ -88,8 +89,9 @@ disabled. Removing a permanently disabled tool does not change the build's enfor
 #### `vador.kotlin-library-conventions`
 
 This plugin composes `vador.jvm-library-conventions` with the Kotlin JVM plugin. It owns the Java
-25 Kotlin toolchain and preserves the current Kotlin compiler arguments, including progressive and
-context-receiver behavior. Module-specific compiler arguments remain in the owning module.
+25 Kotlin toolchain and preserves progressive compilation. The unused `-Xcontext-receivers` flag
+will be removed because no production or test source declares a context receiver. Module-specific
+compiler arguments remain in the owning module.
 
 #### `vador.publishing-conventions`
 
@@ -154,8 +156,11 @@ GitHub Actions will replace the retired `gradle/gradle-build-action@v3` setup wi
 
 ## Compatibility Changes
 
-Gradle, Java, the wrapper checksum, the Gradle setup action, and the repository structure are
-intentional upgrades. Kotlin, dependency, and Gradle plugin versions otherwise remain pinned.
+Gradle, Java, Kotlin, the wrapper checksum, the Gradle setup action, and the repository structure
+are intentional upgrades. Kotlin will move from 2.1.10 to 2.4.20-RC2: Kotlin 2.1.10 does not
+support Gradle 9 or Java 25 targeting, while 2.4.20-RC2 is the current compatible release candidate
+and matches ReVoman's verified Gradle 9.7.1/Java 25 stack. Dependency and other Gradle plugin
+versions otherwise remain pinned.
 
 If a pinned Gradle plugin cannot configure or execute on Gradle 9.7.1 or cannot compile for the
 Java 25 target, implementation may upgrade only that plugin to the minimum stable compatible
