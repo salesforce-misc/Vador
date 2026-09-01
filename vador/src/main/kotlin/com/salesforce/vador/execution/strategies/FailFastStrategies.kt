@@ -133,7 +133,7 @@ internal fun <ContainerValidatableT, MemberValidatableT, FailureT> failFastForEa
       }
       .map { result: Either<FailureT?, List<Either<FailureT?, ContainerValidatableT?>>> ->
         result
-          .fold<Either<Either<FailureT?, List<FailureT?>>, ContainerValidatableT?>?>(
+          .fold<Either<Either<FailureT?, List<FailureT?>>, ContainerValidatableT?>>(
             { containerFailure -> left(left(containerFailure)) },
             { memberResults ->
               val memberFailures = memberResults.filter { it.isLeft }

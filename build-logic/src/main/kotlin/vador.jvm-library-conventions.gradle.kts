@@ -1,38 +1,16 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA
-import com.diffplug.gradle.spotless.JavaExtension
 import com.diffplug.spotless.LineEnding.PLATFORM_NATIVE
-import com.diffplug.spotless.FormatterFunc
-import io.gitlab.arturbosch.detekt.Detekt
-import java.io.Serializable
-import org.gradle.api.GradleException
+import dev.detekt.gradle.Detekt
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.plugins.jvm.JvmTestSuite
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 
-private class ForbidWildcardImports : FormatterFunc, Serializable {
-  override fun apply(source: String): String {
-    if (wildcardImport.containsMatchIn(source)) {
-      throw GradleException("Wildcard imports are forbidden")
-    }
-    return source
-  }
-
-  private companion object {
-    private const val serialVersionUID = 1L
-    val wildcardImport = Regex("^import\\s+(?:static\\s+)?[\\w.]+\\.\\*;", RegexOption.MULTILINE)
-  }
-}
-
-private fun JavaExtension.forbidWildcardImports() {
-  custom("forbidWildcardImports", ForbidWildcardImports())
-}
-
 plugins {
   `java-library`
   id("org.jetbrains.kotlinx.kover")
   id("com.diffplug.spotless")
-  id("io.gitlab.arturbosch.detekt")
+  id("dev.detekt")
   id("com.adarshr.test-logger")
 }
 
@@ -55,14 +33,14 @@ spotless {
   kotlin {
     target("src/*/kotlin/**/*.kt")
     targetExclude("build/**", ".gradle/**", "generated/**", "**/bin/**", "out/**", "tmp/**")
-    ktfmt().googleStyle()
+    ktfmt("0.53").googleStyle()
     trimTrailingWhitespace()
     endWithNewline()
   }
   kotlinGradle {
     target("*.gradle.kts", "src/**/*.gradle.kts")
     targetExclude("build/**", ".gradle/**", "generated/**", "**/bin/**", "out/**", "tmp/**")
-    ktfmt().googleStyle()
+    ktfmt("0.53").googleStyle()
     trimTrailingWhitespace()
     endWithNewline()
   }
@@ -96,8 +74,8 @@ detekt {
 
 tasks.withType<Detekt>().configureEach {
   reports {
-    xml.required.set(true)
-    xml.outputLocation.set(layout.buildDirectory.file("reports/detekt/detekt.xml"))
+    checkstyle.required.set(true)
+    checkstyle.outputLocation.set(layout.buildDirectory.file("reports/detekt/detekt.xml"))
     sarif.required.set(false)
   }
 }

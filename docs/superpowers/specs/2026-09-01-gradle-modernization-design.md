@@ -135,7 +135,9 @@ No `allprojects`, `subprojects`, or `afterEvaluate` configuration will remain.
 ## Gradle and Java Runtime Policy
 
 The complete wrapper will be regenerated for Gradle 9.7.1, including Unix and Windows scripts,
-the wrapper JAR, wrapper properties, and the official binary distribution checksum.
+the wrapper JAR, wrapper properties, and the official binary distribution checksum. Repository
+attributes will keep the generated `gradlew` script LF and `gradlew.bat` CRLF so Git preserves
+their platform line endings without rejecting regenerated content as whitespace errors.
 
 Java 25 will be the single runtime and compilation baseline:
 
@@ -167,6 +169,32 @@ Java 25 target, implementation may upgrade only that plugin to the minimum stabl
 version. Such an upgrade must be supported by a reproducible Gradle 9 or Java 25 failure,
 documented in the implementation record, and revalidated through the complete build. Speculative
 or broad dependency updates are out of scope.
+
+Task 4 reproduced that exception for Kover 0.9.1 under Kotlin 2.4.20-RC2 and Gradle 9.7.1:
+`:matchers:koverGenerateArtifactJvm` failed because Kover requested the removed
+`compileKotlinTask` compilation property. The authorized compatibility correction upgrades only
+Kover from 0.9.1 to the current stable 0.9.9 recommended by its official documentation; that
+release line includes Gradle 9 fixes.
+
+The resumed Java 25 build then reproduced two further bounded plugin failures. Spotless 7.0.2's
+ktfmt and Google Java Format integrations fail against Java 25 compiler APIs, so Spotless is
+authorized to move to stable 8.10.1, which supplies Java 25 formatter support and the native
+`forbidWildcardImports()` step. Detekt 1.23.8 rejects JVM target 25 because it supports targets only
+through 22; no stable 1.x line supports target 25, so Detekt is authorized to move to
+2.0.0-alpha.6, the ReVoman-compatible line built with Kotlin 2.4.10 and Gradle 9.6.1 and tested on
+JDK 25. Detekt's plugin ID/packages and XML report name migrate to `dev.detekt` and Checkstyle,
+while the existing module output paths, merged XML, SARIF-disabled policy, and Sonar path remain
+unchanged. The removed Detekt 1 `build.maxIssues` configuration key is dropped; the active comments
+and line-length policy remains unchanged. Spotless 8 changes its unversioned ktfmt default from
+0.53 to 0.63, which produces application-source formatting drift; every Kotlin and Kotlin-Gradle
+format therefore pins `ktfmt("0.53")` to preserve the prior formatter output without source edits.
+
+Kotlin 2.4.20-RC2 also rejects an existing nullable outer result declaration in
+`FailFastStrategies.failFastForEachBatchOfBatch1`: `fold<Either<...>?>` is immediately followed by
+the non-null receiver call `mapLeft`. Both fold branches already return a non-null `Either`, so the
+authorized build-owned source compatibility correction removes only that outer `?`, preserving
+all nullable payload arguments, branch logic, and the existing progressive compiler policy.
+All other dependency and plugin versions remain pinned.
 
 The hardcoded JUnit 5.10.2 suite version will be removed in favor of the existing catalog version,
 5.12.0. Unused JUnit aliases may be removed after confirming they have no consumers.

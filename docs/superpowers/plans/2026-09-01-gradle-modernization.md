@@ -6,7 +6,7 @@
 
 **Architecture:** Settings own build composition and dependency repositories; a standalone included build exposes focused JVM-library, Kotlin-library, publishing, and root convention plugins. Module scripts retain only module-specific plugins, compiler options, and dependencies, while the root convention owns aggregate reports, Sonar inputs, and Nexus configuration.
 
-**Tech Stack:** Gradle 9.7.1 Kotlin DSL, Kotlin/JVM 2.4.20-RC2, Java 25 toolchains, KAPT/Immutables, Kover, Detekt, Spotless, SonarScanner for Gradle, Gradle Nexus Publish Plugin, GitHub Actions.
+**Tech Stack:** Gradle 9.7.1 Kotlin DSL, Kotlin/JVM 2.4.20-RC2, Java 25 toolchains, KAPT/Immutables, Kover 0.9.9, Detekt 2.0.0-alpha.6, Spotless 8.10.1, SonarScanner for Gradle, Gradle Nexus Publish Plugin, GitHub Actions.
 
 **Spec:** `docs/superpowers/specs/2026-09-01-gradle-modernization-design.md`
 
@@ -14,7 +14,7 @@
 
 - Use Gradle 9.7.1 with binary distribution checksum `acd53f1edaf02f1a8ff99879f8a34b302661a057d9b063ae9e35b552f804d20a` and wrapper JAR checksum `7a9ce74cff467ca1bf60a4fcd9f05185acceda4d0f382434d393e17864262c5d`.
 - Use Java 25 for the Gradle daemon, Java compilation, Kotlin compilation, tests, KAPT, and Javadoc; emitted JVM class major version must be 69.
-- Upgrade Kotlin from 2.1.10 to 2.4.20-RC2 because 2.1.10 does not support Gradle 9 or Java 25 targeting; preserve every other dependency and plugin version unless a reproducible compatibility failure proves a narrow upgrade necessary.
+- Upgrade Kotlin from 2.1.10 to 2.4.20-RC2 because 2.1.10 does not support Gradle 9 or Java 25 targeting. Reproduced failures authorize only Kover 0.9.9, Spotless 8.10.1, and Detekt 2.0.0-alpha.6; preserve every other dependency and plugin version.
 - Preserve projects `:vador` and `:matchers`, Maven coordinates `com.salesforce.vador:vador:1.1.1-SNAPSHOT` and `com.salesforce.vador:vador-matchers:1.1.1-SNAPSHOT`, publication name `vador`, dependency roles, source layout, generated sources, POM metadata, signing, and Sonatype endpoints.
 - Keep configuration-cache problems fail-closed. A third-party execution task may opt out only through its typed task with a precise reason; never restore global warning mode.
 - Do not enable isolated projects or parallel configuration-cache storage in this change.
@@ -35,6 +35,7 @@
 
 **Create**
 
+- `.gitattributes` — deterministic LF/CRLF policy for generated wrapper scripts.
 - `.sdkmanrc` — exact local Java 25 SDKMAN environment.
 - `AGENTS.md` — repository structure, commands, style, generated-source rules, and safety guidance.
 - `build-logic/settings.gradle.kts` — included-build plugin and dependency resolution.
@@ -271,7 +272,7 @@ Create `vador.jvm-library-conventions.gradle.kts` with this responsibility-compl
 ```kotlin
 import com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA
 import com.diffplug.spotless.LineEnding.PLATFORM_NATIVE
-import io.gitlab.arturbosch.detekt.Detekt
+import dev.detekt.gradle.Detekt
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.JavaLanguageVersion
@@ -281,7 +282,7 @@ plugins {
   `java-library`
   id("org.jetbrains.kotlinx.kover")
   id("com.diffplug.spotless")
-  id("io.gitlab.arturbosch.detekt")
+  id("dev.detekt")
   id("com.adarshr.test-logger")
 }
 
@@ -304,14 +305,14 @@ spotless {
   kotlin {
     target("src/*/kotlin/**/*.kt")
     targetExclude("build/**", ".gradle/**", "generated/**", "**/bin/**", "out/**", "tmp/**")
-    ktfmt().googleStyle()
+    ktfmt("0.53").googleStyle()
     trimTrailingWhitespace()
     endWithNewline()
   }
   kotlinGradle {
     target("*.gradle.kts", "src/**/*.gradle.kts")
     targetExclude("build/**", ".gradle/**", "generated/**", "**/bin/**", "out/**", "tmp/**")
-    ktfmt().googleStyle()
+    ktfmt("0.53").googleStyle()
     trimTrailingWhitespace()
     endWithNewline()
   }
@@ -345,8 +346,8 @@ detekt {
 
 tasks.withType<Detekt>().configureEach {
   reports {
-    xml.required.set(true)
-    xml.outputLocation.set(layout.buildDirectory.file("reports/detekt/detekt.xml"))
+    checkstyle.required.set(true)
+    checkstyle.outputLocation.set(layout.buildDirectory.file("reports/detekt/detekt.xml"))
     sarif.required.set(false)
   }
 }
@@ -555,7 +556,7 @@ Replace `vador.root-conventions.gradle.kts` with this shape:
 
 ```kotlin
 import com.diffplug.spotless.LineEnding.PLATFORM_NATIVE
-import io.gitlab.arturbosch.detekt.report.ReportMergeTask
+import dev.detekt.gradle.report.ReportMergeTask
 
 plugins {
   base
@@ -584,7 +585,7 @@ spotless {
   lineEndings = PLATFORM_NATIVE
   kotlinGradle {
     target("*.gradle.kts")
-    ktfmt().googleStyle()
+    ktfmt("0.53").googleStyle()
     trimTrailingWhitespace()
     endWithNewline()
   }
@@ -597,7 +598,7 @@ spotless {
 }
 
 val detektReportMerge by tasks.registering(ReportMergeTask::class) {
-  output = layout.buildDirectory.file("reports/detekt/merge.xml")
+  output.set(layout.buildDirectory.file("reports/detekt/merge.xml"))
   input.from(
     layout.projectDirectory.file("matchers/build/reports/detekt/detekt.xml"),
     layout.projectDirectory.file("vador/build/reports/detekt/detekt.xml"),
@@ -711,6 +712,7 @@ git commit -m "build: centralize root quality conventions"
 
 **Files:**
 
+- Create: `.gitattributes`
 - Create: `.sdkmanrc`
 - Create: `gradle/gradle-daemon-jvm.properties` through `updateDaemonJvm`
 - Modify: `settings.gradle.kts`
@@ -721,6 +723,12 @@ git commit -m "build: centralize root quality conventions"
 - Modify: `gradlew`
 - Modify: `gradlew.bat`
 - Modify: `.github/workflows/build.yml`
+- Modify: `build-logic/src/main/kotlin/vador.jvm-library-conventions.gradle.kts`
+- Modify: `build-logic/src/main/kotlin/vador.root-conventions.gradle.kts`
+- Modify: `detekt/config.yml`
+- Modify: `vador/src/main/kotlin/com/salesforce/vador/execution/strategies/FailFastStrategies.kt`
+- Modify: `docs/superpowers/specs/2026-09-01-gradle-modernization-design.md`
+- Modify: `docs/superpowers/plans/2026-09-01-gradle-modernization.md`
 
 **Interfaces:**
 
@@ -739,12 +747,41 @@ Expected: FAIL; the baseline is Gradle 8.14.1 on Java 21.
 
 - [ ] **Step 2: Set the compatible Kotlin and Java versions**
 
-Change only these catalog values:
+Change these catalog values:
 
 ```toml
 jdk = "25"
 kotlin = "2.4.20-RC2"
+kover = "0.9.9"
+detekt = "2.0.0-alpha.6"
+spotless = "8.10.1"
 ```
+
+Compatibility upgrades are limited to three reproduced failures. Kover 0.9.1 requested the
+removed `compileKotlinTask` property, so it moves to stable 0.9.9. The resumed Java 25 build showed
+Spotless 7.0.2 failing in ktfmt/Google Java Format Java-compiler integration, so it moves to stable
+8.10.1 with Java 25 formatter support. Detekt 1.23.8 rejected JVM target 25 because its supported
+targets end at 22; no stable 1.x target-25 line exists, so it moves to the JDK-25-tested
+2.0.0-alpha.6 used by the reference stack. Keep every other dependency and plugin version
+unchanged.
+
+Migrate Detekt's catalog marker to `dev.detekt:detekt-gradle-plugin`, its alias/plugin ID to
+`dev.detekt`, and convention imports to `dev.detekt.gradle`. Configure per-module
+`checkstyle.required` and `checkstyle.outputLocation` at the existing
+`build/reports/detekt/detekt.xml` path, preserve SARIF disabled, and use
+`dev.detekt.gradle.report.ReportMergeTask` with `output.set(...)` for the unchanged root merged XML
+and Sonar path. Remove the obsolete Detekt 1 `build.maxIssues` config block while preserving the
+active comments and line-length rules. Remove the Spotless 7 custom wildcard-import formatter and
+use Spotless 8's native `forbidWildcardImports()` without changing Java/document tab formatting.
+Because Spotless 8 changes unversioned ktfmt from 0.53 to 0.63, use
+`ktfmt("0.53").googleStyle()` in every JVM/root Kotlin and Kotlin-Gradle format to preserve the
+Spotless 7 output without editing application or test sources.
+
+Kotlin 2.4.20-RC2 reproduces `UNSAFE_CALL` in
+`failFastForEachBatchOfBatch1` because its explicit `fold<Either<...>?>` result is nullable before
+the `mapLeft` call. Remove only the single outer `?` from that fold result type; retain the nullable
+payload type arguments, both branches, the adjacent behavior, and `-progressive`. Verify the
+focused compile and `BatchOfBatch1ValidationConfigTest` before the strict module build.
 
 Replace the cache migration escape hatch in `gradle.properties`:
 
@@ -785,7 +822,7 @@ refresh the scripts and wrapper JAR:
 
 - [ ] **Step 5: Generate Java 25 daemon criteria**
 
-Run:
+Run with `JAVA_HOME` and `PATH` selecting the Foojay-provisioned Java 25 home:
 
 ```bash
 ./gradlew updateDaemonJvm --jvm-version 25
@@ -813,7 +850,7 @@ Change `.github/workflows/build.yml` to:
 
 - [ ] **Step 7: Verify wrapper integrity and runtime selection**
 
-Run:
+Run with `JAVA_HOME` and `PATH` selecting the Foojay-provisioned Java 25 home:
 
 ```bash
 rg -n 'gradle-9\.7\.1-bin\.zip|distributionSha256Sum=acd53f1edaf02f1a8ff99879f8a34b302661a057d9b063ae9e35b552f804d20a|networkTimeout=120000' gradle/wrapper/gradle-wrapper.properties
@@ -831,7 +868,7 @@ Expected runtime: Gradle 9.7.1 with launcher and daemon Java 25.
 
 - [ ] **Step 8: Compile and verify Java 25 bytecode**
 
-Run:
+Run with the same Java 25 `JAVA_HOME` and `PATH`:
 
 ```bash
 ./gradlew clean :matchers:build :vador:build --warning-mode all --configuration-cache-problems=fail --console=plain
@@ -843,10 +880,21 @@ Expected: build PASS and both `javap` checks PASS. If a pinned non-Kotlin plugin
 Gradle 9 compatibility failure, stop with the exact stack trace and amend the spec/plan before
 changing its version.
 
+Track the generated wrapper scripts with explicit platform line endings:
+
+```gitattributes
+gradlew text eol=lf
+gradlew.bat text eol=crlf
+```
+
+Stage the generated scripts through this policy; do not hand-edit their generated content.
+
 - [ ] **Step 9: Commit the runtime upgrade**
 
 ```bash
-git add .sdkmanrc .github/workflows/build.yml settings.gradle.kts gradle.properties gradle/libs.versions.toml gradle/gradle-daemon-jvm.properties gradle/wrapper gradlew gradlew.bat
+git add -f .sdkmanrc
+git add .gitattributes .github/workflows/build.yml settings.gradle.kts gradle.properties gradle/libs.versions.toml gradle/gradle-daemon-jvm.properties gradle/wrapper build-logic/src/main/kotlin/vador.jvm-library-conventions.gradle.kts build-logic/src/main/kotlin/vador.root-conventions.gradle.kts detekt/config.yml vador/src/main/kotlin/com/salesforce/vador/execution/strategies/FailFastStrategies.kt docs/superpowers/specs/2026-09-01-gradle-modernization-design.md docs/superpowers/plans/2026-09-01-gradle-modernization.md
+git add --renormalize gradlew gradlew.bat
 git diff --cached --check
 git commit -m "build: upgrade to Gradle 9 and Java 25"
 ```

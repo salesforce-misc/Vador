@@ -1,5 +1,5 @@
 import com.diffplug.spotless.LineEnding.PLATFORM_NATIVE
-import io.gitlab.arturbosch.detekt.report.ReportMergeTask
+import dev.detekt.gradle.report.ReportMergeTask
 
 plugins {
   base
@@ -28,7 +28,7 @@ spotless {
   lineEndings = PLATFORM_NATIVE
   kotlinGradle {
     target("*.gradle.kts")
-    ktfmt().googleStyle()
+    ktfmt("0.53").googleStyle()
     trimTrailingWhitespace()
     endWithNewline()
   }
@@ -41,7 +41,7 @@ spotless {
 }
 
 val detektReportMerge by tasks.registering(ReportMergeTask::class) {
-  output = layout.buildDirectory.file("reports/detekt/merge.xml")
+  output.set(layout.buildDirectory.file("reports/detekt/merge.xml"))
   input.from(
     layout.projectDirectory.file("matchers/build/reports/detekt/detekt.xml"),
     layout.projectDirectory.file("vador/build/reports/detekt/detekt.xml"),
