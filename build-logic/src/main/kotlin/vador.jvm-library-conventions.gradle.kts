@@ -75,13 +75,13 @@ spotless {
     removeUnusedImports()
     forbidWildcardImports()
     trimTrailingWhitespace()
-    leadingTabsToSpaces(2)
+    leadingSpacesToTabs(2)
     endWithNewline()
   }
   format("documentation") {
     target("*.md", "*.adoc")
     trimTrailingWhitespace()
-    leadingTabsToSpaces(2)
+    leadingSpacesToTabs(2)
     endWithNewline()
   }
 }
