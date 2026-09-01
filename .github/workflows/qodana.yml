@@ -145,6 +145,6 @@ jobs:
 
       - name: Upload SARIF to code scanning
         if: ${{ steps.sarif.outputs.available == 'true' }}
-        uses: github/codeql-action/upload-sarif@fddeee1a7ece751b577e409a89057319e3172939 # v4
+        uses: github/codeql-action/upload-sarif@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4
         with:
           sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
