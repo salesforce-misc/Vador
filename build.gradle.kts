@@ -10,10 +10,11 @@ import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 
 plugins {
   `java-library`
-  id(libs.plugins.detekt.pluginId) apply false
-  id(libs.plugins.kover.pluginId)
+  alias(libs.plugins.detekt) apply false
+  alias(libs.plugins.kover)
   alias(libs.plugins.nexus.publish)
   id("org.sonarqube") version "6.0.1.5171"
+  id("vador.root-conventions") apply false
 }
 
 allprojects { apply(plugin = "vador.root-conventions") }
@@ -78,7 +79,7 @@ afterEvaluate {
 nexusPublishing {
   this.repositories {
     sonatype {
-      stagingProfileId = STAGING_PROFILE_ID
+      stagingProfileId = providers.gradleProperty("vador.stagingProfileId").get()
       nexusUrl = uri("https://ossrh-staging-api.central.sonatype.com/service/local/")
       snapshotRepositoryUrl = uri("https://central.sonatype.com/repository/maven-snapshots/")
     }

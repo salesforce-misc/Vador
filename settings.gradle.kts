@@ -5,11 +5,11 @@
  * https://opensource.org/licenses/BSD-3-Clause
  * ****************************************************************************
  */
+pluginManagement { includeBuild("build-logic") }
+
 plugins { id("com.gradle.develocity") version "4.0" }
 
-dependencyResolutionManagement {
-  versionCatalogs { create("libs") { from(files("libs.versions.toml")) } }
-}
+dependencyResolutionManagement { repositories { mavenCentral() } }
 
 val isCI = !System.getenv("CI").isNullOrEmpty()
 

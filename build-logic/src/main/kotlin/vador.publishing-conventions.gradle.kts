@@ -13,9 +13,11 @@ plugins {
   `java-library`
 }
 
-group = GROUP_ID
+val groupId = providers.gradleProperty("vador.group")
+val releaseVersion = providers.gradleProperty("vador.version")
 
-version = VERSION
+group = groupId.get()
+version = releaseVersion.get()
 
 description = "Vador - A framework for POJO/Data Structure/Bean validation"
 

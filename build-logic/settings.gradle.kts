@@ -5,11 +5,20 @@
  * https://opensource.org/licenses/BSD-3-Clause
  * ****************************************************************************
  */
+pluginManagement {
+  repositories {
+    mavenCentral()
+    gradlePluginPortal()
+  }
+}
+
 dependencyResolutionManagement {
-  versionCatalogs { create("libs") { from(files("../libs.versions.toml")) } }
+  versionCatalogs { create("libs") { from(files("../gradle/libs.versions.toml")) } }
 
   repositories {
     mavenCentral()
     gradlePluginPortal()
   }
 }
+
+rootProject.name = "build-logic"
