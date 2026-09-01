@@ -9,7 +9,10 @@ pluginManagement { includeBuild("build-logic") }
 
 plugins { id("com.gradle.develocity") version "4.0" }
 
-dependencyResolutionManagement { repositories { mavenCentral() } }
+dependencyResolutionManagement {
+  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+  repositories { mavenCentral() }
+}
 
 val isCI = !System.getenv("CI").isNullOrEmpty()
 
