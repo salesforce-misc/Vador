@@ -33,17 +33,14 @@ endif::[]
 
 == Source-code Setup
 
-=== Install Java 17
+=== Install Java 25
 
-It needs JDK 17 installed in your system.
-Recommendation is to do it via https://sdkman.io/install[SDKMAN].
-After you install SDKMAN,
-run `sdk list java` -> Pick Identifier for your favorite java distribution -> Run `sdk install java <Identifier-you-picked>`
-to install Java. For example:
+Vador requires JDK 25. The repository's `.sdkmanrc` pins the development runtime.
+After installing https://sdkman.io/install[SDKMAN], run:
 
 [source,bash]
 ----
-sdk install java 17.0.14-amzn
+sdk env install
 ----
 
 === Build with Gradle
@@ -79,7 +76,7 @@ Similar development aids should be present for other code editors too.
 * This repo uses https://github.com/diffplug/spotless[*Spotless*] for formatting files, as this repo has code from more than one programming language.
 * Please run `./gradlew spotlessApply` before check-in to fix any formatting errors.
 
-TIP: If you're on Intellij, replace your kbd:[Cmd+Shift+L] habit with kbd:[Ctrl]-kbd:[Ctrl] and run `gradle spotlessApply` (Or the respective action if you're on Eclipse).
+TIP: If you're on Intellij, replace your kbd:[Cmd+Shift+L] habit with kbd:[Ctrl]-kbd:[Ctrl] and run `./gradlew spotlessApply` (Or the respective action if you're on Eclipse).
 It may be slow for the first run, but later runs should be faster.
 
 == Manual publishing
@@ -105,7 +102,7 @@ sonatypePassword=<your-password>
 * B = Profit (Feature / Improvement)
 * C = Broke something by accident (Bug)
 
-Follow the Versioning Strategy to increment version link:buildSrc/{sourcedir}/Config.kt[here].
+Follow the Versioning Strategy to increment the `vador.version` property in link:gradle.properties[gradle.properties].
 For SNAPSHOT releases, add a `-SNAPSHOT` at the end of version number
 
 === Publish
