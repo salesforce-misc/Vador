@@ -1,6 +1,6 @@
 [versions]
 jdk = "25"
-kotlin = "2.4.20-RC3"
+kotlin = "2.4.20"
 java-vavr = "0.11.0"
 kotlin-vavr = "0.10.2"
 hamcrest-core = "3.0"
