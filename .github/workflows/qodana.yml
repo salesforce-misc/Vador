@@ -55,7 +55,7 @@ jobs:
         run: ./gradlew :vador:kaptKotlin :vador:classes :matchers:classes --warning-mode all --console=plain
 
       - name: Qodana PR scan
-        uses: JetBrains/qodana-action@10be11607eb323a180e2b76b26c9c5cdceac3e77 # v2026.2.1
+        uses: JetBrains/qodana-action@3e8d76ff0e0241618abd808682f426afe84bab3f # v2026.2.2
         with:
           args: --image,${{ env.QODANA_IMAGE }}
           cache-default-branch-only: true
@@ -116,7 +116,7 @@ jobs:
 
       - name: Qodana trusted master scan
         id: qodana
-        uses: JetBrains/qodana-action@10be11607eb323a180e2b76b26c9c5cdceac3e77 # v2026.2.1
+        uses: JetBrains/qodana-action@3e8d76ff0e0241618abd808682f426afe84bab3f # v2026.2.2
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
         with:
